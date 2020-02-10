@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-//use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 use Validator;
 use DB;
@@ -28,7 +26,7 @@ class APIController extends Controller
    */
   public function index(Request $request)
   {
-    $api = $request->post();
+    $api = $request->all();
 
     dd($api);
 
