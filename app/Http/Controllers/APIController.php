@@ -28,7 +28,7 @@ class APIController extends Controller
   {
     $api = $request->input('action');
 
-    return $api;
+    dd($api);
 
     switch ($api) {
 
