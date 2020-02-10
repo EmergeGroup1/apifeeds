@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests as Input;
 use Validator;
 use DB;
 use Cache;
@@ -25,9 +24,9 @@ class APIController extends Controller
    *
    * @return \Illuminate\Http\Response
    */
-  public function index()
+  public function index(Request $request)
   {
-    $api = Input::all();
+    $api = $request->all();
 
     dd($api);
 
