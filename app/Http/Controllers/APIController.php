@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Request as Input;
+use Request;
 use Validator;
 use DB;
 use Cache;
@@ -26,9 +26,7 @@ class APIController extends Controller
    */
   public function index()
   {
-    $api = Request::get('action');
-
-    return $api;
+    $api = Input::get('action');
 
     switch ($api) {
 
