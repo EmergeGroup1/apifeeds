@@ -24,7 +24,7 @@ class APIController extends Controller
    *
    * @return \Illuminate\Http\Response
    */
-  public function index(Input $request)
+  public function index(Request $request)
   {
     $api = $request->get('action');
 
