@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Input;
+use Request as Input;
 use Validator;
 use DB;
 use Cache;
