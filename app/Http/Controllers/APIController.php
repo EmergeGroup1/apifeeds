@@ -26,7 +26,7 @@ class APIController extends Controller
    */
   public function index(Request $request)
   {
-    $api = $request->get('action');
+    $api = $request->input('action');
 
     return $api;
 
