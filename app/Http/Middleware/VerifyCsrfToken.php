@@ -21,7 +21,7 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         "api",
         "api/*",
-        "/api",
+        "http://test.infarmsolutions.com/api",
         "/api/*",
     ];
 }
