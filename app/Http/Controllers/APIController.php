@@ -26,7 +26,7 @@ class APIController extends Controller
    */
   public function index()
   {
-    $api = Input::get('action');
+    $api = Request::get('action');
 
     switch ($api) {
 
