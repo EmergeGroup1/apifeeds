@@ -16,4 +16,6 @@ Route::get('/', function () {
 });
 
 //Route::get('api',"APIController@index");
-Route::post('api',"APIController@index");
+//Route::post('api',"APIController@index");
+
+Route::match(array('GET','POST'),'api', 'APIController@index');
