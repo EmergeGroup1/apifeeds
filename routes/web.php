@@ -14,3 +14,6 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('api',"APIController@index");
+Route::post('api',"APIController@index");
