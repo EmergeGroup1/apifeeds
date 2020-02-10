@@ -28,6 +28,8 @@ class APIController extends Controller
   {
     $api = $request->get('action');
 
+    return $api;
+
     switch ($api) {
 
       case "logUser":
