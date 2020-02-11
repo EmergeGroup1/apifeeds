@@ -11,12 +11,19 @@ class User extends Authenticatable
     use Notifiable;
 
     /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'feeds_user_accounts';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'username', 'email', 'password','no_hash'
     ];
 
     /**
