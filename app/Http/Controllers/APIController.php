@@ -9,7 +9,6 @@ use DB;
 use Cache;
 use Auth;
 use Storage;
-use App\Http\Requests;
 use App\Farms;
 use App\Bins;
 use App\FarmSchedule;
