@@ -19,9 +19,6 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        "api",
-        "api/*",
-        "http://test.infarmsolutions.com/api",
-        "/api/*",
+        "*",
     ];
 }
