@@ -914,18 +914,17 @@ class HomeController extends Controller
   					->where('med_id','=',$medid)
   					->get();
 
-  		if($output == NULL) {
+      if($output == NULL) {
 
-  			$output = array(
-  						array(
-  							'med_name' => 'No Medication'
-  						)
-  			);
+        $output = 'No Medication';
 
-  		}
+        return $output;
 
-  		$output = json_decode(json_encode($output),true);
-  		return $output[0]['med_name'];
+      }
+
+      $output = $output->med_name;
+
+      return $output;
 
   	}
 
