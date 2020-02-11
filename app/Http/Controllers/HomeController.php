@@ -452,6 +452,7 @@ class HomeController extends Controller
     				->where('delivery_label','active')
     				->where('delivery_date','>',date('Y-m-d'))
     				->groupBy('unique_id')
+            ->orderBy('unique_id')
     				->orderBy('delivery_date','desc')->get();
 
 
