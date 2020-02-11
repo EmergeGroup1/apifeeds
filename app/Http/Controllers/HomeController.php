@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Cache;
 use DB;
 use Carbon;
+use App\Medication;
 use App\Farms;
 use App\FarmSchedule;
 use App\BinsHistory;
@@ -512,7 +513,7 @@ class HomeController extends Controller
   	*/
   	public function medName($medId){
 
-        $data =Medication::where('med_id','=',$medId)
+        $data = Medication::where('med_id','=',$medId)
     				->select('*')
     				->first();
 
