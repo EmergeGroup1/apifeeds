@@ -14,7 +14,6 @@ use App\Bins;
 use App\FarmSchedule;
 use App\Deliveries;
 use App\SchedTool;
-use App\Http\Controllers\Controller;
 
 class APIController extends Controller
 {
