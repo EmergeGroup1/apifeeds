@@ -50,8 +50,8 @@ class APIController extends Controller
 
       case "listFarms":
 
-        $type = Input::get('type');
-        $token = Input::get('token');
+        $type = $request->input('type');
+        $token = $request->input('token');
 
         if ($type == 0) {
           $farms_default = Farms::where('status', 1)->where('farm_type','!=','farrowing')->orderBy('name')->get();
@@ -66,7 +66,7 @@ class APIController extends Controller
         }
 
         $log_token = session('token');
-        $sort_type = Input::get('sort');
+        $sort_type = $request->input('sort');
 
         //$home_controller = new HomeController;
         //$home_controller->forecastingDataCache();
@@ -86,8 +86,8 @@ class APIController extends Controller
 
       case "listBins":
 
-        $farm_id = Input::get('farmID');
-        $token = Input::get('token');
+        $farm_id = $request->input('farmID');
+        $token = $request->input('token');
 
         $farm = Farms::where('id', $farm_id)->first();
 
@@ -136,13 +136,13 @@ class APIController extends Controller
 
       case "deleteBatch":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $batch_id = Input::get('batchID');
+        $batch_id = $request->input('batchID');
 
         DB::table('feeds_batch')->where('id', $batch_id)->delete();
 
@@ -153,13 +153,13 @@ class APIController extends Controller
         break;
 
       case "deleteSchedule":
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $unique_id = Input::get('uniqueID');
+        $unique_id = $request->input('uniqueID');
 
         $scheduling_controller = new ScheduleController;
         $scheduling_controller->deleteSchedDel($unique_id);
@@ -175,7 +175,7 @@ class APIController extends Controller
 
       case "driverList":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
@@ -192,7 +192,7 @@ class APIController extends Controller
 
       case "listMedication":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
@@ -209,7 +209,7 @@ class APIController extends Controller
 
       case "listFeedType":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
@@ -226,19 +226,19 @@ class APIController extends Controller
 
       case "updateBin":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $bin_id = Input::get('binID');
-        $amount = Input::get('amount');
+        $bin_id = $request->input('binID');
+        $amount = $request->input('amount');
 
 
         $_POST['bin'] = $bin_id;
         $_POST['amount'] = $amount;
-        $_POST['user'] = Input::get('userID');
+        $_POST['user'] = $request->input('userID');
 
         // get the medications medication()
         $home_controller = new HomeController;
@@ -251,7 +251,7 @@ class APIController extends Controller
 
       case "updateBinCacheRebuild":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
@@ -268,17 +268,17 @@ class APIController extends Controller
 
       case "updatePigs":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $farm_id = Input::get('farmID');
-        $bin_id = Input::get('binID');
-        $number_of_pigs = Input::get('numberOfPigs');
-        $animal_unique_id = Input::get('animalUniqueID');
-        $user_id = Input::get('user_id');
+        $farm_id = $request->input('farmID');
+        $bin_id = $request->input('binID');
+        $number_of_pigs = $request->input('numberOfPigs');
+        $animal_unique_id = $request->input('animalUniqueID');
+        $user_id = $request->input('user_id');
 
 
         // get the medications medication()
@@ -295,39 +295,39 @@ class APIController extends Controller
 
       case "saveBatch":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
         $data = array(
-          'farm_id' => Input::get('farmID'),
-          'bin_id' => Input::get('binID'),
-          'feed_type' => Input::get('feedType'),
-          'medication' => Input::get('medication'),
-          'amount' => Input::get('amount'),
-          'date' => date("Y-m-d", strtotime(Input::get('date'))),
-          'truck' => Input::get('truck'),
-          'compartment' => Input::get('compartment'),
-          'code_id' => Input::get("code")
+          'farm_id' => $request->input('farmID'),
+          'bin_id' => $request->input('binID'),
+          'feed_type' => $request->input('feedType'),
+          'medication' => $request->input('medication'),
+          'amount' => $request->input('amount'),
+          'date' => date("Y-m-d", strtotime($request->input('date'))),
+          'truck' => $request->input('truck'),
+          'compartment' => $request->input('compartment'),
+          'code_id' => $request->input("code")
         );
 
 
 
         $exists = DB::table('feeds_batch')
           ->where('status', 'pending')
-          ->where('bin_id', Input::get('binID'))
+          ->where('bin_id', $request->input('binID'))
           ->exists();
 
         $code_exists = DB::table('feeds_batch')
-          ->where('code_id', Input::get('code'))
+          ->where('code_id', $request->input('code'))
           ->exists();
 
 
         if ($code_exists) {
           if ($this->saveBatch($data)) {
-            DB::table('feeds_batch')->where('status', 'pending')->where('unique_id', NULL)->update(['date' => date("Y-m-d", strtotime(Input::get('date')))]);
+            DB::table('feeds_batch')->where('status', 'pending')->where('unique_id', NULL)->update(['date' => date("Y-m-d", strtotime($request->input('date')))]);
             return $data + array(
               "err" =>  0,
               "msg" =>  "Successfully added"
@@ -344,7 +344,7 @@ class APIController extends Controller
           }
 
           if ($this->saveBatch($data)) {
-            DB::table('feeds_batch')->where('status', 'pending')->where('unique_id', NULL)->update(['date' => date("Y-m-d", strtotime(Input::get('date')))]);
+            DB::table('feeds_batch')->where('status', 'pending')->where('unique_id', NULL)->update(['date' => date("Y-m-d", strtotime($request->input('date')))]);
             return $data + array(
               "err" =>  0,
               "msg" =>  "Successfully added"
@@ -361,13 +361,13 @@ class APIController extends Controller
 
       case "listBatch":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
 
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
-        $status = Input::get('status');
+        $status = $request->input('status');
 
         $data = DB::table('feeds_batch')->where('status', $status)->orderBy('compartment', 'asc')->get();
         $output = array();
@@ -397,7 +397,7 @@ class APIController extends Controller
 
       case "listSchedule":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
 
         if ($token != $log_token) {
@@ -406,7 +406,7 @@ class APIController extends Controller
 
         $farms_scheduled_unique_id = DB::table('feeds_farm_schedule')
           ->select('unique_id', 'truck_id', 'farm_id', 'driver_id')
-          ->where(DB::raw('LEFT(date_of_delivery,10)'), date("Y-m-d", strtotime(Input::get('selectedDate'))))
+          ->where(DB::raw('LEFT(date_of_delivery,10)'), date("Y-m-d", strtotime($request->input('selectedDate'))))
           ->distinct()->get();
 
         $output = array();
@@ -443,7 +443,7 @@ class APIController extends Controller
 
 
       case "listBatches":
-        $unique_id = Input::get('uid');
+        $unique_id = $request->input('uid');
         $batch = $this->listScheduleBatchesPrint($unique_id);
 
         return array(
@@ -455,10 +455,10 @@ class APIController extends Controller
 
       case "driverNote":
 
-        $type = Input::get('type');
-        $notes = Input::get('notes');
-        $driver_id = Input::get('driver_id');
-        $unique_id = Input::get('unique_id');
+        $type = $request->input('type');
+        $notes = $request->input('notes');
+        $driver_id = $request->input('driver_id');
+        $unique_id = $request->input('unique_id');
 
         $driver_notes = $this->driverNotes($notes,$driver_id,$unique_id);
 
@@ -480,32 +480,32 @@ class APIController extends Controller
 
       case "updateCompartment":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
         $data = array(
-          'farm_id' => Input::get('farmID'),
-          'bin_id' => Input::get('binID'),
-          'feed_type' => Input::get('feedType'),
-          'medication' => Input::get('medication'),
-          'amount' => Input::get('amount'),
-          'date' => date("Y-m-d", strtotime(Input::get('date'))),
-          'truck' => Input::get('truck'),
-          'compartment' => Input::get('compartment'),
+          'farm_id' => $request->input('farmID'),
+          'bin_id' => $request->input('binID'),
+          'feed_type' => $request->input('feedType'),
+          'medication' => $request->input('medication'),
+          'amount' => $request->input('amount'),
+          'date' => date("Y-m-d", strtotime($request->input('date'))),
+          'truck' => $request->input('truck'),
+          'compartment' => $request->input('compartment'),
         );
 
-        DB::table('feeds_batch')->where("id", Input::get('id'))->update($data);
+        DB::table('feeds_batch')->where("id", $request->input('id'))->update($data);
 
-        $batch = DB::table('feeds_batch')->where("id", Input::get('id'))->first();
+        $batch = DB::table('feeds_batch')->where("id", $request->input('id'))->first();
 
         $var = array();
         $var['selected_date'] = $batch->date;
         $var['unique_id'] = $batch->unique_id;
         $var['driver_id'] = $batch->driver_id;
-        $var['user_id'] = Input::get('userID');
+        $var['user_id'] = $request->input('userID');
 
         DB::table('feeds_batch')->where("unique_id", $var['unique_id'])->update(['date' => $data['date']]);
 
@@ -523,13 +523,13 @@ class APIController extends Controller
 
       case "scheduleDelivery":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $user = Input::get("userID");
+        $user = $request->input("userID");
 
         $home_controller = new HomeController;
         $unique_id = $home_controller->generator();
@@ -575,13 +575,13 @@ class APIController extends Controller
         break;
 
       case "schedToolData":
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $selected_date = date("Y-m-d", strtotime(Input::get('selectedDate')));
+        $selected_date = date("Y-m-d", strtotime($request->input('selectedDate')));
 
         $scheduling_controller = new ScheduleController;
         $scheduled_item = $scheduling_controller->scheduledDataAPI($data);
@@ -602,15 +602,15 @@ class APIController extends Controller
         break;
 
       case "updateDate":
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $user = Input::get('userID');
-        $selected_date = date("Y-m-d", strtotime(Input::get('selectedDate')));
-        $unique_id = Input::get('uniqueID');
+        $user = $request->input('userID');
+        $selected_date = date("Y-m-d", strtotime($request->input('selectedDate')));
+        $unique_id = $request->input('uniqueID');
 
         DB::table('feeds_batch')->where('unique_id', $unique_id)->update(['date' => $selected_date]);
 
@@ -633,13 +633,13 @@ class APIController extends Controller
         break;
 
       case "totalTonsSchedTool":
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $selected_date = date("Y-m-d", strtotime(Input::get('selectedDate')));
+        $selected_date = date("Y-m-d", strtotime($request->input('selectedDate')));
 
         $scheduling_controller = new ScheduleController;
         $total_tons = $scheduling_controller->totalTonsAPI($selected_date);
@@ -662,13 +662,13 @@ class APIController extends Controller
         break;
 
       case "totalTonsDeliveredSchedTool":
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $selected_date = date("Y-m-d", strtotime(Input::get('selectedDate')));
+        $selected_date = date("Y-m-d", strtotime($request->input('selectedDate')));
 
         $scheduling_controller = new ScheduleController;
         $total_tons = $scheduling_controller->totalTonsDeliveredAPI($selected_date);
@@ -683,13 +683,13 @@ class APIController extends Controller
         break;
 
       case "totalTonsScheduledSchedTool":
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $selected_date = date("Y-m-d", strtotime(Input::get('selectedDate')));
+        $selected_date = date("Y-m-d", strtotime($request->input('selectedDate')));
 
         $scheduling_controller = new ScheduleController;
         $total_tons = $scheduling_controller->totalTonsScheduledAPI($selected_date);
@@ -705,23 +705,23 @@ class APIController extends Controller
 
       case "moveToSchedTool":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
         $data = array(
-          'driver_id'        =>  Input::get('driverID'),
-          'unique_id'        =>  Input::get('uniqueID'),
-          'user_id'         =>  Input::get('userID'),
-          'selected_date'    =>  date("Y-m-d", strtotime(Input::get('selectedDate')))
+          'driver_id'        =>  $request->input('driverID'),
+          'unique_id'        =>  $request->input('uniqueID'),
+          'user_id'         =>  $request->input('userID'),
+          'selected_date'    =>  date("Y-m-d", strtotime($request->input('selectedDate')))
         );
 
         DB::table('feeds_batch')->where(
           'unique_id',
-          Input::get('uniqueID')
-        )->update(['driver_id' => Input::get('driverID'), 'date' => date("Y-m-d", strtotime(Input::get('selectedDate')))]);
+          $request->input('uniqueID')
+        )->update(['driver_id' => $request->input('driverID'), 'date' => date("Y-m-d", strtotime($request->input('selectedDate')))]);
 
         $scheduling_controller = new ScheduleController;
         $scheduled_item = $scheduling_controller->scheduledItemDriverAPI($data, "movetoschedtool");
@@ -750,18 +750,18 @@ class APIController extends Controller
 
       case "changeDeliveryNumber":
         $validate = array();
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
         $data = array(
-          'driver_id'       => Input::get('driverID'),
-          'unique_id'       => Input::get('uniqueID'),
-          'delivery_number' => Input::get('deliveryNumber'),
-          'selected_index'  => Input::get('selectedIndex'),
-          'selected_date'    => date("Y-m-d", strtotime(Input::get('selectedDate')))
+          'driver_id'       => $request->input('driverID'),
+          'unique_id'       => $request->input('uniqueID'),
+          'delivery_number' => $request->input('deliveryNumber'),
+          'selected_index'  => $request->input('selectedIndex'),
+          'selected_date'    => date("Y-m-d", strtotime($request->input('selectedDate')))
         );
 
         $scheduling_controller = new ScheduleController;
@@ -804,17 +804,17 @@ class APIController extends Controller
 
       case "validateDeliveryNumber":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
         $data = array(
-          'driver_id'       => Input::get('driverID'),
-          'unique_id'       => Input::get('uniqueID'),
-          'delivery_number' => Input::get('deliveryNumber'),
-          'selected_date'    => date("Y-m-d", strtotime(Input::get('selectedDate')))
+          'driver_id'       => $request->input('driverID'),
+          'unique_id'       => $request->input('uniqueID'),
+          'delivery_number' => $request->input('deliveryNumber'),
+          'selected_date'    => date("Y-m-d", strtotime($request->input('selectedDate')))
         );
 
         $scheduling_controller = new ScheduleController;
@@ -838,21 +838,21 @@ class APIController extends Controller
 
       case "loadDelivery":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
         $data = array(
-          'driver_id' => Input::get('driverID'),
-          'unique_id' => Input::get('uniqueID'),
-          'selected_date'    => date("Y-m-d", strtotime(Input::get('selectedDate')))
+          'driver_id' => $request->input('driverID'),
+          'unique_id' => $request->input('uniqueID'),
+          'selected_date'    => date("Y-m-d", strtotime($request->input('selectedDate')))
         );
 
-        DB::table('feeds_batch')->where('unique_id', Input::get('uniqueID'))->update(['driver_id' => Input::get('driverID')]);
+        DB::table('feeds_batch')->where('unique_id', $request->input('uniqueID'))->update(['driver_id' => $request->input('driverID')]);
 
-        $delivery_exists = FarmSchedule::whereNotNull('delivery_unique_id')->where('unique_id', Input::get('uniqueID'))->get()->toArray();
+        $delivery_exists = FarmSchedule::whereNotNull('delivery_unique_id')->where('unique_id', $request->input('uniqueID'))->get()->toArray();
         if ($delivery_exists != NULL) {
           return array(
             "err" =>  1,
@@ -860,7 +860,7 @@ class APIController extends Controller
           );
         }
 
-        $user = Input::get('userID');
+        $user = $request->input('userID');
 
         $scheduling_controller = new ScheduleController;
         $delivery_data = $scheduling_controller->loadToTruckAPI($data, $user);
@@ -882,15 +882,15 @@ class APIController extends Controller
 
       case "driverStats":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
         $data = array(
-          'date_from'  =>  date("Y-m-d", strtotime(Input::get('from'))),
-          'date_to'    =>  date("Y-m-d", strtotime(Input::get('to')))
+          'date_from'  =>  date("Y-m-d", strtotime($request->input('from'))),
+          'date_to'    =>  date("Y-m-d", strtotime($request->input('to')))
         );
 
         $reports_controller = new ReportsController;
@@ -907,13 +907,13 @@ class APIController extends Controller
 
       case "schedDriversGraph":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $selected_date = date("Y-m-d", strtotime(Input::get('selectedDate')));
+        $selected_date = date("Y-m-d", strtotime($request->input('selectedDate')));
 
         $scheduling_controller = new ScheduleController;
         $delivery_data = $scheduling_controller->schedToolOutputAPI($selected_date);
@@ -930,13 +930,13 @@ class APIController extends Controller
 
       case "driverActivityReport":
 
-        $token = Input::get('token');
+        $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
           return array("err" => "Invalid token, please login");
         }
 
-        $selected_date = date("Y-m-d", strtotime(Input::get('selectedDate')));
+        $selected_date = date("Y-m-d", strtotime($request->input('selectedDate')));
 
         $scheduling_controller = new ScheduleController;
         $delivery_data = $scheduling_controller->driverActivityReportAPI($selected_date);
@@ -956,11 +956,11 @@ class APIController extends Controller
       case "updateSchedTime":
 
         $data = array(
-          'start_time' => date("H:i", strtotime(Input::get('startTime'))),
-          'end_time' => date("H:i", strtotime(Input::get('endTime'))),
-          'delivery_number' => Input::get('deliveryNumber'),
-          'unique_id' => Input::get('uniqueID'),
-          'driver_id' => Input::get('driverID')
+          'start_time' => date("H:i", strtotime($request->input('startTime'))),
+          'end_time' => date("H:i", strtotime($request->input('endTime'))),
+          'delivery_number' => $request->input('deliveryNumber'),
+          'unique_id' => $request->input('uniqueID'),
+          'driver_id' => $request->input('driverID')
         );
 
         $scheduling_controller = new ScheduleController;
@@ -978,11 +978,11 @@ class APIController extends Controller
       case "deliveryLists":
 
         $data = array(
-          'from'            =>  date("Y-m-d", strtotime(Input::get('from'))),
-          'to'              =>  date("Y-m-d", strtotime(Input::get('to'))),
-          'driver'          =>  Input::get('driver'),
-          'delivery_number' =>  Input::get('deliveryNumber'),
-          'farm_id'         =>  Input::get('farmID')
+          'from'            =>  date("Y-m-d", strtotime($request->input('from'))),
+          'to'              =>  date("Y-m-d", strtotime($request->input('to'))),
+          'driver'          =>  $request->input('driver'),
+          'delivery_number' =>  $request->input('deliveryNumber'),
+          'farm_id'         =>  $request->input('farmID')
         );
         $home_controller = new HomeController;
         $deliveries = $home_controller->deliveriesListAPI($data);
@@ -995,7 +995,7 @@ class APIController extends Controller
         /* Delivery Page */
       case "deliveryLoadInfo":
 
-        $unique_id = Input::get('uniqueID');
+        $unique_id = $request->input('uniqueID');
         $home_controller = new HomeController;
         $deliveries = $home_controller->loadBreakdownAPI($unique_id);
         unset($home_controller);
@@ -1006,8 +1006,8 @@ class APIController extends Controller
 
       case "searchDeliveryLists":
 
-        $from  = Input::get('from');
-        $to = Input::get('to');
+        $from  = $request->input('from');
+        $to = $request->input('to');
         $home_controller = new HomeController;
         $deliveries = $home_controller->deliveriesListAPI();
         unset($home_controller);
@@ -1018,8 +1018,8 @@ class APIController extends Controller
 
       case "markDelivered":
 
-        $unique_id = Input::get('uniqueID');
-        $user_id = Input::get('userID');
+        $unique_id = $request->input('uniqueID');
+        $user_id = $request->input('userID');
 
         $home_controller = new HomeController;
         $delivery = $home_controller->markDeliveredAPI($unique_id, $user_id);
@@ -1042,7 +1042,7 @@ class APIController extends Controller
 
       case "deleteDelivered":
 
-        $unique_id = Input::get('uniqueID');
+        $unique_id = $request->input('uniqueID');
 
         $home_controller = new HomeController;
         $delivery = $home_controller->deleteDeliveredAPI($unique_id);
@@ -1085,19 +1085,19 @@ class APIController extends Controller
       case "saveFarmAdmin":
 
         $data = array(
-          'name'                =>  Input::get('farmName'),
-          'delivery_time'       =>  Input::get('deliveryTime'),
-          'packer'              =>  Input::get('packerName'),
-          'contact'             =>  Input::get('ContactNumber'),
-          'farm_type'           =>  Input::get('farmType'),
-          'column_type'         =>  Input::get('columnType'),
-          'owner'               =>  Input::get('farmOwner'),
-          'update_notification' =>  Input::get('manualUpdateNotification'),
-          'notes'               =>  Input::get('notes'),
-          'address'             =>  Input::get('address'),
-          'longtitude'          =>  Input::get('lng'),
-          'lattitude'           =>  Input::get('lat'),
-          'user_id'             =>  Input::get('userID'),
+          'name'                =>  $request->input('farmName'),
+          'delivery_time'       =>  $request->input('deliveryTime'),
+          'packer'              =>  $request->input('packerName'),
+          'contact'             =>  $request->input('ContactNumber'),
+          'farm_type'           =>  $request->input('farmType'),
+          'column_type'         =>  $request->input('columnType'),
+          'owner'               =>  $request->input('farmOwner'),
+          'update_notification' =>  $request->input('manualUpdateNotification'),
+          'notes'               =>  $request->input('notes'),
+          'address'             =>  $request->input('address'),
+          'longtitude'          =>  $request->input('lng'),
+          'lattitude'           =>  $request->input('lat'),
+          'user_id'             =>  $request->input('userID'),
           'created_at'          =>  date('Y-m-d H:i:s'),
           'updated_at'          =>  date('Y-m-d H:i:s')
         );
@@ -1120,26 +1120,26 @@ class APIController extends Controller
 
       case "updateFarmAdmin":
 
-        $farm_id = Input::get('farmID');
+        $farm_id = $request->input('farmID');
         $data = array(
-          'name'                =>  Input::get('farmName'),
-          'delivery_time'       =>  Input::get('deliveryTime'),
-          'packer'              =>  Input::get('packerName'),
-          'contact'             =>  Input::get('ContactNumber'),
-          'farm_type'           =>  Input::get('farmType'),
-          'column_type'         =>  Input::get('columnType'),
-          'owner'               =>  Input::get('farmOwner'),
-          'update_notification' =>  Input::get('manualUpdateNotification'),
-          'notes'               =>  Input::get('notes'),
-          'address'             =>  Input::get('address'),
-          'longtitude'          =>  Input::get('lng'),
-          'lattitude'           =>  Input::get('lat'),
-          'user_id'             =>  Input::get('userID'),
+          'name'                =>  $request->input('farmName'),
+          'delivery_time'       =>  $request->input('deliveryTime'),
+          'packer'              =>  $request->input('packerName'),
+          'contact'             =>  $request->input('ContactNumber'),
+          'farm_type'           =>  $request->input('farmType'),
+          'column_type'         =>  $request->input('columnType'),
+          'owner'               =>  $request->input('farmOwner'),
+          'update_notification' =>  $request->input('manualUpdateNotification'),
+          'notes'               =>  $request->input('notes'),
+          'address'             =>  $request->input('address'),
+          'longtitude'          =>  $request->input('lng'),
+          'lattitude'           =>  $request->input('lat'),
+          'user_id'             =>  $request->input('userID'),
           'created_at'          =>  date('Y-m-d H:i:s'),
           'updated_at'          =>  date('Y-m-d H:i:s')
         );
 
-        if (Input::get('farmOwner') == NULL) {
+        if ($request->input('farmOwner') == NULL) {
           $data['owner'] = "none";
         }
 
@@ -1161,7 +1161,7 @@ class APIController extends Controller
 
       case "deleteFarmAdmin":
 
-        $farm_id = Input::get('farmID');
+        $farm_id = $request->input('farmID');
 
         $farms_controller = new FarmsController;
         $status = $farms_controller->deleteFarmAPI($farm_id);
@@ -1181,7 +1181,7 @@ class APIController extends Controller
 
       case "turnOnFarmAdmin":
 
-        $farm_id = Input::get('farmID');
+        $farm_id = $request->input('farmID');
 
         $farms_controller = new FarmsController;
         $status = $farms_controller->turnOnFarmAPI($farm_id);
@@ -1201,8 +1201,8 @@ class APIController extends Controller
 
       case "turnOffFarmAdmin":
 
-        $farm_id = Input::get('farmID');
-        $reactivation_date = Input::get('reactivationDate');
+        $farm_id = $request->input('farmID');
+        $reactivation_date = $request->input('reactivationDate');
 
         $farms_controller = new FarmsController;
         $status = $farms_controller->turnOffFarmAPI($reactivation_date, $farm_id);
@@ -1222,7 +1222,7 @@ class APIController extends Controller
 
       case "listBinFarmAdmin":
 
-        $farm_id = Input::get('farmID');
+        $farm_id = $request->input('farmID');
 
         $farms_controller = new FarmsController;
         $binsList = $farms_controller->listBinFarmAPI($farm_id);
@@ -1246,11 +1246,11 @@ class APIController extends Controller
       case "saveBinFarmAdmin":
 
         $data = array(
-          'farm_id'     =>  Input::get('farmID'),
-          'bin_number'  =>  Input::get('binNumber'),
-          'alias'       =>  Input::get('alias'),
-          'bin_size'    =>  Input::get('binSize'),
-          'user_id'     =>  Input::get('userID')
+          'farm_id'     =>  $request->input('farmID'),
+          'bin_number'  =>  $request->input('binNumber'),
+          'alias'       =>  $request->input('alias'),
+          'bin_size'    =>  $request->input('binSize'),
+          'user_id'     =>  $request->input('userID')
         );
 
         $farms_controller = new FarmsController;
@@ -1272,12 +1272,12 @@ class APIController extends Controller
       case "updateBinFarmAdmin":
 
         $data = array(
-          'bin_id'      =>  Input::get('binID'),
-          'farm_id'     =>  Input::get('farmID'),
-          'feed_type'   =>  Input::get('feedType'),
-          'alias'       =>  Input::get('alias'),
-          'bin_size'    =>  Input::get('binSize'),
-          'user_id'     =>  Input::get('userID')
+          'bin_id'      =>  $request->input('binID'),
+          'farm_id'     =>  $request->input('farmID'),
+          'feed_type'   =>  $request->input('feedType'),
+          'alias'       =>  $request->input('alias'),
+          'bin_size'    =>  $request->input('binSize'),
+          'user_id'     =>  $request->input('userID')
         );
 
         $farms_controller = new FarmsController;
@@ -1299,14 +1299,14 @@ class APIController extends Controller
       case "deleteBinFarmAdmin":
 
         $farms_controller = new FarmsController;
-        $farms_controller->deleteBinFarmAPI(Input::get('binID'));
+        $farms_controller->deleteBinFarmAPI($request->input('binID'));
         unset($farms_controller);
 
         if (!empty($farmsLists)) {
           return array(
             "err"   =>  0,
             "msg"   =>  "Successfully Deleted Bin",
-            "binid" =>  Input::get('binID')
+            "binid" =>  $request->input('binID')
           );
         } else {
           return $this->errorMessage();
@@ -1342,7 +1342,7 @@ class APIController extends Controller
         // user lists for messages
         case "msList":
 
-          $logged_in_user_id = Input::get('userID');
+          $logged_in_user_id = $request->input('userID');
 
           $ms_ctrl = new MessagingController;
           $messages = $ms_ctrl->messagingListAPI($logged_in_user_id);
@@ -1362,8 +1362,8 @@ class APIController extends Controller
 
         // history of messages from specific user
         case "msHistory":
-          $logged_in_user_id = Input::get('userID');
-          $pm_user_id = Input::get('pmUserID');
+          $logged_in_user_id = $request->input('userID');
+          $pm_user_id = $request->input('pmUserID');
 
           $ms_ctrl = new MessagingController;
           $messages = $ms_ctrl->loadMessageHistoryAPI($logged_in_user_id,$pm_user_id);
@@ -1382,8 +1382,8 @@ class APIController extends Controller
 
         // update the notification
         case "msUpdateNotif":
-          $logged_in_user_id = Input::get('userID');
-          $pm_user_id = Input::get('pmUserID');
+          $logged_in_user_id = $request->input('userID');
+          $pm_user_id = $request->input('pmUserID');
 
           $ms_ctrl = new MessagingController;
           $notif = $ms_ctrl->updateNotifAPI($logged_in_user_id,$pm_user_id);
@@ -1402,7 +1402,7 @@ class APIController extends Controller
 
         // total notification
         case "msTotalNotif":
-          $logged_in_user_id = Input::get('userID');
+          $logged_in_user_id = $request->input('userID');
 
           $ms_ctrl = new MessagingController;
           $notif = $ms_ctrl->totalNotifAPI($logged_in_user_id);
@@ -1422,10 +1422,10 @@ class APIController extends Controller
       case "amList":
 
         $data = array(
-          'type'      =>  Input::get('type'), // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
-          'date_from' =>  Input::get('date_from'), // (date)
-          'date_to'   =>  Input::get('date_to'), // (date)
-          'sort'      =>  Input::get('sort') // (string) not_scheduled, day_remaining
+          'type'      =>  $request->input('type'), // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
+          'date_from' =>  $request->input('date_from'), // (date)
+          'date_to'   =>  $request->input('date_to'), // (date)
+          'sort'      =>  $request->input('sort') // (string) not_scheduled, day_remaining
         );
 
         $am_controller = new AnimalMovementController;
@@ -1450,8 +1450,8 @@ class APIController extends Controller
 
       case "amDeleteGroup":
 
-        $group_id = Input::get('group_id');
-        $user_id = Input::get('user_id');
+        $group_id = $request->input('group_id');
+        $user_id = $request->input('user_id');
 
         $am_controller = new AnimalMovementController;
         $am_lists = $am_controller->removeGroupAPI($group_id, $user_id);
@@ -1470,20 +1470,20 @@ class APIController extends Controller
 
       case "amCreateGroup":
 
-        $date_created = date("Y-m-d H:i:s", strtotime(Input::get('date_created')));
+        $date_created = date("Y-m-d H:i:s", strtotime($request->input('date_created')));
 
         $data = array(
-          'group_name'        =>  Input::get('group_name'),
-          'farm_id'            =>  Input::get('farm_id'),
-          'start_weight'      =>  Input::get('start_weight'),
-          'end_weight'        =>  Input::get('end_weight'),
-          'crates'            =>  Input::get('crates') == NULL ? 0 : Input::get('crates'),
+          'group_name'        =>  $request->input('group_name'),
+          'farm_id'            =>  $request->input('farm_id'),
+          'start_weight'      =>  $request->input('start_weight'),
+          'end_weight'        =>  $request->input('end_weight'),
+          'crates'            =>  $request->input('crates') == NULL ? 0 : $request->input('crates'),
           'date_created'      =>  $date_created,
           'status'            =>  'entered',
-          'user_id'            =>  Input::get('user_id'),
-          'type'              =>  Input::get('type'),
-          'bins'              =>  Input::get('bins'),
-          'number_of_pigs'    =>  Input::get('number_of_pigs')
+          'user_id'            =>  $request->input('user_id'),
+          'type'              =>  $request->input('type'),
+          'bins'              =>  $request->input('bins'),
+          'number_of_pigs'    =>  $request->input('number_of_pigs')
         );
 
         $am_controller = new AnimalMovementController;
@@ -1504,23 +1504,23 @@ class APIController extends Controller
 
       case "amUpdateGroup":
 
-        $date_created = date("Y-m-d H:i:s", strtotime(Input::get('date_created')));
+        $date_created = date("Y-m-d H:i:s", strtotime($request->input('date_created')));
 
         $data = array(
-          'group_id'          =>  Input::get('group_id'),
-          'group_name'        =>  Input::get('group_name'),
-          'farm_id'            =>  Input::get('farm_id'),
-          'start_weight'      =>  Input::get('start_weight'),
-          'end_weight'        =>  Input::get('end_weight'),
-          'crates'            =>  Input::get('crates') == NULL ? 0 : Input::get('crates'),
+          'group_id'          =>  $request->input('group_id'),
+          'group_name'        =>  $request->input('group_name'),
+          'farm_id'            =>  $request->input('farm_id'),
+          'start_weight'      =>  $request->input('start_weight'),
+          'end_weight'        =>  $request->input('end_weight'),
+          'crates'            =>  $request->input('crates') == NULL ? 0 : $request->input('crates'),
           'date_created'      =>  $date_created,
           'status'            =>  'entered',
-          'user_id'            =>  Input::get('user_id'),
-          'type'              =>  Input::get('type'),
-          'group_bin_id'      =>  Input::get('group_bin_id'),
-          'bins'              =>  Input::get('bins'),
-          'number_of_pigs'    =>  Input::get('number_of_pigs'),
-          'unique_id'         =>  Input::get('unique_id')
+          'user_id'            =>  $request->input('user_id'),
+          'type'              =>  $request->input('type'),
+          'group_bin_id'      =>  $request->input('group_bin_id'),
+          'bins'              =>  $request->input('bins'),
+          'number_of_pigs'    =>  $request->input('number_of_pigs'),
+          'unique_id'         =>  $request->input('unique_id')
         );
 
         $am_controller = new AnimalMovementController;
@@ -1542,12 +1542,12 @@ class APIController extends Controller
       case "amCreateTransfer":
 
         $data = array(
-          'transfer_type'    =>  Input::get('transfer_type'),
-          'group_from'      =>  Input::get('group_from'),
-          'group_to'        =>  Input::get('group_to'),
-          'driver_id'        =>  Input::get('driver_id'),
-          'date'            =>   date("Y-m-d", strtotime(Input::get('date'))),
-          'number_of_pigs'  =>  Input::get('number_of_pigs')
+          'transfer_type'    =>  $request->input('transfer_type'),
+          'group_from'      =>  $request->input('group_from'),
+          'group_to'        =>  $request->input('group_to'),
+          'driver_id'        =>  $request->input('driver_id'),
+          'date'            =>   date("Y-m-d", strtotime($request->input('date'))),
+          'number_of_pigs'  =>  $request->input('number_of_pigs')
         );
 
         $am_controller = new AnimalMovementController;
@@ -1569,23 +1569,23 @@ class APIController extends Controller
       case "amUpdateTransfer":
 
         $data = array(
-          'transfer_id'       =>  Input::get('transfer_id'),
-          'transfer_type'      =>  Input::get('transfer_type'),
-          'group_from'        =>  Input::get('group_from'),
-          'group_to'          =>  Input::get('group_to'),
+          'transfer_id'       =>  $request->input('transfer_id'),
+          'transfer_type'      =>  $request->input('transfer_type'),
+          'group_from'        =>  $request->input('group_from'),
+          'group_to'          =>  $request->input('group_to'),
           'status'            =>  'created',
-          'date'              =>   date("Y-m-d", strtotime(Input::get('date'))),
-          'shipped'            =>  Input::get('shipped'),
-          'empty_weight'      =>  Input::get('empty_weight'),
-          'ave_weight'        =>  Input::get('ave_weight'),
-          'driver_id'          =>  Input::get('driver_id'),
-          'full_weight'        =>  Input::get('full_weight'),
-          'received'          =>  Input::get('received'),
-          'dead'              =>  Input::get('dead'),
-          'poor'              =>  Input::get('poor'),
-          'farm_count'        =>  Input::get('farm_count'),
-          'final_count'        =>  Input::get('final_count'),
-          'notes'              =>  Input::get('notes')
+          'date'              =>   date("Y-m-d", strtotime($request->input('date'))),
+          'shipped'            =>  $request->input('shipped'),
+          'empty_weight'      =>  $request->input('empty_weight'),
+          'ave_weight'        =>  $request->input('ave_weight'),
+          'driver_id'          =>  $request->input('driver_id'),
+          'full_weight'        =>  $request->input('full_weight'),
+          'received'          =>  $request->input('received'),
+          'dead'              =>  $request->input('dead'),
+          'poor'              =>  $request->input('poor'),
+          'farm_count'        =>  $request->input('farm_count'),
+          'final_count'        =>  $request->input('final_count'),
+          'notes'              =>  $request->input('notes')
         );
 
         $am_controller = new AnimalMovementController;
@@ -1607,23 +1607,23 @@ class APIController extends Controller
       case "amFinalizeTransfer":
 
         $transfer_data = array(
-          'transfer_id' => Input::get('transfer_id'),
-          'transfer_type' =>  Input::get('transfer_type'),
-          'date' =>  Input::get('date'),
-          'group_from' =>  Input::get('group_from'),
-          'group_to' =>  Input::get('group_to'),
-          'empty_weight' =>  Input::get('empty_weight'),
-          'full_weight' =>  Input::get('full_weight'),
-          'ave_weight' =>  Input::get('ave_weight'),
-          'shipped' =>  Input::get('shipped'),
-          'received' =>  Input::get('received'),
-          'dead' =>  Input::get('dead'),
-          'poor' =>  Input::get('poor'),
-          'farm_count' =>  Input::get('farm_count'),
-          'final_count' =>  Input::get('final_count'),
-          'driver_id' =>  Input::get('driver_id'),
-          'unique_id' =>  Input::get('unique_id'),
-          'user_id' =>  Input::get('user_id')
+          'transfer_id' => $request->input('transfer_id'),
+          'transfer_type' =>  $request->input('transfer_type'),
+          'date' =>  $request->input('date'),
+          'group_from' =>  $request->input('group_from'),
+          'group_to' =>  $request->input('group_to'),
+          'empty_weight' =>  $request->input('empty_weight'),
+          'full_weight' =>  $request->input('full_weight'),
+          'ave_weight' =>  $request->input('ave_weight'),
+          'shipped' =>  $request->input('shipped'),
+          'received' =>  $request->input('received'),
+          'dead' =>  $request->input('dead'),
+          'poor' =>  $request->input('poor'),
+          'farm_count' =>  $request->input('farm_count'),
+          'final_count' =>  $request->input('final_count'),
+          'driver_id' =>  $request->input('driver_id'),
+          'unique_id' =>  $request->input('unique_id'),
+          'user_id' =>  $request->input('user_id')
         );
 
         $validator = Validator::make(Input::all(), [
@@ -1649,12 +1649,12 @@ class APIController extends Controller
 
         $data = array(
           'transfer_data' => $transfer_data,
-          'bins_from' => Input::get('bins_from'),
-          'bins_from_pigs' => Input::get('bins_from_pigs'),
-          'bins_to' => Input::get('bins_to'),
-          'bins_to_pigs' => Input::get('bins_to_pigs'),
-          'num_of_pigs_dead' => Input::get('num_of_pigs_dead'),
-          'num_of_pigs_poor' => Input::get('num_of_pigs_poor')
+          'bins_from' => $request->input('bins_from'),
+          'bins_from_pigs' => $request->input('bins_from_pigs'),
+          'bins_to' => $request->input('bins_to'),
+          'bins_to_pigs' => $request->input('bins_to_pigs'),
+          'num_of_pigs_dead' => $request->input('num_of_pigs_dead'),
+          'num_of_pigs_poor' => $request->input('num_of_pigs_poor')
         );
 
         $am_controller = new AnimalMovementController;
@@ -1674,8 +1674,8 @@ class APIController extends Controller
 
       case "amRemoveTransfer":
 
-        $transfer_id = Input::get('transfer_id');
-        $user_id = Input::get('user_id');
+        $transfer_id = $request->input('transfer_id');
+        $user_id = $request->input('user_id');
         $am_controller = new AnimalMovementController;
         $am_transfer = $am_controller->removeTransfer($transfer_id, $user_id);
         unset($am_controller);
@@ -1716,11 +1716,11 @@ class APIController extends Controller
       case "ftCreate":
 
         $data = array(
-          'name' => Input::get('name'),
-          'description' => Input::get('description'),
-          'budgeted_amount' => Input::get('budgeted_amount'),
-          'total_days' => Input::get('total_days'),
-          'user_id' => Input::get('user_id'),
+          'name' => $request->input('name'),
+          'description' => $request->input('description'),
+          'budgeted_amount' => $request->input('budgeted_amount'),
+          'total_days' => $request->input('total_days'),
+          'user_id' => $request->input('user_id'),
           'created_at'  =>  date('Y-m-d H:i:s')
         );
 
@@ -1747,16 +1747,16 @@ class APIController extends Controller
       case "ftUpdate":
 
         $data = array(
-          'name' => Input::get('name'),
-          'description' => Input::get('description'),
-          'budgeted_amount' => Input::get('budgeted_amount'),
-          'total_days' => Input::get('total_days'),
-          'user_id' => Input::get('user_id'),
+          'name' => $request->input('name'),
+          'description' => $request->input('description'),
+          'budgeted_amount' => $request->input('budgeted_amount'),
+          'total_days' => $request->input('total_days'),
+          'user_id' => $request->input('user_id'),
           'updated_at'  =>  date('Y-m-d H:i:s')
         );
 
         $ft_controller = new FeedTypeController;
-        $ft_data = $ft_controller->apiUpdate($data, Input::get('type_id'));
+        $ft_data = $ft_controller->apiUpdate($data, $request->input('type_id'));
         unset($ft_controller);
 
         if ($ft_data != "Feed type has same name") {
@@ -1777,7 +1777,7 @@ class APIController extends Controller
 
       case "ftDelete":
 
-        $feed_type_id = Input::get('type_id');
+        $feed_type_id = $request->input('type_id');
         $ft_controller = new FeedTypeController;
         $ft_data = $ft_controller->apiDelete($feed_type_id);
         unset($ft_controller);
@@ -1795,9 +1795,9 @@ class APIController extends Controller
 
       case "ftUpdateDaysAmount":
 
-        $days_amount = Input::get('days_amount');
+        $days_amount = $request->input('days_amount');
         $ft_controller = new FeedTypeController;
-        $ft_data = $ft_controller->apiUpdateDaysAmount($days_amount, Input::get('type_id'));
+        $ft_data = $ft_controller->apiUpdateDaysAmount($days_amount, $request->input('type_id'));
         unset($ft_controller);
 
         if ($ft_data == "success") {
@@ -1837,7 +1837,7 @@ class APIController extends Controller
       case "rnAdd":
 
         $rn_controller = new MiscController;
-        $rn_data = $rn_controller->apiSaveReleaseNotes(Input::get('description'));
+        $rn_data = $rn_controller->apiSaveReleaseNotes($request->input('description'));
         unset($rn_controller);
 
         if ($rn_data == "success") {
@@ -1901,7 +1901,7 @@ class APIController extends Controller
         break;
 
         case "fpAFarmer": // available farmer
-          $farm_id = Input::get('farm_id');
+          $farm_id = $request->input('farm_id');
           $fp_controller = new FarmsController;
           $fp_data = $fp_controller->availableFarmersAPI($farm_id);
           unset($fp_controller);
@@ -1922,8 +1922,8 @@ class APIController extends Controller
         break;
 
         case "fpAddFarmer": // add farmer
-          $farm_id = Input::get('farm_id');
-          $farmer_id = Input::get('farmer_id');
+          $farm_id = $request->input('farm_id');
+          $farmer_id = $request->input('farmer_id');
           $fp_controller = new FarmsController;
           $fp_data = $fp_controller->saveFarmerAPI($farm_id,$farmer_id);
           unset($fp_controller);
@@ -1945,8 +1945,8 @@ class APIController extends Controller
         break;
 
         case "fpRemoveFarmer": // remove farmer
-          $farm_id = Input::get('farm_id');
-          $farmer_id = Input::get('farmer_id');
+          $farm_id = $request->input('farm_id');
+          $farmer_id = $request->input('farmer_id');
           $fp_controller = new FarmsController;
           $fp_data = $fp_controller->removeFarmerAPI($farm_id,$farmer_id);
           unset($fp_controller);
@@ -1992,13 +1992,13 @@ class APIController extends Controller
         case "uaAdd":
 
           $data = array(
-            'username' => Input::get('username'),
-            'email'  =>  Input::get('email'),
-            'password'  => Input::get('password'),
-            'first_name'  => Input::get('first_name'),
-            'last_name' =>  Input::get('last_name'),
-            'contact_number'  =>  Input::get('contact_number'),
-            'type'  => Input::get('type')
+            'username' => $request->input('username'),
+            'email'  =>  $request->input('email'),
+            'password'  => $request->input('password'),
+            'first_name'  => $request->input('first_name'),
+            'last_name' =>  $request->input('last_name'),
+            'contact_number'  =>  $request->input('contact_number'),
+            'type'  => $request->input('type')
           );
 
           $ua_controller = new UsersController;
@@ -2020,14 +2020,14 @@ class APIController extends Controller
         case "uaUpdate":
 
           $data = array(
-            'user_id' =>  Input::get('user_id'),
-            'username' => Input::get('username'),
-            'pass'  => Input::get('password'),
-            'type_id'  => Input::get('type'),
-            'email'  =>  Input::get('email'),
-            'first_name'  => Input::get('first_name'),
-            'last_name' =>  Input::get('last_name'),
-            'contact_number'  =>  Input::get('contact_number')
+            'user_id' =>  $request->input('user_id'),
+            'username' => $request->input('username'),
+            'pass'  => $request->input('password'),
+            'type_id'  => $request->input('type'),
+            'email'  =>  $request->input('email'),
+            'first_name'  => $request->input('first_name'),
+            'last_name' =>  $request->input('last_name'),
+            'contact_number'  =>  $request->input('contact_number')
           );
 
           $ua_controller = new UsersController;
@@ -2050,7 +2050,7 @@ class APIController extends Controller
         case "uaDelete":
 
           $ua_controller = new UsersController;
-          $ua_data = $ua_controller->apiDelete(Input::get('user_id'));
+          $ua_data = $ua_controller->apiDelete($request->input('user_id'));
           unset($ua_controller);
 
           if ($ua_data == "deleted") {
