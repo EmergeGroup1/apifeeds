@@ -26,9 +26,7 @@ class APIController extends Controller
    */
   public function index(Request $request)
   {
-    $api = $request->all();
-
-    dd($api);
+    $api = $request->input('action');
 
     switch ($api) {
 
