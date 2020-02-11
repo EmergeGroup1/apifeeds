@@ -951,16 +951,75 @@ class HomeController extends Controller
   	}
 
 
+
+    /*
+  	*	farrowingBins()
+  	*/
+  	private function animalGroupBinsAPI($bin_id)
+  	{
+    		$farrow_bins = DB::table('feeds_movement_groups_bins')->where('bin_id',$bin_id)->get();
+    		$total_pigs_per_bins = DB::table('feeds_movement_groups_bins')->where('bin_id',$bin_id)->sum('number_of_pigs');
+    		$farrow_bins = $this->toArray($farrow_bins);
+
+    		if($farrow_bins == NULL){
+    			return NULL;
+    		}
+
+    		$data = array();
+    		foreach($farrow_bins as $k => $v){
+    			$farrowing_groups = $this->animalGroupsAPI($v['unique_id']);
+    			if($farrowing_groups['group_name'] != NULL){
+    				$data[] = array(
+    					'type'					=>	'farrowing',
+    					'group_name'		=>	$farrowing_groups['group_name'],
+    					'group_id'			=>	$farrowing_groups['group_id'],
+    					'farm_id'			=>	$farrowing_groups['farm_id'],
+    					'number_of_pigs'	=>	$total_pigs_per_bins,//$v['number_of_pigs'],
+    					'pigs_per_group'	=> $v['number_of_pigs'],
+    					'bin_id'			=>	$v['bin_id'],
+    					'unique_id'			=>	$v['unique_id']
+    				);
+    			}
+    		}
+
+    		if(count($data) == 1){
+    			if($data[0]['group_name'] == NULL){
+    				return NULL;
+    			}
+    		}
+
+    		if($data == NULL){
+    			return NULL;
+    		}
+
+    		return $data;
+
+  	}
+
+  	/*
+  	*	animalGroupsFarrowing()
+  	*	get the group info of the farrowing groups
+  	*/
+  	private function animalGroupsAPI($unique_id)
+  	{
+    		$farrowing = DB::table('feeds_movement_groups')->where('status','!=','removed')->where('unique_id',$unique_id)->get();
+    		$farrowing = $this->toArray($farrowing);
+
+    		return $farrowing != NULL ? $farrowing[0] : NULL;
+  	}
+
+
+
     /*
   	*	Get the usernames
   	*/
   	private function usernames($user_id)
   	{
-  		$user = User::where('id',$user_id)->first();
+    		$user = User::where('id',$user_id)->first();
 
-  		$output = $user != NULL ? $user->username : "System Auto Update";
+    		$output = $user != NULL ? $user->username : "System Auto Update";
 
-  		return $output;
+    		return $output;
   	}
 
 
