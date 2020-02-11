@@ -2278,7 +2278,7 @@ class APIController extends Controller
    */
   private function binsDaysRemaining($bins)
   {
-    $output = "";
+    $output = array();
 
     foreach ($bins as $k => $v) {
       $output[] = array($k => $v);
