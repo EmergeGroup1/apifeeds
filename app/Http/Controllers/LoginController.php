@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Input;
 use Validator;
@@ -129,7 +129,7 @@ class LoginController extends Controller
             if(session('token') != NULL){
               $token = session('token');
             } else {
-              $token_string = str_random(25);
+              $token_string = Str::random(25);
               session(['token'=>$token_string]);
               $token = session('token');
             }
