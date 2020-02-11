@@ -815,19 +815,6 @@ class HomeController extends Controller
 
 
     /*
-  	*	Feed Name
-  	*/
-  	public function feedName($feedId){
-
-  		$data = FeedTypes::where('type_id','=',$feedId)
-  				->select('*')
-  				->first();
-  		return !empty($data) ? $data : "-";
-
-  	}
-
-
-    /*
     *   Get the feed type update
     */
     public function getFeedTypeUpdate($feedupd, $feeddef) {
