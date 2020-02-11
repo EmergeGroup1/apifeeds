@@ -887,20 +887,19 @@ class HomeController extends Controller
     		$output = DB::table('feeds_medication')
     					->select('med_description')
     					->where('med_id','=',$medid)
-    					->get();
+    					->first();
 
-    		if($output == NULL) {
+        if($output == NULL) {
 
-    			$output = array(
-      						array(
-      							'med_description' => 'No Medication'
-      						)
-    					  );
+    			$output = 'No Medication';
+
+          return $output;
 
     		}
 
-    		$output = json_decode(json_encode($output),true);
-    		return $output[0]['med_description'];
+        $output = $output->med_description;
+
+    		return $output;
 
   	}
 
