@@ -445,14 +445,13 @@ class HomeController extends Controller
     				->first();
 
     		$datas = DB::table('feeds_deliveries')
-    				->select(DB::raw('sum(amount) as sum'))
+    				->selectRaw('sum(amount) as sum')
     				->where('delivered','=', 0)
     				->where('bin_id', $bin_id)
     				->where('farm_id', $farm_id)
     				->where('delivery_label','active')
     				->where('delivery_date','>',date('Y-m-d'))
     				->groupBy('unique_id')
-            ->orderBy('unique_id')
     				->orderBy('delivery_date','desc')->get();
 
 
