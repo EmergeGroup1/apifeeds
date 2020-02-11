@@ -32,8 +32,8 @@ class APIController extends Controller
 
       case "logUser":
 
-        $username = Input::get('username');
-        $password = Input::get('password');
+        $username = $request->input('username');
+        $password = $request->input('password');
         $login_controller = new LoginController;
         $checker = $login_controller->checker();
         if ($checker == 1) {
