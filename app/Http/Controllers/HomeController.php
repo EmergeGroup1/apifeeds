@@ -884,23 +884,26 @@ class HomeController extends Controller
   	*/
     public function getMedDesc($medid) {
 
-  		$output = DB::table('feeds_medication')
-  					->select('med_description')
-  					->where('med_id','=',$medid)
-  					->get();
+    		$output = DB::table('feeds_medication')
+    					->select('med_description')
+    					->where('med_id','=',$medid)
+    					->get();
 
-  		if($output == NULL) {
+    		if($output == NULL) {
 
-  			$output = array(
-  						array(
-  							'med_description' => 'No Medication'
-  						)
-  					  );
+    			$output = array(
+    						array(
+    							'med_description' => 'No Medication'
+    						)
+    					  );
 
-  		}
+    		}
 
-  		$output = json_decode(json_encode($output),true);
-  		return $output[0]['med_description'];
+    		$output = json_decode(json_encode($output),true);
+
+        dd($output);
+
+    		return $output[0]['med_description'];
 
   	}
 
