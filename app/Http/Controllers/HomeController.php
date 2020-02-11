@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use Cache;
 use DB;
+use Storage;
 use Carbon\Carbon;
 use App\Medication;
 use App\Farms;
