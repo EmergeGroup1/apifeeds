@@ -50,6 +50,7 @@ class APIController extends Controller
 
       case "listFarms":
 
+        dd($request);
         $type = $request->input('type');
         $token = $request->input('token');
 
