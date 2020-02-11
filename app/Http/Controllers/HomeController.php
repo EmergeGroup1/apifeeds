@@ -892,17 +892,16 @@ class HomeController extends Controller
     		if($output == NULL) {
 
     			$output = array(
-    						array(
-    							'med_description' => 'No Medication'
-    						)
+      						array(
+      							'med_description' => 'No Medication'
+      						)
     					  );
+
+          return $output;
 
     		}
 
     		$output = json_decode(json_encode($output),true);
-
-        dd($output);
-
     		return $output[0]['med_description'];
 
   	}
@@ -925,7 +924,7 @@ class HomeController extends Controller
   							'med_name' => 'No Medication'
   						)
   			);
-
+        return $output;
   		}
 
   		$output = json_decode(json_encode($output),true);
