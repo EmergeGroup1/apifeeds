@@ -445,7 +445,7 @@ class HomeController extends Controller
     				->first();
 
     		$datas = DB::table('feeds_deliveries')
-    				->selectRaw('sum(amount) as sum')
+    				->select(DB::raw('sum(amount) as sum'))
     				->where('delivered','=', 0)
     				->where('bin_id', $bin_id)
     				->where('farm_id', $farm_id)
