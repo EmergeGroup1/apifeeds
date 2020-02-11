@@ -9,6 +9,7 @@ use Cache;
 use DB;
 use Carbon;
 use App\Farms;
+use App\FarmSchedule;
 use App\BinsHistory;
 use App\User;
 use App\FeedTypes;
