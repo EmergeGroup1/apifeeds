@@ -897,8 +897,6 @@ class HomeController extends Controller
       						)
     					  );
 
-          return $output;
-
     		}
 
     		$output = json_decode(json_encode($output),true);
@@ -924,7 +922,7 @@ class HomeController extends Controller
   							'med_name' => 'No Medication'
   						)
   			);
-        return $output;
+
   		}
 
   		$output = json_decode(json_encode($output),true);
