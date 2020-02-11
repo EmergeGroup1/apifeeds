@@ -912,7 +912,7 @@ class HomeController extends Controller
   		$output = DB::table('feeds_medication')
   					->select('med_name')
   					->where('med_id','=',$medid)
-  					->get();
+  					->first();
 
       if($output == NULL) {
 
