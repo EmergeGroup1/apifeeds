@@ -10,6 +10,7 @@ use Cache;
 use App\SchedTool;
 use App\FarmSchedule;
 use App\Deliveries;
+use App\Farms;
 
 class ScheduleController extends Controller
 {
@@ -210,7 +211,7 @@ class ScheduleController extends Controller
       		$end_time = $scheduled_end_time;
 
       		if($status == "pending"){
-      			
+
       			//When the driver accepted the load and 10 minutes after the driver accepted the load (10 mins interval)
       			$end_time = $this->deliveryETAAcceptLoadAndTenMinutesAfter($deliveries_unique_id);
 
