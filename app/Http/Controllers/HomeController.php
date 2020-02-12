@@ -1302,12 +1302,6 @@ class HomeController extends Controller
 
     		if($medication_cache == NULL){
 
-    			// $medication  = DB::table('feeds_medication')
-    			// 			->where('med_name','!=','No Medication')
-    			// 			->orderBy('med_name')
-    			// 			->lists('med_name','med_id');
-    			// $medication = array(''=>'Please Select') + $medication;
-
           $medication = array_merge(
               [''=>'Please Select'],
               DB::table('feeds_medication')
@@ -1333,13 +1327,6 @@ class HomeController extends Controller
   	public function feedTypesAPI()
     {
 
-  			// $feeds = DB::table('feeds_feed_types')
-  			// 		->where('name','!=','None')
-  			// 		->orderBy('name')
-  			// 		->lists('description','type_id');
-  			// $feeds = array(''=>'Please Select') + $feeds;
-
-
         $feeds = array_merge(
             [''=>'Please Select'],
             DB::table('feeds_feed_types')
@@ -1352,5 +1339,388 @@ class HomeController extends Controller
 
   	}
 
+
+
+    /*
+  	*	Update Bin
+  	*	update the current bin based on yesterday or today's update on forecasting
+  	*/
+  	public function updateBinAPI() {
+
+      		$msg = "OK";
+      		$yesterday = 0;
+
+      		// update today
+      		$lastupdate = $this->todayBinUpdate($_POST['bin']);
+      		$amount = $lastupdate[0]['amount'] - $_POST['amount'];
+      		if($lastupdate[0]['amount'] < $_POST['amount']){
+      				$amount = str_replace("-","",$amount);
+      		} else {
+      				$amount = "-".$amount;
+      		}
+
+      		// update yesterdays
+      		if(empty($lastupdate)){
+      			$lastupdate = $this->yesterdayBinUpdate($_POST['bin']);
+      			$yesterday = 1;
+      		}
+
+      		$budgeted_amount_tons = 0;
+
+      		if($_POST['amount'] > $lastupdate[0]['amount']){
+      			$variance = $lastupdate[0]['variance'];
+      			$actual_consumption_per_pig = $lastupdate[0]['consumption'];
+      			$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
+      		} else {
+      			$new_amount = round(($lastupdate[0]['amount'] - $_POST['amount'])*2000,2);
+      			if($lastupdate[0]['num_of_pigs'] == 0){
+      					$actual_consumption_per_pig = $new_amount;
+      			} else {
+      					$actual_consumption_per_pig = $new_amount / $lastupdate[0]['num_of_pigs'];
+      			}
+      			$variance = round($actual_consumption_per_pig - $lastupdate[0]['budgeted_amount'],2);
+      			$update_type = $lastupdate[0]['update_type'];
+      			if($update_type == 'Manual Update Bin Forecasting Admin' || $update_type == 'Manual Update Mobile Farmer' || $update_type == 'Delivery Manual Update Admin'){
+      				$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
+      			} else {
+      				$budgeted_amount_tons = $lastupdate[0]['amount'];
+      			}
+      		}
+
+      		$budgeted_amount_tons = $budgeted_amount_tons*2000 - ($lastupdate[0]['budgeted_amount'] * $lastupdate[0]['num_of_pigs']);
+      		$budgeted_amount_tons = $budgeted_amount_tons/2000;
+
+      		$budgeted_amount = $this->daysCounterbudgetedAmount($lastupdate[0]['farm_id'],$_POST['bin'],$lastupdate[0]['feed_type'],date("Y-m-d H:i:s"));
+
+      		$currentAmount = $this->currentBinCapacity($_POST['bin']);
+
+      		//feeds
+      		$feeds = FeedTypes::where('type_id','=',$lastupdate[0]['feed_type'])->get()->toArray();
+
+      		// data to insert
+      		$bin_history_data = array(
+      				'update_date' 					=> 	date("Y-m-d H:i:s"),
+      				'bin_id' 								=> 	$_POST['bin'],
+      				'farm_id' 							=> 	$lastupdate[0]['farm_id'],
+      				'num_of_pigs' 					=> 	$lastupdate[0]['num_of_pigs'],
+      				'user_id' 							=> 	$_POST['user'],
+      				'amount' 								=> 	$_POST['amount'],
+      				'update_type' 					=> 	'Manual Update Bin Forecasting Admin',
+      				'created_at' 						=> 	date("Y-m-d H:i:s"),
+      				'budgeted_amount' 			=> 	$budgeted_amount,
+      				'budgeted_amount_tons'	=>	$budgeted_amount_tons,
+      				'actual_amount_tons'		=>	$_POST['amount'],
+      				'remaining_amount' 			=> 	$lastupdate[0]['remaining_amount'],
+      				'sub_amount' 						=> 	$lastupdate[0]['sub_amount'],
+      				'variance' 							=> 	$variance,
+      				'consumption' 					=> 	$actual_consumption_per_pig,
+      				'admin' 								=> 	$_POST['user'],
+      				'feed_type'							=>	!empty($lastupdate[0]['feed_type']) ? $lastupdate[0]['feed_type'] : 51,
+      				'unique_id'							=>	!empty($lastupdate[0]['unique_id']) ? $lastupdate[0]['unique_id'] : 'none'
+      		);
+
+      		if($yesterday == 0){
+      			BinsHistory::where('history_id','=',$lastupdate[0]['history_id'])->update($bin_history_data);
+      		}else{
+      			BinsHistory::insert($bin_history_data);
+      		}
+
+
+      		if($_POST['amount'] > $lastupdate[0]['amount']){
+      			$avg_variance = 0;
+      			$avg_actual = 0;
+      		}else{
+      			//calculate average variance and actual consumption based on last 6 days
+      			$avg_variance = round(($this->averageVariancelast6days($_POST['bin'])/$this->getNumberOfUpdates($_POST['bin'])),2);
+      			$avg_actual = round(($this->averageActuallast6days($_POST['bin'])/$this->getNumberOfUpdates($_POST['bin'])),2);
+      		}
+
+      		//bins
+      		$bins = Bins::where('bin_id','=',$_POST['bin'])->get()->toArray();
+      		//bin Size
+      		$bin_size = BinSize::where('size_id','=',$bins[0]['bin_size'])->get()->toArray();
+      		//medication
+      		$medication = Medication::where('med_id','=',$lastupdate[0]['medication'])->get()->toArray();
+
+
+      		$numofpigs_ = $lastupdate[0]['num_of_pigs'] != NULL ? $lastupdate[0]['num_of_pigs'] : $bins[0]['num_of_pigs'];
+      		if(!empty($lastupdate)){
+      			$budgeted_ = $lastupdate[0]['budgeted_amount'] != NULL ? $lastupdate[0]['budgeted_amount'] : $feeds[0]['budgeted_amount'];
+      		} else {
+      			$budgeted_ = 0;
+      		}
+
+      		if($budgeted_ != 0.0){
+      			if($numofpigs_ != 0){
+      				$daysto = round($_POST['amount'] * 2000 / ($numofpigs_ * $budgeted_),0);
+      			} else {
+      				$daysto = 0;
+      			}
+      		} else {
+      			$daysto = 0;
+      		}
+
+      		// // send mobile notification
+      		// $mobile_data = array(
+      		// 	'bin_id'					=>	!empty($bins[0]['bin_number']) ? $bins[0]['bin_number'] : 0,  //bin number
+      		// 	'farm_id'					=>	$bin_history_data['farm_id'],
+      		// 	'user_id'					=>	$_POST['user'],
+      		// 	'current_amount'	=>	$bin_history_data['amount'],
+      		// 	'created_at'			=>	date('Y-m-d H:i:s'),
+      		// 	'budgeted_amount'	=>	$budgeted_amount,//$bin_history_data['budgeted_amount'],
+      		// 	'actual_amount'		=>	$bin_history_data['amount'],
+      		// 	'bin_size'				=>	$bin_size[0]['ring'],
+      		// 	'variance'				=>	$variance,
+      		// 	'consumption'			=>	$actual_consumption_per_pig,
+      		// 	'feed_type'				=>	$bin_history_data['feed_type'],
+      		// 	'medication'			=>	!empty($medication[0]['med_id']) ? $medication[0]['med_id'] : 0,
+      		// 	'med_name'				=>	!empty($medication[0]['med_name']) ? $medication[0]['med_name'] : 'No Medicaiton',
+      		// 	'feed_name'				=>	!empty($feeds[0]['name']) ? $feeds[0]['name'] : '-',
+      		// 	'user_created_at'	=>	date('Y-m-d H:i:s'),
+      		// 	'num_of_pigs'			=>	$bin_history_data['num_of_pigs'],
+      		// 	'bin_no_id'				=>	$bin_history_data['bin_id'], // bin id
+      		// 	'status'					=>	2,
+      		// 	'unique_id'				=>	!empty($bin_history_data['unique_id']) ? $bin_history_data['unique_id'] : "none"
+      		// );
+          //
+          //
+      		// $history_id = !empty($lastupdate[0]['history_id']) ? $lastupdate[0]['history_id'] : NULL;
+      		// $this->mobileSaveAccepted($mobile_data);
+          //
+      		// $notification = new CloudMessaging;
+      		// $farmer_data = array(
+      		// 	'update_date'				=>	date('Y-m-d H:i:s'),
+      		// 	'bin_id'						=>	$mobile_data['bin_id'],
+      		// 	'farm_id'						=>	$mobile_data['farm_id'],
+      		// 	'num_of_pigs'				=>	$mobile_data['num_of_pigs'],
+      		// 	'user_id'						=>	$mobile_data['user_id'],
+      		// 	'amount'						=>	$mobile_data['current_amount'],
+      		// 	'update_type'				=>	"Manual Update Bin Forecasting Admin",
+      		// 	'created_at'				=>	$mobile_data['created_at'],
+      		// 	'updated_at'				=>	date('Y-m-d H:i:s'),
+      		// 	'budgeted_amount'		=>	$budgeted_amount,//$mobile_data['budgeted_amount'],
+      		// 	'remaining_amount'	=>	$lastupdate[0]['remaining_amount'],
+      		// 	'sub_amount'				=>	$lastupdate[0]['sub_amount'],
+      		// 	'variance'					=>	round($mobile_data['variance'],2),
+      		// 	'consumption'				=>	round($mobile_data['consumption'],2),
+      		// 	'admin'							=>	$_POST['user'],
+      		// 	'medication'				=>	$mobile_data['medication'],
+      		// 	'feed_type'					=>	$mobile_data['feed_type']
+      		// 	);
+      		// $notification->autoUpdateMessaging($farmer_data,$history_id);
+      		// unset($notification);
+
+      		if($daysto > 3) {
+      			$color = "success";
+      		} elseif($daysto < 3) {
+      			$color = "danger";
+      		} else {
+      			$color = "warning";
+      		}
+
+      		if($daysto > 5) {
+      			$text = $daysto . " Days";
+      		} else {
+      			$text = $daysto . " Days";
+      		}
+
+      		$perc = ($daysto<=5 ? (($daysto*2)*10) : 100 );
+
+      		$ring_amount = $this->getmyBinSize($bins[0]['bin_size']);
+      		$ring = "Empty";
+      		foreach($ring_amount as $k => $v){
+      			if($_POST['amount'] == $k){
+      				$ring = $v;
+      			}
+      		}
+
+      		$user = User::where('id',$_POST['user'])->first();
+
+      		return json_encode(array(
+
+      			'msg' 				=> 	$msg,
+      			'empty' 			=> 	$this->emptyDate($daysto),
+      			'daystoemp' 	=> 	$daysto,
+      			'percentage' 	=> 	$perc,
+      			'color' 			=> 	$color,
+      			'text' 				=> 	$text,
+      			'tdy' 				=> 	date('M d'),
+      			'ringAmount'	=>	$ring,
+      			'lastUpdate'	=>	date("M d"),
+      			'user'				=> $user->username,
+      			'farm_id'			=> $bin_history_data['farm_id']
+      		));
+
+  	}
+
+
+
+    /*
+  	*	get the update bin history yesterday
+  	*/
+  	private function todayBinUpdate($bin_id)
+    {
+
+    		$date_today = date("Y-m-d");
+    		$output = BinsHistory::where('bin_id','=',$bin_id)
+    					->where('update_date','<=',$date_today.' 23:59:59')
+    					->orderBy('update_date','desc')
+    					->take(1)->get()->toArray();
+    		return $output;
+
+  	}
+
+
+
+    /*
+  	*	get the update bin hostory yesterday
+  	*/
+  	private function yesterdayBinUpdate($bin_id)
+    {
+
+    		$date_yesterday = date("Y-m-d", time() - 60 * 60 * 24);
+    		$output = BinsHistory::where('bin_id','=',$bin_id)
+    					->where('update_date','<=',$date_yesterday.' 23:59:59')
+    					->orderBy('update_date','desc')
+    					->take(1)->get()->toArray();
+    		return $output;
+
+  	}
+
+
+
+    /*
+  	* get the last update feed type and budgeted amount
+  	*/
+  	public function daysCounterbudgetedAmount($farm_id,$bin_id,$feed_type_id,$date_to_update)
+  	{
+
+    		// get the budgeted amount from feed types table
+    		$feed_type = FeedTypes::where('type_id',$feed_type_id)->first();
+
+    		// check if the feed type has per day budgeted amount
+
+  			if($feed_type->total_days != 0){
+  				// check the feeds_budgeted_amount_counter
+  				$budgeted_amount_counter = DB::table('feeds_budgeted_amount_counter')
+  																			->where('feed_type_id',$feed_type_id)
+  																			->where('farm_id',$farm_id)
+  																			->where('bin_id',$bin_id)
+  																			->orderBy('update_date','desc')
+  																			->first();
+  				if($budgeted_amount_counter != NULL){
+
+  					// get the update date
+  					$update_date = $budgeted_amount_counter->update_date;
+  					$now = strtotime($date_to_update); // or your date as well
+  					$your_date = strtotime($update_date);
+  					$datediff = $now - $your_date;
+  					$days_counter = round($datediff / (60 * 60 * 24));
+  					$days_counter = $days_counter == 0 ? 1 : $days_counter + 1;
+  					$days_counter = str_replace(".0","",$days_counter);
+  					$days_counter = $days_counter == 0 ? 1 : $days_counter;
+
+  					// get the days counted column
+  					$days = DB::table('feeds_feed_type_budgeted_amount_per_day')
+  										->where('feed_type_id',$feed_type_id)
+  										->orderBy('id','desc')
+  										->first();
+  					$days = $this->toArray($days);
+
+  					if($days_counter >= 32 || $days_counter == 32){
+  						$days_counter = 31;
+  					}
+
+  					// if the selected day is 0, select the last column with a non zero value
+  					if($days['day_'.$days_counter] != 0){
+  						return $days['day_'.$days_counter];
+  					} else {
+  						// loop backwards to get the nearest non zero value
+  						for($i=31; $i>=1; $i--){
+  							if($days['day_'.$i] != 0){
+  								return $days['day_'.$i];
+  							}
+  						}
+  					}
+
+  				}
+
+  				// get the day one budgeted amount
+  				$day_one_counter = DB::table('feeds_feed_type_budgeted_amount_per_day')
+  														->select('day_1')
+  														->where('feed_type_id',$feed_type_id)->first();
+  				return $day_one_counter->day_1;
+  			}
+
+  			return $feed_type->budgeted_amount;
+
+  	}
+
+
+
+    /*
+  	* get the average variance of the last 6 days
+  	*/
+    private function averageVariancelast6days($bin_id)
+    {
+
+    		$output = DB::select(DB::raw('SELECT SUM(variance) AS variance
+    									FROM (
+    									SELECT variance AS variance
+    									FROM  `feeds_bin_history` WHERE bin_id = "'. $bin_id.'"
+    									ORDER BY history_id DESC
+    									LIMIT 6
+    									)x'));
+
+    		return $output[0]->variance;
+
+  	}
+
+
+
+    /*
+  	* get the average actual consumption last 6 days
+  	*/
+  	private function averageActuallast6days($bin_id)
+    {
+
+    		$output = DB::select(DB::raw('SELECT SUM(consumption) AS consumption
+    										FROM (
+    										SELECT consumption AS consumption
+    										FROM  `feeds_bin_history` WHERE bin_id = "'. $bin_id.'"
+    										ORDER BY history_id DESC
+    										LIMIT 6
+    										)x'));
+
+    		return $output[0]->consumption;
+
+  	}
+
+
+
+    /*
+  	* get the number of updates of specific bin
+  	*/
+    public function getNumberOfUpdates($bin_id) {
+
+    		$output = $this->graphQuery3($bin_id);
+
+    		$outputData = json_decode(json_encode($output),true);
+
+    		$count = 0;
+
+    		foreach($outputData as $k => $v){
+
+    			if($v['consumption'] != 0) {
+
+    				$count +=1;
+
+    			}
+
+    		}
+
+    		return ($count == 0 ? 1 : $count);
+
+  	}
 
 }
