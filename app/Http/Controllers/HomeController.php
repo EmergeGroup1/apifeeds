@@ -2136,4 +2136,20 @@ class HomeController extends Controller
 
 
 
+    /*
+  	* farmHolderBinClearCache
+  	* Farm holder clear cache
+  	*/
+  	public function farmHolderBinClearCache($farm_id)
+  	{
+
+  		$bins = Bins::where('farm_id',$farm_id)->get()->toArray();
+  		for($i=0;$i<count($bins);$i++){
+  			Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
+  		}
+
+  	}
+
+
+
 }
