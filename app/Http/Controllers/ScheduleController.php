@@ -937,4 +937,255 @@ class ScheduleController extends Controller
       		return $status;
     	}
 
+
+
+      /*
+    	*	Initialize the scheduled data
+    	*/
+    	public function scheduledDataAPI($selected_date){
+
+      		$farm_sched_list = DB::table('feeds_farm_schedule')
+      							->select(DB::raw('DATE_FORMAT(feeds_farm_schedule.date_of_delivery, "%Y-%m-%d %h:%i:%s %p") as date_of_delivery'),
+      									'schedule_id','feeds_type_id','medication_id','unique_id','status','delivery_unique_id',
+      									DB::raw('GROUP_CONCAT(farm_id) AS farm_id'),
+      									DB::raw('GROUP_CONCAT(amount) AS amount'),
+      									DB::raw('GROUP_CONCAT(bin_id) AS bin_id'),
+      									'feeds_truck.name as truck_name',
+      									'feeds_truck.truck_id as truck_id',
+      									'feeds_farm_schedule.driver_id as driver_id')
+      							->leftJoin('feeds_truck','feeds_truck.truck_id','=','feeds_farm_schedule.truck_id')
+      							//->where('status','=',0)
+      							->where('date_of_delivery','LIKE',$selected_date.'%')
+      							->orderBy('date_of_delivery','desc')
+      							->groupBy('feeds_farm_schedule.unique_id')
+      							->get();
+
+      		$data = array();
+      		for($i = 0; $i < count($farm_sched_list); $i++){
+      			$data[] = (object)array(
+      				'schedule_id'		=>	$farm_sched_list[$i]->schedule_id,
+      				'delivery_date'		=>	$this->dateFormat($farm_sched_list[$i]->date_of_delivery),
+      				'delivery_time'		=>	$this->farmDeliveryTimes($farm_sched_list[$i]->farm_id),
+      				'farm_name'			=>	$this->farmNames($farm_sched_list[$i]->farm_id,$farm_sched_list[$i]->date_of_delivery,$farm_sched_list[$i]->unique_id),
+      				'truck_name'		=>	$farm_sched_list[$i]->truck_name,
+      				'status'			=>	$farm_sched_list[$i]->status,
+      				'truck_id'			=>	$farm_sched_list[$i]->truck_id,
+      				'driver'			=>	$this->getDriver($farm_sched_list[$i]->driver_id),
+      				'selected_driver'	=>	$this->schedSelecteDriver($farm_sched_list[$i]->unique_id,$farm_sched_list[$i]->driver_id),
+      				'selected_delivery'	=>	$this->schedSelectedDelivery($farm_sched_list[$i]->unique_id),
+      				'unique_id'			=>	$farm_sched_list[$i]->unique_id,
+      				'sched_tool_status'				=>	$this->schedToolStatus($farm_sched_list[$i]->delivery_unique_id)
+      			);
+      		}
+
+      		$drivers = User::where('type_id','=',2)->orderBy('username','asc')->lists("username","id")->toArray();
+
+
+      		$delivery_count = array();
+      		for($i = 0; $i <= 7; $i++){
+      			$delivery_count[] = $i;
+      		}
+
+
+      		return $data;
+
+    	}
+
+
+      /*
+    	*	date format
+    	*/
+    	public function dateFormat($date)
+      {
+    		  return date('M d',strtotime($date));
+    	}
+
+
+      /*
+    	*	get the delivery time of the farm
+    	*/
+    	private function farmDeliveryTimes($farms)
+      {
+
+      		$data = "";
+      		$farm = array_unique(explode(",",(string)$farms));
+
+      		$output = Farms::select('delivery_time')->whereIn('id',$farm)->max('delivery_time');
+
+      		$counter = count($farm);
+      		$return = 0;
+      		if($counter == 1){
+      			$return = number_format((float)$output, 2, '.', '');
+      		} else{
+      			$added_minutes =  0.50 * ($counter - 1);
+      			$final = $output + $added_minutes;
+      			$return = number_format((float)$final, 2, '.', '');
+      		}
+
+      		$output = "<strong class='ton_vw_sched_kb'> (". $return ." Hour/s)</strong><br/>";
+
+      		return $output;
+
+    	}
+
+
+
+      /*
+    	*	get farm names
+    	*/
+    	private function farmNames($farms,$delivery_date,$unique_id)
+      {
+      		$data = "";
+      		$farm = array_unique(explode(",",(string)$farms));
+
+      		foreach($farm as $k => $v){
+      			$farm_name = $this->farmNamesQuery($farm[$k]);
+      			$amount = $this->totalTonsFarmSched($farm[$k],date("Y-m-d H:i:s",strtotime($delivery_date)),$unique_id);
+      			$bins = $this->getScheduledBins($unique_id,$farm[$k]);
+      			$data .= $farm_name . "<br/> <strong> ".$bins."</strong> <br/><strong class='ton_vw_sched_kb'></strong>";
+      		}
+
+      		return 	$data;
+    	}
+
+
+
+      /*
+    	*	Farm Names Query
+    	*/
+    	private function farmNamesQuery($farm_id)
+      {
+      		$query = DB::table('feeds_farms')
+      					->select('name')
+      					->where('id',$farm_id)
+      					->first();
+      		return !empty($query->name) ? $query->name : "-";
+    	}
+
+
+      /*
+    	*	total tons in farm schedule
+    	*/
+    	private function totalTonsFarmSched($farm_id,$delivery_date,$unique_id)
+      {
+
+      		$amount = FarmSchedule::where('farm_id',$farm_id)
+      								->where('date_of_delivery',"LIKE",$delivery_date."%")
+      								->where('unique_id',$unique_id)
+      								->sum('amount');
+
+      		return $amount;
+
+    	}
+
+
+
+      /*
+    	*	getScheduledBins()
+    	*	get the bins based on scheduled items
+    	*
+    	*/
+    	private function getScheduledBins($unique_id,$farm_id)
+    	{
+      		$data = "";
+      		$scheduled_items = FarmSchedule::select(DB::raw('DISTINCT(bin_id) AS bin_id'))->where('unique_id',$unique_id)->where('farm_id',$farm_id)->get()->toArray();
+
+      		foreach($scheduled_items as $k => $v){
+      			$alias = Bins::select('alias')->where('bin_id',$v['bin_id'])->get()->toArray();
+      			$data .= !empty($alias[0]['alias']) ? $alias[0]['alias']."<strong class='ton_vw_sched_kb'> (".$this->getScheduledBinsSumAmount($unique_id,$farm_id,$v['bin_id'])." Tons)</strong><br/>" : "";
+      		}
+
+      		return substr($data, 0, -1);
+    	}
+
+
+      /*
+    	*	getScheduledBinsSumAmount()
+    	*	get the bins sum amount based on scheduled items
+    	*
+    	*/
+    	private function getScheduledBinsSumAmount($unique_id,$farm_id,$bin_id)
+    	{
+      		$sum = FarmSchedule::where('unique_id',$unique_id)
+      																		->where('farm_id',$farm_id)
+      																		->where('bin_id',$bin_id)
+      																		->sum('amount');
+      		return $sum;
+    	}
+      
+
+
+      /*
+    	* 	get driver
+    	*/
+    	private function getDriver($driver)
+      {
+
+      		if($driver != 0){
+      			$driver = DB::table('feeds_user_accounts')
+      					->select('username','id')
+      					->where('id','=',$driver)
+      					->first();
+      			$output = !empty($driver->username) ? array($driver->id,$driver->username) : array("-","-");
+      		} else {
+      			$output = array("-","-");
+      		}
+
+      		return $output;
+
+    	}
+
+
+
+      /*
+    	*	selected driver on scheduled items
+    	*/
+    	private function schedSelecteDriver($unique_id,$driver_id){
+
+      		$schedToolData = SchedTool::select('driver_id')->where('farm_sched_unique_id','=',$unique_id)->get()->toArray();
+      		$driver = !empty($schedToolData[0]['driver_id']) ? $schedToolData[0]['driver_id'] : $driver_id;
+      		$drivers = User::where('type_id','=',2)->where('id','=',$driver)->select('id')->get()->toArray();
+
+      		$output = !empty($drivers[0]['id']) ? $drivers[0]['id'] : NULL;
+
+      		return $output;
+
+    	}
+
+
+
+      /*
+    	*	selected delivery number
+    	*/
+    	private function schedSelectedDelivery($unique_id)
+      {
+
+      		$schedToolData = SchedTool::select('delivery_number')->where('farm_sched_unique_id','=',$unique_id)->get()->toArray();
+
+      		if(!empty($schedToolData[0]['delivery_number'])){
+      			$output = array(0 => $schedToolData[0]['delivery_number']);
+      		} else {
+      			$output = NULL;
+      		}
+
+      		return $output;
+
+    	}
+
+
+
+      /*
+    	*	Scheduling tool status
+    	*/
+    	private function schedToolStatus($unique_id)
+      {
+      		$data = SchedTool::select('status')->where('delivery_unique_id',$unique_id)->first();
+      		if($data == NULL){
+      			return "none";
+      		}
+
+      		return $data->status;
+    	}
+
+
 }
