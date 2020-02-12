@@ -1280,7 +1280,33 @@ class ScheduleController extends Controller
 
 
 
-      
+      /*
+    	*	Total Tons scheduled
+    	*/
+    	public function totalTonsScheduledAPI($delivery_date){
+
+      		// fetch the data to sched tool data and get the farm_sched_unique_id
+      		$farm_sched_unique_id = SchedTool::select('farm_sched_unique_id')
+      											->where('delivery_date','LIKE',$delivery_date."%")
+      											->whereIn('status',array('created','scheduled','pending','ongoing'))
+      											->get()->toArray();
+
+      		// fetch the farm sched data via unique_id
+      		$total_tons = FarmSchedule::whereIn('unique_id',$farm_sched_unique_id)->sum('amount');
+
+
+      		$deliveries_unique_id = SchedTool::select('delivery_unique_id')
+      											->where('delivery_date','LIKE',$delivery_date."%")
+      											->where('status','ongoing')
+      											->get()->toArray();
+
+      		$deliveries_total_tons = Deliveries::whereIn('unique_id',$deliveries_unique_id)->where('status',3)->sum('amount');
+
+      		$total_tons = $total_tons - $deliveries_total_tons;
+
+      		return $total_tons <= 0 ? 0 : $total_tons;
+
+    	}
 
 
 
