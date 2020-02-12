@@ -1279,7 +1279,7 @@ class HomeController extends Controller
     			// 		->lists('username','id');
 
           $drivers = array_merge(
-              ['' => 'Choose One'],
+              [''=>'-'],
               User::where('type_id','=',2)
         					->orderBy('username')
                   ->pluck('username','id')->toArray()
