@@ -1276,7 +1276,7 @@ class HomeController extends Controller
     		if($drivers_cache == NULL){
     			$drivers = User::where('type_id','=',2)
     					->orderBy('username')
-    					->lists('username','id');
+    					->pluck('username','id');
 
     			$drivers = array(''=>'-') + $drivers;
 
