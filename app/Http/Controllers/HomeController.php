@@ -1274,11 +1274,18 @@ class HomeController extends Controller
     		$drivers_cache = Cache::store('file')->get('drivers');
 
     		if($drivers_cache == NULL){
-    			$drivers = User::where('type_id','=',2)
-    					->orderBy('username')
-    					->lists('username','id');
+    			// $drivers = User::where('type_id','=',2)
+    			// 		->orderBy('username')
+    			// 		->lists('username','id');
 
-    			$drivers = array(''=>'-') + $drivers;
+          $drivers = array_merge(
+              ['' => 'Choose One'],
+              User::where('type_id','=',2)
+        					->orderBy('username')
+                  ->pluck('username','id')->toArray()
+          );
+
+    			//$drivers = array(''=>'-') + $drivers;
 
     			Cache::forever('drivers',$drivers);
 
