@@ -437,4 +437,69 @@ class ScheduleController extends Controller
 
 
 
+      /*
+    	*	update the sched time tool
+    	*/
+    	public function updateScheduledItemAPI($data){
+
+      		$delivery_number = $data['delivery_number'];
+      		$driver_id = $data['driver_id'];
+      		$unique_id = $data['unique_id'];
+      		$start_time = $data['start_time'];
+      		$end_time = $data['end_time'];
+
+      		if($end_time == "00:00"){
+      			$end_time = "23:50:00";
+      		}
+
+
+      		$delivery_date = SchedTool::where('farm_sched_unique_id',$unique_id)->get()->toArray();
+      		$delivery_date = $delivery_date[0]['delivery_date'];
+
+      		$sched_time = array(
+      						'start_time'			=>	$start_time,
+      						'end_time'				=>	$end_time
+      					);
+
+      		$update = SchedTool::where('farm_sched_unique_id',$unique_id)->update($sched_time);
+
+      		$driver_data = SchedTool::where('delivery_date',$delivery_date)
+      								->where('driver_id',$driver_id)
+      								->orderBy('start_time')
+      								->get()->toArray();
+
+      		for($i = 0; $i < count($driver_data); $i++){
+      			$data = array('delivery_number' => $i+1);
+      			SchedTool::where('farm_sched_unique_id',$driver_data[$i]['farm_sched_unique_id'])->update($data);
+      		}
+
+      		$output = array(
+      			'status'		=> 	$update,
+      			'delivery_date'	=>	$delivery_date
+      		);
+      		$this->updateFarmSchedDelivery($unique_id,$delivery_date." ".$start_time);
+      		//$this->updateFarmDeliveryTime($unique_id,$sched_time);
+      		return $output;
+
+    	}
+
+
+
+      /*
+    	*	Update the farm schedule and the delivery time
+    	*/
+    	private function updateFarmSchedDelivery($farm_sched_unique_id,$delivery_date){
+
+      		$farm_sched_data = FarmSchedule::where('unique_id',$farm_sched_unique_id)->get()->toArray();
+
+      		if($farm_sched_data != NULL){
+      			$delivery_unique_id = $farm_sched_data[0]['delivery_unique_id'];
+      			FarmSchedule::where('unique_id',$farm_sched_unique_id)->update(['date_of_delivery'=>$delivery_date]);
+      			Deliveries::where('unique_id',$delivery_unique_id)->update(['delivery_date'=>$delivery_date]);
+      		}
+
+    	}
+
+
+
 }
