@@ -563,6 +563,7 @@ class APIController extends Controller
         break;
 
       case "schedToolData":
+
         $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {

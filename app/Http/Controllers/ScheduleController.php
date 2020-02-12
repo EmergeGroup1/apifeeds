@@ -1112,7 +1112,7 @@ class ScheduleController extends Controller
       																		->sum('amount');
       		return $sum;
     	}
-      
+
 
 
       /*
@@ -1186,6 +1186,78 @@ class ScheduleController extends Controller
 
       		return $data->status;
     	}
+
+
+
+      /*
+    	*	saveChangeDateSchedEdited
+    	*/
+    	public function saveChangeDateSchedAPI($user,$unique_id,$selected_date)
+    	{
+
+      		// fetch the selected_date and time from the feeds_farm_schedule
+      		$farm_sched_data = FarmSchedule::select('date_of_delivery','delivery_unique_id','bin_id')->where('unique_id',$unique_id)->get()->toArray();
+
+      		$date = date("Y-m-d",strtotime($selected_date));
+      		$time = date("H:i:s",strtotime($farm_sched_data[0]['date_of_delivery']));
+      		$datetime = date("Y-m-d H:i:s",strtotime($date.$time));
+
+      		$updated_date_of_delivery = array('date_of_delivery' => $datetime, 'user_id' => $user);
+      		$updated_sched_tool_date_of_delivery = array('delivery_date'=>$datetime);
+      		$updated_date_of_delivery_deliveries_table = array('delivery_date'=>$datetime, 'user_id' => $user);
+
+      		FarmSchedule::where('unique_id',$unique_id)->update($updated_date_of_delivery);
+      		SchedTool::where('farm_sched_unique_id',$unique_id)->update($updated_sched_tool_date_of_delivery);
+
+      		if($farm_sched_data[0]['delivery_unique_id'] != NULL){
+      			$this->updateFarmScheduledDeliveries($farm_sched_data[0]['delivery_unique_id'],$updated_date_of_delivery_deliveries_table);
+      			$this->updateCreatedLoadAPI($farm_sched_data[0]['delivery_unique_id'],$user);
+      			for($i=0; $i<count($farm_sched_data); $i++){
+      				Cache::forget('bins-'.$farm_sched_data[$i]['bin_id']);
+      			}
+      		}
+
+      		return "success";
+
+    	}
+
+
+      /*
+    	*	update the farm schedule time
+    	*/
+    	private function updateFarmScheduledDeliveries($unique_id,$date_of_delivery)
+      {
+
+    		  Deliveries::where('unique_id',$unique_id)->update($date_of_delivery);
+
+    	}
+
+
+
+      /*
+    	* update the created load and remove the previous notification for mobile app
+    	*/
+    	private function updateCreatedLoadAPI($delivery_unique_id,$user_id)
+      {
+
+      		$farm_sched_data = FarmSchedule::select('unique_id','date_of_delivery')->where('delivery_unique_id',$delivery_unique_id)->first();
+      		$farm_sched_unique_id = $farm_sched_data->unique_id;
+      		$deliveries_data = Deliveries::where('unique_id','=',$delivery_unique_id)->first();
+      		$farm_sched_date_of_delivery = $deliveries_data->delivery_date;
+
+      		// $data_previous_driver = array(array(
+      		// 	'driver_id'					=>	$deliveries_data->driver_id,
+      		// 	'truck_id'					=>	$deliveries_data->truck_id,
+      		// 	'delivery_date'			=>	$deliveries_data->delivery_date,
+      		// ));
+          //
+      		// $this->loadTruckDriverNotification($data_previous_driver,$deliveries_data->unique_id);
+      		// DB::table('feeds_mobile_notification')->where('unique_id',$deliveries_data->unique_id)->delete();
+
+      		$this->loadToTruckUpdateAPI($delivery_unique_id,$farm_sched_unique_id,$user_id);
+
+    	}
+
 
 
 }
