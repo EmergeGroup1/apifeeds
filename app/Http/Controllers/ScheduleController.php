@@ -122,6 +122,317 @@ class ScheduleController extends Controller
 
 
 
-      
+      /*
+    	*	Data output for sched tool bar
+    	*/
+    	public function schedToolOutputAPI($delivery_date=NULL){
+
+      		$delivery_date = !empty($delivery_date) ? $delivery_date : date("Y-m-d",strtotime(Input::get('selected_data')));
+
+      		$stDrivers = SchedTool::select(DB::raw('DISTINCT(driver_id) as driver_id,
+      								(SELECT username FROM feeds_user_accounts WHERE id = driver_id) as driver_name'))
+      								->where('delivery_date','=',$delivery_date)
+      								->get()->toArray();
+      		$data = array();
+      		for($i = 0; $i < count($stDrivers); $i++){
+
+      			$data[] = array(
+      					'driver_id'	=> $stDrivers[$i]['driver_id'],
+      					'title'			=> $stDrivers[$i]['driver_name'],
+      					'eta'				=> $this->deliveriesETAPerDriver($stDrivers[$i]['driver_id'],$delivery_date),
+      					'schedule'	=> $this->schedToolLevelTwoAPI($stDrivers[$i]['driver_id'],$delivery_date),
+      					'dar'				=> $this->driverActivityReport($delivery_date)
+      				);
+      		}
+
+
+      		return $data;
+
+    	}
+
+
+
+
+      /*
+    	*	ETA Detector per driver
+    	*/
+    	private function deliveriesETAPerDriver($driver_id,$delivery_date)
+    	{
+
+      		$schedData = SchedTool::select('driver_id','delivery_number','status','farm_sched_unique_id','delivery_unique_id','start_time','end_time',DB::raw('farm_title as text'))
+      								->where('driver_id','=',$driver_id)
+      								->where('delivery_date','=',$delivery_date)
+      								->whereNotIn('status',['scheduled','delivered','created'])
+      								->orderBy('start_time','asc')
+      								->get()->toArray();
+
+      		$output = array();
+      		for($i = 0; $i < count($schedData); $i++){
+
+      			$status = $schedData[$i]['status']; //!empty($schedData[$i]['delivery_unique_id']) ? $this->deliveriesStatus($schedData[$i]['delivery_unique_id']) : $schedData[$i]['status'];
+      			$scheduled_start_time = date("H:i",strtotime($schedData[0]['start_time']));
+      			$scheduled_end_time = date("H:i",strtotime($schedData[$i]['end_time']));
+      			$farms_delivery_hours = $this->farmsDeliveryHours($schedData[$i]['farm_sched_unique_id']);
+      			$delivery_ETA = $this->deliveriesETA($status,$schedData[$i]['delivery_unique_id'],$scheduled_end_time,$farms_delivery_hours);
+
+      			$output[] = array(
+      				'status'	=>	$status,
+      				'start_time'	=>	$scheduled_start_time,
+      				'end_time'		=>	$scheduled_end_time,
+      				'farms_hours'	=> $farms_delivery_hours,
+      				'delivery_eta'	=>	$delivery_ETA,
+      				'delivery_eta_combined_farm'	=>	date("h:i a",strtotime($delivery_ETA))//date("h:i a",strtotime($delivery_ETA."+ ".$farms_delivery_hours))
+      			);
+
+      		}
+
+      		//return json_encode($output);
+      		if($output != NULL){
+      			if($output[count($schedData) - 1]['status'] == 'unloaded'){
+      				return date("h:i a",strtotime($output[count($schedData) - 1]['delivery_eta']));
+      			}
+      		}
+
+
+      		return $output != NULL ? $output[count($schedData) - 1]['delivery_eta_combined_farm'] : "--:--";
+
+    	}
+
+
+
+
+      /*
+    	*	ETA Detector
+    	*/
+    	private function deliveriesETA($status,$deliveries_unique_id,$scheduled_end_time,$farms_delivery_hours)
+    	{
+
+      		$end_time = $scheduled_end_time;
+
+      		if($status == "pending"){
+      			
+      			//When the driver accepted the load and 10 minutes after the driver accepted the load (10 mins interval)
+      			$end_time = $this->deliveryETAAcceptLoadAndTenMinutesAfter($deliveries_unique_id);
+
+      		} else if($status == "ongoing"){
+
+      			$end_time = $this->deliveryETAAcceptLoadAndTenMinutesAfter($deliveries_unique_id);
+
+      		} else if($status == "unloaded"){
+
+      			$end_time = $this->deliveryETAUnloadLastAndTenMinutesAfter($deliveries_unique_id);
+
+      		}else{
+      			$end_time = $end_time;
+      		}
+
+      		return $end_time;
+
+    	}
+
+
+
+
+    	/*
+    	*	ETA every 10 minutes after the truck leaves the Mill (10 mins interval)
+    	*/
+    	private function deliveryETAAcceptLoadAndTenMinutesAfter($deliveries_unique_id)
+    	{
+
+      		$ten_mins_interval = DB::table('feeds_driver_stats_drive_time_interval')->where('deliveries_unique_id',$deliveries_unique_id)->orderBy('id','desc')->get();
+
+      		if($ten_mins_interval != NULL){
+      			return date("H:i",strtotime($ten_mins_interval[0]->eta));
+      		}
+
+      		return NULL;
+
+    	}
+
+
+
+
+    	/*
+    	*	ETA every 10 minutes after the truck leaves the Mill (10 mins interval)
+    	*/
+    	private function deliveryETAUnloadLastAndTenMinutesAfter($deliveries_unique_id)
+    	{
+
+      		$ten_mins_interval = DB::table('feeds_driver_stats_drive_time_interval_mill')->where('deliveries_unique_id',$deliveries_unique_id)->orderBy('id','desc')->get();
+
+      		if($ten_mins_interval != NULL){
+      			return date("H:i",strtotime($ten_mins_interval[0]->eta));
+      		}
+
+      		return NULL;
+
+    	}
+
+
+
+
+      /*
+    	*	farms delivery timnes
+    	*/
+    	private function farmsDeliveryHours($unique_id)
+    	{
+
+      		$data = FarmSchedule::select(DB::raw("GROUP_CONCAT(farm_id) AS farm_id"))
+      							->where("unique_id","=",$unique_id)
+      							->get()->toArray();
+
+      		$farm = array_unique(explode(",",(string)$data[0]['farm_id']));
+      		$output = Farms::select('delivery_time')->whereIn('id',$farm)->sum('delivery_time');
+      		$output = number_format((float)$output, 2, '.', '');
+
+      		$delivery_time = $output;
+      		list($hours, $wrongMinutes) = explode('.', $delivery_time);
+      		$minutes = ($wrongMinutes < 100 ? $wrongMinutes * 100 : $wrongMinutes) * 0.6 / 100;
+      		$calculated_hour = $hours . ' hours ' . ceil($minutes) . ' minutes';
+
+      		return $calculated_hour;
+
+    	}
+
+
+
+      /*
+    	*	scheduled data
+    	*/
+    	private function schedToolLevelTwoAPI($driver_id,$delivery_date){
+
+      		$schedData = SchedTool::select('driver_id','delivery_number','status','farm_sched_unique_id','delivery_unique_id','start_time','end_time',DB::raw('farm_title as text'))
+      								->where('driver_id','=',$driver_id)
+      								->where('delivery_date','=',$delivery_date)
+      								->get()->toArray();
+
+      		for($i = 0; $i < count($schedData); $i++){
+
+      			$output[] = array(
+      				'start'				=>	date("H:i",strtotime($schedData[$i]['start_time'])),
+      				'end'					=>	date("H:i",strtotime($schedData[$i]['end_time'])),
+      				'text'				=>	$schedData[$i]['text'],
+      				'data'				=> 	array(
+      											'delivery_number'	=>	$schedData[$i]['delivery_number'],
+      											'unique_id'			=>	$schedData[$i]['farm_sched_unique_id'],
+      											'driver_id'			=>	$schedData[$i]['driver_id'],
+      											'status'			=>	$this->statusSchedToolAPI($schedData[$i]['status'],$schedData[$i]['delivery_unique_id'])
+      											)
+      			);
+
+      		}
+
+      		return $output;
+
+    	}
+
+
+      /*
+    	*	scheduled data status
+    	*/
+    	private function statusSchedToolAPI($status,$delivery_unique_id){
+
+      		if($status == 'scheduled') {
+
+      			$status = "created";
+
+      		} else if($status == 'ongoing'){
+
+      			$status = "ongoing_green";
+
+      		} else if($status == 'unloaded'){
+
+      			$status = "ongoing_red";
+
+      		} else if($status == 'pending'){
+
+      			$status = "ongoing_green";
+
+      		} else if($status == 'delivered'){
+
+      			$status = "completed";
+
+      		} else {
+
+      			$status = $status;
+
+      		}
+
+      		return $status;
+
+    	}
+
+
+      /*
+    	*	Driver Activity Report
+    	*/
+    	private function driverActivityReport($delivery_date)
+    	{
+
+      		// always get the scheduled and created just get the last 2 data
+      		$schedData = SchedTool::select('id','driver_id','delivery_number','status','farm_sched_unique_id','delivery_unique_id','start_time','end_time',DB::raw('farm_title as text'))
+      								//->where('driver_id','=',$driver_id)
+      								->where('delivery_date','=',$delivery_date)
+      								//->whereIn('status',['scheduled','delivered','created'])
+      								->orderBy('start_time','asc')
+      								->get()->toArray();
+
+      		$data = array();
+      		$exclude = array();
+
+      		if($schedData != NULL){
+      			for($i=0; $i < count($schedData); $i++){
+
+      				$next_delivery_start_time = "--:--";
+      				$farms_delivery_hours = $this->farmsDeliveryHours($schedData[$i]['farm_sched_unique_id']);
+      				$farms_delivery_hours = str_replace("hours","h",$farms_delivery_hours);
+      				$farms_delivery_hours = str_replace(" h","h",$farms_delivery_hours);
+      				$farms_delivery_hours = str_replace("minutes","m",$farms_delivery_hours);
+      				$farms_delivery_hours = str_replace(" m","m",$farms_delivery_hours);
+
+      				$exclude[] = array($schedData[$i]['id']);
+      				// next delivery for driver
+      				$next_delivery_start_time_query = SchedTool::where('driver_id',$schedData[$i]['driver_id'])
+      																							->whereNotIn('id',$exclude)
+      																							->where('delivery_date','=',$delivery_date)
+      																							->orderBy('start_time','asc')
+      																							->value('start_time');
+
+      				if($next_delivery_start_time_query != NULL){
+      					$next_delivery_start_time = date("g:i a",strtotime($next_delivery_start_time_query));
+      				}
+
+      				$actual_time_back = "--:--"; // get the end time on feeds_driver_stats_delivery_time
+      				$end_time_driver_stats = DB::table('feeds_driver_stats_delivery_time')->select('end_time')->where('deliveries_unique_id',$schedData[$i]['delivery_unique_id'])->orderBy('id','desc')->first();
+      				if($end_time_driver_stats != NULL){
+      					//$actual_time_back = $end_time_driver_stats->end_time;
+      					if($end_time_driver_stats->end_time != "0000-00-00 00:00:00"){
+      						$actual_time_back = date("g:i a",strtotime($end_time_driver_stats->end_time));
+      					}
+      				}
+
+      				$data[] = array(
+      					'driver_name'				=> 	User::where('id',$schedData[$i]['driver_id'])->value('username'),
+      					'start_time'				=>	date("g:i a",strtotime($schedData[$i]['start_time'])),
+      					'farm'							=>	$schedData[$i]['text'],
+      					'run_time'					=>	$farms_delivery_hours, //get the feeds_farm_schedule farm id's and get the sum of farms delivery time
+      					'return_time'				=>	$next_delivery_start_time, // next delivery
+      					'actual_time_back'	=>	$actual_time_back //end time
+      				);
+      			}
+      		}
+
+      		return $data;
+
+      		// start time = start time
+      		// truck = driver name
+      		// farm delivery = text
+      		// run time = farm delivery delivery time
+      		// return time = next delivery
+      		// actual time back = arive time at mill
+
+    	}
+
+
 
 }
