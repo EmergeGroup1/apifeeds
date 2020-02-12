@@ -1031,6 +1031,7 @@ class HomeController extends Controller
   	*/
   	private function lastManualUpdate($bin_id)
   	{
+
     		$output = "none";
     		$last_update = BinsHistory::where('bin_id',$bin_id)
     												->where('update_type','!=','Automatic Update Admin')
@@ -1051,15 +1052,217 @@ class HomeController extends Controller
   	*	empty bins counter
   	*/
   	private function countEmptyBins($bins){
-  		$counter = 0;
 
-  		for($i=0; $i < count($bins); $i++){
-  			if($bins[$i]['days_to_empty'] == 0 || $bins[$i]['days_to_empty'] == 1 || $bins[$i]['days_to_empty'] == 2){
-  				$counter++;
-  			}
-  		}
+    		$counter = 0;
 
-  		return $counter;
+    		for($i=0; $i < count($bins); $i++){
+    			if($bins[$i]['days_to_empty'] == 0 || $bins[$i]['days_to_empty'] == 1 || $bins[$i]['days_to_empty'] == 2){
+    				$counter++;
+    			}
+    		}
+
+    		return $counter;
+
   	}
+
+
+    /*
+  	*	deliveries
+  	*/
+  	public function deliveriesListAPI($data){
+
+    		$deliveries = $this->defaultDeliveriesAPI($data);
+
+    		return $deliveries;
+
+  	}
+
+  	/*
+  	*	get deliveries information
+  	*/
+  	private function defaultDeliveriesAPI($data)
+  	{
+
+    		$data['delivery_number'] = str_replace("#","",$data['delivery_number']);
+
+
+    		if($data['farm_id'] != "0" && $data['farm_id'] != 0 && $data['farm_id'] != NULL){
+    			$deliveries = $this->searchFarmDeliveriesAPI($data);
+    		} elseif($data['driver'] != "0" && $data['driver'] != 0  && $data['driver'] != NULL){
+    			$deliveries = $this->searchDriverDeliveriesAPI($data);
+    		} elseif($data['delivery_number'] != "0" && $data['delivery_number'] != 0 && $data['delivery_number'] != NULL){
+    			$deliveries = $this->searchUniqueIdDeliveriesAPI($data['delivery_number']);
+    		}  else {
+    			$deliveries = DB::table('feeds_deliveries')
+    										->select(DB::raw('DISTINCT(CONCAT("#",LEFT(feeds_deliveries.unique_id,7))) AS delivery_number'),'feeds_deliveries.unique_id',
+    										'feeds_deliveries.status','feeds_deliveries.delivery_id','feeds_deliveries.delivery_date','feeds_deliveries.truck_id','feeds_deliveries.driver_id',
+    										DB::raw('GROUP_CONCAT(DISTINCT(feeds_farms.name)) as farm_names'),
+    										'feeds_truck.name AS truck_name',
+    										'feeds_user_accounts.username AS driver')
+    										->leftJoin('feeds_farms','feeds_farms.id','=','feeds_deliveries.farm_id')
+    										->leftJoin('feeds_truck','feeds_truck.truck_id','=','feeds_deliveries.truck_id')
+    										->leftJoin('feeds_user_accounts','feeds_user_accounts.id','=','feeds_deliveries.driver_id')
+    										->where('feeds_deliveries.delivery_label','!=','deleted')
+    										->whereBetween('feeds_deliveries.delivery_date', array($data['from'] . " 00:00:00", $data['to'] . " 23:59:59"))
+    										->groupBy('feeds_deliveries.unique_id')
+    										->orderBy('feeds_deliveries.delivery_date','DESC')
+    										->orderBy('feeds_deliveries.delivery_id','DESC')
+    										->get();
+    		}
+
+    		return $this->defaultDeliveriesBuilderAPI($deliveries);
+
+  	}
+
+
+    /*
+  	*	search by farm
+  	*/
+  	private function searchFarmDeliveriesAPI($data)
+  	{
+
+    		$deliveries = DB::table('feeds_deliveries')
+    							->select(DB::raw('DISTINCT(CONCAT("#",LEFT(feeds_deliveries.unique_id,7))) AS delivery_number'),'feeds_deliveries.unique_id',
+    							'feeds_deliveries.status','feeds_deliveries.delivery_date','feeds_deliveries.truck_id','feeds_deliveries.driver_id',
+    							DB::raw('GROUP_CONCAT(DISTINCT(feeds_farms.name)) as farm_names'),
+    							'feeds_truck.name AS truck_name',
+    							'feeds_user_accounts.username AS driver')
+    							->leftJoin('feeds_farms','feeds_farms.id','=','feeds_deliveries.farm_id')
+    							->leftJoin('feeds_truck','feeds_truck.truck_id','=','feeds_deliveries.truck_id')
+    							->leftJoin('feeds_user_accounts','feeds_user_accounts.id','=','feeds_deliveries.driver_id')
+    							->where('feeds_deliveries.delivery_label','!=','deleted')
+    							->Where('feeds_deliveries.farm_id',$data['farm_id'])
+    							->whereBetween('feeds_deliveries.delivery_date', array($data['from'] . " 00:00:00", $data['to'] . " 23:59:59"))
+    							->groupBy('feeds_deliveries.unique_id')
+    							->orderBy('feeds_deliveries.delivery_date','DESC')
+    							->orderBy('feeds_deliveries.delivery_id','DESC')
+    							->take(100)
+    							->get();
+
+    		return $deliveries;
+
+  	}
+
+
+
+    /*
+  	*	search by driver
+  	*/
+  	private function searchDriverDeliveriesAPI($data)
+  	{
+
+    		$deliveries = DB::table('feeds_deliveries')
+    							->select(DB::raw('DISTINCT(CONCAT("#",LEFT(feeds_deliveries.unique_id,7))) AS delivery_number'),'feeds_deliveries.unique_id',
+    							'feeds_deliveries.status','feeds_deliveries.delivery_date','feeds_deliveries.truck_id','feeds_deliveries.driver_id',
+    							DB::raw('GROUP_CONCAT(DISTINCT(feeds_farms.name)) as farm_names'),
+    							'feeds_truck.name AS truck_name',
+    							'feeds_user_accounts.username AS driver')
+    							->leftJoin('feeds_farms','feeds_farms.id','=','feeds_deliveries.farm_id')
+    							->leftJoin('feeds_truck','feeds_truck.truck_id','=','feeds_deliveries.truck_id')
+    							->leftJoin('feeds_user_accounts','feeds_user_accounts.id','=','feeds_deliveries.driver_id')
+    							->where('feeds_deliveries.delivery_label','!=','deleted')
+    							->Where('feeds_deliveries.driver_id',$data['driver'])
+    							->whereBetween('feeds_deliveries.delivery_date', array($data['from'] . " 00:00:00", $data['to'] . " 23:59:59"))
+    							->groupBy('feeds_deliveries.unique_id')
+    							->orderBy('feeds_deliveries.delivery_date','DESC')
+    							->orderBy('feeds_deliveries.delivery_id','DESC')
+    							->take(100)
+    							->get();
+
+    		return $deliveries;
+
+  	}
+
+
+
+    /*
+  	*	search by unique_id
+  	*/
+  	private function searchUniqueIdDeliveriesAPI($unique_id)
+  	{
+
+    		$deliveries = DB::table('feeds_deliveries')
+    							->select(DB::raw('DISTINCT(CONCAT("#",LEFT(feeds_deliveries.unique_id,7))) AS delivery_number'),'feeds_deliveries.unique_id',
+    							'feeds_deliveries.status','feeds_deliveries.delivery_date','feeds_deliveries.truck_id','feeds_deliveries.driver_id',
+    							DB::raw('GROUP_CONCAT(DISTINCT(feeds_farms.name)) as farm_names'),
+    							'feeds_truck.name AS truck_name',
+    							'feeds_user_accounts.username AS driver')
+    							->leftJoin('feeds_farms','feeds_farms.id','=','feeds_deliveries.farm_id')
+    							->leftJoin('feeds_truck','feeds_truck.truck_id','=','feeds_deliveries.truck_id')
+    							->leftJoin('feeds_user_accounts','feeds_user_accounts.id','=','feeds_deliveries.driver_id')
+    							->where('feeds_deliveries.delivery_label','!=','deleted')
+    							->Where(DB::raw('LEFT(feeds_deliveries.unique_id,7)'),$unique_id)
+    							->groupBy('feeds_deliveries.unique_id')
+    							->orderBy('feeds_deliveries.delivery_date','DESC')
+    							->orderBy('feeds_deliveries.delivery_id','DESC')
+    							->take(10)
+    							->get();
+
+    		return $deliveries;
+
+  	}
+
+
+
+    /*
+  	*	get deliveries information
+  	*/
+  	private function defaultDeliveriesBuilderAPI($deliveries)
+  	{
+
+    		$data = array();
+    		for($i=0;$i<count($deliveries);$i++){
+    			$data[] = array(
+    				'unique_id' => $deliveries[$i]->unique_id,
+    				'delivery_number'	=>	$deliveries[$i]->delivery_number,
+    				'status'		=>	 $this->deliveriesStatusAPI($deliveries[$i]->unique_id),
+    				'delivery_date'	=>	$deliveries[$i]->delivery_date,
+    				'farm_names'	=>	$deliveries[$i]->farm_names,
+    				'truck_name'	=>	$deliveries[$i]->truck_name,
+    				'driver'	=>	$deliveries[$i]->driver,
+    				'load_info'	=>	'',//$this->loadInformationAPI($deliveries[$i]->delivery_date,$deliveries[$i]->truck_id,$deliveries[$i]->driver_id),
+    				'load_breakdown'	=> '',//$this->loadBreakdownAPI($deliveries[$i]->unique_id)
+    			);
+    		}
+
+    		return $data;
+
+  	}
+
+
+
+    /*
+  	*	deliveries status counter
+  	*/
+  	public function deliveriesStatusAPI($unique_id){
+
+    		$status = "";
+
+    		$loads  = Deliveries::where('unique_id','=',$unique_id)->count();
+    		$on_going = Deliveries::where('unique_id','=',$unique_id)->where('status','=',1)->count();
+    		$on_going_red = Deliveries::where('unique_id','=',$unique_id)->where('status','=',2)->count();
+    		$delivered = Deliveries::where('unique_id','=',$unique_id)->where('status','=',3)->count();
+    		$pending = Deliveries::where('unique_id','=',$unique_id)->where('status','=',0)->count();
+
+    		if($delivered == $loads){
+    			$status = "completed";
+    		}elseif($on_going == $loads){
+    			$status = "ongoing_green";
+    		}elseif($on_going_red == $loads){
+    			$status = "ongoing_red";
+    		}elseif($pending == $loads){
+    			$status = "pending";
+    		}elseif($on_going_red == 1){
+    			$status = "ongoing_red";
+    		}else{
+    			$status = "ongoing_green";
+    		}
+
+    		return $status;
+
+  	}
+
+
+    
 
 }
