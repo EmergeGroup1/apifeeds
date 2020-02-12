@@ -68,10 +68,6 @@ class APIController extends Controller
         $log_token = session('token');
         $sort_type = $request->input('sort');
 
-        //$home_controller = new HomeController;
-        //$home_controller->forecastingDataCache();
-        //unset($home_controller);
-        //if($token == $log_token){
         if ($sort_type == 1) {
           $farms = json_decode(Storage::get('forecasting_data_a_to_z.txt'));
         } else {
@@ -232,12 +228,8 @@ class APIController extends Controller
           return array("err" => "Invalid token, please login");
         }
 
-        $bin_id = $request->input('binID');
-        $amount = $request->input('amount');
-
-
-        $_POST['bin'] = $bin_id;
-        $_POST['amount'] = $amount;
+        $_POST['bin'] = $request->input('binID');
+        $_POST['amount'] = $request->input('amount');
         $_POST['user'] = $request->input('userID');
 
         // get the medications medication()
