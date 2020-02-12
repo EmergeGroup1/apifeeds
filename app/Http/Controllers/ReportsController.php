@@ -166,7 +166,7 @@ class ReportsController extends Controller
 
     }
 
-    
+
 
     /**
     * get the deliveries that are done
@@ -545,6 +545,10 @@ class ReportsController extends Controller
 
         $total_hours = "";
         $today = strtotime("TODAY");
+
+        if($result_to_array != NULL) {
+          return "00:00:00";
+        }
 
         foreach($result_to_array as $k => $v){
             $total_hours = $total_hours + (strtotime(str_replace("-","",$v->hours)) - $today);
