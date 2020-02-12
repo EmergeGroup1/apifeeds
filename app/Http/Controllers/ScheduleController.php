@@ -559,7 +559,7 @@ class ScheduleController extends Controller
         		FarmSchedule::where('unique_id','=',$uniqueID)->delete();
         		DB::table('feeds_mobile_notification')->where('unique_id',$uniqueID)->delete();
 
-        		Artisan::call("forecastingdatacache");
+        		//Artisan::call("forecastingdatacache");
 
     	}
 
