@@ -305,8 +305,6 @@ class APIController extends Controller
           'code_id' => $request->input("code")
         );
 
-
-
         $exists = DB::table('feeds_batch')
           ->where('status', 'pending')
           ->where('bin_id', $request->input('binID'))
@@ -346,10 +344,8 @@ class APIController extends Controller
           }
         }
 
-
-
-
         break;
+
 
       case "listBatch":
 
