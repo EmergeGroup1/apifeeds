@@ -2418,4 +2418,21 @@ class HomeController extends Controller
 
 
 
+    /*
+  	*	Unique ID generator
+  	*/
+  	public function generator(){
+
+    		$unique = uniqid(rand());
+    		$dateToday = date('ymdhms');
+
+    		$unique_id = FarmSchedule::where('unique_id','=',$unique)->exists();
+
+    		$output = ($unique_id == true ? $unique.$dateToday : $unique );
+
+    		return $output;
+
+  	}
+
+
 }
