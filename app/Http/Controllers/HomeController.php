@@ -1274,9 +1274,6 @@ class HomeController extends Controller
     		$drivers_cache = Cache::store('file')->get('drivers');
 
     		if($drivers_cache == NULL){
-    			// $drivers = User::where('type_id','=',2)
-    			// 		->orderBy('username')
-    			// 		->lists('username','id');
 
           $drivers = array_merge(
               [''=>'-'],
@@ -1284,8 +1281,6 @@ class HomeController extends Controller
         					->orderBy('username')
                   ->pluck('username','id')->toArray()
           );
-
-    			//$drivers = array(''=>'-') + $drivers;
 
     			Cache::forever('drivers',$drivers);
 
@@ -1296,6 +1291,39 @@ class HomeController extends Controller
 
   	}
 
+
+    /*
+  	*	Medication
+  	*/
+  	public function medication()
+    {
+
+    		$medication_cache = Cache::store('file')->get('medications');
+
+    		if($medication_cache == NULL){
+
+    			// $medication  = DB::table('feeds_medication')
+    			// 			->where('med_name','!=','No Medication')
+    			// 			->orderBy('med_name')
+    			// 			->lists('med_name','med_id');
+    			// $medication = array(''=>'Please Select') + $medication;
+
+          $medication = array_merge(
+              [''=>'-'],
+              DB::table('feeds_medication')
+      						->where('med_name','!=','No Medication')
+      						->orderBy('med_name')
+                  ->pluck('med_name','med_id')->toArray()
+          );
+
+    			Cache::forever('medications',$medication);
+    			$medication_cache = Cache::store('file')->get('medications');
+          
+    		}
+
+    		return $medication_cache;
+
+  	}
 
 
 }
