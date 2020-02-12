@@ -11,6 +11,7 @@ use App\SchedTool;
 use App\FarmSchedule;
 use App\Deliveries;
 use App\Farms;
+use App\User;
 
 class ScheduleController extends Controller
 {
