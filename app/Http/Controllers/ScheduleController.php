@@ -1234,29 +1234,7 @@ class ScheduleController extends Controller
 
 
 
-      /*
-    	* update the created load and remove the previous notification for mobile app
-    	*/
-    	private function updateCreatedLoadAPI($delivery_unique_id,$user_id)
-      {
-
-      		$farm_sched_data = FarmSchedule::select('unique_id','date_of_delivery')->where('delivery_unique_id',$delivery_unique_id)->first();
-      		$farm_sched_unique_id = $farm_sched_data->unique_id;
-      		$deliveries_data = Deliveries::where('unique_id','=',$delivery_unique_id)->first();
-      		$farm_sched_date_of_delivery = $deliveries_data->delivery_date;
-
-      		// $data_previous_driver = array(array(
-      		// 	'driver_id'					=>	$deliveries_data->driver_id,
-      		// 	'truck_id'					=>	$deliveries_data->truck_id,
-      		// 	'delivery_date'			=>	$deliveries_data->delivery_date,
-      		// ));
-          //
-      		// $this->loadTruckDriverNotification($data_previous_driver,$deliveries_data->unique_id);
-      		// DB::table('feeds_mobile_notification')->where('unique_id',$deliveries_data->unique_id)->delete();
-
-      		$this->loadToTruckUpdateAPI($delivery_unique_id,$farm_sched_unique_id,$user_id);
-
-    	}
+      
 
 
 
