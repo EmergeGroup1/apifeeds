@@ -1309,7 +1309,7 @@ class HomeController extends Controller
     			// $medication = array(''=>'Please Select') + $medication;
 
           $medication = array_merge(
-              [''=>'-'],
+              [''=>'Please Select'],
               DB::table('feeds_medication')
       						->where('med_name','!=','No Medication')
       						->orderBy('med_name')
@@ -1318,10 +1318,37 @@ class HomeController extends Controller
 
     			Cache::forever('medications',$medication);
     			$medication_cache = Cache::store('file')->get('medications');
-          
+
     		}
 
     		return $medication_cache;
+
+  	}
+
+
+
+    /*
+  	*	Feed Types
+  	*/
+  	public function feedTypesAPI()
+    {
+
+  			// $feeds = DB::table('feeds_feed_types')
+  			// 		->where('name','!=','None')
+  			// 		->orderBy('name')
+  			// 		->lists('description','type_id');
+  			// $feeds = array(''=>'Please Select') + $feeds;
+
+
+        $feeds = array_merge(
+            [''=>'Please Select'],
+            DB::table('feeds_feed_types')
+      					->where('name','!=','None')
+      					->orderBy('name')
+                ->pluck('description','type_id')->toArray()
+        );
+
+  			return $feeds;
 
   	}
 
