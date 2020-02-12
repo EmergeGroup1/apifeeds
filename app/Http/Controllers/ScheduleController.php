@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use DB;
 use Cache;
+use Artisan;
 use App\SchedTool;
 use App\FarmSchedule;
 use App\Deliveries;
@@ -501,5 +502,86 @@ class ScheduleController extends Controller
     	}
 
 
+
+      /*
+    	*	delete sched deliveries
+    	*/
+    	public function deleteSchedDel($uniqueID){
+
+
+        		SchedTool::where('farm_sched_unique_id','=',$uniqueID)->delete();
+
+        		$farmSched = FarmSchedule::where('unique_id','=',$uniqueID)->get()->toArray();
+
+        		for($i=0; $i<count($farmSched);$i++){
+        			Cache::forget('bins-'.$farmSched[$i]['bin_id']);
+        			Cache::forget('farm_holder-'.$farmSched[$i]['farm_id']);
+        			Cache::forget('farm_holder_bins_data-'.$farmSched[$i]['bin_id']);
+        		}
+
+        		$delivery_unique_id = !empty($farmSched[0]['delivery_unique_id']) ? $farmSched[0]['delivery_unique_id'] : NULL;
+
+        		$deliveries = Deliveries::where('unique_id',$delivery_unique_id)->get()->toArray();
+
+        		if($deliveries != NULL){
+
+        			// $notification = new CloudMessaging;
+              //
+        			// $notification_data_driver = array(
+        			// 	'unique_id'		=> 	$deliveries[0]['unique_id'],
+        			// 	'driver_id'		=> 	$deliveries[0]['driver_id']
+        			// 	);
+              //
+        			// $notification->deleteDeliveryNotifier($notification_data_driver);
+
+        				for($i=0; $i<count($deliveries); $i++){
+        					Cache::forget('bins-'.$deliveries[$i]['bin_id']);
+        					Cache::forget('farm_holder-'.$deliveries[$i]['farm_id']);
+        					Cache::forget('farm_holder_bins_data-'.$deliveries[$i]['bin_id']);
+
+
+        					$notification_data_farmer = array(
+        						'farm_id'		=> 	$deliveries[$i]['farm_id'],
+        						'unique_id'		=> 	$deliveries[$i]['unique_id']
+        						);
+
+        					$this->deleteDriverStats($deliveries[$i]['unique_id']);
+
+        					// $notification->deleteDeliveryNotifier($notification_data_farmer);
+        					// DB::table('feeds_mobile_notification')->where('unique_id',$deliveries[$i]['unique_id'])->delete();
+        				}
+
+        			Deliveries::where('unique_id',$delivery_unique_id)->update(['delivery_label'=>'deleted']);
+        			//DB::table('feeds_mobile_notification')->where('unique_id',$delivery_unique_id)->delete();
+        			//unset($notification);
+        		}
+
+        		FarmSchedule::where('unique_id','=',$uniqueID)->delete();
+        		DB::table('feeds_mobile_notification')->where('unique_id',$uniqueID)->delete();
+
+        		Artisan::call("forecastingdatacache");
+
+    	}
+
+
+      /*
+    	*	Delete delivered items for the driver stats
+    	*/
+    	private function deleteDriverStats($unique_id)
+    	{
+
+        		DB::table('feeds_driver_stats')->where('deliveries_unique_id',$unique_id)->delete();
+        		DB::table('feeds_driver_stats_delivery_time')->where('deliveries_unique_id',$unique_id)->delete();
+        		DB::table('feeds_driver_stats_drive_time_google_est_mill')->where('deliveries_unique_id',$unique_id)->delete();
+        		DB::table('feeds_driver_stats_drive_time')->where('deliveries_unique_id',$unique_id)->delete();
+        		DB::table('feeds_driver_stats_drive_time_google_est')->where('deliveries_unique_id',$unique_id)->delete();
+        		DB::table('feeds_driver_stats_time_at_farm')->where('deliveries_unique_id',$unique_id)->delete();
+        		DB::table('feeds_driver_stats_time_at_mill')->where('deliveries_unique_id',$unique_id)->delete();
+        		DB::table('feeds_driver_stats_drive_time_interval')->where('deliveries_unique_id',$unique_id)->delete();
+        		DB::table('feeds_driver_stats_drive_time_interval_mill')->where('deliveries_unique_id',$unique_id)->delete();
+        		DB::table('feeds_driver_stats_total_miles')->where('deliveries_unique_id',$unique_id)->delete();
+        		DB::table('feeds_mobile_notification')->where('unique_id',$unique_id)->delete();
+
+    	}
 
 }
