@@ -411,6 +411,7 @@ class ReportsController extends Controller
     }
 
 
+
     /**
     * decimalHours
     * Get the decimal equivalent of time
@@ -427,6 +428,7 @@ class ReportsController extends Controller
       	return ($hms[0] + $m + $h);
 
     }
+
 
 
     /**
@@ -474,6 +476,8 @@ class ReportsController extends Controller
 
     }
 
+
+
     /**
     * Time at Farm
     * Calculate each time difference from start time and end time
@@ -500,6 +504,7 @@ class ReportsController extends Controller
     }
 
 
+
     /**
     * Time at Farm
     * Calculate each time difference from start time and end time
@@ -523,6 +528,8 @@ class ReportsController extends Controller
 
     }
 
+
+
     /**
     * get the sum of start and end time
     *
@@ -539,20 +546,23 @@ class ReportsController extends Controller
 
         foreach($result_to_array as $k => $v){
             $total_hours = $total_hours + (strtotime(str_replace("-","",$v->hours)) - $today);
-            }
+        }
 
-            $total_hours = $total_hours + $today;
-            $sum_hours = date("H:i:s", $total_hours);
+        $total_hours = $total_hours + $today;
+        $sum_hours = date("H:i:s", $total_hours);
 
-            if($sum_hours != "00:00:00"){
-            $final = $sum_hours;
-            return $final;
+        if($sum_hours != "00:00:00"){
+
+          $final = $sum_hours;
+          return $final;
 
         }
 
         return $sum_hours;
 
     }
+
+
 
     /**
     * Get the average time
