@@ -1274,8 +1274,7 @@ class HomeController extends Controller
     		$drivers_cache = Cache::store('file')->get('drivers');
 
     		if($drivers_cache == NULL){
-    			$drivers = DB::table('feeds_user_accounts')
-    					->where('type_id','=',2)
+    			$drivers = User::where('type_id','=',2)
     					->orderBy('username')
     					->lists('username','id');
 
@@ -1285,7 +1284,7 @@ class HomeController extends Controller
 
     			$drivers_cache = Cache::store('file')->get('drivers');
     		}
-        
+
     		return $drivers_cache;
 
   	}
