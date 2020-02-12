@@ -2143,10 +2143,276 @@ class HomeController extends Controller
   	public function farmHolderBinClearCache($farm_id)
   	{
 
-  		$bins = Bins::where('farm_id',$farm_id)->get()->toArray();
-  		for($i=0;$i<count($bins);$i++){
-  			Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
-  		}
+    		$bins = Bins::where('farm_id',$farm_id)->get()->toArray();
+    		for($i=0;$i<count($bins);$i++){
+    			Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
+    		}
+
+  	}
+
+
+
+    /*
+  	*	Insert the number of pigs on the bin history
+  	*/
+  	public function updatePigsAPI($farm_id,$bin,$numpigs,$animal_unique_id,$user_id)
+  	{
+
+    		$updateBin = array();
+    		foreach($numpigs as $k => $v){
+    			$updateBin[] = $this->fetchBinAnimalGroupAPI($animal_unique_id[$k],$v,$farm_id,$bin,$user_id);
+    		}
+
+    		$output = array();
+
+    		$update = $this->multiToOne($updateBin);
+
+    		foreach($update as $k => $v){
+
+    			if($v['daysto'] > 3) {
+
+    				$color = "success";
+
+    			} elseif($v['daysto'] < 3) {
+    				$color = "danger";
+    			} else {
+    				$color = "warning";
+    			}
+
+    			if($v['daysto'] > 5) {
+    				$text = $v['daysto'] . " Days";
+    			} else {
+    				$text = $v['daysto'] . " Days";
+    			}
+
+    			$perc = ($v['daysto'] <=5 ? (($v['daysto']*2)*10) : 100 );
+
+
+    			$output[] = array(
+    				'bin'	=>	$v['bin'],
+    				'msg' => "Bin was successfully Updated!",
+    				'empty' => $this->emptyDate($this->daysOfBins($this->currentBinCapacity($v['bin']),$v['budgeted_'],$v['total_number_of_pigs'])),
+    				'daystoemp' => $v['daysto'],
+    				'numofpigs' => $v['numofpigs_'],
+    				'percentage' => $perc,
+    				'color' => $color,
+    				'text' => $text,
+    				'tdy' => date('M d'),
+    				'unique_id'	=>	$v['animal_unique_id'],
+    				'total_number_of_pigs'	=>	$v['total_number_of_pigs']
+    			);
+
+    		}
+
+    		$counter = count($output) - 1;
+
+    		return array(0=>$output[$counter]);
+
+  	}
+
+
+
+    /*
+  	*	get the bins in Animal Group for farrowing
+  	*/
+  	private function fetchBinAnimalGroupAPI($unique_id,$number_of_pigs,$farm_id,$bin_id,$user_id)
+  	{
+
+      		// check the farm type
+      		$type = $this->farmTypes($farm_id);
+
+      		if($type != NULL){
+            DB::table('feeds_movement_groups_bins')
+              ->where('unique_id',$unique_id)
+              ->where('bin_id',$bin_id)
+              ->update(['number_of_pigs'=>$number_of_pigs]);
+      		} else {
+      			return NULL;
+      		}
+
+      		$update = array();
+          $update[] = $this->updateBinsHistoryNumberOfPigsAPI($number_of_pigs,$bin_id,$unique_id,$user_id);
+
+      		return $update;
+
+  	}
+
+
+
+    /*
+  	*	Update the bin history for update number of pigs
+  	*/
+  	private function updateBinsHistoryNumberOfPigsAPI($number_of_pigs,$bin_id,$unique_id,$user_id)
+  	{
+
+      		$bininfo = $this->getBinDefaultInfo($bin_id);
+      		$lastupdate  = $this->getLastHistory($bininfo);
+
+      		if(!empty($lastupdate)){
+      			$update_date = date("Y-m-d",strtotime($lastupdate[0]->update_date));
+
+      			if($update_date == date("Y-m-d")){
+      				$variance = $lastupdate[0]->variance;
+      				$consumption = $lastupdate[0]->consumption;
+      			}else{
+      				$variance = 0;
+      				$consumption = 0;
+      			}
+      		}
+
+      		// get the total number of pigs based on the animal group total number of pigs
+      		//$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroup($bin_id,$bininfo[0]->farm_id); //$number_of_pigs;
+          $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bin_id,$bininfo[0]->farm_id);
+
+      		$budgeted_amount = $this->daysCounterbudgetedAmount($bininfo[0]->farm_id,$bin_id,$lastupdate[0]->feed_type,date("Y-m-d H:i:s"));
+
+      		$data = array(
+      				'update_date' => date("Y-m-d H:i:s"),
+      				'bin_id' => $bin_id,
+      				'farm_id' => $bininfo[0]->farm_id,
+      				'num_of_pigs' => $total_number_of_pigs,
+      				'user_id' => $user_id,
+      				'amount' => $lastupdate[0]->amount,
+      				'update_type' => 'Manual Update Number of Pigs Forecasting Admin',
+      				'created_at' => date("Y-m-d H:i:s"),
+      				'updated_at' => date("Y-m-d H:i:s"),
+      				'budgeted_amount' => $budgeted_amount,//$lastupdate[0]->budgeted_amount,
+      				'remaining_amount' => $lastupdate[0]->remaining_amount,
+      				'sub_amount' => $lastupdate[0]->sub_amount,
+      				'variance' => $variance,
+      				'consumption' => $consumption,
+      				'admin' => $user_id,
+      				'medication' => !empty($lastupdate[0]->medication) ? $lastupdate[0]->medication : 0,
+      				'feed_type' => $lastupdate[0]->feed_type,
+      				'unique_id'	=> !empty($lastupdate[0]->unique_id) ? $lastupdate[0]->unique_id : "none"
+      			);
+
+      		BinsHistory::where('bin_id', '=', $bin_id)
+      			->where('update_date',"LIKE", date("Y-m-d") . "%")
+      			->delete();
+
+      		BinsHistory::insert($data);
+
+      		// $notification = new CloudMessaging;
+      		// $farmer_data = array(
+      		// 	'farm_id'		=> 	$bininfo[0]->farm_id,
+      		// 	'bin_id'		=> 	$bin_id,
+      		// 	'num_of_pigs'	=> 	$number_of_pigs
+      		// 	);
+      		// $notification->updatePigsMessaging($farmer_data);
+      		// unset($notification);
+
+      		$numofpigs_ = $this->displayDefaultNumberOfPigs($bininfo[0]->num_of_pigs, $number_of_pigs);
+      		$budgeted_ = $budgeted_amount;//$this->getmyBudgetedAmount($lastupdate[0]->budgeted_amount, $bininfo[0]->feed_type);
+      		$daysto = $this->daysOfBins($this->currentBinCapacity($bin_id),$budgeted_,$numofpigs_);
+
+      		Cache::forget('bins-'.$bin_id);
+
+      		return array(
+      			'bin'					=>	$bin_id,
+      			'numofpigs_'			=>	$number_of_pigs,
+      			'total_number_of_pigs'	=>	$total_number_of_pigs,
+      			'budgeted_'				=>	$budgeted_,
+      			'daysto'				=>	$daysto,
+      			'animal_unique_id'		=>	$unique_id
+      		);
+
+  	}
+
+
+
+    /**
+  	** Gets the Default Values of a certain Bin
+  	** int bin_id Primary key
+  	** return array Object 2-19-2016
+  	**/
+  	public function getBinDefaultInfo($bin_id) {
+
+      		$output = DB::table('feeds_bins')
+      					->select('bin_id','farm_id','num_of_pigs','amount', 'feed_type', 'bin_size')
+      					->where('bin_id','=',$bin_id)
+      					->get();
+
+      		return $output;
+
+  	}
+
+
+    /**
+  	** Gets last values from Update History
+  	** bininfo array Object
+  	** return array Object 2-19-2016
+  	**/
+  	public  function getLastHistory($bininfo) {
+
+      		$output = DB::table('feeds_bin_history')
+      					->where('bin_id','=',$bininfo[0]->bin_id)
+      					->orderBy('update_date', 'DESC')
+      					->take(1)
+      					->get();
+
+      		if(count($output) == 0) {
+
+      			$output[0] =  (object)array(
+
+      				'num_of_pigs' => $bininfo[0]->num_of_pigs,
+      				'amount'=> 0,
+      				'budgeted_amount'=>$this->getBudgetedAmount($bininfo[0]->feed_type),
+      				'remaining_amount'=> 0,
+      				'sub_amount' => 0,
+      				'variance' => 0,
+      				'consumption' => 0,
+      				'update_date'	=>	date("Y-m-d"),
+      				'feed_type'	=>	0
+
+      			);
+
+      		}
+
+      		return $output;
+
+  	}
+
+
+
+    public function getBudgetedAmount($feedtype) {
+
+    		$output = DB::table('feeds_feed_types')
+    					->select('budgeted_amount')
+    					->where('type_id','=',$feedtype)
+    					->get();
+
+    		return !empty($output[0]->budgeted_amount) ? $output[0]->budgeted_amount : 0;
+
+  	}
+
+
+
+    /*
+  	*	Multidimentional Array to One Dimentional output
+  	*/
+  	private function multiToOne($updateBin)
+  	{
+
+    		$update = array();
+    		foreach($updateBin as $k => $v){
+
+    			foreach($v as $key => $val){
+
+    				$update[] = array(
+    					"bin"					=>	$val['bin'],
+    					"numofpigs_" 			=>	$val['numofpigs_'],
+    					"budgeted_" 			=>	$val['budgeted_'],
+    					"daysto"				=>	$val['daysto'],
+    					"animal_unique_id"		=>	$val['animal_unique_id'],
+    					'total_number_of_pigs'	=>	$val['total_number_of_pigs']
+    				);
+
+    			}
+
+    		}
+
+    		return $update;
 
   	}
 
