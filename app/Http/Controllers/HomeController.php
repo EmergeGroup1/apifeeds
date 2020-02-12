@@ -454,7 +454,7 @@ class HomeController extends Controller
     				->where('delivery_label','active')
     				->where('delivery_date','>',date('Y-m-d'))
     				->groupBy('unique_id')->get();
-    				//->orderBy('delivery_date','desc')->get();
+    				->orderBy('delivery_date','desc')->get();
 
 
     		if(count($datas) == 0) {
@@ -1263,6 +1263,6 @@ class HomeController extends Controller
   	}
 
 
-    
+
 
 }
