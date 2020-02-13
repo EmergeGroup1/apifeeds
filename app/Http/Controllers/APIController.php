@@ -1842,28 +1842,28 @@ class APIController extends Controller
         /* End of Release Notes API */
 
         /* Drivers Map API */
-      case "lmDrivers":
-
-        $lm_controller = new MiscController;
-        $lm_data = $lm_controller->apiLMDriver();
-        unset($lm_controller);
-
-
-        if ($lm_data != NULL) {
-          return array(
-            "err"     =>  0,
-            "msg"     =>  "Successfully get the drivers with active deliveries",
-            "data"    =>  $lm_data
-          );
-        } else {
-          return array(
-            "err"     =>  0,
-            "msg"     =>  "empty result, no drivers with active deliveries",
-            "data"    =>  $lm_data
-          );
-        }
-
-        break;
+      // case "lmDrivers":
+      //
+      //   $lm_controller = new MiscController;
+      //   $lm_data = $lm_controller->apiLMDriver();
+      //   unset($lm_controller);
+      //
+      //
+      //   if ($lm_data != NULL) {
+      //     return array(
+      //       "err"     =>  0,
+      //       "msg"     =>  "Successfully get the drivers with active deliveries",
+      //       "data"    =>  $lm_data
+      //     );
+      //   } else {
+      //     return array(
+      //       "err"     =>  0,
+      //       "msg"     =>  "empty result, no drivers with active deliveries",
+      //       "data"    =>  $lm_data
+      //     );
+      //   }
+      //
+      //   break;
 
         /*
         * Farms Profile
