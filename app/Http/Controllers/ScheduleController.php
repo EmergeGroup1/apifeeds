@@ -1468,7 +1468,7 @@ class ScheduleController extends Controller
       						->exists();
       		return $output;
     	}
-      
+
 
 
       /*
@@ -1561,6 +1561,68 @@ class ScheduleController extends Controller
 
 
 
+      /*
+      *	Scheduling tool status
+      */
+      public function scheduleCache()
+      {
 
+          Cache::forget('scheduling_data_1st_load_ajax');
+
+          $farm_sched_list = DB::table('feeds_farm_schedule')
+                    ->select(DB::raw('DATE_FORMAT(feeds_farm_schedule.date_of_delivery, "%Y-%m-%d %h:%i:%s %p") as date_of_delivery'),
+                        'schedule_id','feeds_type_id','medication_id','unique_id','delivery_unique_id',
+                        DB::raw('GROUP_CONCAT(farm_id) AS farm_id'),
+                        DB::raw('GROUP_CONCAT(amount) AS amount'),
+                        DB::raw('GROUP_CONCAT(bin_id) AS bin_id'),
+                        'feeds_truck.name as truck_name',
+                        'feeds_truck.truck_id as truck_id',
+                        'feeds_farm_schedule.driver_id as driver_id')
+                    ->leftJoin('feeds_truck','feeds_truck.truck_id','=','feeds_farm_schedule.truck_id')
+                    ->where('status','=',0)
+                    ->where('feeds_farm_schedule.date_of_delivery',date("Y-m-d")."%")
+                    ->orderBy('date_of_delivery','desc')
+                    ->groupBy('feeds_farm_schedule.unique_id')
+                    ->get();
+
+          $data = array();
+          for($i = 0; $i < count($farm_sched_list); $i++){
+            $data[] = (object)array(
+              'schedule_id'		=>	$farm_sched_list[$i]->schedule_id,
+              'delivery_date'		=>	$this->dateFormat($farm_sched_list[$i]->date_of_delivery),
+              'farm_name'			=>	$this->farmNames($farm_sched_list[$i]->farm_id,$farm_sched_list[$i]->date_of_delivery,$farm_sched_list[$i]->unique_id),
+              'truck_name'		=>	$farm_sched_list[$i]->truck_name,
+              'truck_id'			=>	$farm_sched_list[$i]->truck_id,
+              'driver'			=>	$this->getDriver($farm_sched_list[$i]->driver_id),
+              'unique_id'			=>	$farm_sched_list[$i]->unique_id,
+            );
+          }
+
+          $data = $this->toArray($data);
+          // cache data via sort type a-z farms
+          usort($data, function($a,$b){
+            return strcasecmp($a["farm_name"], $b["farm_name"]);
+          });
+
+          Cache::forever('scheduling_data_1st_load_ajax',$data);
+
+
+          return "done";
+
+      }
+      
+
+
+      /**
+       * Convert object to array
+       *
+       * @return Response
+       */
+      private function toArray($data)
+      {
+    		$resultArray = json_decode(json_encode($data), true);
+
+    		return $resultArray;
+    	}
 
 }
