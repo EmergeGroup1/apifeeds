@@ -2872,6 +2872,226 @@ class HomeController extends Controller
 
 
 
-    
+    /*
+  	* Test Cron
+  	*/
+  	public function conAutoUpdate(){
+
+    		$farms = Farms::where('status',1)->get()->toArray();
+
+    		$forecastingData = array();
+    		$farms_count = count($farms)-1;
+    		for($i=0; $i<=$farms_count; $i++){
+    			$forecastingData[] = array(
+    				'farm_id'	=>	$farms[$i]['id'],
+    				'name'		=>	$farms[$i]['name'],
+    				'address'	=>	$farms[$i]['address'],
+    				'bins'		=> 	$this->conBinsData($farms[$i]['id'])
+    			);
+
+    		}
+
+    		$farmBins = $forecastingData;
+
+    		foreach($farmBins as $k => $v){
+
+    			$counter = count($v['bins'])-1;
+    			for($i=0; $i<=$counter; $i++){
+    				$this->updateBinHistory($v['bins'][$i]['bin_id'],NULL);
+    			}
+
+    		}
+
+    		// update the cache for forecasting
+    		$this->forecastingDataCacheBuilder();
+
+  	}
+
+
+    /*
+  	*	Get all the bins id via farm id
+  	*/
+  	private function conBinsData($farm_id){
+
+    		$bins = Bins::where('farm_id','=',$farm_id)
+    					->select('bin_id')
+    					->get()->toArray();
+
+    		return $bins;
+
+  	}
+
+
+
+    /*
+    *	History Updater
+    */
+    public function updateBinHistory($bin_id,$date_to_update){
+
+        if($date_to_update == NULL){
+          $date_today = date("Y-m-d H:i:s");
+          $date_yesterday = date("Y-m-d", time() - 60 * 60 * 24);
+        } else {
+          $date_today = date("Y-m-d", strtotime($date_to_update));
+          $date_yesterday = date("Y-m-d", strtotime($date_today." -1 day"));
+        }
+
+        $previous_auto_update_data = BinsHistory::where('update_date','LIKE',$date_today.'%')
+                        ->where('bin_id','=',$bin_id)
+                        ->where('update_type','=','Automatic Update Admin')
+                        ->orderBy('update_date','desc')
+                        ->get()
+                        ->toArray();
+
+        // check if there's already automatic update
+        if(empty($previous_auto_update_data)){
+
+          // if update not exists, update data based on 0 consumption update
+          $history = $this->historyFinder($date_today,$bin_id);
+          if(!empty($history[0])){
+
+            if($history[0]['consumption'] == 0.0){
+              //$this->testUpdate($history);
+              $this->updateNoConsumption($history,$date_today);
+            }
+          // update based on yesterday's update
+          } else {
+            $history = $this->historyFinder($date_yesterday,$bin_id);
+            if(!empty($history[0])){
+              $this->testUpdate($history,$date_today);
+            }
+          }
+
+        } else {
+          echo "Nothing to update<br/>";
+        }
+
+    }
+
+
+
+    /*
+  	*	Update finder query
+  	*/
+  	private function historyFinder($date,$bin_id)
+    {
+    		$date = date("Y-m-d",strtotime($date));
+    		$data = BinsHistory::where('update_date','LIKE',$date.'%')
+    					->where('bin_id','=',$bin_id)
+    					->orderBy('update_date','desc')
+    					->get()
+    					->toArray();
+    		return $data;
+  	}
+
+
+    /*
+    * Auto update for the consumption of bins
+    */
+    private function updateNoConsumption($data,$date_today){
+
+    		// get the days counted for the auto update budgeted amount
+    		// feeds_feed_type_budgeted_amount_per_day
+    		// get the last date inserted on the feeds_budgeted_amount_counter and count it on today's date then get the day column for that budgeted amount
+    		// if the day column has 0 get the last day column where it has a value that is not equal to zero
+    		$budgeted_amount = $this->daysCounterbudgetedAmount($data[0]['farm_id'],$data[0]['bin_id'],$data[0]['feed_type'],$date_today);
+
+    		$amount = $this->calculateBin($data[0]['num_of_pigs'],$budgeted_amount,$data[0]['amount']);
+    		$consumption = $this->calculateConPerPig($data[0]['num_of_pigs'],$budgeted_amount,$data[0]['amount']);
+
+    		$amount = $amount < 0 ? 0 : $amount;
+
+    		//feeds
+    		$feeds = FeedTypes::where('type_id','=',$data[0]['feed_type'])->get()->toArray();
+
+    		$update_data = array(
+    			'update_date'		=>	$date_today,//date('Y-m-d H:i:s'),
+    			'bin_id'			=>	$data[0]['bin_id'],
+    			'farm_id'			=>	$data[0]['farm_id'],
+    			'num_of_pigs'		=>	$data[0]['num_of_pigs'],
+    			'user_id'			=>	1,//$data[0]['user_id'],
+    			'amount'			=>	$amount,
+    			'update_type'		=>	'Automatic Update Admin',
+    			'created_at'		=>	date('Y-m-d H:i:s'),
+    			'updated_at'		=>	date('Y-m-d H:i:s'),
+    			'budgeted_amount'	=>	$budgeted_amount,//$feeds[0]['budgeted_amount'],
+    			'remaining_amount'	=>	$data[0]['remaining_amount'],
+    			'sub_amount'		=>	$data[0]['sub_amount'],
+    			'variance'			=>	0,
+    			'consumption'		=>	$consumption,
+    			'admin'				=>	1,
+    			'medication'		=>	!empty($data[0]['medication']) ? $data[0]['medication'] : 8,
+    			'feed_type'			=>	$data[0]['feed_type'],
+    			'unique_id'			=>	!empty($data[0]['unique_id']) ? $data[0]['unique_id'] : "none"
+    			);
+    		BinsHistory::where('history_id','=',$data[0]['history_id'])->update($update_data);
+
+    		$bin_size = Bins::where('bin_id','=',$data[0]['bin_id'])->first();
+    		$med_name = Medication::where('med_id','=',$data[0]['medication'])->first();
+    		$feed_name = FeedTypes::where('type_id','=',$data[0]['feed_type'])->first();
+
+    		echo "0 Consumption update<br/>";
+
+  	}
+
+
+
+    /*
+  	*	calculate the amount of the bin
+  	*/
+  	private function calculateBin($number_of_pigs,$budgeted_amount,$current_amount)
+    {
+    		$total_consumption = $number_of_pigs * $budgeted_amount;
+    		$current_bin_amount = round($current_amount - ($total_consumption/2000),2);
+    		return $current_bin_amount;
+  	}
+
+
+    /*
+  	*	calculate consumption per pig
+  	*/
+  	private function calculateConPerPig($number_of_pigs,$budgeted_amount,$current_amount)
+    {
+    		if($number_of_pigs == 0){
+    			$consumption_per_pig = 0;
+    		} else{
+    			$total_consumption = $number_of_pigs * $budgeted_amount;
+    			$consumption_per_pig = ($total_consumption/$number_of_pigs);
+    		}
+
+    		return $consumption_per_pig;
+  	}
+
+
+
+    /*
+  	*	Cache forecasting data builder
+  	*/
+  	public function forecastingDataCacheBuilder($sort_type = NULL){
+
+  		Cache::forget('forecastingData_1');
+  		Cache::forget('forecastingData_2');
+  		$forecastingData = NULL;
+
+
+  		// cache data via sort type low bins
+  		$sort_type = Cache::store('file')->get('sort_type');
+  		if($sort_type == NULL || $sort_type == 1) {
+
+  			if(Cache::forever('forecastingData_1',$forecastingData)){
+  				echo "Cached";
+  			}
+
+  		// cache data via sort type a-z farms
+  		} else {
+
+  			if(Cache::forever('forecastingData_2',$forecastingData)){
+  				echo "Cached";
+  			}
+  		}
+
+  		echo "finished";
+
+  	}
 
 }

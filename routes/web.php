@@ -16,3 +16,4 @@ Route::get('/', function () {
 });
 
 Route::match(array('GET','POST'),'api', 'APIController@index');
+Route::get('conautoupdate','HomeController@conAutoUpdate');
