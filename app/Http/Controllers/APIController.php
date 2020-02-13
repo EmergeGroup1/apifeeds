@@ -1307,103 +1307,103 @@ class APIController extends Controller
 
 
         /* Driver Tracking */
-      case "driverTracking":
-
-        $livetruck_controller = new LiveTruckController;
-        $drivers = $livetruck_controller->liveTrucksAPI();
-        unset($livetruck_controller);
-
-        if (!empty($drivers)) {
-          return array(
-            "err"     =>  0,
-            "msg"     =>  "Successfully Deleted Bin",
-            "drivers" =>  $drivers
-          );
-        } else {
-          return $this->errorMessage();
-        }
-
-        break;
-        /* End Farms Administraton */
-
-        /* Messaging */
-
-        // user lists for messages
-        case "msList":
-
-          $logged_in_user_id = $request->input('userID');
-
-          $ms_ctrl = new MessagingController;
-          $messages = $ms_ctrl->messagingListAPI($logged_in_user_id);
-          unset($ms_ctrl);
-
-          if (!empty($messages)) {
-            return array(
-              "err"     =>  0,
-              "msg"     =>  "Successfully Get Users List",
-              "messagesList" =>  $messages
-            );
-          } else {
-            return $this->errorMessage();
-          }
-
-        break;
-
-        // history of messages from specific user
-        case "msHistory":
-          $logged_in_user_id = $request->input('userID');
-          $pm_user_id = $request->input('pmUserID');
-
-          $ms_ctrl = new MessagingController;
-          $messages = $ms_ctrl->loadMessageHistoryAPI($logged_in_user_id,$pm_user_id);
-          unset($ms_ctrl);
-
-          if (!empty($messages)) {
-            return array(
-              "err"     =>  0,
-              "msg"     =>  "Successfully Get Messages History",
-              "messagesList" =>  $messages
-            );
-          } else {
-            return $this->errorMessage();
-          }
-        break;
-
-        // update the notification
-        case "msUpdateNotif":
-          $logged_in_user_id = $request->input('userID');
-          $pm_user_id = $request->input('pmUserID');
-
-          $ms_ctrl = new MessagingController;
-          $notif = $ms_ctrl->updateNotifAPI($logged_in_user_id,$pm_user_id);
-          unset($ms_ctrl);
-
-          if ($notif != NULL) {
-            return array(
-              "err"     =>  0,
-              "msg"     =>  "Successfully Get Response",
-              "message" =>  $notif
-            );
-          } else {
-            return $this->errorMessage();
-          }
-        break;
-
-        // total notification
-        case "msTotalNotif":
-          $logged_in_user_id = $request->input('userID');
-
-          $ms_ctrl = new MessagingController;
-          $notif = $ms_ctrl->totalNotifAPI($logged_in_user_id);
-          unset($ms_ctrl);
-
-          return array(
-            "err"     =>  0,
-            "msg"     =>  "Successfully Get total notification",
-            "totalNotif" =>  $notif
-          );
-
-        break;
+      // case "driverTracking":
+      //
+      //   $livetruck_controller = new LiveTruckController;
+      //   $drivers = $livetruck_controller->liveTrucksAPI();
+      //   unset($livetruck_controller);
+      //
+      //   if (!empty($drivers)) {
+      //     return array(
+      //       "err"     =>  0,
+      //       "msg"     =>  "Successfully Deleted Bin",
+      //       "drivers" =>  $drivers
+      //     );
+      //   } else {
+      //     return $this->errorMessage();
+      //   }
+      //
+      //   break;
+      //   /* End Farms Administraton */
+      //
+      //   /* Messaging */
+      //
+      //   // user lists for messages
+      //   case "msList":
+      //
+      //     $logged_in_user_id = $request->input('userID');
+      //
+      //     $ms_ctrl = new MessagingController;
+      //     $messages = $ms_ctrl->messagingListAPI($logged_in_user_id);
+      //     unset($ms_ctrl);
+      //
+      //     if (!empty($messages)) {
+      //       return array(
+      //         "err"     =>  0,
+      //         "msg"     =>  "Successfully Get Users List",
+      //         "messagesList" =>  $messages
+      //       );
+      //     } else {
+      //       return $this->errorMessage();
+      //     }
+      //
+      //   break;
+      //
+      //   // history of messages from specific user
+      //   case "msHistory":
+      //     $logged_in_user_id = $request->input('userID');
+      //     $pm_user_id = $request->input('pmUserID');
+      //
+      //     $ms_ctrl = new MessagingController;
+      //     $messages = $ms_ctrl->loadMessageHistoryAPI($logged_in_user_id,$pm_user_id);
+      //     unset($ms_ctrl);
+      //
+      //     if (!empty($messages)) {
+      //       return array(
+      //         "err"     =>  0,
+      //         "msg"     =>  "Successfully Get Messages History",
+      //         "messagesList" =>  $messages
+      //       );
+      //     } else {
+      //       return $this->errorMessage();
+      //     }
+      //   break;
+      //
+      //   // update the notification
+      //   case "msUpdateNotif":
+      //     $logged_in_user_id = $request->input('userID');
+      //     $pm_user_id = $request->input('pmUserID');
+      //
+      //     $ms_ctrl = new MessagingController;
+      //     $notif = $ms_ctrl->updateNotifAPI($logged_in_user_id,$pm_user_id);
+      //     unset($ms_ctrl);
+      //
+      //     if ($notif != NULL) {
+      //       return array(
+      //         "err"     =>  0,
+      //         "msg"     =>  "Successfully Get Response",
+      //         "message" =>  $notif
+      //       );
+      //     } else {
+      //       return $this->errorMessage();
+      //     }
+      //   break;
+      //
+      //   // total notification
+      //   case "msTotalNotif":
+      //     $logged_in_user_id = $request->input('userID');
+      //
+      //     $ms_ctrl = new MessagingController;
+      //     $notif = $ms_ctrl->totalNotifAPI($logged_in_user_id);
+      //     unset($ms_ctrl);
+      //
+      //     return array(
+      //       "err"     =>  0,
+      //       "msg"     =>  "Successfully Get total notification",
+      //       "totalNotif" =>  $notif
+      //     );
+      //
+      //   break;
         /* End of Messaging */
 
 
