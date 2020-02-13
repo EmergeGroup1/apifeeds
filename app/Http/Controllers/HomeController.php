@@ -2800,6 +2800,78 @@ class HomeController extends Controller
   	}
 
 
+    /*
+  	*	Delete delivered item
+  	*/
+  	public function deleteDeliveredAPI($unique_id)
+  	{
 
+    		$deliveries = Deliveries::where('unique_id',$unique_id)->get()->toArray();
+
+    		$farm_sched = FarmSchedule::select('unique_id')->where('delivery_unique_id',$unique_id)->first()->toArray();
+    		if($farm_sched != NULL){
+    			DB::table('feeds_batch')->where('unique_id',$farm_sched['unique_id'])->delete();
+    		}
+
+    		  // delete driver stats
+      		$this->deleteDriverStats($unique_id);
+
+      		// $notification = new CloudMessaging;
+          //
+    			// $notification_data_driver = array(
+    			// 	'unique_id'		=> 	$deliveries[0]['unique_id'],
+    			// 	'driver_id'		=> 	$deliveries[0]['driver_id']
+    			// 	);
+          //
+    			// $notification->deleteDeliveryNotifier($notification_data_driver);
+
+    			foreach($deliveries as $k => $v){
+
+    				Cache::forget('bins-'.$v['bin_id']);
+    				Cache::forget('farm_holder_bins_data-'.$v['bin_id']);
+    				Cache::forget('farm_holder-'.$v['farm_id']);
+
+    				// $notification_data_farmer = array(
+    				// 	'farm_id'		=> 	$v['farm_id'],
+    				// 	'unique_id'		=> 	$v['unique_id']
+    				// 	);
+            //
+    				// $notification->deleteDeliveryNotifier($notification_data_farmer);
+
+    			}
+
+    		//unset($notification);
+    		SchedTool::where('delivery_unique_id',$unique_id)->delete();
+    		FarmSchedule::where('delivery_unique_id',$unique_id)->delete();
+    		if(Deliveries::where('unique_id',$unique_id)->update(['delivery_label'=>'deleted'])){
+    			$this->forecastingDataCache();
+    			return "deleted";
+    		}
+
+    		return "failed to delete";
+
+  	}
+
+
+
+    /*
+  	*	Delete delivered items for the driver stats
+  	*/
+  	private function deleteDriverStats($unique_id)
+  	{
+    		DB::table('feeds_driver_stats')->where('deliveries_unique_id',$unique_id)->delete();
+    		DB::table('feeds_driver_stats_delivery_time')->where('deliveries_unique_id',$unique_id)->delete();
+    		DB::table('feeds_driver_stats_drive_time_google_est_mill')->where('deliveries_unique_id',$unique_id)->delete();
+    		DB::table('feeds_driver_stats_drive_time')->where('deliveries_unique_id',$unique_id)->delete();
+    		DB::table('feeds_driver_stats_drive_time_google_est')->where('deliveries_unique_id',$unique_id)->delete();
+    		DB::table('feeds_driver_stats_time_at_farm')->where('deliveries_unique_id',$unique_id)->delete();
+    		DB::table('feeds_driver_stats_time_at_mill')->where('deliveries_unique_id',$unique_id)->delete();
+    		DB::table('feeds_driver_stats_total_miles')->where('deliveries_unique_id',$unique_id)->delete();
+    		DB::table('feeds_mobile_notification')->where('unique_id',$unique_id)->delete();
+  	}
+
+
+
+    
 
 }
