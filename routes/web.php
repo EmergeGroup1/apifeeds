@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return "Nothing to do here...";
 });
 
 Route::match(array('GET','POST'),'api', 'APIController@index');
