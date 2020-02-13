@@ -12,7 +12,9 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return "Nothing to do here...";
 });
 
 Route::match(array('GET','POST'),'api', 'APIController@index');
+Route::get('conautoupdate','HomeController@conAutoUpdate');
+Route::get('schedulingcache','ScheduleController@scheduleCache');

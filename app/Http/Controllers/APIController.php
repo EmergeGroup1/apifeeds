@@ -68,10 +68,6 @@ class APIController extends Controller
         $log_token = session('token');
         $sort_type = $request->input('sort');
 
-        //$home_controller = new HomeController;
-        //$home_controller->forecastingDataCache();
-        //unset($home_controller);
-        //if($token == $log_token){
         if ($sort_type == 1) {
           $farms = json_decode(Storage::get('forecasting_data_a_to_z.txt'));
         } else {
@@ -232,12 +228,8 @@ class APIController extends Controller
           return array("err" => "Invalid token, please login");
         }
 
-        $bin_id = $request->input('binID');
-        $amount = $request->input('amount');
-
-
-        $_POST['bin'] = $bin_id;
-        $_POST['amount'] = $amount;
+        $_POST['bin'] = $request->input('binID');
+        $_POST['amount'] = $request->input('amount');
         $_POST['user'] = $request->input('userID');
 
         // get the medications medication()
@@ -313,8 +305,6 @@ class APIController extends Controller
           'code_id' => $request->input("code")
         );
 
-
-
         $exists = DB::table('feeds_batch')
           ->where('status', 'pending')
           ->where('bin_id', $request->input('binID'))
@@ -354,10 +344,8 @@ class APIController extends Controller
           }
         }
 
-
-
-
         break;
+
 
       case "listBatch":
 
@@ -575,6 +563,7 @@ class APIController extends Controller
         break;
 
       case "schedToolData":
+
         $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
@@ -1318,103 +1307,103 @@ class APIController extends Controller
 
 
         /* Driver Tracking */
-      case "driverTracking":
-
-        $livetruck_controller = new LiveTruckController;
-        $drivers = $livetruck_controller->liveTrucksAPI();
-        unset($livetruck_controller);
-
-        if (!empty($drivers)) {
-          return array(
-            "err"     =>  0,
-            "msg"     =>  "Successfully Deleted Bin",
-            "drivers" =>  $drivers
-          );
-        } else {
-          return $this->errorMessage();
-        }
-
-        break;
-        /* End Farms Administraton */
-
-        /* Messaging */
-
-        // user lists for messages
-        case "msList":
-
-          $logged_in_user_id = $request->input('userID');
-
-          $ms_ctrl = new MessagingController;
-          $messages = $ms_ctrl->messagingListAPI($logged_in_user_id);
-          unset($ms_ctrl);
-
-          if (!empty($messages)) {
-            return array(
-              "err"     =>  0,
-              "msg"     =>  "Successfully Get Users List",
-              "messagesList" =>  $messages
-            );
-          } else {
-            return $this->errorMessage();
-          }
-
-        break;
-
-        // history of messages from specific user
-        case "msHistory":
-          $logged_in_user_id = $request->input('userID');
-          $pm_user_id = $request->input('pmUserID');
-
-          $ms_ctrl = new MessagingController;
-          $messages = $ms_ctrl->loadMessageHistoryAPI($logged_in_user_id,$pm_user_id);
-          unset($ms_ctrl);
-
-          if (!empty($messages)) {
-            return array(
-              "err"     =>  0,
-              "msg"     =>  "Successfully Get Messages History",
-              "messagesList" =>  $messages
-            );
-          } else {
-            return $this->errorMessage();
-          }
-        break;
-
-        // update the notification
-        case "msUpdateNotif":
-          $logged_in_user_id = $request->input('userID');
-          $pm_user_id = $request->input('pmUserID');
-
-          $ms_ctrl = new MessagingController;
-          $notif = $ms_ctrl->updateNotifAPI($logged_in_user_id,$pm_user_id);
-          unset($ms_ctrl);
-
-          if ($notif != NULL) {
-            return array(
-              "err"     =>  0,
-              "msg"     =>  "Successfully Get Response",
-              "message" =>  $notif
-            );
-          } else {
-            return $this->errorMessage();
-          }
-        break;
-
-        // total notification
-        case "msTotalNotif":
-          $logged_in_user_id = $request->input('userID');
-
-          $ms_ctrl = new MessagingController;
-          $notif = $ms_ctrl->totalNotifAPI($logged_in_user_id);
-          unset($ms_ctrl);
-
-          return array(
-            "err"     =>  0,
-            "msg"     =>  "Successfully Get total notification",
-            "totalNotif" =>  $notif
-          );
-
-        break;
+      // case "driverTracking":
+      //
+      //   $livetruck_controller = new LiveTruckController;
+      //   $drivers = $livetruck_controller->liveTrucksAPI();
+      //   unset($livetruck_controller);
+      //
+      //   if (!empty($drivers)) {
+      //     return array(
+      //       "err"     =>  0,
+      //       "msg"     =>  "Successfully Deleted Bin",
+      //       "drivers" =>  $drivers
+      //     );
+      //   } else {
+      //     return $this->errorMessage();
+      //   }
+      //
+      //   break;
+      //   /* End Farms Administraton */
+      //
+      //   /* Messaging */
+      //
+      //   // user lists for messages
+      //   case "msList":
+      //
+      //     $logged_in_user_id = $request->input('userID');
+      //
+      //     $ms_ctrl = new MessagingController;
+      //     $messages = $ms_ctrl->messagingListAPI($logged_in_user_id);
+      //     unset($ms_ctrl);
+      //
+      //     if (!empty($messages)) {
+      //       return array(
+      //         "err"     =>  0,
+      //         "msg"     =>  "Successfully Get Users List",
+      //         "messagesList" =>  $messages
+      //       );
+      //     } else {
+      //       return $this->errorMessage();
+      //     }
+      //
+      //   break;
+      //
+      //   // history of messages from specific user
+      //   case "msHistory":
+      //     $logged_in_user_id = $request->input('userID');
+      //     $pm_user_id = $request->input('pmUserID');
+      //
+      //     $ms_ctrl = new MessagingController;
+      //     $messages = $ms_ctrl->loadMessageHistoryAPI($logged_in_user_id,$pm_user_id);
+      //     unset($ms_ctrl);
+      //
+      //     if (!empty($messages)) {
+      //       return array(
+      //         "err"     =>  0,
+      //         "msg"     =>  "Successfully Get Messages History",
+      //         "messagesList" =>  $messages
+      //       );
+      //     } else {
+      //       return $this->errorMessage();
+      //     }
+      //   break;
+      //
+      //   // update the notification
+      //   case "msUpdateNotif":
+      //     $logged_in_user_id = $request->input('userID');
+      //     $pm_user_id = $request->input('pmUserID');
+      //
+      //     $ms_ctrl = new MessagingController;
+      //     $notif = $ms_ctrl->updateNotifAPI($logged_in_user_id,$pm_user_id);
+      //     unset($ms_ctrl);
+      //
+      //     if ($notif != NULL) {
+      //       return array(
+      //         "err"     =>  0,
+      //         "msg"     =>  "Successfully Get Response",
+      //         "message" =>  $notif
+      //       );
+      //     } else {
+      //       return $this->errorMessage();
+      //     }
+      //   break;
+      //
+      //   // total notification
+      //   case "msTotalNotif":
+      //     $logged_in_user_id = $request->input('userID');
+      //
+      //     $ms_ctrl = new MessagingController;
+      //     $notif = $ms_ctrl->totalNotifAPI($logged_in_user_id);
+      //     unset($ms_ctrl);
+      //
+      //     return array(
+      //       "err"     =>  0,
+      //       "msg"     =>  "Successfully Get total notification",
+      //       "totalNotif" =>  $notif
+      //     );
+      //
+      //   break;
         /* End of Messaging */
 
 
@@ -1853,28 +1842,28 @@ class APIController extends Controller
         /* End of Release Notes API */
 
         /* Drivers Map API */
-      case "lmDrivers":
-
-        $lm_controller = new MiscController;
-        $lm_data = $lm_controller->apiLMDriver();
-        unset($lm_controller);
-
-
-        if ($lm_data != NULL) {
-          return array(
-            "err"     =>  0,
-            "msg"     =>  "Successfully get the drivers with active deliveries",
-            "data"    =>  $lm_data
-          );
-        } else {
-          return array(
-            "err"     =>  0,
-            "msg"     =>  "empty result, no drivers with active deliveries",
-            "data"    =>  $lm_data
-          );
-        }
-
-        break;
+      // case "lmDrivers":
+      //
+      //   $lm_controller = new MiscController;
+      //   $lm_data = $lm_controller->apiLMDriver();
+      //   unset($lm_controller);
+      //
+      //
+      //   if ($lm_data != NULL) {
+      //     return array(
+      //       "err"     =>  0,
+      //       "msg"     =>  "Successfully get the drivers with active deliveries",
+      //       "data"    =>  $lm_data
+      //     );
+      //   } else {
+      //     return array(
+      //       "err"     =>  0,
+      //       "msg"     =>  "empty result, no drivers with active deliveries",
+      //       "data"    =>  $lm_data
+      //     );
+      //   }
+      //
+      //   break;
 
         /*
         * Farms Profile
