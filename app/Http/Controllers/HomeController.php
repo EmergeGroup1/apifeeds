@@ -17,6 +17,7 @@ use App\User;
 use App\FeedTypes;
 use App\Deliveries;
 use App\MobileBinsAcceptedLoad;
+use App\SchedTool;
 
 class HomeController extends Controller
 {
