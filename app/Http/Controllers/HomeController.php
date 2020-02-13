@@ -2435,4 +2435,437 @@ class HomeController extends Controller
   	}
 
 
+
+    /*
+  	*	get deliveries information
+  	*/
+  	public function loadBreakdownAPI($unique_id)
+  	{
+    		$data = array();
+    		$delivery = $this->getDeliveries($unique_id);
+    		for($i=0;$i<count($delivery);$i++){
+    			$data[] = array(
+    				'farm'	=>	$this->getDeliveriesFarmName($delivery[$i]['farm_id']),
+    				'feed_type'	=>	$this->getDeliveriesFeedType($delivery[$i]['feeds_type_id']),
+    				'medication'	=>	$this->getDeliveriesMedication($delivery[$i]['medication_id']),
+    				'amount'	=>	$delivery[$i]['amount'],
+    				'bins'	=>	$this->getDeliveriesSpecificBinName($delivery[$i]['bin_id']),
+    				'compartment'	=>	$delivery[$i]['compartment_number']
+    			);
+    		}
+
+    		return $data;
+  	}
+
+
+
+    /*
+  	*	Delievries Farm Name
+  	*/
+  	public function getDeliveriesFarmName($farm_id)
+  	{
+    		$farm_name = Farms::select('name')->where('id',$farm_id)->get()->toArray();
+
+    		return !empty($farm_name[0]['name']) ? $farm_name[0]['name'] : "";
+  	}
+
+  	/*
+  	*	Deliveries Feed Types
+  	*/
+  	public function getDeliveriesFeedType($feed_type_id)
+  	{
+    		$feed_type = FeedTypes::select('name')
+    					->where('type_id','=',$feed_type_id)
+    					->get()->toArray();
+    		return !empty($feed_type[0]['name']) ? $feed_type[0]['name'] : "-";
+  	}
+
+  	/*
+  	*	Deliveries Medication
+  	*/
+  	public function getDeliveriesMedication($med_id)
+  	{
+    		$medications = Medication::select('med_name')
+    						->where('med_id',$med_id)
+    						->get()->toArray();
+    		return !empty($medications[0]['med_name']) ? $medications[0]['med_name'] : "-";
+  	}
+
+  	/*
+  	*	Deliveries Bin Name
+  	*/
+  	public function getDeliveriesSpecificBinName($bin_id)
+  	{
+    		$bin_name = Bins::select('alias')
+    					->where('bin_id',$bin_id)
+    					->get()->toArray();
+    		return !empty($bin_name[0]['alias']) ? $bin_name[0]['alias'] : "-";
+  	}
+
+
+
+    /*
+  	*	Mark as delivered
+  	*/
+  	public function markDeliveredAPI($unique_id,$user){
+
+    		$user = $user == NULL ? 1 : $user;
+    		$undone_deliveries = Deliveries::select(DB::raw("sum(amount) as amount"),"farm_id","feeds_type_id","medication_id","bin_id","driver_id","truck_id","unique_id","unload_by","status")
+    										->where('unique_id',$unique_id)
+    										->whereIn('status',[0,1,2])
+    										->groupBy('bin_id')
+    										->get()->toArray();
+
+    		$farm_ids = array();
+    		$data_to_update = array();
+    		$data_to_insert = array();
+    		for($i=0;$i<count($undone_deliveries);$i++){
+
+    			$bin_id = $undone_deliveries[$i]['bin_id'];
+    			$farm_id = $undone_deliveries[$i]['farm_id'];
+
+    			Cache::forget('bins-'.$bin_id);
+
+    			// last update
+    			$data = $this->feedsHistoryData($bin_id,$farm_id);
+    			$update_date = $data != NULL ? $data[0]['update_date'] : date("Y-m-d",strtotime(date("Y-m-d")."+ 1 day"));
+    			$update_date = date("Y-m-d",strtotime($update_date));
+    			$date_today = date("Y-m-d H:i:s");
+    			$bins_data = Bins::where('bin_id',$bin_id)->take(1)->get()->toArray();
+    			$num_of_pigs = $data != NULL ? $data[0]['num_of_pigs'] : $bins_data[0]['num_of_pigs'];
+    			$amount = $data != NULL ? $data[0]['amount'] : 0;
+    			$medication = $data != NULL ? $data[0]['medication'] : 0;
+    			$feed_type = $data != NULL ? $data[0]['feed_type'] : $bins_data[0]['feed_type'];
+    			$if_date_today = date("Y-m-d",strtotime($date_today));
+    			$medication_id = $undone_deliveries[$i]['medication_id'] != NULL ? $undone_deliveries[$i]['medication_id'] : $data[0]['medication'];
+    			$feed_type_id = $undone_deliveries[$i]['feeds_type_id'] != NULL ? $undone_deliveries[$i]['feeds_type_id'] : $data[0]['feed_type'];
+
+    			// update
+    			if($update_date === $if_date_today){
+
+    				$budgeted_amount = $this->budgetedAmountUpdater($data[0]['feed_type'],$undone_deliveries[$i]['feeds_type_id'],$farm_id,$bin_id,$date_today);
+
+    				$data_to_update = array(
+    					'update_date'						=>	$date_today,
+    					'amount'								=>	$data[0]['amount'] + $undone_deliveries[$i]['amount'],
+    					'budgeted_amount_tons'	=>	$data[0]['budgeted_amount_tons'] + $undone_deliveries[$i]['amount'],
+    					'actual_amount_tons'		=>	$data[0]['actual_amount_tons'] + $undone_deliveries[$i]['amount'],
+    					'bin_id'								=>	$bin_id,
+    					'farm_id'								=>	$farm_id,
+    					'num_of_pigs'						=>	$num_of_pigs,
+    					'user_id'								=> 	$user,
+    					'update_type'						=>	'Delivery Manual Update Admin',
+    					'admin'									=>	1,
+    					'created_at'						=>	$date_today,
+    					'updated_at'						=>	$date_today,
+    					'budgeted_amount'				=>	$budgeted_amount,
+    					'remaining_amount'			=>	0,
+    					'sub_amount'						=>	0,
+    					'variance'							=>	$data[0]['variance'],
+    					'consumption'						=>	$data[0]['consumption'],
+    					'medication'						=>	$medication_id,
+    					'feed_type'							=>	$feed_type_id,
+    					'unique_id'							=>	$unique_id
+    				);
+
+    				if($undone_deliveries[$i]['unload_by'] == "admin"){
+    					$this->updateFeedsHistoryDataAPI($data_to_update);
+    					$this->markAsdeliveredBinsAcceptedLoad($data_to_update);
+    					//$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$undone_deliveries[$i]['driver_id']);
+    				}
+
+    				// if($undone_deliveries[$i]['status'] == 2){
+    				// 	$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$undone_deliveries[$i]['driver_id']);
+    				// }
+
+    			// insert
+    			} else {
+
+    				$budgeted_amount = $this->budgetedAmountUpdater($data[0]['feed_type'],$undone_deliveries[$i]['feeds_type_id'],$farm_id,$bin_id,$date_today);
+
+    				$data_to_insert = array(
+    					'update_date'				=>	$date_today,
+    					'bin_id'						=>	$bin_id,
+    					'farm_id'						=>	$farm_id,
+    					'num_of_pigs'				=>	$num_of_pigs,
+    					'user_id'						=>	$user,
+    					'amount'						=>	$amount + $undone_deliveries[$i]['amount'],
+    					'update_type'				=>	'Delivery Manual Update Admin',
+    					'created_at'				=>	$date_today,
+    					'updated_at'				=>	$date_today,
+    					'budgeted_amount'		=>	$budgeted_amount,
+    					'remaining_amount'	=>	0,
+    					'sub_amount'				=>	0,
+    					'variance'					=>	0,
+    					'consumption'				=>	0,
+    					'admin'							=>	1,
+    					'medication'				=>	$medication_id,
+    					'feed_type'					=>	$feed_type_id,
+    					'unique_id'					=>	$unique_id
+    				);
+
+    				if($undone_deliveries[$i]['unload_by'] == "admin"){
+    					$this->saveFeedsHistoryData($data_to_insert);
+    					$this->markAsdeliveredBinsAcceptedLoad($data_to_insert);
+    					//$this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$undone_deliveries[$i]['driver_id']);
+    				}
+
+    				// if($undone_deliveries[$i]['status'] == 2){
+    				// 	$this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$undone_deliveries[$i]['driver_id']);
+    				// }
+
+    			}
+
+    			// for bins_data_first_load
+    			Cache::forget('farm_holder_bins_data-'.$bin_id);
+    			Cache::forget('farm_holder-'.$farm_id);
+
+    		}
+
+    		SchedTool::where('delivery_unique_id',$unique_id)->update(['status'=>'delivered']);
+    		$update = Deliveries::where('unique_id',$unique_id)
+    				->update(['status'=>3,'delivered'=>1,'compartment_status'=>3]);
+
+    		// update feeds_mobile_notification
+    		DB::table('feeds_mobile_notification')->where('unique_id',$unique_id)->update(['is_readred'=>'true']);
+
+    		//$this->forecastingDataCache();
+
+    		return $update;
+  	}
+
+
+
+    /*
+  	*	feeds_bin_history data to update
+  	*/
+  	private function feedsHistoryData($bin_id,$farm_id)
+    {
+    		$date_today = date("Y-m-d");
+    		$update_data = BinsHistory::where('update_date','LIKE',$date_today.'%')
+    										->where('bin_id','=',$bin_id)
+    										->where('farm_id','=',$farm_id)
+    										->orderBy('update_date','desc')
+    										->take(1)->get()
+    										->toArray();
+
+    		if($update_data == NULL){
+    			$update_data = BinsHistory::where('update_date','<=',$date_today)
+    										->where('bin_id','=',$bin_id)
+    										->where('farm_id','=',$farm_id)
+    										->orderBy('update_date','desc')
+    										->take(1)->get()
+    										->toArray();
+    		}
+
+    		return $update_data;
+  	}
+
+
+
+    /*
+    *	budgeted amount updater
+    */
+    private function budgetedAmountUpdater($last_feed_type,$current_feed_type,$farm_id,$bin_id,$date_today)
+    {
+        $budgeted_amount = 0;
+        if($current_feed_type != $last_feed_type){
+          // insert data to feeds_budgeted_amount_counter
+          $budgeted_amount = $this->budgetedAmountCounterUpdater($farm_id,$bin_id,$current_feed_type);
+        }else {
+          // get the days counted for the auto update budgeted amount
+          // feeds_feed_type_budgeted_amount_per_day
+          // get the last date inserted on the feeds_budgeted_amount_counter and count it on today's date then get the day column for that budgeted amount
+          // if the day column has 0 get the last day column where it has a value that is not equal to zero
+          $budgeted_amount = $this->daysCounterbudgetedAmount($farm_id,$bin_id,$current_feed_type,$date_today);
+        }
+
+        return $budgeted_amount;
+    }
+
+
+    /*
+  	* insert the new feed type to the budgeted amount counter
+  	*/
+  	public function budgetedAmountCounterUpdater($farm_id,$bin_id,$feed_type_id)
+  	{
+    		$data = array(
+    			'farm_id'				=>	$farm_id,
+    			'bin_id'				=>	$bin_id,
+    			'update_date'		=>	date('Y-m-d'),
+    			'feed_type_id'	=>	$feed_type_id
+    		);
+
+    		// insert the changed feed type
+    		DB::table('feeds_budgeted_amount_counter')->insert($data);
+
+    		// check if the feed_type has different budgeted amount
+    		$budgeted_amount_counter = DB::table('feeds_budgeted_amount_counter')
+    																	->where('farm_id',$farm_id)
+    																	->where('bin_id',$bin_id)
+    																	->orderBy('id','desc')
+    																	->first();
+
+    		// get the budgeted amount from feed types table
+    		$feed_type = FeedTypes::where('type_id',$budgeted_amount_counter->feed_type_id)->first();
+
+    		// check if the feed type has per day budgeted amount
+    		if($feed_type->total_days != 0){
+    			// get the day one budgeted amount
+    			$day_one_counter = DB::table('feeds_feed_type_budgeted_amount_per_day')
+    													->select('day_1')
+    													->where('feed_type_id',$feed_type_id)->first();
+    			return $day_one_counter->day_1;
+    		}
+
+    		return $feed_type->budgeted_amount;
+
+  	}
+
+
+
+    /*
+  	* get the last update feed type and budgeted amount
+  	*/
+  	public function daysCounterbudgetedAmount($farm_id,$bin_id,$feed_type_id,$date_to_update)
+  	{
+    		// get the budgeted amount from feed types table
+    		$feed_type = FeedTypes::where('type_id',$feed_type_id)->first();
+
+    		// check if the feed type has per day budgeted amount
+
+    			if($feed_type->total_days != 0){
+    				// check the feeds_budgeted_amount_counter
+    				$budgeted_amount_counter = DB::table('feeds_budgeted_amount_counter')
+    																			->where('feed_type_id',$feed_type_id)
+    																			->where('farm_id',$farm_id)
+    																			->where('bin_id',$bin_id)
+    																			->orderBy('update_date','desc')
+    																			->first();
+    				if($budgeted_amount_counter != NULL){
+
+    					// get the update date
+    					$update_date = $budgeted_amount_counter->update_date;
+    					$now = strtotime($date_to_update); // or your date as well
+    					$your_date = strtotime($update_date);
+    					$datediff = $now - $your_date;
+    					$days_counter = round($datediff / (60 * 60 * 24));
+    					$days_counter = $days_counter == 0 ? 1 : $days_counter + 1;
+    					$days_counter = str_replace(".0","",$days_counter);
+    					$days_counter = $days_counter == 0 ? 1 : $days_counter;
+
+    					// get the days counted column
+    					$days = DB::table('feeds_feed_type_budgeted_amount_per_day')
+    										->where('feed_type_id',$feed_type_id)
+    										->orderBy('id','desc')
+    										->first();
+    					$days = $this->toArray($days);
+
+    					if($days_counter >= 32 || $days_counter == 32){
+    						$days_counter = 31;
+    					}
+
+    					// if the selected day is 0, select the last column with a non zero value
+    					if($days['day_'.$days_counter] != 0){
+    						return $days['day_'.$days_counter];
+    					} else {
+    						// loop backwards to get the nearest non zero value
+    						for($i=31; $i>=1; $i--){
+    							if($days['day_'.$i] != 0){
+    								return $days['day_'.$i];
+    							}
+    						}
+    					}
+
+    				}
+
+    				// get the day one budgeted amount
+    				$day_one_counter = DB::table('feeds_feed_type_budgeted_amount_per_day')
+    														->select('day_1')
+    														->where('feed_type_id',$feed_type_id)->first();
+    				return $day_one_counter->day_1;
+    			}
+    			return $feed_type->budgeted_amount;
+
+  	}
+
+
+
+    /*
+  	*	Update the feeds_bin_history for mark as delivered item for admin
+  	*/
+  	private function updateFeedsHistoryDataAPI($data_to_update){
+
+      		if($data_to_update != NULL){
+
+      				$data = BinsHistory::where('update_date','LIKE',date("Y-m-d",strtotime($data_to_update['update_date'])).'%')
+      													->where('bin_id','=',$data_to_update['bin_id'])
+      													->where('farm_id','=',$data_to_update['farm_id'])
+      													->first();
+
+      				// /$data = BinsHistory::findOrFail($data->history_id);
+
+      				$data->update_date						=	$data_to_update['update_date'];
+      				$data->amount									=	$data_to_update['amount'];
+      				$data->budgeted_amount_tons		=	$data_to_update['budgeted_amount_tons'];
+      				$data->actual_amount_tons			=	$data_to_update['actual_amount_tons'];
+      				$data->bin_id									=	$data_to_update['bin_id'];
+      				$data->farm_id								=	$data_to_update['farm_id'];
+      				$data->num_of_pigs						=	$data_to_update['num_of_pigs'];
+      				$data->user_id								= $data_to_update['user_id'];
+      				$data->update_type						= $data_to_update['update_type'];
+      				$data->admin									=	$data_to_update['admin'];
+      				$data->created_at							=	$data_to_update['created_at'];
+      				$data->updated_at							=	$data_to_update['updated_at'];
+      				$data->budgeted_amount				=	$data_to_update['budgeted_amount'];
+      				$data->remaining_amount				=	$data_to_update['remaining_amount'];
+      				$data->sub_amount							=	$data_to_update['sub_amount'];
+      				$data->variance								=	$data_to_update['variance'];
+      				$data->consumption						=	$data_to_update['consumption'];
+      				$data->medication							=	$data_to_update['medication'];
+      				$data->feed_type							=	$data_to_update['feed_type'];
+      				$data->unique_id							=	$data_to_update['unique_id'];
+
+      				//$data->save();
+
+      				Event::fire(new CallBinsHistory($data));
+
+      		}
+
+  	}
+
+
+
+    /*
+  	*	Mark as delivered Mobile bins accepted load
+  	*/
+  	private function markAsdeliveredBinsAcceptedLoad($data)
+    {
+
+    		if($data['medication'] == 8){
+    			$data['medication'] = 0;
+    		}
+
+    		$bin_number = Bins::where('bin_id',$data['bin_id'])->first()->toArray();
+    		$bin_size = BinSize::where('size_id',$bin_number['bin_size'])->first()->toArray();
+    		$med_name = Medication::where('med_id',$data['medication'])->first()->toArray();
+    		$feed_name = FeedTypes::where('type_id',$data['feed_type'])->first()->toArray();
+
+  	}
+
+
+
+    /*
+  	*	Insert the feeds_bin_history for mark as delivered item for admin
+  	*/
+  	private function saveFeedsHistoryData($data)
+    {
+    		if($data != NULL){
+    			BinsHistory::insert($data);
+    		}
+  	}
+
+
+
+
 }

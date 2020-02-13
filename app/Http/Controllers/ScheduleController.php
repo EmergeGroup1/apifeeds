@@ -1412,4 +1412,155 @@ class ScheduleController extends Controller
 
 
 
+      /*
+    	*	Sched Tool Delivery Number Validator
+    	*/
+    	public function deliveryNumberValidateAPI($data){
+
+      		$selected_date = $data['selected_date'];
+      		$delivery_number = $data['delivery_number'];
+      		$driver_id = $data['driver_id'];
+      		$unique_id = $data['unique_id'];
+
+      		$selected_index = SchedTool::select('delivery_number')
+      						->where('delivery_date','=',$selected_date)
+      						->where('driver_id','=',$driver_id)
+      						//->orderBy('delivery_number','desc')
+      						->first()->toArray();
+
+      		$data_exists = $this->schedToolDataChecker($selected_date,$delivery_number,$driver_id);
+
+      		if($data_exists == true){
+      			$output = array(
+      				'output'			=>	1,
+      				'selected_index'	=>	!empty($selected_index) ? $selected_index['delivery_number'] : 0
+      			);
+      		} else{
+      			$output = array('output'=>0,'selected_index'=>0);
+      		}
+
+      		if($output['selected_index'] == 0){
+      			$data = array(
+      				'delivery_number'	=>	0,
+      				'selected_index'	=>	0,
+      				'farm_title'		=>	NULL,
+      				'start_time'		=>	NULL,
+      				'end_time'			=>	NULL
+      			);
+
+      			SchedTool::where('farm_sched_unique_id',$unique_id)
+      						->update($data);
+      		}
+
+      		return $output;
+    	}
+
+
+
+      /*
+    	*	Sched tool data checker
+    	*/
+    	private function schedToolDataChecker($selected_date,$delivery_number,$driver_id)
+      {
+      		$output = SchedTool::where('delivery_date','=',$selected_date)
+      						->where('delivery_number','=',$delivery_number)
+      						->where('driver_id','=',$driver_id)
+      						->exists();
+      		return $output;
+    	}
+      
+
+
+      /*
+    	*	Scheduled items for delivery number dropdown
+    	*/
+    	public function scheduledItemDeliveryNumberAPI($data){
+
+      		$selected_date = $data['selected_date'];
+      		$selected_index = $data['selected_index'];
+      		$unique_id = $data['unique_id'];
+      		$driver_id = $data['driver_id'];
+      		$delivery_number = $data['delivery_number'];
+
+      		$delivery_data = SchedTool::where('farm_sched_unique_id','=',$unique_id)->get()->toArray();
+      		$delivery_unique_id = !empty($delivery_data[0]['delivery_unique_id']) ? $delivery_data[0]['delivery_unique_id'] : 0;
+
+      		$data = FarmSchedule::select(DB::raw("GROUP_CONCAT(farm_id) AS farm_id"))
+      							->where("unique_id","=",$unique_id)
+      							->get()->toArray();
+
+      		$delivery_time = $this->deliveryTimes($data[0]['farm_id']);
+      		list($hours, $wrongMinutes) = explode('.', $delivery_time);
+      		$minutes = ($wrongMinutes < 100 ? $wrongMinutes * 100 : $wrongMinutes) * 0.6 / 100;
+      		$calculated_hour = $hours . 'hours ' . ceil($minutes) . 'minutes';
+
+      		if($delivery_number == 1){
+      			$start_time = "06:00:00";
+      			$end_time = date("H:i:s",strtotime($start_time."+".$calculated_hour));
+      		} elseif ($delivery_number == 0){
+      			//delete the data
+      			$schedTool = SchedTool::where('farm_sched_unique_id','=',$unique_id)->delete();
+      			$start_time = NULL;
+      			$end_time = NULL;
+      		}else {
+      			// get the max delivery number add 10 minutes interval then add the start time and end time
+      			$items = SchedTool::where('delivery_date','=',$selected_date)
+      								->where('driver_id','=',$driver_id)
+      								->where('farm_sched_unique_id','!=',$unique_id)
+      								->orderBy('delivery_number','desc')
+      								->get()->toArray();
+      			$start_time = !empty($items[0]['end_time']) ? date("H:i:s",strtotime($items[0]['end_time']."+ 10 minutes")) : "06:00:00";
+
+
+      			if(date("H",strtotime($start_time)) > 16){
+      				$start_time = "06:00:00";
+      			}
+      			$end_time = date("H:i:s",strtotime($start_time."+".$calculated_hour));
+      			//$start_time = "06:00:00";
+      			//$end_time = date("H:i:s",strtotime($start_time."+".$calculated_hour));
+      		}
+
+      		$farm = array_unique(explode(",",(string)$data[0]['farm_id']));
+      		$farm_names = Farms::select(DB::raw("GROUP_CONCAT(name) AS name"))->whereIn('id',$farm)->get()->toArray();
+
+      		$data_to_save = array(
+      			'driver_id'				=>	$driver_id,
+      			'farm_sched_unique_id'	=>	$unique_id,
+      			'farm_title'			=>	$farm_names[0]['name'],
+      			'delivery_number'		=>	$delivery_number,
+      			'delivery_date'			=>	$selected_date,
+      			'start_time'			=>	$start_time,
+      			'end_time'				=>	$end_time,
+      			'selected_index'		=>	$selected_index
+      		);
+
+      		// delete existing same record
+      		SchedTool::where('delivery_date',$selected_date)->where('farm_sched_unique_id',$unique_id)->delete();
+      		FarmSchedule::where('unique_id',$unique_id)->update(['date_of_delivery'=>$selected_date." ".$start_time]);
+
+      		if($delivery_number != 0){
+      			// save record
+      			SchedTool::insert($data_to_save);
+      		}
+
+      		if($driver_id ==0){
+      			SchedTool::where('farm_sched_unique_id',$unique_id)->delete();
+      		}
+
+      		// check if the delivery is already created
+      		if($delivery_unique_id != 0){
+      			//update the delivery
+      			$this->updateCreatedLoadAPI($delivery_unique_id);
+      		}
+
+      		$output = $this->schedToolOutput($selected_date);
+
+
+      		return $output;
+    	}
+
+
+
+
+
 }
