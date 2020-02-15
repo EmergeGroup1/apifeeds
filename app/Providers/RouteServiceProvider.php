@@ -60,7 +60,6 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::middleware('web')
              ->namespace($this->namespace)
-             ->domain("test.infarmsolutions.com")
              ->group(base_path('routes/web.php'));
     }
 
