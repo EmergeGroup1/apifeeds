@@ -19,11 +19,6 @@ use App\Http\Controllers\Controller;
 class APIController extends Controller
 {
 
-  public function __construct()
-	{
-		$this->middleware(['except' => ['index']]);
-	}
-
   /**
    * Display a listing of the resource.
    *
