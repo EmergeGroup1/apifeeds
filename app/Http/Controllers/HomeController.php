@@ -3140,23 +3140,22 @@ class HomeController extends Controller
 
 	public function getMedName($medid) {
 
-		$output = DB::table('feeds_medication')
-					->select('med_name')
-					->where('med_id','=',$medid)
-					->get();
+    $output = DB::table('feeds_medication')
+          ->select('med_name')
+          ->where('med_id','=',$medid)
+          ->first();
 
-		if($output == NULL) {
+    if($output == NULL) {
 
-			$output = array(
-						array(
-							'med_name' => 'No Medication'
-						)
-					  );
+      $output = 'No Medication';
 
-		}
+      return $output;
 
-		$output = json_decode(json_encode($output),true);
-		return $output[0]['med_name'];
+    }
+
+    $output = $output->med_name;
+
+    return $output;
 
 	}
 
