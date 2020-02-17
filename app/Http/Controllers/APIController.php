@@ -30,6 +30,17 @@ class APIController extends Controller
 
     switch ($api) {
 
+      case "cacherebuild":
+
+        // get the medications medication()
+        $home_controller = new HomeController;
+        $cacheData = $home_controller->forecastingDataCache();
+        unset($home_controller);
+
+        return $cacheData;
+
+        break;
+
       case "logUser":
 
         $username = $request->input('username');
