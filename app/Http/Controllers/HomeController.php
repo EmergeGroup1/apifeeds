@@ -22,7 +22,15 @@ use App\SchedTool;
 class HomeController extends Controller
 {
 
-
+  /**
+	 * Create a new controller instance.
+	 *
+	 * @return void
+	 */
+	public function __construct()
+	{
+		$this->middleware('auth',['except' => ['forecastingDataCacheBuilder','forecastingDataCache','forecastingDataOutput','binsDataCacheBuilder','clearBinsCache','conAutoUpdate']]);
+	}
 
 	/**
 	 * Show the forecasting data to the user.
