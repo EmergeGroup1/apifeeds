@@ -11,6 +11,7 @@ use Storage;
 use Carbon\Carbon;
 use App\Medication;
 use App\Farms;
+use App\Bins;
 use App\FarmSchedule;
 use App\BinsHistory;
 use App\User;
