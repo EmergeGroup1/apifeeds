@@ -22,7 +22,7 @@ use App\SchedTool;
 class HomeController extends Controller
 {
 
-  
+
 
 	/**
 	 * Show the forecasting data to the user.
@@ -3611,20 +3611,24 @@ class HomeController extends Controller
 	*	Medication
 	*/
 	public function medication(){
-		$medication_cache = Cache::store('file')->get('medications');
+    $medication_cache = Cache::store('file')->get('medications');
 
-		if($medication_cache == NULL){
+    if($medication_cache == NULL){
 
-			$medication  = DB::table('feeds_medication')
-						->where('med_name','!=','No Medication')
-						->orderBy('med_name')
-						->lists('med_name','med_id');
-			$medication = array(''=>'Please Select') + $medication;
+      $medication = array_merge(
+          [''=>'Please Select'],
+          DB::table('feeds_medication')
+              ->where('med_name','!=','No Medication')
+              ->orderBy('med_name')
+              ->pluck('med_name','med_id')->toArray()
+      );
 
-			Cache::forever('medications',$medication);
-			$medication_cache = Cache::store('file')->get('medications');
-		}
-		return $medication_cache;
+      Cache::forever('medications',$medication);
+      $medication_cache = Cache::store('file')->get('medications');
+
+    }
+
+    return $medication_cache;
 	}
 
 	/*
@@ -3651,13 +3655,15 @@ class HomeController extends Controller
 	*	Feed Types
 	*/
 	public function feedTypesAPI(){
-			$feeds = DB::table('feeds_feed_types')
-					->where('name','!=','None')
-					->orderBy('name')
-					->lists('description','type_id');
-			$feeds = array(''=>'Please Select') + $feeds;
+      $feeds = array_merge(
+                [''=>'Please Select'],
+                DB::table('feeds_feed_types')
+          					->where('name','!=','None')
+          					->orderBy('name')
+                    ->pluck('description','type_id')->toArray()
+            );
 
-			return $feeds;
+      return $feeds;
 	}
 
 	/*
