@@ -29,9 +29,9 @@ class HomeController extends Controller
     public function binsData($farm_id) {
 
       // get thecache value
-		$binsDataFinal = NULL; //Cache::store('file')->get('bins-'.$farm_id);
+		//$binsDataFinal = NULL; //Cache::store('file')->get('bins-'.$farm_id);
 
-		if($binsDataFinal == NULL){
+		//if($binsDataFinal == NULL){
 
         Cache::forget('bins-'.$farm_id);
 
@@ -68,7 +68,7 @@ class HomeController extends Controller
           $delivery = $this->nextDel_($farm_id,$bins[$i]['bin_id']);
           $last_delivery = $this->lastDelivery($farm_id,$bins[$i]['bin_id'],$last_update);
 
-          $bins_items = NULL; //Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
+          $bins_items = Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
           if($bins_items == NULL){
             // rebuild cache data
             $bins_items = array(
@@ -131,9 +131,9 @@ class HomeController extends Controller
         }
 
 
-      } else {
-        $binsDataFinal = $binsDataFinal ;
-      }
+      //} else {
+        //$binsDataFinal = $binsDataFinal ;
+      //}
 
       Storage::put('bins_data'.$farm_id.'.txt',json_encode($binsDataFinal));
       $binsDataFinal = Storage::get('bins_data'.$farm_id.'.txt');
