@@ -5453,7 +5453,7 @@ class HomeController extends Controller
 	/*
 	* Test Cron
 	*/
-	public function testCrons(){
+	public function conAutoUpdate(){
 
 		$farms = Farms::where('status',1)->get()->toArray();
 
