@@ -3628,11 +3628,11 @@ class HomeController extends Controller
 			$meds = DB::table('feeds_medication')
 					->where('med_name','!=','No Medication')
 					->orderBy('med_name')
-					->pluck('med_name','med_id')->toArray();
+					->select('med_name','med_id')->get();
 
 			$r = array();
 			for($i=0; $i<count($meds); $i++){
-				$r[$meds[$i]['med_id']] = $meds[$i]['med_name'];
+				$r[$meds[$i]->med_id] = $meds[$i]->med_name;
 			}
 
       $medication = array_merge(
