@@ -109,6 +109,7 @@ class APIController extends Controller
         $forecasting = json_decode(Storage::get('forecasting_data_low_bins.txt'));
         $home_controller = new HomeController;
         $bins = $home_controller->binsData($farm_id);
+        return $bins;
         unset($home_controller);
         $bins = json_decode($bins);
 
