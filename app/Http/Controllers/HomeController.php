@@ -2454,7 +2454,7 @@ class HomeController extends Controller
 			$binsCount = count($bins) - 1;
 			for($i=0; $i<=$binsCount; $i++){
 
-				$bins_items = NULL;//Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
+				$bins_items = Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
 				if($bins_items == NULL){
 
 					$current_bin_amount_lbs = $this->currentBinCapacity($bins[$i]['bin_id']);
@@ -2530,9 +2530,9 @@ class HomeController extends Controller
 			}
 
 
-		} else {
-			$binsDataFinal = $binsDataFinal ;
-		}
+		// } else {
+		// 	$binsDataFinal = $binsDataFinal ;
+		// }
 
 		Storage::put('bins_data'.$farm_id.'.txt',json_encode($binsDataFinal));
 		$binsDataFinal = Storage::get('bins_data'.$farm_id.'.txt');
