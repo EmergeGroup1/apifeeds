@@ -3632,7 +3632,7 @@ class HomeController extends Controller
 
 			$r = array();
 			for($i=0; $i<count($meds); $i++){
-				$r[$meds[0]['med_id']] = $meds[0]['med_name'];
+				$r[$meds[$i]['med_id']] = $meds[$i]['med_name'];
 			}
 
       $medication = array_merge(
