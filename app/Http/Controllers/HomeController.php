@@ -4080,13 +4080,23 @@ class HomeController extends Controller
 			$drivers_cache = NULL;
 			if($drivers_cache == NULL){
 
+				$users = DB::table('feeds_user_accounts')
+						->select('id','username')
+						->where('type_id','=',2)
+						->orderBy('username')
+						->get()->toArray();
+
+				$u = array();
+				$counter = count($users);
+				for($i=0; $i<$counter; $i++){
+					$u[] = array($users['id'] => $users['username']);
+				}
+
+
+
 	      $drivers = array_merge(
 	          [''=>'-'],
-	          DB::table('feeds_user_accounts')
-								->select('id AS d_id','username')
-								->where('type_id','=',2)
-	    					->orderBy('username')
-	              ->pluck('username','d_id')->toArray()
+	      		$u
 	      );
 
 				//Cache::forever('drivers',$drivers);
