@@ -733,6 +733,7 @@ class HomeController extends Controller
 	*/
 	private function fetchBinAnimalGroupFarrowing($unique_id,$bin_id)
 	{
+		Cache::forget('bin-'.$bin_id);
 		$bin = DB::table('feeds_movement_farrowing_bins')
 			->where('unique_id',$unique_id)
 			->where('bin_id',$bin_id)
@@ -1700,6 +1701,8 @@ class HomeController extends Controller
 		// $notification->autoUpdateMessaging($farmer_data,$history_id);
 		// unset($notification);
 
+		Cache::forget('bin-'.$_POST['bin']);
+
 		if($daysto > 3) {
 			$color = "success";
 		} elseif($daysto < 3) {
@@ -2462,7 +2465,6 @@ class HomeController extends Controller
 					$last_update_user = json_decode(json_encode($this->lastUpdateUser($bins[$i]['bin_id'])), true);
 					$up_hist[$i] = json_decode(json_encode($this->lastUpdate_numpigs($bins[$i]['bin_id'])), true);
 					$numofpigs_ = $this->displayDefaultNumberOfPigs($bins[$i]['num_of_pigs'], $up_hist[$i][0]['num_of_pigs']);
-					//$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroup($bins[$i]['bin_id'],$bins[$i]['farm_id']);
 	        $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
 					$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i][0]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i][0]['budgeted_amount']);
 					$delivery = $this->nextDel_($farm_id,$bins[$i]['bin_id']);
@@ -2496,7 +2498,6 @@ class HomeController extends Controller
 						'last_update'							=>	$last_update_user[0]['update_date'],
 						'next_deliverydd'					=>  $last_delivery,
 						'delivery_amount'					=>  $delivery['amount'],
-						//'default_val'							=>  $this->animalGroup($bins[$i]['bin_id'],$bins[$i]['farm_id']),
             'default_val'							=>  $this->animalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']),
 						'graph_data'							=>	NULL,//$this->graphData($bins[$i]['bin_id'],$total_number_of_pigs),
 						'num_of_update'						=>  NULL,//$this->getNumberOfUpdates($bins[$i]['bin_id']),
