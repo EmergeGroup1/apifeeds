@@ -2530,9 +2530,9 @@ class HomeController extends Controller
 			}
 
 
-		// } else {
-		// 	$binsDataFinal = $binsDataFinal ;
-		// }
+		} else {
+			$binsDataFinal = $binsDataFinal ;
+		}
 
 		Storage::put('bins_data'.$farm_id.'.txt',json_encode($binsDataFinal));
 		$binsDataFinal = Storage::get('bins_data'.$farm_id.'.txt');
