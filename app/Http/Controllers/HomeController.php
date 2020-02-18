@@ -4084,7 +4084,7 @@ class HomeController extends Controller
 	          [''=>'-'],
 	          User::where('type_id','=',2)
 	    					->orderBy('username')
-	              ->select('id','username')->get()->toArray()
+	              ->pluck('username')->toArray()
 	      );
 
 				Cache::forever('drivers',$drivers);
