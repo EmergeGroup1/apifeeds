@@ -99,6 +99,8 @@ class APIController extends Controller
 
         $farm = Farms::where('id', $farm_id)->first();
 
+        return $farm;
+
         if ($farm == NULL) {
           return array(
             "err" =>  1,
@@ -109,7 +111,6 @@ class APIController extends Controller
         $forecasting = json_decode(Storage::get('forecasting_data_low_bins.txt'));
         $home_controller = new HomeController;
         $bins = $home_controller->binsData($farm_id);
-        return $bins;
         unset($home_controller);
         $bins = json_decode($bins);
 
