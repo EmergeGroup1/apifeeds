@@ -815,14 +815,14 @@ class HomeController extends Controller
 
 		BinsHistory::insert($data);
 
-		$notification = new CloudMessaging;
-		$farmer_data = array(
-			'farm_id'		=> 	$bininfo[0]->farm_id,
-			'bin_id'		=> 	$bin_id,
-			'num_of_pigs'	=> 	$number_of_pigs
-			);
-		$notification->updatePigsMessaging($farmer_data);
-		unset($notification);
+		// $notification = new CloudMessaging;
+		// $farmer_data = array(
+		// 	'farm_id'		=> 	$bininfo[0]->farm_id,
+		// 	'bin_id'		=> 	$bin_id,
+		// 	'num_of_pigs'	=> 	$number_of_pigs
+		// 	);
+		// $notification->updatePigsMessaging($farmer_data);
+		// unset($notification);
 
 		$numofpigs_ = $this->displayDefaultNumberOfPigs($bininfo[0]->num_of_pigs, $number_of_pigs);
 		$budgeted_ = $budgeted_amount;//$this->getmyBudgetedAmount($lastupdate[0]->budgeted_amount, $bininfo[0]->feed_type);
@@ -895,14 +895,14 @@ class HomeController extends Controller
 
 		BinsHistory::insert($data);
 
-		$notification = new CloudMessaging;
-		$farmer_data = array(
-			'farm_id'		=> 	$bininfo[0]->farm_id,
-			'bin_id'		=> 	$bin_id,
-			'num_of_pigs'	=> 	$number_of_pigs
-			);
-		$notification->updatePigsMessaging($farmer_data);
-		unset($notification);
+		// $notification = new CloudMessaging;
+		// $farmer_data = array(
+		// 	'farm_id'		=> 	$bininfo[0]->farm_id,
+		// 	'bin_id'		=> 	$bin_id,
+		// 	'num_of_pigs'	=> 	$number_of_pigs
+		// 	);
+		// $notification->updatePigsMessaging($farmer_data);
+		// unset($notification);
 
 		$numofpigs_ = $this->displayDefaultNumberOfPigs($bininfo[0]->num_of_pigs, $number_of_pigs);
 		$budgeted_ = $budgeted_amount;//$this->getmyBudgetedAmount($lastupdate[0]->budgeted_amount, $bininfo[0]->feed_type);
@@ -1216,54 +1216,54 @@ class HomeController extends Controller
 		}
 
 		// send mobile notification
-		$mobile_data = array(
-			'bin_id'			=>	!empty($bins[0]['bin_number']) ? $bins[0]['bin_number'] : 0,  //bin number
-			'farm_id'			=>	$bin_history_data['farm_id'],
-			'user_id'			=>	0,
-			'current_amount'	=>	$bin_history_data['amount'],
-			'created_at'		=>	date('Y-m-d H:i:s'),
-			'budgeted_amount'	=>	$budgeted_amount,//$bin_history_data['budgeted_amount'],
-			'actual_amount'		=>	$bin_history_data['amount'],
-			'bin_size'			=>	$bin_size[0]['ring'],
-			'variance'			=>	$variance,
-			'consumption'		=>	$actual_consumption_per_pig,
-			'feed_type'			=>	$bin_history_data['feed_type'],
-			'medication'		=>	!empty($medication[0]['med_id']) ? $medication[0]['med_id'] : 0,
-			'med_name'			=>	!empty($medication[0]['med_name']) ? $medication[0]['med_name'] : 'No Medicaiton',
-			'feed_name'			=>	!empty($feeds[0]['name']) ? $feeds[0]['name'] : '-',
-			'user_created_at'	=>	date('Y-m-d H:i:s'),
-			'num_of_pigs'		=>	$bin_history_data['num_of_pigs'],
-			'bin_no_id'			=>	$bin_history_data['bin_id'], // bin id
-			'status'			=>	2,
-			'unique_id'			=>	!empty($bin_history_data['unique_id']) ? $bin_history_data['unique_id'] : "none"
-		);
+		// $mobile_data = array(
+		// 	'bin_id'			=>	!empty($bins[0]['bin_number']) ? $bins[0]['bin_number'] : 0,  //bin number
+		// 	'farm_id'			=>	$bin_history_data['farm_id'],
+		// 	'user_id'			=>	0,
+		// 	'current_amount'	=>	$bin_history_data['amount'],
+		// 	'created_at'		=>	date('Y-m-d H:i:s'),
+		// 	'budgeted_amount'	=>	$budgeted_amount,//$bin_history_data['budgeted_amount'],
+		// 	'actual_amount'		=>	$bin_history_data['amount'],
+		// 	'bin_size'			=>	$bin_size[0]['ring'],
+		// 	'variance'			=>	$variance,
+		// 	'consumption'		=>	$actual_consumption_per_pig,
+		// 	'feed_type'			=>	$bin_history_data['feed_type'],
+		// 	'medication'		=>	!empty($medication[0]['med_id']) ? $medication[0]['med_id'] : 0,
+		// 	'med_name'			=>	!empty($medication[0]['med_name']) ? $medication[0]['med_name'] : 'No Medicaiton',
+		// 	'feed_name'			=>	!empty($feeds[0]['name']) ? $feeds[0]['name'] : '-',
+		// 	'user_created_at'	=>	date('Y-m-d H:i:s'),
+		// 	'num_of_pigs'		=>	$bin_history_data['num_of_pigs'],
+		// 	'bin_no_id'			=>	$bin_history_data['bin_id'], // bin id
+		// 	'status'			=>	2,
+		// 	'unique_id'			=>	!empty($bin_history_data['unique_id']) ? $bin_history_data['unique_id'] : "none"
+		// );
 
 
 		$history_id = !empty($lastupdate[0]['history_id']) ? $lastupdate[0]['history_id'] : NULL;
-		$this->mobileSaveAccepted($mobile_data);
-
-		$notification = new CloudMessaging;
-		$farmer_data = array(
-			'update_date'		=>	date('Y-m-d H:i:s'),
-			'bin_id'			=>	$mobile_data['bin_id'],
-			'farm_id'			=>	$mobile_data['farm_id'],
-			'num_of_pigs'		=>	$mobile_data['num_of_pigs'],
-			'user_id'			=>	$mobile_data['user_id'],
-			'amount'			=>	$mobile_data['current_amount'],
-			'update_type'		=>	"Manual Update Bin Forecasting Admin",
-			'created_at'		=>	$mobile_data['created_at'],
-			'updated_at'		=>	date('Y-m-d H:i:s'),
-			'budgeted_amount'	=>	$budgeted_amount,//$mobile_data['budgeted_amount'],
-			'remaining_amount'	=>	$lastupdate[0]['remaining_amount'],
-			'sub_amount'		=>	$lastupdate[0]['sub_amount'],
-			'variance'			=>	round($mobile_data['variance'],2),
-			'consumption'		=>	round($mobile_data['consumption'],2),
-			'admin'				=>	2,
-			'medication'		=>	$mobile_data['medication'],
-			'feed_type'			=>	$mobile_data['feed_type']
-			);
-		$notification->autoUpdateMessaging($farmer_data,$history_id);
-		unset($notification);
+		// $this->mobileSaveAccepted($mobile_data);
+		//
+		// $notification = new CloudMessaging;
+		// $farmer_data = array(
+		// 	'update_date'		=>	date('Y-m-d H:i:s'),
+		// 	'bin_id'			=>	$mobile_data['bin_id'],
+		// 	'farm_id'			=>	$mobile_data['farm_id'],
+		// 	'num_of_pigs'		=>	$mobile_data['num_of_pigs'],
+		// 	'user_id'			=>	$mobile_data['user_id'],
+		// 	'amount'			=>	$mobile_data['current_amount'],
+		// 	'update_type'		=>	"Manual Update Bin Forecasting Admin",
+		// 	'created_at'		=>	$mobile_data['created_at'],
+		// 	'updated_at'		=>	date('Y-m-d H:i:s'),
+		// 	'budgeted_amount'	=>	$budgeted_amount,//$mobile_data['budgeted_amount'],
+		// 	'remaining_amount'	=>	$lastupdate[0]['remaining_amount'],
+		// 	'sub_amount'		=>	$lastupdate[0]['sub_amount'],
+		// 	'variance'			=>	round($mobile_data['variance'],2),
+		// 	'consumption'		=>	round($mobile_data['consumption'],2),
+		// 	'admin'				=>	2,
+		// 	'medication'		=>	$mobile_data['medication'],
+		// 	'feed_type'			=>	$mobile_data['feed_type']
+		// 	);
+		// $notification->autoUpdateMessaging($farmer_data,$history_id);
+		// unset($notification);
 
 		if($daysto > 3) {
 
@@ -1429,54 +1429,54 @@ class HomeController extends Controller
 		}
 
 		// send mobile notification
-		$mobile_data = array(
-			'bin_id'			=>	!empty($bins[0]['bin_number']) ? $bins[0]['bin_number'] : 0,  //bin number
-			'farm_id'			=>	$bin_history_data['farm_id'],
-			'user_id'			=>	0,
-			'current_amount'	=>	$bin_history_data['amount'],
-			'created_at'		=>	date('Y-m-d H:i:s'),
-			'budgeted_amount'	=>	$budgeted_amount,//$bin_history_data['budgeted_amount'],
-			'actual_amount'		=>	$bin_history_data['amount'],
-			'bin_size'			=>	$bin_size[0]['ring'],
-			'variance'			=>	$variance,
-			'consumption'		=>	$actual_consumption_per_pig,
-			'feed_type'			=>	$bin_history_data['feed_type'],
-			'medication'		=>	!empty($medication[0]['med_id']) ? $medication[0]['med_id'] : 0,
-			'med_name'			=>	!empty($medication[0]['med_name']) ? $medication[0]['med_name'] : 'No Medicaiton',
-			'feed_name'			=>	!empty($feeds[0]['name']) ? $feeds[0]['name'] : '-',
-			'user_created_at'	=>	date('Y-m-d H:i:s'),
-			'num_of_pigs'		=>	$bin_history_data['num_of_pigs'],
-			'bin_no_id'			=>	$bin_history_data['bin_id'], // bin id
-			'status'			=>	2,
-			'unique_id'			=>	!empty($bin_history_data['unique_id']) ? $bin_history_data['unique_id'] : "none"
-		);
+		// $mobile_data = array(
+		// 	'bin_id'			=>	!empty($bins[0]['bin_number']) ? $bins[0]['bin_number'] : 0,  //bin number
+		// 	'farm_id'			=>	$bin_history_data['farm_id'],
+		// 	'user_id'			=>	0,
+		// 	'current_amount'	=>	$bin_history_data['amount'],
+		// 	'created_at'		=>	date('Y-m-d H:i:s'),
+		// 	'budgeted_amount'	=>	$budgeted_amount,//$bin_history_data['budgeted_amount'],
+		// 	'actual_amount'		=>	$bin_history_data['amount'],
+		// 	'bin_size'			=>	$bin_size[0]['ring'],
+		// 	'variance'			=>	$variance,
+		// 	'consumption'		=>	$actual_consumption_per_pig,
+		// 	'feed_type'			=>	$bin_history_data['feed_type'],
+		// 	'medication'		=>	!empty($medication[0]['med_id']) ? $medication[0]['med_id'] : 0,
+		// 	'med_name'			=>	!empty($medication[0]['med_name']) ? $medication[0]['med_name'] : 'No Medicaiton',
+		// 	'feed_name'			=>	!empty($feeds[0]['name']) ? $feeds[0]['name'] : '-',
+		// 	'user_created_at'	=>	date('Y-m-d H:i:s'),
+		// 	'num_of_pigs'		=>	$bin_history_data['num_of_pigs'],
+		// 	'bin_no_id'			=>	$bin_history_data['bin_id'], // bin id
+		// 	'status'			=>	2,
+		// 	'unique_id'			=>	!empty($bin_history_data['unique_id']) ? $bin_history_data['unique_id'] : "none"
+		// );
 
 
 		$history_id = !empty($lastupdate[0]['history_id']) ? $lastupdate[0]['history_id'] : NULL;
-		$this->mobileSaveAccepted($mobile_data);
+		// $this->mobileSaveAccepted($mobile_data);
 
-		$notification = new CloudMessaging;
-		$farmer_data = array(
-			'update_date'		=>	date('Y-m-d H:i:s'),
-			'bin_id'			=>	$mobile_data['bin_id'],
-			'farm_id'			=>	$mobile_data['farm_id'],
-			'num_of_pigs'		=>	$mobile_data['num_of_pigs'],
-			'user_id'			=>	$mobile_data['user_id'],
-			'amount'			=>	$mobile_data['current_amount'],
-			'update_type'		=>	"Manual Update Bin Forecasting Admin",
-			'created_at'		=>	$mobile_data['created_at'],
-			'updated_at'		=>	date('Y-m-d H:i:s'),
-			'budgeted_amount'	=>	$budgeted_amount,//$mobile_data['budgeted_amount'],
-			'remaining_amount'	=>	$lastupdate[0]['remaining_amount'],
-			'sub_amount'		=>	$lastupdate[0]['sub_amount'],
-			'variance'			=>	round($mobile_data['variance'],2),
-			'consumption'		=>	round($mobile_data['consumption'],2),
-			'admin'				=>	2,
-			'medication'		=>	$mobile_data['medication'],
-			'feed_type'			=>	$mobile_data['feed_type']
-			);
-		$notification->autoUpdateMessaging($farmer_data,$history_id);
-		unset($notification);
+		// $notification = new CloudMessaging;
+		// $farmer_data = array(
+		// 	'update_date'		=>	date('Y-m-d H:i:s'),
+		// 	'bin_id'			=>	$mobile_data['bin_id'],
+		// 	'farm_id'			=>	$mobile_data['farm_id'],
+		// 	'num_of_pigs'		=>	$mobile_data['num_of_pigs'],
+		// 	'user_id'			=>	$mobile_data['user_id'],
+		// 	'amount'			=>	$mobile_data['current_amount'],
+		// 	'update_type'		=>	"Manual Update Bin Forecasting Admin",
+		// 	'created_at'		=>	$mobile_data['created_at'],
+		// 	'updated_at'		=>	date('Y-m-d H:i:s'),
+		// 	'budgeted_amount'	=>	$budgeted_amount,//$mobile_data['budgeted_amount'],
+		// 	'remaining_amount'	=>	$lastupdate[0]['remaining_amount'],
+		// 	'sub_amount'		=>	$lastupdate[0]['sub_amount'],
+		// 	'variance'			=>	round($mobile_data['variance'],2),
+		// 	'consumption'		=>	round($mobile_data['consumption'],2),
+		// 	'admin'				=>	2,
+		// 	'medication'		=>	$mobile_data['medication'],
+		// 	'feed_type'			=>	$mobile_data['feed_type']
+		// 	);
+		// $notification->autoUpdateMessaging($farmer_data,$history_id);
+		// unset($notification);
 
 		if($daysto > 3) {
 
@@ -1651,54 +1651,54 @@ class HomeController extends Controller
 		}
 
 		// send mobile notification
-		$mobile_data = array(
-			'bin_id'					=>	!empty($bins[0]['bin_number']) ? $bins[0]['bin_number'] : 0,  //bin number
-			'farm_id'					=>	$bin_history_data['farm_id'],
-			'user_id'					=>	$_POST['user'],
-			'current_amount'	=>	$bin_history_data['amount'],
-			'created_at'			=>	date('Y-m-d H:i:s'),
-			'budgeted_amount'	=>	$budgeted_amount,//$bin_history_data['budgeted_amount'],
-			'actual_amount'		=>	$bin_history_data['amount'],
-			'bin_size'				=>	$bin_size[0]['ring'],
-			'variance'				=>	$variance,
-			'consumption'			=>	$actual_consumption_per_pig,
-			'feed_type'				=>	$bin_history_data['feed_type'],
-			'medication'			=>	!empty($medication[0]['med_id']) ? $medication[0]['med_id'] : 0,
-			'med_name'				=>	!empty($medication[0]['med_name']) ? $medication[0]['med_name'] : 'No Medicaiton',
-			'feed_name'				=>	!empty($feeds[0]['name']) ? $feeds[0]['name'] : '-',
-			'user_created_at'	=>	date('Y-m-d H:i:s'),
-			'num_of_pigs'			=>	$bin_history_data['num_of_pigs'],
-			'bin_no_id'				=>	$bin_history_data['bin_id'], // bin id
-			'status'					=>	2,
-			'unique_id'				=>	!empty($bin_history_data['unique_id']) ? $bin_history_data['unique_id'] : "none"
-		);
+		// $mobile_data = array(
+		// 	'bin_id'					=>	!empty($bins[0]['bin_number']) ? $bins[0]['bin_number'] : 0,  //bin number
+		// 	'farm_id'					=>	$bin_history_data['farm_id'],
+		// 	'user_id'					=>	$_POST['user'],
+		// 	'current_amount'	=>	$bin_history_data['amount'],
+		// 	'created_at'			=>	date('Y-m-d H:i:s'),
+		// 	'budgeted_amount'	=>	$budgeted_amount,//$bin_history_data['budgeted_amount'],
+		// 	'actual_amount'		=>	$bin_history_data['amount'],
+		// 	'bin_size'				=>	$bin_size[0]['ring'],
+		// 	'variance'				=>	$variance,
+		// 	'consumption'			=>	$actual_consumption_per_pig,
+		// 	'feed_type'				=>	$bin_history_data['feed_type'],
+		// 	'medication'			=>	!empty($medication[0]['med_id']) ? $medication[0]['med_id'] : 0,
+		// 	'med_name'				=>	!empty($medication[0]['med_name']) ? $medication[0]['med_name'] : 'No Medicaiton',
+		// 	'feed_name'				=>	!empty($feeds[0]['name']) ? $feeds[0]['name'] : '-',
+		// 	'user_created_at'	=>	date('Y-m-d H:i:s'),
+		// 	'num_of_pigs'			=>	$bin_history_data['num_of_pigs'],
+		// 	'bin_no_id'				=>	$bin_history_data['bin_id'], // bin id
+		// 	'status'					=>	2,
+		// 	'unique_id'				=>	!empty($bin_history_data['unique_id']) ? $bin_history_data['unique_id'] : "none"
+		// );
 
 
 		$history_id = !empty($lastupdate[0]['history_id']) ? $lastupdate[0]['history_id'] : NULL;
-		$this->mobileSaveAccepted($mobile_data);
+		// $this->mobileSaveAccepted($mobile_data);
 
-		$notification = new CloudMessaging;
-		$farmer_data = array(
-			'update_date'				=>	date('Y-m-d H:i:s'),
-			'bin_id'						=>	$mobile_data['bin_id'],
-			'farm_id'						=>	$mobile_data['farm_id'],
-			'num_of_pigs'				=>	$mobile_data['num_of_pigs'],
-			'user_id'						=>	$mobile_data['user_id'],
-			'amount'						=>	$mobile_data['current_amount'],
-			'update_type'				=>	"Manual Update Bin Forecasting Admin",
-			'created_at'				=>	$mobile_data['created_at'],
-			'updated_at'				=>	date('Y-m-d H:i:s'),
-			'budgeted_amount'		=>	$budgeted_amount,//$mobile_data['budgeted_amount'],
-			'remaining_amount'	=>	$lastupdate[0]['remaining_amount'],
-			'sub_amount'				=>	$lastupdate[0]['sub_amount'],
-			'variance'					=>	round($mobile_data['variance'],2),
-			'consumption'				=>	round($mobile_data['consumption'],2),
-			'admin'							=>	$_POST['user'],
-			'medication'				=>	$mobile_data['medication'],
-			'feed_type'					=>	$mobile_data['feed_type']
-			);
-		$notification->autoUpdateMessaging($farmer_data,$history_id);
-		unset($notification);
+		// $notification = new CloudMessaging;
+		// $farmer_data = array(
+		// 	'update_date'				=>	date('Y-m-d H:i:s'),
+		// 	'bin_id'						=>	$mobile_data['bin_id'],
+		// 	'farm_id'						=>	$mobile_data['farm_id'],
+		// 	'num_of_pigs'				=>	$mobile_data['num_of_pigs'],
+		// 	'user_id'						=>	$mobile_data['user_id'],
+		// 	'amount'						=>	$mobile_data['current_amount'],
+		// 	'update_type'				=>	"Manual Update Bin Forecasting Admin",
+		// 	'created_at'				=>	$mobile_data['created_at'],
+		// 	'updated_at'				=>	date('Y-m-d H:i:s'),
+		// 	'budgeted_amount'		=>	$budgeted_amount,//$mobile_data['budgeted_amount'],
+		// 	'remaining_amount'	=>	$lastupdate[0]['remaining_amount'],
+		// 	'sub_amount'				=>	$lastupdate[0]['sub_amount'],
+		// 	'variance'					=>	round($mobile_data['variance'],2),
+		// 	'consumption'				=>	round($mobile_data['consumption'],2),
+		// 	'admin'							=>	$_POST['user'],
+		// 	'medication'				=>	$mobile_data['medication'],
+		// 	'feed_type'					=>	$mobile_data['feed_type']
+		// 	);
+		// $notification->autoUpdateMessaging($farmer_data,$history_id);
+		// unset($notification);
 
 		if($daysto > 3) {
 			$color = "success";
@@ -5665,34 +5665,34 @@ class HomeController extends Controller
 		$created_at = date('Y-m-d H:i:s', strtotime($date.$time));
 		$user_created_at = date('Y-m-d H:i:s', strtotime($created_at)+60*60);*/
 
-		$mobile_data = array(
-			'bin_id'			=>	!empty($bin_size->bin_number) ? $bin_size->bin_number : 0,
-			'farm_id'			=>	$data[0]['farm_id'],
-			'user_id'			=>	1,//$data[0]['user_id'],
-			'current_amount'	=>	$amount,
-			'created_at'		=>	date('Y-m-d H:i:s'),
-			'budgeted_amount'	=>	$budgeted_amount,//$feeds[0]['budgeted_amount'],
-			'actual_amount'		=>	$amount,
-			'bin_size'			=>	!empty($bin_size->size_id) ? $bin_size->size_id : 0,
-			'variance'			=>	0,
-			'consumption'		=>	$consumption,
-			'feed_type'			=>	$data[0]['feed_type'],
-			'medication'		=>	!empty($data[0]['medication']) ? $data[0]['medication'] : 8,
-			'med_name'			=>	!empty($med_name->med_name) ? $med_name->med_name : 0,
-			'feed_name'			=>	!empty($feed_name->name) ? $feed_name->name : '-',
-			'user_created_at'	=>	date('Y-m-d H:i:s'),
-			'num_of_pigs'		=>	$data[0]['num_of_pigs'],
-			'bin_no_id'			=>	$data[0]['bin_id'],
-			'status'			=>	2,
-			'unique_id'			=>	!empty($data[0]['unique_id']) ? $data[0]['unique_id'] : "none"
-		);
-
-		$this->mobileSaveAccepted($mobile_data);
-		$notification = new CloudMessaging;
-
-		$notification->autoUpdateMessaging($update_data,$data[0]['history_id']);
-
-		unset($notification);
+		// $mobile_data = array(
+		// 	'bin_id'			=>	!empty($bin_size->bin_number) ? $bin_size->bin_number : 0,
+		// 	'farm_id'			=>	$data[0]['farm_id'],
+		// 	'user_id'			=>	1,//$data[0]['user_id'],
+		// 	'current_amount'	=>	$amount,
+		// 	'created_at'		=>	date('Y-m-d H:i:s'),
+		// 	'budgeted_amount'	=>	$budgeted_amount,//$feeds[0]['budgeted_amount'],
+		// 	'actual_amount'		=>	$amount,
+		// 	'bin_size'			=>	!empty($bin_size->size_id) ? $bin_size->size_id : 0,
+		// 	'variance'			=>	0,
+		// 	'consumption'		=>	$consumption,
+		// 	'feed_type'			=>	$data[0]['feed_type'],
+		// 	'medication'		=>	!empty($data[0]['medication']) ? $data[0]['medication'] : 8,
+		// 	'med_name'			=>	!empty($med_name->med_name) ? $med_name->med_name : 0,
+		// 	'feed_name'			=>	!empty($feed_name->name) ? $feed_name->name : '-',
+		// 	'user_created_at'	=>	date('Y-m-d H:i:s'),
+		// 	'num_of_pigs'		=>	$data[0]['num_of_pigs'],
+		// 	'bin_no_id'			=>	$data[0]['bin_id'],
+		// 	'status'			=>	2,
+		// 	'unique_id'			=>	!empty($data[0]['unique_id']) ? $data[0]['unique_id'] : "none"
+		// );
+		//
+		// $this->mobileSaveAccepted($mobile_data);
+		// $notification = new CloudMessaging;
+		//
+		// $notification->autoUpdateMessaging($update_data,$data[0]['history_id']);
+		//
+		// unset($notification);
 
 		echo "0 Consumption update<br/>";
 	}
@@ -5727,11 +5727,11 @@ class HomeController extends Controller
 	private function testUpdateSave($data,$history_id){
 
 		if(BinsHistory::insert($data)){
-			$notification = new CloudMessaging;
-
-			$notification->autoUpdateMessaging($data,$history_id);
-
-			unset($notification);
+			// $notification = new CloudMessaging;
+			//
+			// $notification->autoUpdateMessaging($data,$history_id);
+			//
+			// unset($notification);
 
 			echo "Updated Successfully<br/>";
 		} else {
@@ -6391,14 +6391,14 @@ class HomeController extends Controller
 		// delete driver stats
 		$this->deleteDriverStats($unique_id);
 
-		$notification = new CloudMessaging;
-
-			$notification_data_driver = array(
-				'unique_id'		=> 	$deliveries[0]['unique_id'],
-				'driver_id'		=> 	$deliveries[0]['driver_id']
-				);
-
-			$notification->deleteDeliveryNotifier($notification_data_driver);
+		// $notification = new CloudMessaging;
+		//
+		// 	$notification_data_driver = array(
+		// 		'unique_id'		=> 	$deliveries[0]['unique_id'],
+		// 		'driver_id'		=> 	$deliveries[0]['driver_id']
+		// 		);
+		//
+		// 	$notification->deleteDeliveryNotifier($notification_data_driver);
 
 			foreach($deliveries as $k => $v){
 
@@ -6406,16 +6406,16 @@ class HomeController extends Controller
 				Cache::forget('farm_holder_bins_data-'.$v['bin_id']);
 				Cache::forget('farm_holder-'.$v['farm_id']);
 
-				$notification_data_farmer = array(
-					'farm_id'		=> 	$v['farm_id'],
-					'unique_id'		=> 	$v['unique_id']
-					);
-
-				$notification->deleteDeliveryNotifier($notification_data_farmer);
+				// $notification_data_farmer = array(
+				// 	'farm_id'		=> 	$v['farm_id'],
+				// 	'unique_id'		=> 	$v['unique_id']
+				// 	);
+				//
+				// $notification->deleteDeliveryNotifier($notification_data_farmer);
 
 			}
 
-		unset($notification);
+		// unset($notification);
 		SchedTool::where('delivery_unique_id',$unique_id)->delete();
 		FarmSchedule::where('delivery_unique_id',$unique_id)->delete();
 		if(Deliveries::where('unique_id',$unique_id)->update(['delivery_label'=>'deleted'])){
@@ -6436,16 +6436,16 @@ class HomeController extends Controller
 		$deliveries = Deliveries::where('unique_id',$unique_id)->get()->toArray();
 
 		// delete driver stats
-		$this->deleteDriverStats($unique_id);
-
-		$notification = new CloudMessaging;
-
-			$notification_data_driver = array(
-				'unique_id'		=> 	$deliveries[0]['unique_id'],
-				'driver_id'		=> 	$deliveries[0]['driver_id']
-				);
-
-			$notification->deleteDeliveryNotifier($notification_data_driver);
+		// $this->deleteDriverStats($unique_id);
+		//
+		// $notification = new CloudMessaging;
+		//
+		// 	$notification_data_driver = array(
+		// 		'unique_id'		=> 	$deliveries[0]['unique_id'],
+		// 		'driver_id'		=> 	$deliveries[0]['driver_id']
+		// 		);
+		//
+		// 	$notification->deleteDeliveryNotifier($notification_data_driver);
 
 			foreach($deliveries as $k => $v){
 
@@ -6453,16 +6453,16 @@ class HomeController extends Controller
 				Cache::forget('farm_holder_bins_data-'.$v['bin_id']);
 				Cache::forget('farm_holder-'.$v['farm_id']);
 
-				$notification_data_farmer = array(
-					'farm_id'		=> 	$v['farm_id'],
-					'unique_id'		=> 	$v['unique_id']
-					);
-
-				$notification->deleteDeliveryNotifier($notification_data_farmer);
+				// $notification_data_farmer = array(
+				// 	'farm_id'		=> 	$v['farm_id'],
+				// 	'unique_id'		=> 	$v['unique_id']
+				// 	);
+				//
+				// $notification->deleteDeliveryNotifier($notification_data_farmer);
 
 			}
 
-		unset($notification);
+		// unset($notification);
 		SchedTool::where('delivery_unique_id',$unique_id)->delete();
 		FarmSchedule::where('delivery_unique_id',$unique_id)->delete();
 		if(Deliveries::where('unique_id',$unique_id)->update(['delivery_label'=>'deleted'])){
