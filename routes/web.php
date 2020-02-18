@@ -19,3 +19,4 @@ Route::match(array('POST','GET'),'/', 'APIController@index');
 Route::match(array('POST','GET'),'api', 'APIController@index');
 Route::get('conautoupdate','HomeController@conAutoUpdate');
 Route::get('schedulingcache','ScheduleController@scheduleCache');
+Route::get('forecastingdata','HomeController@forecastingDataOutput');
