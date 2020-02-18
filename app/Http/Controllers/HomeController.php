@@ -3635,9 +3635,7 @@ class HomeController extends Controller
 				$r[$meds[$i]->med_id] = $meds[$i]->med_name;
 			}
 
-      $medication = array_merge(
-          [''=>'Please Select'],$r
-      );
+      $medication = [''=>'Please Select']+$r;
 
       Cache::forever('medications',$medication);
       $medication_cache = Cache::store('file')->get('medications');
