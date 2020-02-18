@@ -111,7 +111,7 @@ class APIController extends Controller
         $home_controller = new HomeController;
         $farmsCount = count($forecasting) - 1;
   			for($i=0; $i<=$farmsCount; $i++){
-          $bins = $home_controller->binsData($forecasting[$i]['farm_id']);
+          $bins = $home_controller->binsData($forecasting[$i]->farm_id);
         }
         // $bins = $home_controller->binsData($farm_id);
         unset($home_controller);
