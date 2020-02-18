@@ -4089,9 +4089,9 @@ class HomeController extends Controller
 	              ->pluck('username','d_id')->toArray()
 	      );
 
-				Cache::forever('drivers',$drivers);
+				//Cache::forever('drivers',$drivers);
 
-				$drivers_cache = Cache::store('file')->get('drivers');
+				$drivers_cache = $drivers; //Cache::store('file')->get('drivers');
 			}
 
 			return $drivers_cache;
