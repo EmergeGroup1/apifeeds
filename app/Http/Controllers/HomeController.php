@@ -2425,7 +2425,7 @@ class HomeController extends Controller
 	public function binsData($farm_id) {
 
 		// get thecache value
-		$binsDataFinal = NULL; //Cache::store('file')->get('bins-'.$farm_id);
+		$binsDataFinal = Cache::store('file')->get('bins-'.$farm_id);
 
 		if($binsDataFinal == NULL){
 
@@ -2465,7 +2465,7 @@ class HomeController extends Controller
 				$delivery = $this->nextDel_($farm_id,$bins[$i]['bin_id']);
 				$last_delivery = $this->lastDelivery($farm_id,$bins[$i]['bin_id'],$last_update);
 
-				$bins_items = NULL; //Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
+				$bins_items = Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
 				if($bins_items == NULL){
 					// rebuild cache data
 					$bins_items = array(
@@ -6503,29 +6503,29 @@ class HomeController extends Controller
 		$feed_name = FeedTypes::where('type_id',$data['feed_type'])->first()->toArray();
 
 		// send mobile notification
-		$mobile_data = array(
-			'bin_id'					=>	$bin_number['bin_number'],  //bin number
-			'farm_id'					=>	$data['farm_id'],
-			'user_id'					=>	1,
-			'current_amount'	=>	$data['amount'],
-			'created_at'			=>	date('Y-m-d H:i:s'),
-			'budgeted_amount'	=>	$data['budgeted_amount'],
-			'actual_amount'		=>	$data['amount'],
-			'bin_size'				=>	$bin_size['ring'], // ring
-			'variance'				=>	$data['variance'],
-			'consumption'			=>	$data['consumption'],
-			'feed_type'				=>	$data['feed_type'],
-			'medication'			=>	$data['medication'],
-			'med_name'				=>	!empty($med_name['med_name']) ? $med_name['med_name'] : 0,
-			'feed_name'				=>	$feed_name['name'],
-			'user_created_at'	=>	date('Y-m-d H:i:s'),
-			'num_of_pigs'			=>	$data['num_of_pigs'],
-			'bin_no_id'				=>	$data['bin_id'], // bin id
-			'status'					=>	2,
-			'unique_id'				=>	$data['unique_id']
-		);
-
-		$this->mobileSaveAccepted($mobile_data);
+		// $mobile_data = array(
+		// 	'bin_id'					=>	$bin_number['bin_number'],  //bin number
+		// 	'farm_id'					=>	$data['farm_id'],
+		// 	'user_id'					=>	1,
+		// 	'current_amount'	=>	$data['amount'],
+		// 	'created_at'			=>	date('Y-m-d H:i:s'),
+		// 	'budgeted_amount'	=>	$data['budgeted_amount'],
+		// 	'actual_amount'		=>	$data['amount'],
+		// 	'bin_size'				=>	$bin_size['ring'], // ring
+		// 	'variance'				=>	$data['variance'],
+		// 	'consumption'			=>	$data['consumption'],
+		// 	'feed_type'				=>	$data['feed_type'],
+		// 	'medication'			=>	$data['medication'],
+		// 	'med_name'				=>	!empty($med_name['med_name']) ? $med_name['med_name'] : 0,
+		// 	'feed_name'				=>	$feed_name['name'],
+		// 	'user_created_at'	=>	date('Y-m-d H:i:s'),
+		// 	'num_of_pigs'			=>	$data['num_of_pigs'],
+		// 	'bin_no_id'				=>	$data['bin_id'], // bin id
+		// 	'status'					=>	2,
+		// 	'unique_id'				=>	$data['unique_id']
+		// );
+		//
+		// $this->mobileSaveAccepted($mobile_data);
 
 	}
 
