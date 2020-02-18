@@ -4084,12 +4084,12 @@ class HomeController extends Controller
 						->select('id','username')
 						->where('type_id','=',2)
 						->orderBy('username')
-						->get()->toArray();
+						->get();
 
 				$u = array();
 				$counter = count($users);
 				for($i=0; $i<$counter; $i++){
-					$u[] = array($users[$i]['id'] => $users[$i]['username']);
+					$u[] = array($users[$i]->id => $users[$i]->username);
 				}
 
 
