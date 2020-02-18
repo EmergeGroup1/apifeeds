@@ -4082,9 +4082,9 @@ class HomeController extends Controller
 
 	      $drivers = array_merge(
 	          [''=>'-'],
-	          User::where('type_id','=',2)
+	          DB::table('feeds_user_accounts')->where('type_id','=',2)
 	    					->orderBy('username')
-	              ->pluck('username')->toArray()
+	              ->pluck('id','username')->toArray()
 	      );
 
 				Cache::forever('drivers',$drivers);
