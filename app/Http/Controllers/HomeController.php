@@ -3628,7 +3628,7 @@ class HomeController extends Controller
 			$meds = DB::table('feeds_medication')
 					->where('med_name','!=','No Medication')
 					->orderBy('med_name')
-					->pluck('med_name','med_id')->toArray()
+					->pluck('med_name','med_id')->toArray();
 
 			$r = array();
 			for(i=0; $i<count($meds); $i++){
