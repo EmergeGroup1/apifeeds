@@ -19,6 +19,7 @@ use App\FeedTypes;
 use App\Deliveries;
 use App\MobileBinsAcceptedLoad;
 use App\SchedTool;
+use App\BinSize;
 
 class HomeController extends Controller
 {
