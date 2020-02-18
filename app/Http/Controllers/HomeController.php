@@ -3622,16 +3622,21 @@ class HomeController extends Controller
 	*	Medication
 	*/
 	public function medication(){
-    $medication_cache = Cache::store('file')->get('medications');
+    $medication_cache = NULL; // Cache::store('file')->get('medications');
 
     if($medication_cache == NULL){
+			$meds = DB::table('feeds_medication')
+					->where('med_name','!=','No Medication')
+					->orderBy('med_name')
+					->pluck('med_name','med_id')->toArray()
+
+			$r = array();
+			for(i=0; $i<count($meds); $i++){
+				$r[$meds[0]['med_id']] = $meds[0]['med_name'];
+			}
 
       $medication = array_merge(
-          [''=>'Please Select'],
-          DB::table('feeds_medication')
-              ->where('med_name','!=','No Medication')
-              ->orderBy('med_name')
-              ->pluck('med_name','med_id')->toArray()
+          [''=>'Please Select'],$r
       );
 
       Cache::forever('medications',$medication);
@@ -4077,7 +4082,7 @@ class HomeController extends Controller
 	public function driver()
 	{
 			$drivers_cache = Cache::store('file')->get('drivers');
-			$drivers_cache = NULL;
+
 			if($drivers_cache == NULL){
 
 				$users = DB::table('feeds_user_accounts')
@@ -4093,12 +4098,9 @@ class HomeController extends Controller
 				}
 
 
-
 	      $drivers = $u+array(''=>'-');
 
-				//Cache::forever('drivers',$drivers);
-
-				$drivers_cache = $drivers; //Cache::store('file')->get('drivers');
+				$drivers_cache = Cache::store('file')->get('drivers');
 			}
 
 			return $drivers_cache;
