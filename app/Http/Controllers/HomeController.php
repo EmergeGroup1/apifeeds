@@ -2425,7 +2425,7 @@ class HomeController extends Controller
 	public function binsData($farm_id) {
 
 		// get thecache value
-		$binsDataFinal = Cache::store('file')->get('bins-'.$farm_id);
+		$binsDataFinal = NULL; // Cache::store('file')->get('bins-'.$farm_id);
 
 		if($binsDataFinal == NULL){
 
@@ -2454,7 +2454,7 @@ class HomeController extends Controller
 			$binsCount = count($bins) - 1;
 			for($i=0; $i<=$binsCount; $i++){
 
-				$bins_items = Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
+				$bins_items = NULL;//Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
 				if($bins_items == NULL){
 
 					$current_bin_amount_lbs = $this->currentBinCapacity($bins[$i]['bin_id']);
