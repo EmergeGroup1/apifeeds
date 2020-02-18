@@ -4094,10 +4094,7 @@ class HomeController extends Controller
 
 
 
-	      $drivers = array_merge(
-	          [''=>'-'],
-	      		$u
-	      );
+	      $drivers = [''=>'-']+$u;
 
 				//Cache::forever('drivers',$drivers);
 
