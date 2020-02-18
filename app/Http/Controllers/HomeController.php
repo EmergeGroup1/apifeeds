@@ -5490,7 +5490,7 @@ class HomeController extends Controller
 		}
 
 		// update the cache for forecasting
-		$this->forecastingDataCacheBuilder();
+		//$this->forecastingDataCacheBuilder();
 
 		/*
 		$first = $forecastingData[0]['bins'][0]['bin_id'];
@@ -5777,7 +5777,6 @@ class HomeController extends Controller
 			if(!empty($history[0])){
 
 				if($history[0]['consumption'] == 0.0){
-					//$this->testUpdate($history);
 					$this->testUpdateNoConsumption($history,$date_today);
 				}
 			// update based on yesterday's update
@@ -5944,12 +5943,12 @@ class HomeController extends Controller
 				if($undone_deliveries[$i]['unload_by'] == "admin"){
 					$this->updateFeedsHistoryDataAPI($data_to_update);
 					$this->markAsdeliveredBinsAcceptedLoad($data_to_update);
-					$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$undone_deliveries[$i]['driver_id']);
+					//$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$undone_deliveries[$i]['driver_id']);
 				}
 
-				if($undone_deliveries[$i]['status'] == 2){
-					$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$undone_deliveries[$i]['driver_id']);
-				}
+				// if($undone_deliveries[$i]['status'] == 2){
+				// 	$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$undone_deliveries[$i]['driver_id']);
+				// }
 
 			// insert
 			} else {
@@ -5980,12 +5979,12 @@ class HomeController extends Controller
 				if($undone_deliveries[$i]['unload_by'] == "admin"){
 					$this->saveFeedsHistoryData($data_to_insert);
 					$this->markAsdeliveredBinsAcceptedLoad($data_to_insert);
-					$this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$undone_deliveries[$i]['driver_id']);
+					// $this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$undone_deliveries[$i]['driver_id']);
 				}
 
-				if($undone_deliveries[$i]['status'] == 2){
-					$this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$undone_deliveries[$i]['driver_id']);
-				}
+				// if($undone_deliveries[$i]['status'] == 2){
+				// 	$this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$undone_deliveries[$i]['driver_id']);
+				// }
 
 			}
 
@@ -6112,13 +6111,13 @@ class HomeController extends Controller
 				if($v['unload_by'] == "admin"){
 					$this->updateFeedsHistoryData($data_to_update);
 					$this->markAsdeliveredBinsAcceptedLoad($data_to_update);
-					$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$v['driver_id']);
+					// $this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$v['driver_id']);
 				}
 
-				if($v['status'] == 2){
-					//$this->markAsdeliveredBinsAcceptedLoad($data_to_update);
-					$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$v['driver_id']);
-				}
+				// if($v['status'] == 2){
+				// 	//$this->markAsdeliveredBinsAcceptedLoad($data_to_update);
+				// 	$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$v['driver_id']);
+				// }
 
 			// insert
 			} else {
@@ -6164,14 +6163,14 @@ class HomeController extends Controller
 
 				if($v['unload_by'] == "admin"){
 					$this->saveFeedsHistoryData($data_to_insert);
-					$this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$v['driver_id']);
+					//$this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$v['driver_id']);
 					$this->markAsdeliveredBinsAcceptedLoad($data_to_insert);
 				}
 
-				if($v['status'] == 2){
-					//$this->markAsdeliveredBinsAcceptedLoad($data_to_update);
-					$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$v['driver_id']);
-				}
+				// if($v['status'] == 2){
+				// 	//$this->markAsdeliveredBinsAcceptedLoad($data_to_update);
+				// 	$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$v['driver_id']);
+				// }
 
 			}
 
@@ -6534,67 +6533,67 @@ class HomeController extends Controller
 	*	Mobile notification for mark as delivered
 	*
 	*/
-	private function sendNotificationMarkAsDelivered($unique_id,$driver_id){
-
-		$mobile_data = Deliveries::select('unique_id','driver_id')
-														->where('driver_id',$driver_id)
-														->where('unique_id',$unique_id)
-														->first();
-		$mobile_data = array(
-			'unique_id'	=>	$mobile_data->unique_id,
-			'driver_id'	=>	$mobile_data->driver_id
-		);
-
-		Cache::forever('mobile_data',$mobile_data);
-
-		event(new MarkDelivered());
-
-		//Cache::forget('mobile_data');
-		/*
-
-		$this->sendNotificationMarkAsDeliveredFarmer($unique_id);
-
-		$mobile = new CloudMessaging;
-
-		$mobile->markasDelivered($mobile_data);
-
-		unset($mobile);
-		*/
-
-	}
+	// private function sendNotificationMarkAsDelivered($unique_id,$driver_id){
+	//
+	// 	$mobile_data = Deliveries::select('unique_id','driver_id')
+	// 													->where('driver_id',$driver_id)
+	// 													->where('unique_id',$unique_id)
+	// 													->first();
+	// 	$mobile_data = array(
+	// 		'unique_id'	=>	$mobile_data->unique_id,
+	// 		'driver_id'	=>	$mobile_data->driver_id
+	// 	);
+	//
+	// 	Cache::forever('mobile_data',$mobile_data);
+	//
+	// 	event(new MarkDelivered());
+	//
+	// 	//Cache::forget('mobile_data');
+	// 	/*
+	//
+	// 	$this->sendNotificationMarkAsDeliveredFarmer($unique_id);
+	//
+	// 	$mobile = new CloudMessaging;
+	//
+	// 	$mobile->markasDelivered($mobile_data);
+	//
+	// 	unset($mobile);
+	// 	*/
+	//
+	// }
 
 	/*
 	*	Mobile notification for mark as delivered
 	*
 	*/
-	private function sendNotificationMarkAsDeliveredFarmer($unique_id){
-
-		/*
-		$deliveries = Deliveries::where('unique_id',$unique_id)->get()->toArray();
-
-		$mobile = new CloudMessaging;
-
-		foreach($deliveries as $k => $v){
-
-			$bins = Bins::where('bin_id',$v['bin_id'])->first()->toArray();
-
-			$data = array(
-				'farm_id'			=>	$v['farm_id'],
-				'bin_no'			=>	$bins['bin_number'],
-				'compartment'		=>	$v['compartment_number'],
-				'bin_id'			=>	$v['bin_id'],
-				'unique_id'			=>	$v['unique_id'],
-				'date_of_delivery'	=>	$v['delivery_date'],
-				'delivery_status'	=>	'unload'
-			);
-
-			$mobile->markasDeliveredFarmer($data);
-
-		}
-
-		unset($mobile);
-		*/
-	}
+	// private function sendNotificationMarkAsDeliveredFarmer($unique_id){
+	//
+	// 	/*
+	// 	$deliveries = Deliveries::where('unique_id',$unique_id)->get()->toArray();
+	//
+	// 	$mobile = new CloudMessaging;
+	//
+	// 	foreach($deliveries as $k => $v){
+	//
+	// 		$bins = Bins::where('bin_id',$v['bin_id'])->first()->toArray();
+	//
+	// 		$data = array(
+	// 			'farm_id'			=>	$v['farm_id'],
+	// 			'bin_no'			=>	$bins['bin_number'],
+	// 			'compartment'		=>	$v['compartment_number'],
+	// 			'bin_id'			=>	$v['bin_id'],
+	// 			'unique_id'			=>	$v['unique_id'],
+	// 			'date_of_delivery'	=>	$v['delivery_date'],
+	// 			'delivery_status'	=>	'unload'
+	// 		);
+	//
+	// 		$mobile->markasDeliveredFarmer($data);
+	//
+	// 	}
+	//
+	// 	unset($mobile);
+	// 	*/
+	// }
 
 
 	/*
