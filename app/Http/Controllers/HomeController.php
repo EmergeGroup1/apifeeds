@@ -4077,7 +4077,7 @@ class HomeController extends Controller
 	public function driver()
 	{
 			$drivers_cache = Cache::store('file')->get('drivers');
-
+			$drivers_cache = NULL;
 			if($drivers_cache == NULL){
 
 	      $drivers = array_merge(
