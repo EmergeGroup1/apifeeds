@@ -4070,27 +4070,29 @@ class HomeController extends Controller
 	}
 
 	/**
-     * driver
-     *
-     * @return Response
-     */
-    public function driver()
-    {
-		$drivers_cache = Cache::store('file')->get('drivers');
-
-		if($drivers_cache == NULL){
-			$drivers = DB::table('feeds_user_accounts')
-					->where('type_id','=',2)
-					->orderBy('username')
-					->lists('username','id');
-
-			$drivers = array(''=>'-') + $drivers;
-
-			Cache::forever('drivers',$drivers);
-
+	* driver
+	*
+	* @return Response
+	*/
+	public function driver()
+	{
 			$drivers_cache = Cache::store('file')->get('drivers');
-		}
-		return $drivers_cache;
+
+			if($drivers_cache == NULL){
+
+	      $drivers = array_merge(
+	          [''=>'-'],
+	          User::where('type_id','=',2)
+	    					->orderBy('username')
+	              ->pluck('username','id')->toArray()
+	      );
+
+				Cache::forever('drivers',$drivers);
+
+				$drivers_cache = Cache::store('file')->get('drivers');
+			}
+
+			return $drivers_cache;
 	}
 
 	/*
