@@ -3631,7 +3631,7 @@ class HomeController extends Controller
 					->pluck('med_name','med_id')->toArray();
 
 			$r = array();
-			for(i=0; $i<count($meds); $i++){
+			for($i=0; $i<count($meds); $i++){
 				$r[$meds[0]['med_id']] = $meds[0]['med_name'];
 			}
 
