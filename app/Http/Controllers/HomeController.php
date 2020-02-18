@@ -2454,19 +2454,21 @@ class HomeController extends Controller
 			$binsCount = count($bins) - 1;
 			for($i=0; $i<=$binsCount; $i++){
 
-				$current_bin_amount_lbs = $this->currentBinCapacity($bins[$i]['bin_id']);
-				$last_update = json_decode(json_encode($this->lastUpdate($bins[$i]['bin_id'])), true);
-				$last_update_user = json_decode(json_encode($this->lastUpdateUser($bins[$i]['bin_id'])), true);
-				$up_hist[$i] = json_decode(json_encode($this->lastUpdate_numpigs($bins[$i]['bin_id'])), true);
-				$numofpigs_ = $this->displayDefaultNumberOfPigs($bins[$i]['num_of_pigs'], $up_hist[$i][0]['num_of_pigs']);
-				//$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroup($bins[$i]['bin_id'],$bins[$i]['farm_id']);
-        $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
-				$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i][0]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i][0]['budgeted_amount']);
-				$delivery = $this->nextDel_($farm_id,$bins[$i]['bin_id']);
-				$last_delivery = $this->lastDelivery($farm_id,$bins[$i]['bin_id'],$last_update);
-
 				$bins_items = Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
 				if($bins_items == NULL){
+
+					$current_bin_amount_lbs = $this->currentBinCapacity($bins[$i]['bin_id']);
+					$last_update = json_decode(json_encode($this->lastUpdate($bins[$i]['bin_id'])), true);
+					$last_update_user = json_decode(json_encode($this->lastUpdateUser($bins[$i]['bin_id'])), true);
+					$up_hist[$i] = json_decode(json_encode($this->lastUpdate_numpigs($bins[$i]['bin_id'])), true);
+					$numofpigs_ = $this->displayDefaultNumberOfPigs($bins[$i]['num_of_pigs'], $up_hist[$i][0]['num_of_pigs']);
+					//$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroup($bins[$i]['bin_id'],$bins[$i]['farm_id']);
+	        $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
+					$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i][0]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i][0]['budgeted_amount']);
+					$delivery = $this->nextDel_($farm_id,$bins[$i]['bin_id']);
+					$last_delivery = $this->lastDelivery($farm_id,$bins[$i]['bin_id'],$last_update);
+
+
 					// rebuild cache data
 					$bins_items = array(
 						'bin_s'										=>  $this->getmyBinSize($bins[$i]['bin_size']),
