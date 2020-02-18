@@ -4084,7 +4084,7 @@ class HomeController extends Controller
 	          [''=>'-'],
 	          DB::table('feeds_user_accounts')->where('type_id','=',2)
 	    					->orderBy('username')
-	              ->pluck('id','username')->toArray()
+	              ->pluck('username','id')->toArray()
 	      );
 
 				Cache::forever('drivers',$drivers);
