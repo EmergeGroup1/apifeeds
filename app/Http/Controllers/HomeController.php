@@ -3622,7 +3622,7 @@ class HomeController extends Controller
 	*	Medication
 	*/
 	public function medication(){
-    $medication_cache = NULL; // Cache::store('file')->get('medications');
+    $medication_cache = Cache::store('file')->get('medications');
 
     if($medication_cache == NULL){
 			$meds = DB::table('feeds_medication')
