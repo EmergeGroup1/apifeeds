@@ -125,7 +125,7 @@ class LoginController extends Controller
 
         }
 
-        if(auth()->attempt(array($fieldType => $username, 'password' => $password))) {
+        if(auth()->attempt(['username' => $username, 'password' => $password])) {
 
         //if (Auth::attempt(['username' => $username, 'password' => $password])) {
             // generate 25 digit random alphanumeric string
