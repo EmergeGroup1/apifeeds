@@ -1383,14 +1383,14 @@ class AnimalMovementController extends Controller
 
             BinsHistory::insert($data);
 
-            $notification = new CloudMessaging;
-            $farmer_data = array(
-              'farm_id'		=> 	$bininfo[0]->farm_id,
-              'bin_id'		=> 	$bin_id,
-              'num_of_pigs'	=> 	$total_number_of_pigs
-              );
-            $notification->updatePigsMessaging($farmer_data);
-            unset($notification);
+            // $notification = new CloudMessaging;
+            // $farmer_data = array(
+            //   'farm_id'		=> 	$bininfo[0]->farm_id,
+            //   'bin_id'		=> 	$bin_id,
+            //   'num_of_pigs'	=> 	$total_number_of_pigs
+            //   );
+            // $notification->updatePigsMessaging($farmer_data);
+            // unset($notification);
 
             Cache::forget('bins-'.$bin_id);
 
