@@ -145,8 +145,8 @@ class ScheduleController extends Controller
       			$data[] = array(
       					'driver_id'	=> $stDrivers[$i]['driver_id'],
       					'title'			=> $stDrivers[$i]['driver_name'],
-      					'eta'				=> $this->deliveriesETAPerDriver($stDrivers[$i]['driver_id'],$delivery_date),
-      					'schedule'	=> NULL,//$this->schedToolLevelTwoAPI($stDrivers[$i]['driver_id'],$delivery_date),
+      					'eta'				=> "--:--", //$this->deliveriesETAPerDriver($stDrivers[$i]['driver_id'],$delivery_date),
+      					'schedule'	=> $this->schedToolLevelTwoAPI($stDrivers[$i]['driver_id'],$delivery_date),
       					'dar'				=> $this->driverActivityReport($delivery_date)
       				);
       		}
