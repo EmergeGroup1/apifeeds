@@ -137,7 +137,7 @@ class ScheduleController extends Controller
       								->where('delivery_date','=',$delivery_date)
       								->get()->toArray();
           if($stDrivers == NULL){
-            return array(); 
+            return array();
           }
       		$data = array();
       		for($i = 0; $i < count($stDrivers); $i++){
@@ -165,42 +165,43 @@ class ScheduleController extends Controller
     	private function deliveriesETAPerDriver($driver_id,$delivery_date)
     	{
 
-      		$schedData = SchedTool::select('driver_id','delivery_number','status','farm_sched_unique_id','delivery_unique_id','start_time','end_time',DB::raw('farm_title as text'))
-      								->where('driver_id','=',$driver_id)
-      								->where('delivery_date','=',$delivery_date)
-      								->whereNotIn('status',['scheduled','delivered','created'])
-      								->orderBy('start_time','asc')
-      								->get()->toArray();
-
-      		$output = array();
-      		for($i = 0; $i < count($schedData); $i++){
-
-      			$status = $schedData[$i]['status']; //!empty($schedData[$i]['delivery_unique_id']) ? $this->deliveriesStatus($schedData[$i]['delivery_unique_id']) : $schedData[$i]['status'];
-      			$scheduled_start_time = date("H:i",strtotime($schedData[0]['start_time']));
-      			$scheduled_end_time = date("H:i",strtotime($schedData[$i]['end_time']));
-      			$farms_delivery_hours = $this->farmsDeliveryHours($schedData[$i]['farm_sched_unique_id']);
-      			$delivery_ETA = $this->deliveriesETA($status,$schedData[$i]['delivery_unique_id'],$scheduled_end_time,$farms_delivery_hours);
-
-      			$output[] = array(
-      				'status'	=>	$status,
-      				'start_time'	=>	$scheduled_start_time,
-      				'end_time'		=>	$scheduled_end_time,
-      				'farms_hours'	=> $farms_delivery_hours,
-      				'delivery_eta'	=>	$delivery_ETA,
-      				'delivery_eta_combined_farm'	=>	date("h:i a",strtotime($delivery_ETA))//date("h:i a",strtotime($delivery_ETA."+ ".$farms_delivery_hours))
-      			);
-
-      		}
-
-      		//return json_encode($output);
-      		if($output != NULL){
-      			if($output[count($schedData) - 1]['status'] == 'unloaded'){
-      				return date("h:i a",strtotime($output[count($schedData) - 1]['delivery_eta']));
-      			}
-      		}
-
-
-      		return $output != NULL ? $output[count($schedData) - 1]['delivery_eta_combined_farm'] : "--:--";
+      		// $schedData = SchedTool::select('driver_id','delivery_number','status','farm_sched_unique_id','delivery_unique_id','start_time','end_time',DB::raw('farm_title as text'))
+      		// 						->where('driver_id','=',$driver_id)
+      		// 						->where('delivery_date','=',$delivery_date)
+      		// 						->whereNotIn('status',['scheduled','delivered','created'])
+      		// 						->orderBy('start_time','asc')
+      		// 						->get()->toArray();
+          //
+      		// $output = array();
+      		// for($i = 0; $i < count($schedData); $i++){
+          //
+      		// 	$status = $schedData[$i]['status']; //!empty($schedData[$i]['delivery_unique_id']) ? $this->deliveriesStatus($schedData[$i]['delivery_unique_id']) : $schedData[$i]['status'];
+      		// 	$scheduled_start_time = date("H:i",strtotime($schedData[0]['start_time']));
+      		// 	$scheduled_end_time = date("H:i",strtotime($schedData[$i]['end_time']));
+      		// 	$farms_delivery_hours = $this->farmsDeliveryHours($schedData[$i]['farm_sched_unique_id']);
+      		// 	$delivery_ETA = $this->deliveriesETA($status,$schedData[$i]['delivery_unique_id'],$scheduled_end_time,$farms_delivery_hours);
+          //
+      		// 	$output[] = array(
+      		// 		'status'	=>	$status,
+      		// 		'start_time'	=>	$scheduled_start_time,
+      		// 		'end_time'		=>	$scheduled_end_time,
+      		// 		'farms_hours'	=> $farms_delivery_hours,
+      		// 		'delivery_eta'	=>	$delivery_ETA,
+      		// 		'delivery_eta_combined_farm'	=>	date("h:i a",strtotime($delivery_ETA))//date("h:i a",strtotime($delivery_ETA."+ ".$farms_delivery_hours))
+      		// 	);
+          //
+      		// }
+          //
+      		// //return json_encode($output);
+      		// if($output != NULL){
+      		// 	if($output[count($schedData) - 1]['status'] == 'unloaded'){
+      		// 		return date("h:i a",strtotime($output[count($schedData) - 1]['delivery_eta']));
+      		// 	}
+      		// }
+          //
+          //
+      		// return $output != NULL ? $output[count($schedData) - 1]['delivery_eta_combined_farm'] : "--:--";
+          return "--:--";
 
     	}
 
