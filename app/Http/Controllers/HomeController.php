@@ -2470,6 +2470,7 @@ class HomeController extends Controller
 					$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i][0]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i][0]['budgeted_amount']);
 					$delivery = $this->nextDel_($farm_id,$bins[$i]['bin_id']);
 					$last_delivery = $this->lastDelivery($farm_id,$bins[$i]['bin_id'],$last_update);
+					$feed_type_update = $this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']));
 
 
 					// rebuild cache data
@@ -2484,8 +2485,10 @@ class HomeController extends Controller
 						'hex_color'								=>	$bins[$i]['hex_color'],
 						'bin_size'								=>	$bins[$i]['bin_size'],
 						'bin_size_name'						=>	$bins[$i]['bin_size_name'],
-						'feed_type_name'					=>	$this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']))->description,
-						'feed_type_name_orig'			=>	$this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']))->name,
+						'feed_type_name'					=>	$feed_type_update->description,
+						'feed_type_name_orig'			=>	$feed_type_update->name,
+						// 'feed_type_name'					=>	$this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']))->description,
+						// 'feed_type_name_orig'			=>	$this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']))->name,
 						'feed_type_id'						=>	$up_hist[$i][0]['feed_type'],
 						'budgeted_amount'					=>	$budgeted_,
 						'current_bin_amount_tons'	=>	$up_hist[$i][0]['amount'],
