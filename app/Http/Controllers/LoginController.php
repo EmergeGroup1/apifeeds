@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Input;
 use Validator;
-use Auth;
+use App\Http\Controllers\Auth;
 use App\User;
 
 class LoginController extends Controller
