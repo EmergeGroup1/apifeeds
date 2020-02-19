@@ -6688,9 +6688,9 @@ class HomeController extends Controller
 				$data->feed_type							=	$data_to_update['feed_type'];
 				$data->unique_id							=	$data_to_update['unique_id'];
 
-				//$data->save();
+				$data->update();
 
-				Event::fire(new CallBinsHistory($data));
+				//Event::fire(new CallBinsHistory($data));
 
 		}
 
