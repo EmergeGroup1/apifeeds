@@ -4079,7 +4079,7 @@ class HomeController extends Controller
 	*/
 	public function driver()
 	{
-			$drivers_cache = Cache::store('file')->get('drivers');
+			$drivers_cache = NULL; //Cache::store('file')->get('drivers');
 
 			if($drivers_cache == NULL){
 
