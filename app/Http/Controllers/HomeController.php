@@ -2433,7 +2433,7 @@ class HomeController extends Controller
 
 		if($binsDataFinal == NULL){
 
-			Cache::forget('bins-'.$farm_id);
+			//Cache::forget('bins-'.$farm_id);
 
 			$bins = DB::table('feeds_bins')
 						 ->select('feeds_bins.*',
