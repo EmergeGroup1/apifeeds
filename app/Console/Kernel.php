@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        $schedule->command('forecastingdatacache')->everyMinute();
         $schedule->command('schedulingcache')->everyMinute();
         $schedule->command('consumption')->dailyAt('01:15');
     }

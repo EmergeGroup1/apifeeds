@@ -6012,7 +6012,7 @@ class HomeController extends Controller
 		// update feeds_mobile_notification
 		DB::table('feeds_mobile_notification')->where('unique_id',$unique_id)->update(['is_readred'=>'true']);
 
-		$this->forecastingDataCache();
+		//$this->forecastingDataCache();
 
 		return $update;
 	}
