@@ -14,6 +14,10 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         'App\Console\Commands\Consumption',
+        'App\Console\Commands\TurnOnFarms',
+    		'App\Console\Commands\BuildBinsCache',
+    		'App\Console\Commands\ForecastingCache',
+        'App\Console\Commands\SchedulingCache',
     ];
 
     /**
