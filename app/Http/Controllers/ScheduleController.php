@@ -136,6 +136,9 @@ class ScheduleController extends Controller
       								(SELECT username FROM feeds_user_accounts WHERE id = driver_id) as driver_name'))
       								->where('delivery_date','=',$delivery_date)
       								->get()->toArray();
+          if($stDrivers == NULL){
+            return array(); 
+          }
       		$data = array();
       		for($i = 0; $i < count($stDrivers); $i++){
 
