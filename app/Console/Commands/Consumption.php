@@ -50,7 +50,7 @@ class Consumption extends Command
       $ch = curl_init();
 
       // set url
-      curl_setopt($ch, CURLOPT_URL, 'http://'.env('APP_DOMAIN')."/conautoupdate");
+      curl_setopt($ch, CURLOPT_URL, 'http://apifeeds.carrierinsite.com/conautoupdate');
 
       //return the transfer as a string
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
