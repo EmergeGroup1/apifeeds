@@ -4079,10 +4079,6 @@ class HomeController extends Controller
 	*/
 	public function driver()
 	{
-			$drivers_cache = NULL; //Cache::store('file')->get('drivers');
-
-			if($drivers_cache == NULL){
-
 				$users = DB::table('feeds_user_accounts')
 						->select('id','username')
 						->where('type_id','=',2)
@@ -4096,12 +4092,7 @@ class HomeController extends Controller
 				}
 
 
-	      $drivers = $u+array(''=>'-');
-
-				$drivers_cache = Cache::store('file')->get('drivers');
-			}
-
-			return $drivers_cache;
+	      return $u+array(''=>'-');
 	}
 
 	/*
