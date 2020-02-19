@@ -570,6 +570,10 @@ class APIController extends Controller
 
         $farm_schedule_data = FarmSchedule::where('unique_id', $unique_id)->first()->toArray();
 
+        $home_controller = new HomeController;
+        $unique_id = $home_controller->forecastingDataCache();
+        unset($home_controller);
+
         if ($farm_schedule_data != NULL) {
 
           return $update + array(
@@ -2528,6 +2532,7 @@ class APIController extends Controller
         'user_id'              =>  $user,
         'unique_id'            =>  $unique_id
       );
+      Cache::forget('farm_holder-'.$data[$i]->farm_id);
     }
 
     FarmSchedule::insert($farm_sched_data);
