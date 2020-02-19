@@ -1639,7 +1639,7 @@ class APIController extends Controller
           'user_id' =>  $request->input('user_id')
         );
 
-        $validator = Validator::make(Input::all(), [
+        $validator = Validator::make($request->all(), [
           'transfer_id'     =>  'required',
           'transfer_type'   =>  'required',
           'date'            =>  'required',
