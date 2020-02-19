@@ -41,7 +41,7 @@ class ForecastingCache extends Command
     $ch = curl_init();
 
     // set url
-    curl_setopt($ch, CURLOPT_URL, 'http://apifeeds.carrierinsite.com/forecastingdata');
+    curl_setopt($ch, CURLOPT_URL, 'http://apifeeds.carrierinsite.com/forecastdata');
 
     //return the transfer as a string
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
