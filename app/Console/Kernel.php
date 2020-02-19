@@ -29,6 +29,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('forecastingdatacache')->everyMinute();
         $schedule->command('schedulingcache')->everyMinute();
         $schedule->command('consumption')->dailyAt('01:15');
+        $schedule->command('turnonfarms')->dailyAt('01:00');
+    	  $schedule->command('buildbinscache')->dailyAt('02:00');
     }
 
     /**
