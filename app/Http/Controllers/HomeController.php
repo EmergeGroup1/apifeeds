@@ -5286,7 +5286,8 @@ class HomeController extends Controller
 
 
 		$data =  DB::table('feeds_bin_history')
-				->select(DB::raw('round(feeds_bin_history.amount * 2000,0) AS amount'))
+				//->select(DB::raw('round(feeds_bin_history.amount * 2000,0) AS amount'))
+				->select('amount')
 				->where('feeds_bin_history.bin_id','=',$bin_id)
 				->orderBy('feeds_bin_history.created_at','desc')
 				->take(1)->get();
@@ -5298,7 +5299,7 @@ class HomeController extends Controller
 			$data = json_decode(json_encode($data), true);
 
 			foreach($data as $k => $v){
-				$data = $v['amount'];
+				$data = round($v['amount'] * 2000,0);
 			}
 
 		}
