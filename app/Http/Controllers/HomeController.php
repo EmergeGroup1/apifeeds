@@ -3683,12 +3683,12 @@ class HomeController extends Controller
 
 			$r = array();
 			for($i=0; $i<count($meds); $i++){
-				$r[$meds[$i]->type_id] = $meds[$i]->description;
+				$r[$feeds[$i]->type_id] = $feeds[$i]->description;
 			}
 
-			$feeds = array(''=>'Please Select')+$r;
+			$out = array(''=>'Please Select')+$r;
 
-      return $feeds;
+      return $out;
 	}
 
 	/*
