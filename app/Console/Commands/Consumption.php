@@ -37,7 +37,7 @@ class Consumption extends Command
      */
     public function handle()
     {
-        //
+        return $this->forecastingDataCacheBuilder();
     }
 
 
