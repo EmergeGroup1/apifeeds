@@ -3674,13 +3674,19 @@ class HomeController extends Controller
 	*	Feed Types
 	*/
 	public function feedTypesAPI(){
-      $feeds = array_merge(
-                [''=>'Please Select'],
-                DB::table('feeds_feed_types')
-          					->where('name','!=','None')
-          					->orderBy('name')
-                    ->pluck('description','type_id')->toArray()
-            );
+
+			$feeds =   DB::table('feeds_feed_types')
+										->where('name','!=','None')
+										->orderBy('name')
+										->select('description','type_id')
+										->get();
+
+			$r = array();
+			for($i=0; $i<count($meds); $i++){
+				$r[$meds[$i]->type_id] = $meds[$i]->description;
+			}
+
+			$feeds = array(''=>'Please Select')+$r;
 
       return $feeds;
 	}
