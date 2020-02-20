@@ -3682,7 +3682,7 @@ class HomeController extends Controller
 										->get();
 
 			$r = array();
-			for($i=0; $i<count($meds); $i++){
+			for($i=0; $i<count($feeds); $i++){
 				$r[$feeds[$i]->type_id] = $feeds[$i]->description;
 			}
 
