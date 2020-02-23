@@ -42,7 +42,7 @@ class schedulingcache extends Command
       $ch = curl_init();
 
       // set url
-      curl_setopt($ch, CURLOPT_URL, 'http://apifeeds.carrierinsite.com/schedulingcache');
+      curl_setopt($ch, CURLOPT_URL, 'http://'.env('APP_DOMAIN').'/schedulingcache');
 
       //return the transfer as a string
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
