@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Input;
 use Validator;
 use Auth;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\User;
 
 class LoginController extends Controller
@@ -124,7 +125,9 @@ class LoginController extends Controller
 
         }
 
-        if (Auth::attempt(['username' => $username, 'password' => $password])) {
+        if(auth()->attempt(['username' => $username, 'password' => $password])) {
+
+        //if (Auth::attempt(['username' => $username, 'password' => $password])) {
             // generate 25 digit random alphanumeric string
             if(session('token') != NULL){
               $token = session('token');

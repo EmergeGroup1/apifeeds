@@ -11,10 +11,14 @@
 |
 */
 
-Route::get('/', function () {
-    return "Nothing to do here...";
-});
+// Route::get('/', function () {
+//     return "Nothing to do here...";
+// });
 
-Route::match(array('GET','POST'),'api', 'APIController@index');
+Route::match(array('POST','GET'),'/', 'APIController@index');
+Route::match(array('POST','GET'),'api', 'APIController@index');
 Route::get('conautoupdate','HomeController@conAutoUpdate');
 Route::get('schedulingcache','ScheduleController@scheduleCache');
+Route::get('forecastingdata','HomeController@forecastingDataOutput');
+Route::get('forecastdata','HomeController@forecastingDataCache');
+Route::get('binscachebuilder','HomeController@binsDataCacheBuilder');

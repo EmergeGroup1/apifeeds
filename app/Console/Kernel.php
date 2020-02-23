@@ -14,6 +14,10 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         'App\Console\Commands\Consumption',
+        'App\Console\Commands\TurnOnFarms',
+    		'App\Console\Commands\BuildBinsCache',
+    		'App\Console\Commands\ForecastingCache',
+        'App\Console\Commands\SchedulingCache',
     ];
 
     /**
@@ -26,8 +30,11 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        $schedule->command('forecastingdatacache')->everyMinute();
         $schedule->command('schedulingcache')->everyMinute();
-        $schedule->command('consumption')->dailyAt('01:15');
+        $schedule->command('consumption')->dailyAt('01:33');
+        $schedule->command('turnonfarms')->dailyAt('01:00');
+    	  $schedule->command('buildbinscache')->dailyAt('02:00');
     }
 
     /**

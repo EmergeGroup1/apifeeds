@@ -18,6 +18,7 @@ use App\Http\Controllers\Controller;
 
 class APIController extends Controller
 {
+
   /**
    * Display a listing of the resource.
    *
@@ -28,6 +29,17 @@ class APIController extends Controller
     $api = $request->input('action');
 
     switch ($api) {
+
+      case "cacherebuild":
+
+        // get the medications medication()
+        $home_controller = new HomeController;
+        $cacheData = $home_controller->forecastingDataCache();
+        unset($home_controller);
+
+        return $cacheData;
+
+        break;
 
       case "logUser":
 
@@ -95,9 +107,17 @@ class APIController extends Controller
         }
 
         $forecasting = json_decode(Storage::get('forecasting_data_low_bins.txt'));
+
         $home_controller = new HomeController;
+        // $farmsCount = count($forecasting);
+        // $r = array();
+        // for($i=0; $i<$farmsCount; $i++){
+        //   $r[] =  $home_controller->binsData($forecasting[$i]->farm_id);
+        // }
+        // return $r;
         $bins = $home_controller->binsData($farm_id);
         unset($home_controller);
+
         $bins = json_decode($bins);
 
         $bins = $this->binsBuilder($bins);
@@ -549,6 +569,10 @@ class APIController extends Controller
         $this->saveFarmSchedule($batches, $unique_id, $user);
 
         $farm_schedule_data = FarmSchedule::where('unique_id', $unique_id)->first()->toArray();
+
+        $home_controller = new HomeController;
+        $unique_id = $home_controller->forecastingDataCache();
+        unset($home_controller);
 
         if ($farm_schedule_data != NULL) {
 
@@ -1615,7 +1639,7 @@ class APIController extends Controller
           'user_id' =>  $request->input('user_id')
         );
 
-        $validator = Validator::make(Input::all(), [
+        $validator = Validator::make($request->all(), [
           'transfer_id'     =>  'required',
           'transfer_type'   =>  'required',
           'date'            =>  'required',
@@ -2203,7 +2227,7 @@ class APIController extends Controller
             'farmName'            =>  $v->name,
             'farmAbbr'            =>  strtoupper(substr(str_replace(" ", "", $v->name), 0, 2)),
             'farmType'            =>  $v->farm_type,
-            'numberOfBins'        =>  count((array) $v->bins) - 4,
+            'numberOfBins'        =>  (count((array) $v->bins) - 4) - 1,
             'numberOfLowBins'     =>  $v->bins->lowBins,
             'hasPendingDelivery'  =>  $v->delivery_status,
             'daysRemaining'       =>  $this->binsDaysRemaining($v->bins),
@@ -2508,6 +2532,7 @@ class APIController extends Controller
         'user_id'              =>  $user,
         'unique_id'            =>  $unique_id
       );
+      Cache::forget('farm_holder-'.$data[$i]->farm_id);
     }
 
     FarmSchedule::insert($farm_sched_data);

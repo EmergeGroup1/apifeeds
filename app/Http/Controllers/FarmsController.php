@@ -40,7 +40,7 @@ class FarmsController extends Controller
 
   		}
 
-      
+
 
       /**
        * Show the form for editing the specified resource.
@@ -1592,7 +1592,7 @@ class FarmsController extends Controller
   				unset($home_controller);
 
   				BinsHistory::insert($binsData);
-  				Artisan::call("forecastingdatacache");
+  				//Artisan::call("forecastingdatacache");
 
   		}
 

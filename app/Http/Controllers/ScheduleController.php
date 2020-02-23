@@ -136,13 +136,16 @@ class ScheduleController extends Controller
       								(SELECT username FROM feeds_user_accounts WHERE id = driver_id) as driver_name'))
       								->where('delivery_date','=',$delivery_date)
       								->get()->toArray();
+          if($stDrivers == NULL){
+            return array();
+          }
       		$data = array();
       		for($i = 0; $i < count($stDrivers); $i++){
 
       			$data[] = array(
       					'driver_id'	=> $stDrivers[$i]['driver_id'],
       					'title'			=> $stDrivers[$i]['driver_name'],
-      					'eta'				=> $this->deliveriesETAPerDriver($stDrivers[$i]['driver_id'],$delivery_date),
+      					'eta'				=> "--:--", //$this->deliveriesETAPerDriver($stDrivers[$i]['driver_id'],$delivery_date),
       					'schedule'	=> $this->schedToolLevelTwoAPI($stDrivers[$i]['driver_id'],$delivery_date),
       					'dar'				=> $this->driverActivityReport($delivery_date)
       				);
@@ -162,42 +165,43 @@ class ScheduleController extends Controller
     	private function deliveriesETAPerDriver($driver_id,$delivery_date)
     	{
 
-      		$schedData = SchedTool::select('driver_id','delivery_number','status','farm_sched_unique_id','delivery_unique_id','start_time','end_time',DB::raw('farm_title as text'))
-      								->where('driver_id','=',$driver_id)
-      								->where('delivery_date','=',$delivery_date)
-      								->whereNotIn('status',['scheduled','delivered','created'])
-      								->orderBy('start_time','asc')
-      								->get()->toArray();
-
-      		$output = array();
-      		for($i = 0; $i < count($schedData); $i++){
-
-      			$status = $schedData[$i]['status']; //!empty($schedData[$i]['delivery_unique_id']) ? $this->deliveriesStatus($schedData[$i]['delivery_unique_id']) : $schedData[$i]['status'];
-      			$scheduled_start_time = date("H:i",strtotime($schedData[0]['start_time']));
-      			$scheduled_end_time = date("H:i",strtotime($schedData[$i]['end_time']));
-      			$farms_delivery_hours = $this->farmsDeliveryHours($schedData[$i]['farm_sched_unique_id']);
-      			$delivery_ETA = $this->deliveriesETA($status,$schedData[$i]['delivery_unique_id'],$scheduled_end_time,$farms_delivery_hours);
-
-      			$output[] = array(
-      				'status'	=>	$status,
-      				'start_time'	=>	$scheduled_start_time,
-      				'end_time'		=>	$scheduled_end_time,
-      				'farms_hours'	=> $farms_delivery_hours,
-      				'delivery_eta'	=>	$delivery_ETA,
-      				'delivery_eta_combined_farm'	=>	date("h:i a",strtotime($delivery_ETA))//date("h:i a",strtotime($delivery_ETA."+ ".$farms_delivery_hours))
-      			);
-
-      		}
-
-      		//return json_encode($output);
-      		if($output != NULL){
-      			if($output[count($schedData) - 1]['status'] == 'unloaded'){
-      				return date("h:i a",strtotime($output[count($schedData) - 1]['delivery_eta']));
-      			}
-      		}
-
-
-      		return $output != NULL ? $output[count($schedData) - 1]['delivery_eta_combined_farm'] : "--:--";
+      		// $schedData = SchedTool::select('driver_id','delivery_number','status','farm_sched_unique_id','delivery_unique_id','start_time','end_time',DB::raw('farm_title as text'))
+      		// 						->where('driver_id','=',$driver_id)
+      		// 						->where('delivery_date','=',$delivery_date)
+      		// 						->whereNotIn('status',['scheduled','delivered','created'])
+      		// 						->orderBy('start_time','asc')
+      		// 						->get()->toArray();
+          //
+      		// $output = array();
+      		// for($i = 0; $i < count($schedData); $i++){
+          //
+      		// 	$status = $schedData[$i]['status']; //!empty($schedData[$i]['delivery_unique_id']) ? $this->deliveriesStatus($schedData[$i]['delivery_unique_id']) : $schedData[$i]['status'];
+      		// 	$scheduled_start_time = date("H:i",strtotime($schedData[0]['start_time']));
+      		// 	$scheduled_end_time = date("H:i",strtotime($schedData[$i]['end_time']));
+      		// 	$farms_delivery_hours = $this->farmsDeliveryHours($schedData[$i]['farm_sched_unique_id']);
+      		// 	$delivery_ETA = $this->deliveriesETA($status,$schedData[$i]['delivery_unique_id'],$scheduled_end_time,$farms_delivery_hours);
+          //
+      		// 	$output[] = array(
+      		// 		'status'	=>	$status,
+      		// 		'start_time'	=>	$scheduled_start_time,
+      		// 		'end_time'		=>	$scheduled_end_time,
+      		// 		'farms_hours'	=> $farms_delivery_hours,
+      		// 		'delivery_eta'	=>	$delivery_ETA,
+      		// 		'delivery_eta_combined_farm'	=>	date("h:i a",strtotime($delivery_ETA))//date("h:i a",strtotime($delivery_ETA."+ ".$farms_delivery_hours))
+      		// 	);
+          //
+      		// }
+          //
+      		// //return json_encode($output);
+      		// if($output != NULL){
+      		// 	if($output[count($schedData) - 1]['status'] == 'unloaded'){
+      		// 		return date("h:i a",strtotime($output[count($schedData) - 1]['delivery_eta']));
+      		// 	}
+      		// }
+          //
+          //
+      		// return $output != NULL ? $output[count($schedData) - 1]['delivery_eta_combined_farm'] : "--:--";
+          return "--:--";
 
     	}
 
@@ -1313,102 +1317,102 @@ class ScheduleController extends Controller
       /*
       *	Scheduled items for driver dropdown
       */
-      public function scheduledItemDriverAPI($data,$request){
-
-          $selected_date = $data['selected_date'];
-          $unique_id = $data['unique_id'];
-          $driver_id = $data['driver_id'];
-          $user_id = $data['user_id'];
-          $delivery_data = SchedTool::where('farm_sched_unique_id','=',$unique_id)->get()->toArray();
-          $delivery_number = !empty($delivery_data[0]['delivery_number']) ? $delivery_data[0]['delivery_number'] : 0;
-          $delivery_unique_id = !empty($delivery_data[0]['delivery_unique_id']) ? $delivery_data[0]['delivery_unique_id'] : 0;
-          $selected_index = $delivery_number;
-
-          // if driver_id = 0 delete the entry on SchedTool
-          //if($driver_id == 0){
-          //	SchedTool::where('farm_sched_unique_id','=',$unique_id)->delete();
-          //}
-
-          // count the deliveries of the driver
-          $delivery_counter = SchedTool::select('farm_sched_unique_id')
-                                            ->where('delivery_date',$selected_date)
-                                            ->where('driver_id',$driver_id)
-                                            ->count();
-          if($delivery_counter > 7){
-            return "More than 7 deliveries";
-          }
-
-          if($request == "movetoschedtool"){
-          $delivery_number = $this->selectedIndexPosition($delivery_number,$selected_index=NULL,$driver_id,$selected_date);
-          }
-          // get the id's of farm
-          $data = FarmSchedule::select(DB::raw("GROUP_CONCAT(farm_id) AS farm_id"))
-                    ->where("unique_id","=",$unique_id)
-                    ->get()->toArray();
-
-          $delivery_time = $this->deliveryTimes($data[0]['farm_id']);
-          list($hours, $wrongMinutes) = explode('.', $delivery_time);
-          $minutes = ($wrongMinutes < 100 ? $wrongMinutes * 100 : $wrongMinutes) * 0.6 / 100;
-          $calculated_hour = $hours . 'hours ' . ceil($minutes) . 'minutes';
-
-          if($delivery_number == 1){
-            $start_time = "06:00:00";
-            $end_time = date("H:i:s",strtotime($start_time."+".$calculated_hour));
-          } else {
-            // get the max delivery number add 10 minutes interval then add the start time and end time
-            $items = SchedTool::where('delivery_date','=',$selected_date)
-                      ->where('driver_id','=',$driver_id)
-                      ->where('farm_sched_unique_id','!=',$unique_id)
-                      ->orderBy('delivery_number','desc')
-                      ->get()->toArray();
-            $start_time = !empty($items[0]['end_time']) ? date("H:i:s",strtotime($items[0]['end_time']."+ 10 minutes")) : "06:00:00";
-
-            //if(date("H",strtotime($start_time)) > 16){
-              //$start_time = "06:00:00";
-            //}
-
-            $end_time = date("H:i:s",strtotime($start_time."+".$calculated_hour));
-          }
-
-          $farm = array_unique(explode(",",(string)$data[0]['farm_id']));
-          $farm_names = Farms::select(DB::raw("GROUP_CONCAT(name) AS name"))->whereIn('id',$farm)->get()->toArray();
-
-          $data_to_save = array(
-            'driver_id'							=>	$driver_id,
-            'farm_sched_unique_id'	=>	$unique_id,
-            'farm_title'						=>	$farm_names[0]['name'],
-            'delivery_number'				=>	$delivery_number,
-            'delivery_date'					=>	$selected_date,
-            'start_time'						=>	$start_time,
-            'end_time'							=>	$end_time,
-            'selected_index'				=>	$selected_index
-          );
-
-          // delete existing same record
-          SchedTool::where('delivery_date',$selected_date)->where('farm_sched_unique_id',$unique_id)->delete();
-          FarmSchedule::where('unique_id',$unique_id)->update(['date_of_delivery'=>$selected_date." ".$start_time,'user_id'=>$user_id]);
-
-          if($delivery_number != 0 || $driver_id !=0){
-            // save record
-            SchedTool::insert($data_to_save);
-          }
-
-          if($driver_id ==0){
-            SchedTool::where('farm_sched_unique_id',$unique_id)->delete();
-          }
-
-          // check if the delivery is already created
-          if($delivery_unique_id != 0){
-            //update the delivery
-            $this->updateCreatedLoadAPI($delivery_unique_id,$user_id);
-          }
-
-          $this->updateScheduledDriver($driver_id,$unique_id);
-
-          $output = $this->schedToolOutput($selected_date);
-
-          return $output;
-      }
+      // public function scheduledItemDriverAPI($data,$request){
+      //
+      //     $selected_date = $data['selected_date'];
+      //     $unique_id = $data['unique_id'];
+      //     $driver_id = $data['driver_id'];
+      //     $user_id = $data['user_id'];
+      //     $delivery_data = SchedTool::where('farm_sched_unique_id','=',$unique_id)->get()->toArray();
+      //     $delivery_number = !empty($delivery_data[0]['delivery_number']) ? $delivery_data[0]['delivery_number'] : 0;
+      //     $delivery_unique_id = !empty($delivery_data[0]['delivery_unique_id']) ? $delivery_data[0]['delivery_unique_id'] : 0;
+      //     $selected_index = $delivery_number;
+      //
+      //     // if driver_id = 0 delete the entry on SchedTool
+      //     //if($driver_id == 0){
+      //     //	SchedTool::where('farm_sched_unique_id','=',$unique_id)->delete();
+      //     //}
+      //
+      //     // count the deliveries of the driver
+      //     $delivery_counter = SchedTool::select('farm_sched_unique_id')
+      //                                       ->where('delivery_date',$selected_date)
+      //                                       ->where('driver_id',$driver_id)
+      //                                       ->count();
+      //     if($delivery_counter > 7){
+      //       return "More than 7 deliveries";
+      //     }
+      //
+      //     if($request == "movetoschedtool"){
+      //     $delivery_number = $this->selectedIndexPosition($delivery_number,$selected_index=NULL,$driver_id,$selected_date);
+      //     }
+      //     // get the id's of farm
+      //     $data = FarmSchedule::select(DB::raw("GROUP_CONCAT(farm_id) AS farm_id"))
+      //               ->where("unique_id","=",$unique_id)
+      //               ->get()->toArray();
+      //
+      //     $delivery_time = $this->deliveryTimes($data[0]['farm_id']);
+      //     list($hours, $wrongMinutes) = explode('.', $delivery_time);
+      //     $minutes = ($wrongMinutes < 100 ? $wrongMinutes * 100 : $wrongMinutes) * 0.6 / 100;
+      //     $calculated_hour = $hours . 'hours ' . ceil($minutes) . 'minutes';
+      //
+      //     if($delivery_number == 1){
+      //       $start_time = "06:00:00";
+      //       $end_time = date("H:i:s",strtotime($start_time."+".$calculated_hour));
+      //     } else {
+      //       // get the max delivery number add 10 minutes interval then add the start time and end time
+      //       $items = SchedTool::where('delivery_date','=',$selected_date)
+      //                 ->where('driver_id','=',$driver_id)
+      //                 ->where('farm_sched_unique_id','!=',$unique_id)
+      //                 ->orderBy('delivery_number','desc')
+      //                 ->get()->toArray();
+      //       $start_time = !empty($items[0]['end_time']) ? date("H:i:s",strtotime($items[0]['end_time']."+ 10 minutes")) : "06:00:00";
+      //
+      //       //if(date("H",strtotime($start_time)) > 16){
+      //         //$start_time = "06:00:00";
+      //       //}
+      //
+      //       $end_time = date("H:i:s",strtotime($start_time."+".$calculated_hour));
+      //     }
+      //
+      //     $farm = array_unique(explode(",",(string)$data[0]['farm_id']));
+      //     $farm_names = Farms::select(DB::raw("GROUP_CONCAT(name) AS name"))->whereIn('id',$farm)->get()->toArray();
+      //
+      //     $data_to_save = array(
+      //       'driver_id'							=>	$driver_id,
+      //       'farm_sched_unique_id'	=>	$unique_id,
+      //       'farm_title'						=>	$farm_names[0]['name'],
+      //       'delivery_number'				=>	$delivery_number,
+      //       'delivery_date'					=>	$selected_date,
+      //       'start_time'						=>	$start_time,
+      //       'end_time'							=>	$end_time,
+      //       'selected_index'				=>	$selected_index
+      //     );
+      //
+      //     // delete existing same record
+      //     SchedTool::where('delivery_date',$selected_date)->where('farm_sched_unique_id',$unique_id)->delete();
+      //     FarmSchedule::where('unique_id',$unique_id)->update(['date_of_delivery'=>$selected_date." ".$start_time,'user_id'=>$user_id]);
+      //
+      //     if($delivery_number != 0 || $driver_id !=0){
+      //       // save record
+      //       SchedTool::insert($data_to_save);
+      //     }
+      //
+      //     if($driver_id ==0){
+      //       SchedTool::where('farm_sched_unique_id',$unique_id)->delete();
+      //     }
+      //
+      //     // check if the delivery is already created
+      //     if($delivery_unique_id != 0){
+      //       //update the delivery
+      //       $this->updateCreatedLoadAPI($delivery_unique_id,$user_id);
+      //     }
+      //
+      //     $this->updateScheduledDriver($driver_id,$unique_id);
+      //
+      //     $output = $this->schedToolOutput($selected_date);
+      //
+      //     return $output;
+      // }
 
 
 
@@ -1610,7 +1614,7 @@ class ScheduleController extends Controller
           return "done";
 
       }
-      
+
 
 
       /**
