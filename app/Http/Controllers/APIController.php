@@ -66,13 +66,13 @@ class APIController extends Controller
         $token = $request->input('token');
 
         if ($type == 0) {
-          $farms_default = Farms::where('status', 1)->where('farm_type','!=','farrowing')->orderBy('name')->get();
+          $farms_default = Farms::where('status', 1)->orderBy('name')->get();
         } else if ($type == 1) {
-          $farms_default = Farms::where('column_type', 1)->where('farm_type','!=','farrowing')->where('status', 1)->orderBy('name')->get();
+          $farms_default = Farms::where('column_type', 1)->where('status', 1)->orderBy('name')->get();
         } else if ($type == 2) {
-          $farms_default = Farms::where('column_type', 2)->where('farm_type','!=','farrowing')->where('status', 1)->orderBy('name')->get();
+          $farms_default = Farms::where('column_type', 2)->where('status', 1)->orderBy('name')->get();
         } else if ($type == 3) {
-          $farms_default = Farms::where('column_type', 3)->where('farm_type','!=','farrowing')->where('status', 1)->orderBy('name')->get();
+          $farms_default = Farms::where('column_type', 3)->where('status', 1)->orderBy('name')->get();
         } else {
           return "no type passed";
         }
