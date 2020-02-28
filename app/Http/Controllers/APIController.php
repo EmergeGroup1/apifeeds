@@ -73,6 +73,21 @@ class APIController extends Controller
           $farms_default = Farms::where('column_type', 2)->where('farm_type','!=','farrowing')->where('status', 1)->orderBy('name')->get();
         } else if ($type == 3) {
           $farms_default = Farms::where('column_type', 3)->where('farm_type','!=','farrowing')->where('status', 1)->orderBy('name')->get();
+        } else if ($type == 4) {
+          $farms_default = Farms::where('farm_type','farrowing')->where('status', 1)->orderBy('name')->get();
+          $log_token = session('token');
+          $sort_type = $request->input('sort');
+
+          if ($sort_type == 1) {
+            $farms = json_decode(Storage::get('forecasting_farrowing_data_a_to_z.txt'));
+          } else {
+            $farms = json_decode(Storage::get('forecasting_farrowing_data_low_bins.txt'));
+          }
+
+          $data = $this->farmsBuilder($sort_type, $farms, $farms_default);
+
+          return array('farmID' => $data);
+
         } else {
           return "no type passed";
         }
@@ -84,27 +99,6 @@ class APIController extends Controller
           $farms = json_decode(Storage::get('forecasting_data_a_to_z.txt'));
         } else {
           $farms = json_decode(Storage::get('forecasting_data_low_bins.txt'));
-        }
-
-        $data = $this->farmsBuilder($sort_type, $farms, $farms_default);
-
-        return array('farmID' => $data);
-
-        break;
-
-      case "listFarrowingFarms":
-
-
-        $farms_default = Farms::where('farm_type','farrowing')->where('status', 1)->orderBy('name')->get();
-
-
-        $log_token = session('token');
-        $sort_type = $request->input('sort');
-
-        if ($sort_type == 1) {
-          $farms = json_decode(Storage::get('forecasting_farrowing_data_a_to_z.txt'));
-        } else {
-          $farms = json_decode(Storage::get('forecasting_farrowing_data_low_bins.txt'));
         }
 
         $data = $this->farmsBuilder($sort_type, $farms, $farms_default);
