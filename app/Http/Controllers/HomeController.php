@@ -24,104 +24,147 @@ use App\BinSize;
 class HomeController extends Controller
 {
 
-  /**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-		$this->middleware('auth',['except' => ['forecastingDataCacheBuilder','forecastingDataCache','forecastingDataOutput','binsDataCacheBuilder','clearBinsCache','conAutoUpdate']]);
-	}
+	  /**
+		 * Create a new controller instance.
+		 *
+		 * @return void
+		 */
+		public function __construct()
+		{
 
-	/**
-	 * Show the forecasting data to the user.
-	 *
-	 * @return Response
-	 */
-	public function forecastingDataOutput()
-	{
-		return Storage::get('forecasting_data_low_bins.txt');
-	}
-
-	/*
-	* enabledFarms()
-	* Get all the enabled farms
-	*/
-	private function enabledFarms()
-	{
-		$farms = Farms::select(
-								DB::raw('DISTINCT(feeds_farms.id) as id'),
-								DB::raw('feeds_farms.name as name'),
-								DB::raw('feeds_farms.farm_type as farm_type'),
-								DB::raw('feeds_farms.address as address'),
-								DB::raw('feeds_farms.notes as notes'),
-								DB::raw('feeds_farms.update_notification as update_notification')
-								)
-								->rightJoin('feeds_bins','feeds_farms.id','=','feeds_bins.farm_id')
-								->where('status',1)
-								->get()->toArray();
-
-		return $farms;
-	}
-
-	/*
-	*	forecastingDataCache()
-	*	Cache data Builder for forecasting page
-	* Method to use for cron job
-	*/
-	public function forecastingDataCache()
-	{
-		if(Storage::exists('forecasting_data_low_bins.txt')){
-			//Storage::delete('forecasting_data_low_bins.txt');
-		}
-
-		if(Storage::exists('forecasting_data_a_to_z.txt')){
-			//Storage::delete('forecasting_data_a_to_z.txt');
-		}
-
-		$farms = $this->enabledFarms();
-		$forecastingData = array();
-
-		for($i=0; $i<count($farms); $i++){
-			Cache::forget('farm_holder-'.$farms[$i]['id']);
-			if(Cache::has('farm_holder-'.$farms[$i]['id'])) {
-
-				 $forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
-
-			} else {
-
-				$forecastingData[] = array(
-					'farm_id'					=>	$farms[$i]['id'],
-					'name'						=>	$farms[$i]['name'],
-					'farm_type'				=>	$farms[$i]['farm_type'],
-					'delivery_status'	=>	$this->pendingDeliveryItems($farms[$i]['id']),
-					'address'					=>	$farms[$i]['address'],
-					'bins'						=> 	$this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes'])
-				);
-
-				Cache::forever('farm_holder-'.$farms[$i]['id'],$forecastingData);
-
-			}
+			$this->middleware('auth',['except' => ['forecastingDataCacheBuilder','forecastingDataCache','forecastingDataOutput','binsDataCacheBuilder','clearBinsCache','conAutoUpdate']]);
 
 		}
-		// cache data via sort type low bins
-		usort($forecastingData, function($a,$b){
-			if($a['bins'][0]['empty_bins'] == $b['bins'][0]['empty_bins'])
-			return ($a['bins'][0]['first_list_days_to_empty'] > $b['bins'][0]['first_list_days_to_empty']);
-			return ($a['bins'][0]['empty_bins'] < $b['bins'][0]['empty_bins'])?1:-1;
-		});
-		Storage::put('forecasting_data_low_bins.txt',json_encode($forecastingData));
 
-		// cache data via sort type a-z farms
-		usort($forecastingData, function($a,$b){
-			return strcasecmp($a["name"], $b["name"]);
-		});
-		Storage::put('forecasting_data_a_to_z.txt',json_encode($forecastingData));
+		/**
+		 * Show the forecasting data to the user.
+		 *
+		 * @return Response
+		 */
+		public function forecastingDataOutput()
+		{
 
-		return "done caching";
+			return Storage::get('forecasting_data_low_bins.txt');
 
-	}
+		}
+
+		/*
+		* enabledFarms()
+		* Get all the enabled farms
+		*/
+		private function enabledFarms()
+		{
+
+				$farms = Farms::select(
+										DB::raw('DISTINCT(feeds_farms.id) as id'),
+										DB::raw('feeds_farms.name as name'),
+										DB::raw('feeds_farms.farm_type as farm_type'),
+										DB::raw('feeds_farms.address as address'),
+										DB::raw('feeds_farms.notes as notes'),
+										DB::raw('feeds_farms.update_notification as update_notification')
+										)
+										->rightJoin('feeds_bins','feeds_farms.id','=','feeds_bins.farm_id')
+										->where('status',1)
+										->get()->toArray();
+
+				return $farms;
+
+		}
+
+		/*
+		*	forecastingDataCache()
+		*	Cache data Builder for forecasting page
+		* Method to use for cron job
+		*/
+		public function forecastingDataCache()
+		{
+
+				$farms = $this->enabledFarms();
+				$forecastingData = $this->farmsDataBuilder($farms);
+
+				// cache data via sort type low bins
+				usort($forecastingData, function($a,$b){
+					if($a['bins'][0]['empty_bins'] == $b['bins'][0]['empty_bins'])
+					return ($a['bins'][0]['first_list_days_to_empty'] > $b['bins'][0]['first_list_days_to_empty']);
+					return ($a['bins'][0]['empty_bins'] < $b['bins'][0]['empty_bins'])?1:-1;
+				});
+				Storage::put('forecasting_data_low_bins.txt',json_encode($forecastingData));
+
+				// cache data via sort type a-z farms
+				usort($forecastingData, function($a,$b){
+					return strcasecmp($a["name"], $b["name"]);
+				});
+				Storage::put('forecasting_data_a_to_z.txt',json_encode($forecastingData));
+
+				// execute the farrowing farms data cache builder
+				$this->forecastingFarrowingDataCache();
+
+				return "done caching";
+
+		}
+
+		/*
+		*		forecastingFarrowingDataCache
+		*		Building farms forecasting data exclusive for farrowing farms only
+		*/
+		private funciton forecastingFarrowingDataCache()
+		{
+
+				$farms = Farms::where('farm_type','farrowing')->where('status', 1)->orderBy('name')->get();
+				$forecastingData = $this->farmsDataBuilder($farms);
+
+				// cache data via sort type low bins
+				usort($forecastingData, function($a,$b){
+					if($a['bins'][0]['empty_bins'] == $b['bins'][0]['empty_bins'])
+					return ($a['bins'][0]['first_list_days_to_empty'] > $b['bins'][0]['first_list_days_to_empty']);
+					return ($a['bins'][0]['empty_bins'] < $b['bins'][0]['empty_bins'])?1:-1;
+				});
+				Storage::put('forecasting_farrowing_data_low_bins.txt',json_encode($forecastingData));
+
+				// cache data via sort type a-z farms
+				usort($forecastingData, function($a,$b){
+					return strcasecmp($a["name"], $b["name"]);
+				});
+				Storage::put('forecasting_farrowing_data_a_to_z.txt',json_encode($forecastingData));
+
+				return "done caching farrowing<br/>";
+
+		}
+
+		/*
+		*		farmsDataBuilder
+		*		farms databuilder for forecasting cache
+		*		and building farms data exclusive for forecasting only
+		*/
+		private funciton farmsDataBuilder($farms)
+		{
+				$forecastingData = array();
+
+				for($i=0; $i<count($farms); $i++){
+					Cache::forget('farm_holder-'.$farms[$i]['id']);
+					if(Cache::has('farm_holder-'.$farms[$i]['id'])) {
+
+						 $forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
+
+					} else {
+
+						$forecastingData[] = array(
+							'farm_id'					=>	$farms[$i]['id'],
+							'name'						=>	$farms[$i]['name'],
+							'farm_type'				=>	$farms[$i]['farm_type'],
+							'delivery_status'	=>	$this->pendingDeliveryItems($farms[$i]['id']),
+							'address'					=>	$farms[$i]['address'],
+							'bins'						=> 	$this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes'])
+						);
+
+						Cache::forever('farm_holder-'.$farms[$i]['id'],$forecastingData);
+
+					}
+
+				}
+
+				return $forecastingData;
+		}
 
 	/*
 	*	curLForecastingData()
