@@ -107,7 +107,7 @@ class HomeController extends Controller
 		*		forecastingFarrowingDataCache
 		*		Building farms forecasting data exclusive for farrowing farms only
 		*/
-		private funciton forecastingFarrowingDataCache()
+		private function forecastingFarrowingDataCache()
 		{
 
 				$farms = Farms::where('farm_type','farrowing')->where('status', 1)->orderBy('name')->get();
@@ -136,7 +136,7 @@ class HomeController extends Controller
 		*		farms databuilder for forecasting cache
 		*		and building farms data exclusive for forecasting only
 		*/
-		private funciton farmsDataBuilder($farms)
+		private function farmsDataBuilder($farms)
 		{
 				$forecastingData = array();
 
