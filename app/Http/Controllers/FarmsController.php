@@ -1723,7 +1723,6 @@ class FarmsController extends Controller
 
          // insert to feeds_farrowing_rooms
          $fr_data = array(
-            'farm_id' => $d['farm_id'],
             'room_number' => $d['room_number'],
           );
           DB::table('feeds_farrowing_rooms')
