@@ -1354,7 +1354,7 @@ class APIController extends Controller
               return array(
                 "err" =>  0,
                 "msg" =>  "Successfully Pulled Data",
-                "binsList" => $binsList
+                "roomsList" => $binsList
               );
             } else {
               return array(

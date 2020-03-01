@@ -1646,9 +1646,35 @@ class FarmsController extends Controller
 
           if($rooms->exists()){
             $r = $rooms->get()->toArray();
+            $output = array();
+            for($i=0; $i<count($r); $i++){
+              $output = array(
+                'id'  => $r[$i]['id'],
+                'farm_id' => $r[$i]['farm_id'],
+                'name'  => $r[$i]['name'],
+                'pigs'  => $this->pigsOfFarrowFarms($r[$i]['id'])
+              );
+            }
           }
 
           return $r;
+      }
+
+      /*
+      * get the farrowing history pigs
+      */
+      private function pigsOfFarrowFarms($fr_id)
+      {
+          $pigs = 0;
+          $rooms = DB::table('feeds_farrowing_rooms_history')
+                      ->where('farrowing_room_id',$fr_id);
+
+          if($rooms->exists()){
+            $rooms = $rooms->first();
+            $pigs = $rooms->pigs;
+          }
+
+          return $pigs;
       }
 
 
