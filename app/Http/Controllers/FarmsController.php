@@ -1666,12 +1666,16 @@ class FarmsController extends Controller
          );
          DB::table('feeds_farrowing_rooms')->insert($fr_data);
 
-         $id = DB::table('feeds_farrowing_rooms')->lastInsertId();
+         $id = DB::table('feeds_farrowing_rooms')
+                  ->where('farm_id',$d['farm_id'])
+                  ->where('room_name',$d['room_name'])
+                  ->orderBy('id','desc')
+                  ->first();
 
          // insert to feeds_farrowing_rooms_history
          $frj_data = array(
            'farm_id' => $d['farm_id'],
-           'farrowing_room_id'  => $id,
+           'farrowing_room_id'  => $id->id,
            'pigs' =>  $d['pigs'],
            'created_date' => date("Y-m-d H:i:a"),
            'update_type' => "Created new room of farrowing farm"
