@@ -1369,22 +1369,20 @@ class APIController extends Controller
         case "saveRoomFarmAdmin":
 
           $data = array(
-            'farm_id'     =>  $request->input('farmID'),
-            'bin_number'  =>  $request->input('binNumber'),
-            'alias'       =>  $request->input('alias'),
-            'bin_size'    =>  $request->input('binSize'),
-            'user_id'     =>  $request->input('userID')
+            'farm_id'     =>  $request->input('farm_id'),
+            'room_name'  =>  $request->input('room_name'),
+            'pigs'       =>  $request->input('pigs')
           );
 
           $farms_controller = new FarmsController;
-          $farms_controller->saveBinFarmAPI($data);
+          $farms_controller->saveRoomFarmAPI($data);
           unset($farms_controller);
 
           if (!empty($farmsLists)) {
             return array(
               "err" =>  0,
               "msg" =>  "Successfully Pulled Data",
-              "bin_data_saved" => $data
+              "rooms_data_saved" => $data
             );
           } else {
             return $this->errorMessage();

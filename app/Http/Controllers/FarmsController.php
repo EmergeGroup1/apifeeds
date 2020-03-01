@@ -1657,7 +1657,7 @@ class FarmsController extends Controller
   		 *
   		 * @return Response
   		 */
-  		public function saveRoomsFarmAPI($d)
+  		public function saveRoomFarmAPI($d)
   		{
          // insert to feeds_farrowing_rooms
   			 $fr_data = array(
@@ -1678,6 +1678,8 @@ class FarmsController extends Controller
           );
           DB::table('feeds_farrowing_rooms_history')->insert($frj_data);
 
+          return $d;
+
   		}
 
   		/**
@@ -1685,7 +1687,7 @@ class FarmsController extends Controller
   		 *
   		 * @return Response
   		 */
-  		public function updateRoomsFarmAPI($d)
+  		public function updateRoomFarmAPI($d)
   		{
 
 
@@ -1697,7 +1699,7 @@ class FarmsController extends Controller
   		 *
   		 * @return Response
   		 */
-  		public function deleteRoomsFarmAPI($id)
+  		public function deleteRoomFarmAPI($id)
   		{
 
 
