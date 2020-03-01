@@ -1370,7 +1370,7 @@ class APIController extends Controller
 
           $data = array(
             'farm_id'     =>  $request->input('farm_id'),
-            'room_name'  =>  $request->input('room_name'),
+            'room_nnumber'  =>  $request->input('room_nnumber'),
             'pigs'       =>  $request->input('pigs')
           );
 
@@ -1392,24 +1392,21 @@ class APIController extends Controller
 
         case "updateRoomFarmAdmin":
 
-          $data = array(
-            'bin_id'      =>  $request->input('binID'),
-            'farm_id'     =>  $request->input('farmID'),
-            'feed_type'   =>  $request->input('feedType'),
-            'alias'       =>  $request->input('alias'),
-            'bin_size'    =>  $request->input('binSize'),
-            'user_id'     =>  $request->input('userID')
-          );
+        $data = array(
+          'farm_id'     =>  $request->input('farm_id'),
+          'room_name'  =>  $request->input('room_name'),
+          'pigs'       =>  $request->input('pigs')
+        );
 
           $farms_controller = new FarmsController;
-          $binsLists = $farms_controller->updateBinFarmAPI($data);
+          $roomLists = $farms_controller->updateRoomFarmAPI($data);
           unset($farms_controller);
 
-          if (!empty($binsLists)) {
+          if (!empty($roomLists)) {
             return array(
               "err" =>  0,
               "msg" =>  "Successfully Pulled Data",
-              "bin_data_updated" => $data
+              "room_data_updated" => $roomLists
             );
           } else {
             return $this->errorMessage();

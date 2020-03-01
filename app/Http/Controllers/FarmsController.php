@@ -1651,7 +1651,7 @@ class FarmsController extends Controller
               $output[] = array(
                 'id'  => $r[$i]->id,
                 'farm_id' => $r[$i]->farm_id,
-                'name'  => $r[$i]->name,
+                'room_number'  => $r[$i]->room_number,
                 'pigs'  => $this->pigsOfFarrowFarms($r[$i]->id)
               );
             }
@@ -1694,7 +1694,7 @@ class FarmsController extends Controller
 
          $id = DB::table('feeds_farrowing_rooms')
                   ->where('farm_id',$d['farm_id'])
-                  ->where('name',$d['room_name'])
+                  ->where('name',$d['room_number'])
                   ->orderBy('id','desc')
                   ->first();
 
