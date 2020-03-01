@@ -1642,11 +1642,12 @@ class FarmsController extends Controller
       public function listRoomsFarmAPI($farm_id)
       {
           $r = array();
+          $output = array();
           $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id);
 
           if($rooms->exists()){
             $r = $rooms->get();
-            $output = array();
+
             for($i=0; $i<count($r); $i++){
               $output[] = array(
                 'id'  => $r[$i]->id,
