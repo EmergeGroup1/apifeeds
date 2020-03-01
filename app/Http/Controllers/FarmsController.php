@@ -1041,13 +1041,14 @@ class FarmsController extends Controller
       */
       public function listRoomsFarmAPI($farm_id)
       {
+        $r = array();
         $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id);
 
         if($rooms->exists()){
-          $rooms = $rooms->get();
+          $r = $rooms->get()->toArray();
         }
 
-        return $rooms;
+        return $r;
       }
 
   		/*
