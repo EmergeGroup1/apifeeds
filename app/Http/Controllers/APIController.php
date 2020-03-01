@@ -1418,14 +1418,14 @@ class APIController extends Controller
         case "deleteRoomFarmAdmin":
 
           $farms_controller = new FarmsController;
-          $farms_controller->deleteBinFarmAPI($request->input('binID'));
+          $farms_controller->deleteRoomFarmAPI($request->input('room_id'));
           unset($farms_controller);
 
-          if (!empty($farmsLists)) {
+          if (!empty($request->input('room_id'))) {
             return array(
               "err"   =>  0,
-              "msg"   =>  "Successfully Deleted Bin",
-              "binid" =>  $request->input('binID')
+              "msg"   =>  "Successfully Deleted Room",
+              "binid" =>  $request->input('room_id')
             );
           } else {
             return $this->errorMessage();

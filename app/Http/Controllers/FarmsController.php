@@ -1754,10 +1754,18 @@ class FarmsController extends Controller
   		 *
   		 * @return Response
   		 */
-  		public function deleteRoomFarmAPI($id)
+  		public function deleteRoomFarmAPI($room_id)
   		{
 
+          // delete farrowing room, history and animal groups
+          DB::table('feeds_farrowing_rooms')
+              ->where('id',$room_id)
+              ->delete();
+          DB::table('feeds_farrowing_rooms_history')
+              ->where('farrowing_room_id',$room_id)
+              ->delete();
 
+          // delete animal groups
 
   		}
 
