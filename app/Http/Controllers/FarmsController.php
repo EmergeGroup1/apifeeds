@@ -1669,7 +1669,7 @@ class FarmsController extends Controller
          $id = DB::table('feeds_farrowing_rooms')->lastInsertId();
 
          // insert to feeds_farrowing_rooms_history
-         $frj_data array(
+         $frj_data = array(
            'farm_id' => $d['farm_id'],
            'farrowing_room_id'  => $id,
            'pigs' =>  $d['pigs'],
