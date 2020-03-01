@@ -1406,7 +1406,7 @@ class APIController extends Controller
             if (!empty($roomLists)) {
               return array(
                 "err" =>  0,
-                "msg" =>  "Successfully Pulled Data",
+                "msg" =>  "Successfully Updated Data",
                 "room_data_updated" => $roomLists
               );
             } else {
