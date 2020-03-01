@@ -543,38 +543,39 @@ class FarmsController extends Controller
        */
       public function destroy($farmid)
       {
-  		Cache::forget('farms_lists');
 
-      Farms::findOrFail($farmid)->delete();
-  		// Delete related bins for the deleted farm
-  		DB::table('feeds_bins')->where('farm_id','=',$farmid)->delete();
-  		// Delete related farm users entries
-  		DB::table('feeds_farm_users')->where('farm_id',$farmid)->delete();
+    		Cache::forget('farms_lists');
 
-  		// delete related  bin_accepted_load
-  		DB::table('feeds_bins_accepted_load')->where('farm_id',$farmid)->delete();
-  		// delete data on history table
-  		DB::table('feeds_bin_history')->where('farm_id',$farmid)->delete();
+        Farms::findOrFail($farmid)->delete();
+    		// Delete related bins for the deleted farm
+    		DB::table('feeds_bins')->where('farm_id','=',$farmid)->delete();
+    		// Delete related farm users entries
+    		DB::table('feeds_farm_users')->where('farm_id',$farmid)->delete();
 
-  		// delete deliveries
-  		DB::table('feeds_deliveries')->where('farm_id',$farmid)->delete();
-  		// delete animal groups and transfers
-  		$this->removeRelatedData($farmid);
-  		// delete scheduled deliveries
-  		$this->removeFarmSchedule($farmid);
+    		// delete related  bin_accepted_load
+    		DB::table('feeds_bins_accepted_load')->where('farm_id',$farmid)->delete();
+    		// delete data on history table
+    		DB::table('feeds_bin_history')->where('farm_id',$farmid)->delete();
 
-  		//delete pending deliveries
-  		DB::table('feeds_deliveries_pending')->where('farm_id',$farmid)->delete();
+    		// delete deliveries
+    		DB::table('feeds_deliveries')->where('farm_id',$farmid)->delete();
+    		// delete animal groups and transfers
+    		$this->removeRelatedData($farmid);
+    		// delete scheduled deliveries
+    		$this->removeFarmSchedule($farmid);
 
-  		flash()->overlay("The farm has been successfully deleted!", "H&H Farms");
+    		//delete pending deliveries
+    		DB::table('feeds_deliveries_pending')->where('farm_id',$farmid)->delete();
 
-  		Cache::forget('farm_holder-'.$farmid);
-  		$home_controller = new HomeController;
-  		$home_controller->farmHolderBinClearCache($farmid);
-  		$home_controller->forecastingDataCache();
-  		unset($home_controller);
+    		flash()->overlay("The farm has been successfully deleted!", "H&H Farms");
 
-  		return redirect('farms');
+    		Cache::forget('farm_holder-'.$farmid);
+    		$home_controller = new HomeController;
+    		$home_controller->farmHolderBinClearCache($farmid);
+    		$home_controller->forecastingDataCache();
+    		unset($home_controller);
+
+    		return redirect('farms');
 
       }
 
@@ -1034,22 +1035,6 @@ class FarmsController extends Controller
 
   			return $bins;
   		}
-
-
-      /*
-      * list rooms api
-      */
-      public function listRoomsFarmAPI($farm_id)
-      {
-        $r = array();
-        $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id);
-
-        if($rooms->exists()){
-          $r = $rooms->get()->toArray();
-        }
-
-        return $r;
-      }
 
   		/*
   		*	Random hex color generator
@@ -1647,6 +1632,75 @@ class FarmsController extends Controller
   			DB::table('feeds_bins_accepted_load')->where('bin_id',$bin_id)->delete();
   			// delete data on history table
   			DB::table('feeds_bin_history')->where('bin_id',$bin_id)->delete();
+
+  		}
+
+
+      /*
+      * list rooms api
+      */
+      public function listRoomsFarmAPI($farm_id)
+      {
+          $r = array();
+          $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id);
+
+          if($rooms->exists()){
+            $r = $rooms->get()->toArray();
+          }
+
+          return $r;
+      }
+
+
+      /**
+  		 * Save the farm room.
+  		 *
+  		 * @return Response
+  		 */
+  		public function saveRoomsFarmAPI($d)
+  		{
+         // insert to feeds_farrowing_rooms
+  			 $fr_data = array(
+           'farm_id' => $d['farm_id'],
+           'name' => $d['room_name'],
+         );
+         DB::table('feeds_farrowing_rooms')->insert($fr_data);
+
+         $id = DB::table('feeds_farrowing_rooms')->lastInsertId();
+
+         // insert to feeds_farrowing_rooms_history
+         $frj_data array(
+           'farm_id' => $d['farm_id'],
+           'farrowing_room_id'  => $id,
+           'pigs' =>  $d['pigs'],
+           'created_date' => $d['created_date'],
+           'update_type' => "Created new room of farrowing farm"
+          );
+          DB::table('feeds_farrowing_rooms_history')->insert($frj_data);
+
+  		}
+
+  		/**
+  		 * update the farm roomn.
+  		 *
+  		 * @return Response
+  		 */
+  		public function updateRoomsFarmAPI($d)
+  		{
+
+
+
+  		}
+
+  		/**
+  		 * Delete the farm room.
+  		 *
+  		 * @return Response
+  		 */
+  		public function deleteRoomsFarmAPI($id)
+  		{
+
+
 
   		}
 

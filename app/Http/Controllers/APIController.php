@@ -1271,29 +1271,6 @@ class APIController extends Controller
 
         break;
 
-      case "listRoomsFarmAdmin":
-
-          $farm_id = $request->input('farmID');
-
-          $farms_controller = new FarmsController;
-          $binsList = $farms_controller->listRoomsFarmAPI($farm_id);
-          unset($farms_controller);
-
-          if (!empty($binsList)) {
-            return array(
-              "err" =>  0,
-              "msg" =>  "Successfully Pulled Data",
-              "binsList" => $binsList
-            );
-          } else {
-            return array(
-              "err" =>  1,
-              "msg" =>  "Selected farm has no rooms yet"
-            );
-          }
-
-        break;
-
       case "saveBinFarmAdmin":
 
         $data = array(
@@ -1364,6 +1341,102 @@ class APIController extends Controller
         }
 
         break;
+
+        case "listRoomsFarmAdmin":
+
+            $farm_id = $request->input('farmID');
+
+            $farms_controller = new FarmsController;
+            $binsList = $farms_controller->listRoomsFarmAPI($farm_id);
+            unset($farms_controller);
+
+            if (!empty($binsList)) {
+              return array(
+                "err" =>  0,
+                "msg" =>  "Successfully Pulled Data",
+                "binsList" => $binsList
+              );
+            } else {
+              return array(
+                "err" =>  1,
+                "msg" =>  "Selected farm has no rooms yet"
+              );
+            }
+
+          break;
+
+
+        case "saveRoomFarmAdmin":
+
+          $data = array(
+            'farm_id'     =>  $request->input('farmID'),
+            'bin_number'  =>  $request->input('binNumber'),
+            'alias'       =>  $request->input('alias'),
+            'bin_size'    =>  $request->input('binSize'),
+            'user_id'     =>  $request->input('userID')
+          );
+
+          $farms_controller = new FarmsController;
+          $farms_controller->saveBinFarmAPI($data);
+          unset($farms_controller);
+
+          if (!empty($farmsLists)) {
+            return array(
+              "err" =>  0,
+              "msg" =>  "Successfully Pulled Data",
+              "bin_data_saved" => $data
+            );
+          } else {
+            return $this->errorMessage();
+          }
+
+          break;
+
+        case "updateRoomFarmAdmin":
+
+          $data = array(
+            'bin_id'      =>  $request->input('binID'),
+            'farm_id'     =>  $request->input('farmID'),
+            'feed_type'   =>  $request->input('feedType'),
+            'alias'       =>  $request->input('alias'),
+            'bin_size'    =>  $request->input('binSize'),
+            'user_id'     =>  $request->input('userID')
+          );
+
+          $farms_controller = new FarmsController;
+          $binsLists = $farms_controller->updateBinFarmAPI($data);
+          unset($farms_controller);
+
+          if (!empty($binsLists)) {
+            return array(
+              "err" =>  0,
+              "msg" =>  "Successfully Pulled Data",
+              "bin_data_updated" => $data
+            );
+          } else {
+            return $this->errorMessage();
+          }
+
+          break;
+
+        case "deleteRoomFarmAdmin":
+
+          $farms_controller = new FarmsController;
+          $farms_controller->deleteBinFarmAPI($request->input('binID'));
+          unset($farms_controller);
+
+          if (!empty($farmsLists)) {
+            return array(
+              "err"   =>  0,
+              "msg"   =>  "Successfully Deleted Bin",
+              "binid" =>  $request->input('binID')
+            );
+          } else {
+            return $this->errorMessage();
+          }
+
+          break;
+
 
         /* End Farms Administraton */
 
