@@ -1682,7 +1682,7 @@ class FarmsController extends Controller
           );
           DB::table('feeds_farrowing_rooms_history')->insert($frj_data);
 
-          return $d;
+          return $frj_data;
 
   		}
 
