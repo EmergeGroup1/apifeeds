@@ -1344,7 +1344,7 @@ class APIController extends Controller
 
         case "listRoomsFarmAdmin":
 
-            $farm_id = $request->input('farmID');
+            $farm_id = $request->input('farm_id');
 
             $farms_controller = new FarmsController;
             $roomsList = $farms_controller->listRoomsFarmAPI($farm_id);
