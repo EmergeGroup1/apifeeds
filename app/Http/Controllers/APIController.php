@@ -1425,7 +1425,7 @@ class APIController extends Controller
             return array(
               "err"   =>  0,
               "msg"   =>  "Successfully Deleted Room",
-              "binid" =>  $request->input('room_id')
+              "roomid" =>  $request->input('room_id')
             );
           } else {
             return $this->errorMessage();
