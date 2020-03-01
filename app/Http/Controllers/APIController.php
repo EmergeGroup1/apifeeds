@@ -1288,7 +1288,7 @@ class APIController extends Controller
           } else {
             return array(
               "err" =>  1,
-              "msg" =>  "Selected farm not exists"
+              "msg" =>  "Selected farm has no rooms yet"
             );
           }
 
