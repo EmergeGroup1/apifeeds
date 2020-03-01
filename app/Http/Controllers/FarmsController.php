@@ -1729,6 +1729,12 @@ class FarmsController extends Controller
               ->where('id',$d['id'])
               ->update($fr_data);
 
+          // delete record if the same date
+          DB::table('feeds_farrowing_rooms_history')
+              ->where('id',$d['id'])
+              ->where('date','>=',date("Y-m-d"))
+              ->delete();
+
           // insert to feeds_farrowing_rooms_history
           $frj_data = array(
             'farm_id' => $d['farm_id'],
