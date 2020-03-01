@@ -1645,14 +1645,14 @@ class FarmsController extends Controller
           $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id);
 
           if($rooms->exists()){
-            $r = $rooms->get()->toArray();
+            $r = $rooms->get();
             $output = array();
             for($i=0; $i<count($r); $i++){
               $output = array(
-                'id'  => $r[$i]['id'],
-                'farm_id' => $r[$i]['farm_id'],
-                'name'  => $r[$i]['name'],
-                'pigs'  => $this->pigsOfFarrowFarms($r[$i]['id'])
+                'id'  => $r[$i]->id,
+                'farm_id' => $r[$i]->farm_id,
+                'name'  => $r[$i]->name,
+                'pigs'  => $this->pigsOfFarrowFarms($r[$i]->id)
               );
             }
           }
