@@ -1726,13 +1726,13 @@ class FarmsController extends Controller
             'room_number' => $d['room_number'],
           );
           DB::table('feeds_farrowing_rooms')
-              ->where('id',$d['room_id'])
+              ->where('id',$d['id'])
               ->update($fr_data);
 
           // insert to feeds_farrowing_rooms_history
           $frj_data = array(
             'farm_id' => $d['farm_id'],
-            'farrowing_room_id'  => $d['room_id'],
+            'farrowing_room_id'  => $d['id'],
             'pigs' =>  $d['pigs'],
             'date' => date("Y-m-d H:i:a"),
             'update_type' => "Updated Room"
