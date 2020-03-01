@@ -1392,27 +1392,27 @@ class APIController extends Controller
 
         case "updateRoomFarmAdmin":
 
-        $data = array(
-          'farm_id'     =>  $request->input('farm_id'),
-          'room_name'  =>  $request->input('room_name'),
-          'pigs'       =>  $request->input('pigs')
-        );
+          $data = array(
+            'id'     =>  $request->input('room_id'),
+            'room_number'  =>  $request->input('room_number'),
+            'pigs'       =>  $request->input('pigs')
+          );
 
-          $farms_controller = new FarmsController;
-          $roomLists = $farms_controller->updateRoomFarmAPI($data);
-          unset($farms_controller);
+            $farms_controller = new FarmsController;
+            $roomLists = $farms_controller->updateRoomFarmAPI($data);
+            unset($farms_controller);
 
-          if (!empty($roomLists)) {
-            return array(
-              "err" =>  0,
-              "msg" =>  "Successfully Pulled Data",
-              "room_data_updated" => $roomLists
-            );
-          } else {
-            return $this->errorMessage();
-          }
+            if (!empty($roomLists)) {
+              return array(
+                "err" =>  0,
+                "msg" =>  "Successfully Pulled Data",
+                "room_data_updated" => $roomLists
+              );
+            } else {
+              return $this->errorMessage();
+            }
 
-          break;
+            break;
 
         case "deleteRoomFarmAdmin":
 

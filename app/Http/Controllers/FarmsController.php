@@ -1704,7 +1704,7 @@ class FarmsController extends Controller
            'farm_id' => $d['farm_id'],
            'farrowing_room_id'  => $id->id,
            'pigs' =>  $d['pigs'],
-           'created_date' => date("Y-m-d H:i:a"),
+           'date' => date("Y-m-d H:i:s"),
            'update_type' => "Created New Room"
           );
           DB::table('feeds_farrowing_rooms_history')->insert($frj_data);
@@ -1721,7 +1721,26 @@ class FarmsController extends Controller
   		public function updateRoomFarmAPI($d)
   		{
 
+         // insert to feeds_farrowing_rooms
+         $fr_data = array(
+            'farm_id' => $d['farm_id'],
+            'name' => $d['room_name'],
+          );
+          DB::table('feeds_farrowing_rooms')
+              ->where('id',$d['room_id'])
+              ->update($fr_data);
 
+          // insert to feeds_farrowing_rooms_history
+          $frj_data = array(
+            'farm_id' => $d['farm_id'],
+            'farrowing_room_id'  => $d['room_id'],
+            'pigs' =>  $d['pigs'],
+            'date' => date("Y-m-d H:i:a"),
+            'update_type' => "Updated Room"
+           );
+           DB::table('feeds_farrowing_rooms_history')->insert($frj_data);
+
+           return $d;
 
   		}
 
