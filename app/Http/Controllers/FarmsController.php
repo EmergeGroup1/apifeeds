@@ -1668,7 +1668,7 @@ class FarmsController extends Controller
 
          $id = DB::table('feeds_farrowing_rooms')
                   ->where('farm_id',$d['farm_id'])
-                  ->where('room_name',$d['room_name'])
+                  ->where('name',$d['room_name'])
                   ->orderBy('id','desc')
                   ->first();
 
