@@ -1035,6 +1035,21 @@ class FarmsController extends Controller
   			return $bins;
   		}
 
+
+      /*
+      * list rooms api
+      */
+      public function listRoomsFarmAPI($farm_id)
+      {
+        $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id);
+
+        if($rooms->exists()){
+          $rooms = $rooms->get();
+        }
+
+        return $rooms;
+      }
+
   		/*
   		*	Random hex color generator
   		*/

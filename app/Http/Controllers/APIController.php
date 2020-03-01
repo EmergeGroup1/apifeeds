@@ -1248,7 +1248,7 @@ class APIController extends Controller
 
         break;
 
-      case "listBinFarmAdmin":
+        case "listBinFarmAdmin":
 
         $farm_id = $request->input('farmID');
 
@@ -1268,6 +1268,29 @@ class APIController extends Controller
             "msg" =>  "Selected farm not exists"
           );
         }
+
+        break;
+
+      case "listRoomsFarmAdmin":
+
+          $farm_id = $request->input('farmID');
+
+          $farms_controller = new FarmsController;
+          $binsList = $farms_controller->listRoomsFarmAPI($farm_id);
+          unset($farms_controller);
+
+          if (!empty($binsList)) {
+            return array(
+              "err" =>  0,
+              "msg" =>  "Successfully Pulled Data",
+              "binsList" => $binsList
+            );
+          } else {
+            return array(
+              "err" =>  1,
+              "msg" =>  "Selected farm not exists"
+            );
+          }
 
         break;
 
