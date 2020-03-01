@@ -1732,7 +1732,7 @@ class FarmsController extends Controller
           // delete record if the same date
           DB::table('feeds_farrowing_rooms_history')
               ->where('farrowing_room_id',$d['id'])
-              ->where('date','LIKE',"%".date("Y-m-d"))
+              ->where('date','LIKE',date("Y-m-d")."%")
               ->delete();
 
           // insert to feeds_farrowing_rooms_history
