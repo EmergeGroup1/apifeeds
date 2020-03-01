@@ -1375,10 +1375,10 @@ class APIController extends Controller
           );
 
           $farms_controller = new FarmsController;
-          $farms_controller->saveRoomFarmAPI($data);
+          $data = $farms_controller->saveRoomFarmAPI($data);
           unset($farms_controller);
 
-          if (!empty($farmsLists)) {
+          if (!empty($data)) {
             return array(
               "err" =>  0,
               "msg" =>  "Successfully Pulled Data",
