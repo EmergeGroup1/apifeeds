@@ -1657,7 +1657,7 @@ class FarmsController extends Controller
             }
           }
 
-          return $r;
+          return $output;
       }
 
       /*

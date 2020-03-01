@@ -1347,14 +1347,14 @@ class APIController extends Controller
             $farm_id = $request->input('farmID');
 
             $farms_controller = new FarmsController;
-            $binsList = $farms_controller->listRoomsFarmAPI($farm_id);
+            $roomsList = $farms_controller->listRoomsFarmAPI($farm_id);
             unset($farms_controller);
 
-            if (!empty($binsList)) {
+            if (!empty($roomsList)) {
               return array(
                 "err" =>  0,
                 "msg" =>  "Successfully Pulled Data",
-                "roomsList" => $binsList
+                "roomsList" => $roomsList
               );
             } else {
               return array(
