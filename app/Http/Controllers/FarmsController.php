@@ -1673,7 +1673,7 @@ class FarmsController extends Controller
            'farm_id' => $d['farm_id'],
            'farrowing_room_id'  => $id,
            'pigs' =>  $d['pigs'],
-           'created_date' => $d['created_date'],
+           'created_date' => date("Y-m-d H:i:a"),
            'update_type' => "Created new room of farrowing farm"
           );
           DB::table('feeds_farrowing_rooms_history')->insert($frj_data);
