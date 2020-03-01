@@ -1689,13 +1689,13 @@ class FarmsController extends Controller
          // insert to feeds_farrowing_rooms
   			 $fr_data = array(
            'farm_id' => $d['farm_id'],
-           'name' => $d['room_name'],
+           'room_number' => $d['room_number'],
          );
          DB::table('feeds_farrowing_rooms')->insert($fr_data);
 
          $id = DB::table('feeds_farrowing_rooms')
                   ->where('farm_id',$d['farm_id'])
-                  ->where('name',$d['room_number'])
+                  ->where('room_number',$d['room_number'])
                   ->orderBy('id','desc')
                   ->first();
 
@@ -1724,7 +1724,7 @@ class FarmsController extends Controller
          // insert to feeds_farrowing_rooms
          $fr_data = array(
             'farm_id' => $d['farm_id'],
-            'name' => $d['room_name'],
+            'room_number' => $d['room_number'],
           );
           DB::table('feeds_farrowing_rooms')
               ->where('id',$d['room_id'])
