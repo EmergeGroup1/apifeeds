@@ -1739,6 +1739,7 @@ class FarmsController extends Controller
 
       }
 
+
   		/**
   		 * update the farm room.
   		 *
@@ -1746,6 +1747,13 @@ class FarmsController extends Controller
   		 */
   		public function updateRoomFarmAPI($d)
   		{
+
+        if($d['prev_room_number'] != $d['room_number']){
+          if($this->roomCheck($d)){
+            return false;
+          }
+        }
+
 
          // insert to feeds_farrowing_rooms
          $fr_data = array(
