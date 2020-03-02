@@ -1686,6 +1686,11 @@ class FarmsController extends Controller
   		 */
   		public function saveRoomFarmAPI($d)
   		{
+
+          if($this->roomCheck($d)){
+            return false;
+          }
+
          // insert to feeds_farrowing_rooms
   			 $fr_data = array(
            'farm_id' => $d['farm_id'],
@@ -1713,8 +1718,29 @@ class FarmsController extends Controller
 
   		}
 
+
+
   		/**
-  		 * update the farm roomn.
+  		 * room number check.
+  		 *
+  		 * @return Response
+  		 */
+  		public function roomCheck($d)
+  		{
+          $room = DB::table('feeds_farrowing_rooms')
+                    ->where('farm_id',$d['farm_id'])
+                    ->where('room_number',$d['room_number']);
+
+          if ($room->exists()) {
+            return true;
+          } else {
+            return false;
+          }
+
+      }
+
+  		/**
+  		 * update the farm room.
   		 *
   		 * @return Response
   		 */
