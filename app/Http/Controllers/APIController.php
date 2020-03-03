@@ -88,6 +88,8 @@ class APIController extends Controller
 
           return array('farmID' => $data);
 
+        } else if ($type == 5) {
+          $farms_default = Farms::where('status', 1)->orderBy('name')->get();
         } else {
           return "no type passed";
         }
