@@ -128,8 +128,8 @@ class APIController extends Controller
           $farms_controller = new FarmsController;
           $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
           unset($farms_controller);
-          
-          return $rooms;
+
+          return array("rooms"=>$rooms);
         }
 
         $forecasting = json_decode(Storage::get('forecasting_data_low_bins.txt'));
