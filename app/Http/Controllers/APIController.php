@@ -123,6 +123,15 @@ class APIController extends Controller
           );
         }
 
+        // make selection for farrowing rooms
+        if($farm->farm_type == "farrowing") {
+          $farms_controller = new FarmsController;
+          $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
+          unset($farms_controller);
+          
+          return $rooms;
+        }
+
         $forecasting = json_decode(Storage::get('forecasting_data_low_bins.txt'));
 
         $home_controller = new HomeController;
