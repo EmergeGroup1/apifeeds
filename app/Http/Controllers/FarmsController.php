@@ -1668,10 +1668,11 @@ class FarmsController extends Controller
       {
           $pigs = 0;
           $rooms = DB::table('feeds_farrowing_rooms_history')
-                      ->where('farrowing_room_id',$fr_id);
+                      ->where('farrowing_room_id',$fr_id)
+                      ->orderBy("id","desc");
 
           if($rooms->exists()){
-            $rooms = $rooms->orderBy("date","desc")->first();
+            $rooms = $rooms->first();
             $pigs = $rooms->pigs;
           }
 
