@@ -1671,7 +1671,7 @@ class FarmsController extends Controller
                       ->where('farrowing_room_id',$fr_id);
 
           if($rooms->exists()){
-            $rooms = $rooms->first();
+            $rooms = $rooms->orderBy("date","desc")->first();
             $pigs = $rooms->pigs;
           }
 
