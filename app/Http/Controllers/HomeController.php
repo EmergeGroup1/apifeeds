@@ -584,15 +584,13 @@ class HomeController extends Controller
 
 
 		$updateBin = array();
+		$sum_pigs = 0;
 		foreach($numpigs as $k => $v){
+			$sum_pigs = $sum_pigs + $v;
 			$updateBin[] = $this->fetchRoomAnimalGroupAPI($animal_unique_id[$k],$v,$farm_id,$room,$user_id);
 		}
 
 		$output = array();
-		$sum_pigs = DB::table('feeds_movement_groups_bins')
-									->whereIn('unique_id',$animal_unique_id)
-									->sum('number_of_pigs');
-
 		foreach($updateBin as $k => $v){
 
 			$output[] = array(
