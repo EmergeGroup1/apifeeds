@@ -588,16 +588,13 @@ class HomeController extends Controller
 			$updateBin[] = $this->fetchRoomAnimalGroupAPI($animal_unique_id[$k],$v,$farm_id,$room,$user_id);
 		}
 
-		$output = array();
-
 		return $updateBin;
 
-		//$update = $this->multiToOne($updateBin);
-
+		$output = array();
 		foreach($updateBin as $k => $v){
 
 			$output[] = array(
-				'bin'	=>	$updateBin[$k]->room_id,
+				'bin'	=>	$v[$k]['bin_id'],
 				'msg' => "Room was successfully Updated!",
 				'empty' => "",
 				'daystoemp' => 0,
@@ -612,7 +609,7 @@ class HomeController extends Controller
 
 		}
 
-		return array(0=>$output);
+		return array($output[0]);
 
 	}
 
