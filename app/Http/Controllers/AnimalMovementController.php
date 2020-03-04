@@ -561,9 +561,10 @@ class AnimalMovementController extends Controller
       {
         $room = DB::table("feeds_farrowing_rooms")
                   ->select('room_number')
-                  ->where("id",$room_id);
-        if($room->isNotEmpty()){
-          return $room->first()->room_number;
+                  ->where("id",$room_id)
+                  ->first();
+        if(count($room)){
+          return $room->room_number;
         }
         return NULL;
       }
