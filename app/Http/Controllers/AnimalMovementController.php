@@ -846,6 +846,7 @@ class AnimalMovementController extends Controller
       public function saveGroupAPI($data)
       {
           $bins = $data['bins'];
+          $rooms = $data['rooms'];
           $number_of_pigs = $data['number_of_pigs'];
           $unique_id = $this->generateUniqueID();
 
@@ -865,14 +866,26 @@ class AnimalMovementController extends Controller
             'unique_id'				  =>	$unique_id
           );
 
-          foreach($bins as $k => $v){
-            $data_group_bins = array(
-              'bin_id'			    =>	$bins[$k],
-              'number_of_pigs'	=>	$number_of_pigs[$k],
-              'unique_id'			  =>	$unique_id
-            );
-            $this->saveGroupBins($data_group_bins);
+          if($data['type'] == "farrowing"){
+            foreach($rooms as $k => $v){
+              $data_group_bins = array(
+                'room_id'			    =>	$rooms[$k],
+                'number_of_pigs'	=>	$number_of_pigs[$k],
+                'unique_id'			  =>	$unique_id
+              );
+              $this->saveGroupBins($data_group_bins);
+            }
+          } else {
+            foreach($bins as $k => $v){
+              $data_group_bins = array(
+                'bin_id'			    =>	$bins[$k],
+                'number_of_pigs'	=>	$number_of_pigs[$k],
+                'unique_id'			  =>	$unique_id
+              );
+              $this->saveGroupBins($data_group_bins);
+            }
           }
+
 
           $save = DB::table('feeds_movement_groups')->insert($data_group,$data['farm_id']);
 
