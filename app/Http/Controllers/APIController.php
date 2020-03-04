@@ -1586,10 +1586,11 @@ class APIController extends Controller
       case "amDeleteGroup":
 
         $group_id = $request->input('group_id');
+        $type = $request->input('type');
         $user_id = $request->input('user_id');
 
         $am_controller = new AnimalMovementController;
-        $am_lists = $am_controller->removeGroupAPI($group_id, $user_id);
+        $am_lists = $am_controller->removeGroupAPI($group_id, $user_id, $type);
         unset($am_controller);
 
         if (!empty($am_lists)) {

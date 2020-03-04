@@ -1593,7 +1593,7 @@ class AnimalMovementController extends Controller
       ** @param $group_id int
       ** @return Response
       **/
-      public function removeGroupAPI($group_id,$user_id)
+      public function removeGroupAPI($group_id,$user_id,$type)
       {
 
           // remove data on deceased and treatment
@@ -1610,7 +1610,10 @@ class AnimalMovementController extends Controller
               ->delete();
               //DB::table('feeds_deceased')->where('group_id',$v->id)->delete();
               //DB::table('feeds_treatment')->where('group_id',$v->id)->delete();
-              $this->removePigsHistory($v->bin_id,$user_id);
+
+              if($type != "farrowing"){
+                  $this->removePigsHistory($v->bin_id,$user_id);
+              }
             }
           }
           $this->removeTransferData($group_id);
