@@ -575,6 +575,75 @@ class HomeController extends Controller
 
 	}
 
+
+	/*
+	*	Insert the number of pigs on the bin history
+	*/
+	public function updateRoomPigsAPI($farm_id,$room,$numpigs,$animal_unique_id,$user_id)
+	{
+
+
+		$updateBin = array();
+		foreach($numpigs as $k => $v){
+			$updateBin[] = $this->fetchRoomAnimalGroupAPI($animal_unique_id[$k],$v,$farm_id,$room,$user_id);
+		}
+
+		$output = array();
+
+		$update = $this->multiToOne($updateBin);
+
+		foreach($update as $k => $v){
+
+			$output[] = array(
+				'bin'	=>	$v['bin'],
+				'msg' => "Room was successfully Updated!",
+				'empty' => "",
+				'daystoemp' => 0,
+				'numofpigs' => 0,
+				'percentage' => 0,
+				'color' => "",
+				'text' => $text,
+				'tdy' => date('M d'),
+				'unique_id'	=>	$v['animal_unique_id'],
+				'total_number_of_pigs'	=>	$v['total_number_of_pigs']
+			);
+
+		}
+
+		$counter = count($output) - 1;
+
+		return array(0=>$output[$counter]);
+
+	}
+
+
+
+	/*
+	*	get the bins in Animal Group for farrowing
+	*/
+	private function fetchRoomAnimalGroupAPI($unique_id,$number_of_pigs,$farm_id,$room_id,$user_id)
+	{
+
+		// check the farm type
+		$type = $this->farmTypes($farm_id);
+
+		if($type != NULL){
+      DB::table('feeds_movement_groups_bins')
+        ->where('unique_id',$unique_id)
+        ->where('room_id',$room_id)
+        ->update(['number_of_pigs'=>$number_of_pigs]);
+		} else {
+			return NULL;
+		}
+
+		$update = array();
+    //$update[] = $this->updateRoomHistoryNumberOfPigsAPI($number_of_pigs,$bin_id,$unique_id,$user_id);
+
+		return $update;
+
+	}
+
+
 	/*
 	* Empty date
 	*/

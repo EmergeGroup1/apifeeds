@@ -334,6 +334,33 @@ class APIController extends Controller
 
         break;
 
+        case "updateRoomPigs":
+
+          $token = $request->input('token');
+          $log_token = session('token');
+          if ($token != $log_token) {
+            return array("err" => "Invalid token, please login");
+          }
+
+          $farm_id = $request->input('farmID');
+          $room_id = $request->input('roomID');
+          $number_of_pigs = $request->input('numberOfPigs');
+          $animal_unique_id = $request->input('animalUniqueID');
+          $user_id = $request->input('user_id');
+
+
+          // get the medications medication()
+          $home_controller = new HomeController;
+          $update_pigs = $home_controller->updateRoomPigsAPI($farm_id, $room_id, $number_of_pigs, $animal_unique_id, $user_id);
+          unset($home_controller);
+
+          return $update_pigs + array(
+            "err" =>  0,
+            "msg" =>  "Successfully updated pigs"
+          );
+
+          break;
+
       case "saveBatch":
 
         $token = $request->input('token');
