@@ -1653,7 +1653,8 @@ class FarmsController extends Controller
                 'id'  => $r[$i]->id,
                 'farm_id' => $r[$i]->farm_id,
                 'room_number'  => $r[$i]->room_number,
-                'pigs'  => $this->pigsOfFarrowFarms($r[$i]->id)
+                'pigs'  => $this->pigsOfFarrowFarms($r[$i]->id),
+                'groups' => ""
               );
             }
           }
