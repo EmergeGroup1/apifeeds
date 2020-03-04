@@ -1649,7 +1649,7 @@ class FarmsController extends Controller
             $r = $rooms->get();
 
             for($i=0; $i<count($r); $i++){
-              $output[] = array(
+              $output[$r[$i]->id] = array(
                 'id'  => $r[$i]->id,
                 'farm_id' => $r[$i]->farm_id,
                 'room_number'  => $r[$i]->room_number,
