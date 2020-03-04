@@ -622,16 +622,12 @@ class HomeController extends Controller
 	private function fetchRoomAnimalGroupAPI($unique_id,$number_of_pigs,$farm_id,$room_id,$user_id)
 	{
 
-		if($type != NULL){
       DB::table('feeds_movement_groups_bins')
         ->where('unique_id',$unique_id)
         ->where('room_id',$room_id)
         ->update(['number_of_pigs'=>$number_of_pigs]);
-		} else {
-			return NULL;
-		}
 
-		return $update;
+		return true;
 
 	}
 
