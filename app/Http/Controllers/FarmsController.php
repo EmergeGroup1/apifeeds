@@ -1643,7 +1643,7 @@ class FarmsController extends Controller
       {
           $r = array();
           $output = array();
-          $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id);
+          $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->oderBy("room_number","desc");
 
           if($rooms->exists()){
             $r = $rooms->get();
@@ -1652,7 +1652,7 @@ class FarmsController extends Controller
               $output[] = array(
                 'id'  => $r[$i]->id,
                 'farm_id' => $r[$i]->farm_id,
-                'room_number'  => $r[$i]->room_number, 
+                'room_number'  => $r[$i]->room_number,
                 'groups' => ""
               );
             }
