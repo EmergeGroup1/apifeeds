@@ -875,6 +875,9 @@ class AnimalMovementController extends Controller
               );
               $this->saveGroupBins($data_group_bins);
             }
+
+            $save = DB::table('feeds_movement_groups')->insert($data_group,$data['farm_id']);
+
           } else {
             $bins = $data['bins'];
             foreach($bins as $k => $v){
@@ -885,14 +888,16 @@ class AnimalMovementController extends Controller
               );
               $this->saveGroupBins($data_group_bins);
             }
+
+            $save = DB::table('feeds_movement_groups')->insert($data_group,$data['farm_id']);
+
+            foreach($bins as $k => $v){
+              $this->updateBinsHistoryNumberOfPigs($bins[$k],$number_of_pigs[$k],"create",$data['user_id']);
+            }
           }
 
 
-          $save = DB::table('feeds_movement_groups')->insert($data_group,$data['farm_id']);
 
-          foreach($bins as $k => $v){
-            $this->updateBinsHistoryNumberOfPigs($bins[$k],$number_of_pigs[$k],"create",$data['user_id']);
-          }
 
           if($save == 1){
             return "success";
