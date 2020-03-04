@@ -591,6 +591,9 @@ class HomeController extends Controller
 
 		$output = array();
 		foreach($updateBin as $k => $v){
+			$sum_pigs = DB::table('feeds_movement_groups_bins')
+										->where('unique_id',$v[0]->unique_id)
+										->sum('number_of_pigs');
 
 			$output[] = array(
 				'bin'	=>	$v[0]->bin_id,
@@ -602,8 +605,8 @@ class HomeController extends Controller
 				'color' => "",
 				'text' => "",
 				'tdy' => date('M d'),
-				'unique_id'	=>	$v[0]->animal_unique_id,
-				'total_number_of_pigs'	=>	$v[0]->total_number_of_pigs
+				'unique_id'	=>	$v[0]->unique_id,
+				'total_number_of_pigs'	=>	$sum_pigs
 			);
 
 		}
@@ -629,6 +632,7 @@ class HomeController extends Controller
 								->where('unique_id',$unique_id)
 								->where('room_id',$room_id)
 								->get();
+
 
 		return $groups;
 
