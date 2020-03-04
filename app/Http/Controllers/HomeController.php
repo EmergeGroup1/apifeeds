@@ -590,7 +590,7 @@ class HomeController extends Controller
 
 		$output = array();
 
-		$update = $this->multiToOne($updateBin);
+		//$update = $this->multiToOne($updateBin);
 
 		foreach($update as $k => $v){
 
@@ -622,9 +622,6 @@ class HomeController extends Controller
 	private function fetchRoomAnimalGroupAPI($unique_id,$number_of_pigs,$farm_id,$room_id,$user_id)
 	{
 
-		// check the farm type
-		$type = $this->farmTypes($farm_id);
-
 		if($type != NULL){
       DB::table('feeds_movement_groups_bins')
         ->where('unique_id',$unique_id)
@@ -633,9 +630,6 @@ class HomeController extends Controller
 		} else {
 			return NULL;
 		}
-
-		$update = array();
-    //$update[] = $this->updateRoomHistoryNumberOfPigsAPI($number_of_pigs,$bin_id,$unique_id,$user_id);
 
 		return $update;
 
