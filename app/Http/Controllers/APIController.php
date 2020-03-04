@@ -336,6 +336,8 @@ class APIController extends Controller
 
         case "updateRoomPigs":
 
+          return $request->all();
+
           $token = $request->input('token');
           $log_token = session('token');
           if ($token != $log_token) {
