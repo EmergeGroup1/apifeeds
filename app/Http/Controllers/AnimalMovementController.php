@@ -548,12 +548,23 @@ class AnimalMovementController extends Controller
                     'farm_name'	=> $this->farmName($farm_id),
                     'bin_id'		=>	$v['bin_id'],
                     'room_id'   =>  $v['room_id'],
+                    'room_number' =>
                     'number_of_pigs'	=> $v['number_of_pigs']
                     );
           }
 
           return $data;
 
+      }
+
+      private function roomNumber($room_id)
+      {
+        $room = DB::table("feeds_farrowing_rooms")
+                  ->select('room_number')
+                  ->where("id",$room_id)
+                  ->first();
+
+        return $room->room_number;
       }
 
       /**
