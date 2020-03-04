@@ -1659,10 +1659,16 @@ class APIController extends Controller
           'user_id'            =>  $request->input('user_id'),
           'type'              =>  $request->input('type'),
           'group_bin_id'      =>  $request->input('group_bin_id'),
-          'bins'              =>  $request->input('bins'),
+          //'bins'              =>  $request->input('bins'),
           'number_of_pigs'    =>  $request->input('number_of_pigs'),
           'unique_id'         =>  $request->input('unique_id')
         );
+
+        if($request->input('type') == "farrowing"){
+          $data['rooms'] = $request->input('rooms');
+        } else {
+          $data['bins'] = $request->input('bins');
+        }
 
         $am_controller = new AnimalMovementController;
         $am_lists = $am_controller->updateGroupAPI($data);

@@ -945,7 +945,7 @@ class AnimalMovementController extends Controller
       public function updateGroupAPI($data)
       {
           $date_to_transfer = $this->dateToTransfer($data['type'],$data['date_created']);
-          $data_bin = $data['bins'];
+
           $number_of_pigs = $data['number_of_pigs'];
           $group_bin_id = $data['group_bin_id'];
 
@@ -976,13 +976,43 @@ class AnimalMovementController extends Controller
             }
             // delete bins
             DB::table('feeds_movement_groups_bins')->where('unique_id',$data['unique_id'])->delete();
-            foreach($data_bin as $k => $v){
-              $this->insertBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$data['user_id']);
+
+            if($data['type'] == "farrowing"){
+              $data_room = $data['rooms'];
+              foreach($data_room as $k => $v){
+                $data = array(
+                'room_id'			=>	$v,
+                'number_of_pigs'	=>	$number_of_pigs[$k],
+                'unique_id'			=>	$data['unique_id']
+                );
+                DB::table('feeds_movement_groups_bins')->insert($data);
+              }
+            } else {
+              $data_bin = $data['bins'];
+              foreach($data_bin as $k => $v){
+                $this->insertBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$data['user_id']);
+              }
             }
+
           } else {
             // update bins
-            foreach($data_bin as $k => $v){
-              $this->updateBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$group_bin_id[$k],$data['user_id']);
+            if($data['type'] == "farrowing"){
+              $data_room = $data['rooms'];
+              foreach($data_room as $k => $v){
+                $d = array(
+                'room_id'			=>	$room_id,
+                'number_of_pigs'	=>	$number_of_pigs[$k]
+                );
+
+                DB::table('feeds_movement_groups_bins')
+                ->where('id',$group_bin_id[$k])
+                ->where('unique_id',$unique_id)
+                ->update($d);
+              }
+            } else {
+              foreach($data_bin as $k => $v){
+                $this->updateBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$group_bin_id[$k],$data['user_id']);
+              }
             }
 
           }
