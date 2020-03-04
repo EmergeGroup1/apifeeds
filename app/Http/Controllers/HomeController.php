@@ -600,10 +600,10 @@ class HomeController extends Controller
 				'numofpigs' => 0,
 				'percentage' => 0,
 				'color' => "",
-				'text' => $text,
+				'text' => "",
 				'tdy' => date('M d'),
-				'unique_id'	=>	$v['animal_unique_id'],
-				'total_number_of_pigs'	=>	$v['total_number_of_pigs']
+				'unique_id'	=>	$v[0]->animal_unique_id,
+				'total_number_of_pigs'	=>	$v[0]->total_number_of_pigs
 			);
 
 		}
