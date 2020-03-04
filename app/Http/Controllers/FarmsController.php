@@ -1653,6 +1653,7 @@ class FarmsController extends Controller
                 'id'  => $r[$i]->id,
                 'farm_id' => $r[$i]->farm_id,
                 'room_number'  => $r[$i]->room_number,
+                'pigs'  => $this->totalNumberOfPigsAnimalGroupAPI($r[$i]->id),
                 'groups' => $this->animalGroupBinsAPI($r[$i]->id)
               );
             }
@@ -1678,6 +1679,69 @@ class FarmsController extends Controller
 
           return $pigs;
       }
+
+
+
+      /*
+    	*	totalNumberOfPigsAnimalGroup
+    	*	get the total number of pigs based on the animal groups bin
+    	*/
+    	private function totalNumberOfPigsAnimalGroupAPI($room_id,$farm_id)
+    	{
+    		// check the farm type
+    		$type = $this->farmTypes($farm_id);
+    		$total_pigs = 0;
+
+    		if($type != NULL){
+
+    			$unique_id = $this->activeGroups('feeds_movement_groups');
+    			if($unique_id != NULL){
+    				$total_pigs = $this->animalGroupsBinsTotalNumberOfPigs($room_id,$unique_id);
+    			}
+
+    		} else {
+    			return $total_pigs;
+    		}
+
+    		return $total_pigs != NULL ? $total_pigs : 0;
+
+    	}
+
+    	/**
+    	** Gets the active groups
+    	** string $group_table Primary key
+    	** return array
+    	**/
+    	private function activeGroups($group_table)
+    	{
+
+    		$active_groups = DB::table($group_table)
+    											->select('unique_id')
+    											->where('status','!=','removed')
+    											->get();
+    		$active_groups = $this->toArray($active_groups);
+
+    		if($active_groups != NULL){
+    			return $active_groups;
+    		}
+
+    		return $active_groups;
+    	}
+
+      /*
+    	*	farrowingTotalNumberOfPigsAnimalGroup
+    	*	get the total number of pigs based on the animal groups bin
+    	*/
+    	private function animalGroupsBinsTotalNumberOfPigs($room_id,$unique_id)
+    	{
+    		$sum = DB::table('feeds_movement_groups_bins')
+    						->where('room_id',$room_id)
+    						->whereIn('unique_id',$unique_id)
+    						->sum('number_of_pigs');
+
+    		return $sum;
+    	}
+
 
 
 
