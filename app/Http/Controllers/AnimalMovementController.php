@@ -548,7 +548,7 @@ class AnimalMovementController extends Controller
                     'farm_name'	=> $this->farmName($farm_id),
                     'bin_id'		=>	$v['bin_id'],
                     'room_id'   =>  $v['room_id'],
-                    'room_number' =>
+                    'room_number' => $this->roomNumber($v['room_id']),
                     'number_of_pigs'	=> $v['number_of_pigs']
                     );
           }
