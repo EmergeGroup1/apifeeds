@@ -873,7 +873,7 @@ class AnimalMovementController extends Controller
                 'number_of_pigs'	=>	$number_of_pigs[$k],
                 'unique_id'			  =>	$unique_id
               );
-              $this->saveGroupBins($data_group_bins);
+              DB::table('feeds_movement_groups_bins')->insert($data_group_bins);
             }
 
             $save = DB::table('feeds_movement_groups')->insert($data_group,$data['farm_id']);
