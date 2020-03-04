@@ -592,10 +592,13 @@ class HomeController extends Controller
 		$output = array();
 		$sum_pigs = 0;
 		foreach($updateBin as $k => $v){
-			$sum_pigs = $sum_pigs+$v[0]->number_of_pigs;
+			$sum_pigs = DB::table('feeds_movement_groups_bins')
+										->where('room_id',$v[0]->room_id)
+										->where('unique_id',$v[0]->unique_id)
+										->sum('number_of_pigs');
 
 			$output[] = array(
-				'bin'	=>	$v[0]->bin_id,
+				'bin'	=>	$v[0]->room_id,
 				'msg' => "Room was successfully Updated!",
 				'empty' => "",
 				'daystoemp' => 0,
