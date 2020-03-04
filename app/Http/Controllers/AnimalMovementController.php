@@ -547,6 +547,7 @@ class AnimalMovementController extends Controller
                     'alias_label' 	=> $this->binLabel($v['bin_id']),
                     'farm_name'	=> $this->farmName($farm_id),
                     'bin_id'		=>	$v['bin_id'],
+                    'room_id'   =>  $v['room_id'],
                     'number_of_pigs'	=> $v['number_of_pigs']
                     );
           }
