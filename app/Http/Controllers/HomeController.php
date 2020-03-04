@@ -610,7 +610,7 @@ class HomeController extends Controller
 
 		}
 
-		$counter = count($output) - 1;
+		$counter = count($output);
 
 		return array(0=>$output[$counter]);
 
