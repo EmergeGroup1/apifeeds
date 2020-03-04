@@ -592,10 +592,10 @@ class HomeController extends Controller
 
 		//$update = $this->multiToOne($updateBin);
 
-		foreach($update as $k => $v){
+		foreach($updateBin as $k => $v){
 
 			$output[] = array(
-				'bin'	=>	$v['bin'],
+				'bin'	=>	$v['room_id'],
 				'msg' => "Room was successfully Updated!",
 				'empty' => "",
 				'daystoemp' => 0,
@@ -627,7 +627,12 @@ class HomeController extends Controller
         ->where('room_id',$room_id)
         ->update(['number_of_pigs'=>$number_of_pigs]);
 
-		return true;
+		$groups = DB::table('feeds_movement_groups_bins')
+								->where('unique_id',$unique_id)
+								->where('room_id',$room_id)
+								->get();
+
+		return $groups;
 
 	}
 
