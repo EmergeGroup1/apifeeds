@@ -1000,13 +1000,13 @@ class AnimalMovementController extends Controller
               $data_room = $data['rooms'];
               foreach($data_room as $k => $v){
                 $d = array(
-                'room_id'			=>	$room_id,
+                'room_id'			=>	$v,
                 'number_of_pigs'	=>	$number_of_pigs[$k]
                 );
 
                 DB::table('feeds_movement_groups_bins')
                 ->where('id',$group_bin_id[$k])
-                ->where('unique_id',$unique_id)
+                ->where('unique_id',$data['unique_id'])
                 ->update($d);
               }
             } else {
