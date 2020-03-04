@@ -845,8 +845,7 @@ class AnimalMovementController extends Controller
       **/
       public function saveGroupAPI($data)
       {
-          $bins = $data['bins'];
-          $rooms = $data['rooms'];
+
           $number_of_pigs = $data['number_of_pigs'];
           $unique_id = $this->generateUniqueID();
 
@@ -867,6 +866,7 @@ class AnimalMovementController extends Controller
           );
 
           if($data['type'] == "farrowing"){
+            $rooms = $data['rooms'];
             foreach($rooms as $k => $v){
               $data_group_bins = array(
                 'room_id'			    =>	$rooms[$k],
@@ -876,6 +876,7 @@ class AnimalMovementController extends Controller
               $this->saveGroupBins($data_group_bins);
             }
           } else {
+            $bins = $data['bins'];
             foreach($bins as $k => $v){
               $data_group_bins = array(
                 'bin_id'			    =>	$bins[$k],
