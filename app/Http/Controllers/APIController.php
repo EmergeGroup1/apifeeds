@@ -1385,7 +1385,7 @@ class APIController extends Controller
           $data = array(
             'farm_id'     =>  $request->input('farm_id'),
             'room_number'  =>  $request->input('room_number'),
-            'pigs'       =>  $request->input('pigs')
+            //'pigs'       =>  $request->input('pigs')
           );
 
           $farms_controller = new FarmsController;

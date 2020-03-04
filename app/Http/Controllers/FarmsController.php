@@ -1710,7 +1710,6 @@ class FarmsController extends Controller
          $frj_data = array(
            'farm_id' => $d['farm_id'],
            'farrowing_room_id'  => $id->id,
-           'pigs' =>  $d['pigs'],
            'date' => date("Y-m-d H:i:s"),
            'update_type' => "Created New Room"
           );
@@ -1775,7 +1774,6 @@ class FarmsController extends Controller
           $frj_data = array(
             'farm_id' => $d['farm_id'],
             'farrowing_room_id'  => $d['id'],
-            'pigs' =>  $d['pigs'],
             'date' => date("Y-m-d H:i:a"),
             'update_type' => "Updated Room"
            );
