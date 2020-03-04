@@ -588,7 +588,6 @@ class HomeController extends Controller
 			$updateBin[] = $this->fetchRoomAnimalGroupAPI($animal_unique_id[$k],$v,$farm_id,$room,$user_id);
 		}
 
-		return $updateBin;
 
 		$output = array();
 		foreach($updateBin as $k => $v){
