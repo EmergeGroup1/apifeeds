@@ -1643,7 +1643,7 @@ class FarmsController extends Controller
       {
           $r = array();
           $output = array();
-          $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->orderBy("room_number","desc");
+          $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->orderBy("room_number");
 
           if($rooms->exists()){
             $r = $rooms->get();
