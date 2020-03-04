@@ -595,7 +595,7 @@ class HomeController extends Controller
 		foreach($updateBin as $k => $v){
 
 			$output[] = array(
-				'bin'	=>	$updateBin[$k]['room_id'],
+				'bin'	=>	$updateBin[$k]->room_id,
 				'msg' => "Room was successfully Updated!",
 				'empty' => "",
 				'daystoemp' => 0,
