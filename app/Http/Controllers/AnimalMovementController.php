@@ -563,7 +563,7 @@ class AnimalMovementController extends Controller
                   ->select('room_number')
                   ->where("id",$room_id)
                   ->first();
-        if(count($room)){
+        if(!empty($room)){
           return $room->room_number;
         }
         return NULL;
