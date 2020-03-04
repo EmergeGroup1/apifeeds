@@ -590,6 +590,8 @@ class HomeController extends Controller
 
 		$output = array();
 
+		return $updateBin;
+
 		//$update = $this->multiToOne($updateBin);
 
 		foreach($updateBin as $k => $v){
