@@ -561,10 +561,11 @@ class AnimalMovementController extends Controller
       {
         $room = DB::table("feeds_farrowing_rooms")
                   ->select('room_number')
-                  ->where("id",$room_id)
-                  ->first();
-
-        return $room->room_number;
+                  ->where("id",$room_id);
+        if($room->has("room_number")){
+          return $room->first()->room_number;
+        }
+        return NULL;
       }
 
       /**
