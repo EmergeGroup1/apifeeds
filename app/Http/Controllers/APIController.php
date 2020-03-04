@@ -343,7 +343,7 @@ class APIController extends Controller
           }
 
           $farm_id = $request->input('farmID');
-          $room_id = $request->input('roomID');
+          $room_id = $request->input('binID');
           $number_of_pigs = $request->input('numberOfPigs');
           $animal_unique_id = $request->input('animalUniqueID');
           $user_id = $request->input('user_id');
