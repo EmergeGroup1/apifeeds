@@ -1622,9 +1622,9 @@ class APIController extends Controller
         );
 
         if($request->input('type') == "farrowing"){
-          $data['bins'] = $request->input('rooms');
+          $data['rooms'] = $request->input('rooms');
         } else {
-          $data['rooms'] = $request->input('bins');
+          $data['bins'] = $request->input('bins');
         }
 
         $am_controller = new AnimalMovementController;
