@@ -661,7 +661,7 @@ class AnimalMovementController extends Controller
             $group_name_to = $group_to_data != NULL ? $group_to_data->group_name : "";
             $farm_id_to = $group_to_data != NULL ? $group_to_data->farm_id : 1;
             $farm_name_to = Farms::where('id',$farm_id_to)->first();
-            $farm_name_to = $farm_name_to->name;
+            $farm_name_to = $farm_name_to != NULL ? $farm_name_to->name : NULL;
           }
 
           return array(
