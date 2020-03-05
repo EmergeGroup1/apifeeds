@@ -1447,7 +1447,10 @@ class FarmsController extends Controller
       {
 
           for($i = 0; $i<count($farms_data); $i++){
-            $farms_data[$i]['totalRooms'] = DB::table('feeds_farrowing_rooms')->where('farm_id',$farms_data[$i]['farm_id'])
+            $t = DB::table('feeds_farrowing_rooms')
+                    ->where('farm_id',$farms_data[$i]['farm_id'])
+                    ->count();
+            $farms_data[$i]['totalRooms'] = $t;
           }
 
           return $farms_data;
