@@ -1358,6 +1358,7 @@ class AnimalMovementController extends Controller
               $transfer_bins[] = array(
                 'transfer_id'		=>	$transfer_id,
                 'bin_id_from'		=>	$v,
+                'room_id_from'  =>  NULL,
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
                 'dead'					=>	$num_of_pigs_dead[$k],
@@ -1367,6 +1368,7 @@ class AnimalMovementController extends Controller
               $transfer_bins_update = array(
                 'transfer_id'		=>	$transfer_id,
                 'bin_id_from'		=>	$v,
+                'room_id_from'  =>  NULL,
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
                 'dead'					=>	$num_of_pigs_dead[$k],
@@ -1705,13 +1707,14 @@ class AnimalMovementController extends Controller
         if($transfer_type == 'farrowing_to_nursery'){
 
           // get the number_of_pigs for the bins in group from
-          $number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->first();
+          $number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('room_id',$transfer_bins['room_id_from'])->where('unique_id',$group_from_unique_id)->first();
+          //$number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->first();
           //$decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead'] + $poor); // + $transfer_bins['poor'];
           $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
           $decreased_pigs = $decreased_pigs < 0 ? 0 : $decreased_pigs;
 
           //update the feeds_movement_groups_bins for decreased transferred pigs
-          DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->update(['number_of_pigs'=>$decreased_pigs]);
+          DB::table('feeds_movement_groups_bins')->where('room_id',$transfer_bins['room_id_from'])->where('unique_id',$group_from_unique_id)->update(['number_of_pigs'=>$decreased_pigs]);
 
           // remove empty pigs group
           $pigs_count = $this->groupPigsCounter('feeds_movement_groups_bins',$group_from_unique_id);
@@ -1738,7 +1741,7 @@ class AnimalMovementController extends Controller
           } else {
             $this->animalGroupStatusUpdateChecker($group_from_id,'feeds_movement_groups');
             //if($decreased_pigs != 0){
-              $this->updateBinsHistoryNumberOfPigs($transfer_bins['bin_id_from'],$decreased_pigs,"update",$user_id);
+              //$this->updateBinsHistoryNumberOfPigs($transfer_bins['bin_id_from'],$decreased_pigs,"update",$user_id);
             //}
           }
 
