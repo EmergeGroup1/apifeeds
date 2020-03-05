@@ -1437,8 +1437,21 @@ class FarmsController extends Controller
   							->groupBy('feeds_farms.id')
   							->get();
 
-  				return $farms;
+  				return $this->toArray($farms);
   		}
+
+      /*
+      *
+      */
+      private function totalRooms($farms_data)
+      {
+
+          for($i = 0; $i<count($farms_data); $i++){
+            $farms_data[$i]['totalRooms'] = DB::table('feeds_farrowing_rooms')->where('farm_id',$farms_data[$i]['farm_id'])
+          }
+
+          return $farms_data;
+      }
 
   		/**
   		 * Save the farm.
