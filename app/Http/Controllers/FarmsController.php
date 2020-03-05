@@ -1437,7 +1437,7 @@ class FarmsController extends Controller
   							->groupBy('feeds_farms.id')
   							->get();
 
-  				return $this->toArray($farms);
+  				return $this->totalRooms($this->toArray($farms));
   		}
 
       /*
