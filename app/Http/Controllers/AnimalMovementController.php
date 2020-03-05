@@ -1354,11 +1354,20 @@ class AnimalMovementController extends Controller
         $transfer_bins = array();
         foreach($bins_from as $k => $v){
 
+          if($transfer['transfer_type'] == "farrowing_to_nursery"){
+            $room_from_id = $v;
+            $bin_id_from = NULL;
+          } else {
+            $room_from_id = NULL;
+            $bin_id_from = $v;
+          }
+
+
           //if($bins_from_pigs[$k]['value'] != 0){
               $transfer_bins[] = array(
                 'transfer_id'		=>	$transfer_id,
-                'bin_id_from'		=>	$v,
-                'room_id_from'  =>  NULL,
+                'bin_id_from'		=>	$bin_id_from,
+                'room_id_from'  =>  $room_from_id,
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
                 'dead'					=>	$num_of_pigs_dead[$k],
@@ -1367,8 +1376,8 @@ class AnimalMovementController extends Controller
 
               $transfer_bins_update = array(
                 'transfer_id'		=>	$transfer_id,
-                'bin_id_from'		=>	$v,
-                'room_id_from'  =>  NULL,
+                'bin_id_from'		=>	$bin_id_from,
+                'room_id_from'  =>  $room_from_id,
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
                 'dead'					=>	$num_of_pigs_dead[$k],
