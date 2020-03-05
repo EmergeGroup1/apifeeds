@@ -88,12 +88,14 @@ class HomeController extends Controller
 					return ($a['bins'][0]['first_list_days_to_empty'] > $b['bins'][0]['first_list_days_to_empty']);
 					return ($a['bins'][0]['empty_bins'] < $b['bins'][0]['empty_bins'])?1:-1;
 				});
+				Storage::put('forecasting_data_low_bins.txt',NULL);
 				Storage::put('forecasting_data_low_bins.txt',json_encode($forecastingData));
 
 				// cache data via sort type a-z farms
 				usort($forecastingData, function($a,$b){
 					return strcasecmp($a["name"], $b["name"]);
 				});
+				Storage::put('forecasting_data_a_to_z.txt',NULL);
 				Storage::put('forecasting_data_a_to_z.txt',json_encode($forecastingData));
 
 				// execute the farrowing farms data cache builder
