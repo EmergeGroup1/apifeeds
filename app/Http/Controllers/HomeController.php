@@ -63,7 +63,7 @@ class HomeController extends Controller
 										DB::raw('feeds_farms.notes as notes'),
 										DB::raw('feeds_farms.update_notification as update_notification')
 										)
-										->rightJoin('feeds_bins','feeds_farms.id','=','feeds_bins.farm_id')
+										//->rightJoin('feeds_bins','feeds_farms.id','=','feeds_bins.farm_id')
 										->where('status',1)
 										->get()->toArray();
 
