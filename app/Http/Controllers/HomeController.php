@@ -82,8 +82,6 @@ class HomeController extends Controller
 				$farms = $this->enabledFarms();
 				$forecastingData = $this->farmsDataBuilder($farms);
 
-				return $forecastingData;
-
 				// cache data via sort type low bins
 				usort($forecastingData, function($a,$b){
 					if($a['bins'][0]['empty_bins'] == $b['bins'][0]['empty_bins'])
@@ -156,7 +154,7 @@ class HomeController extends Controller
 							'farm_type'				=>	$farms[$i]['farm_type'],
 							'delivery_status'	=>	$this->pendingDeliveryItems($farms[$i]['id']),
 							'address'					=>	$farms[$i]['address'],
-							'bins'						=> 	$this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes'])
+							'bins'						=> 	$farms[$i]['farm_type'] != "farrowing" ? $this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes']) : NULL
 						);
 
 						Cache::forever('farm_holder-'.$farms[$i]['id'],$forecastingData);
