@@ -82,6 +82,8 @@ class HomeController extends Controller
 				$farms = $this->enabledFarms();
 				$forecastingData = $this->farmsDataBuilder($farms);
 
+				return $forecastingData;
+
 				// cache data via sort type low bins
 				usort($forecastingData, function($a,$b){
 					if($a['bins'][0]['empty_bins'] == $b['bins'][0]['empty_bins'])
