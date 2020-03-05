@@ -627,17 +627,10 @@ class FarmsController extends Controller
   	   */
   		private function removeRelatedData($farm_id)
   		{
-  			$farrowing_group = DB::table('feeds_movement_farrowing_group')->where('farm_id',$farm_id)->get();
-  			$nursery_group = DB::table('feeds_movement_nursery_group')->where('farm_id',$farm_id)->get();
-  			$finisher_group = DB::table('feeds_movement_finisher_group')->where('farm_id',$farm_id)->get();
+  			$group = DB::table('feeds_movement_groups')->where('farm_id',$farm_id)->get();
+  			$this->removeGroups($group,'feeds_movement_groups_bins');
 
-  			$this->removeGroups($farrowing_group,'feeds_movement_farrowing_bins');
-  			$this->removeGroups($nursery_group,'feeds_movement_nursery_bins');
-  			$this->removeGroups($finisher_group,'feeds_movement_finisher_bins');
-
-  			DB::table('feeds_movement_farrowing_group')->where('farm_id',$farm_id)->delete();
-  			DB::table('feeds_movement_nursery_group')->where('farm_id',$farm_id)->delete();
-  			DB::table('feeds_movement_finisher_group')->where('farm_id',$farm_id)->delete();
+  			DB::table('feeds_movement_groups')->where('farm_id',$farm_id)->delete();
   		}
 
   		/*
@@ -665,8 +658,8 @@ class FarmsController extends Controller
 
   		private function removeTransfer($group_id)
   		{
-  			$transfer_from = DB::table('feeds_movement_transfer')->select('transfer_id')->where('group_from',$group_id)->get();
-  			$transfer_to = DB::table('feeds_movement_transfer')->select('transfer_id')->where('group_to',$group_id)->get();
+  			$transfer_from = DB::table('feeds_movement_transfer_v2')->select('transfer_id')->where('group_from',$group_id)->get();
+  			$transfer_to = DB::table('feeds_movement_transfer_v2')->select('transfer_id')->where('group_to',$group_id)->get();
 
   			if($transfer_from != NULL){
   				foreach($transfer_from as $k => $v){
@@ -680,8 +673,8 @@ class FarmsController extends Controller
   				}
   			}
 
-  			DB::table('feeds_movement_transfer')->where('group_from',$group_id)->delete();
-  			DB::table('feeds_movement_transfer')->where('group_to',$group_id)->delete();
+  			DB::table('feeds_movement_transfer_v2')->where('group_from',$group_id)->delete();
+  			DB::table('feeds_movement_transfer_v2')->where('group_to',$group_id)->delete();
   		}
 
   		/*
@@ -690,7 +683,7 @@ class FarmsController extends Controller
   		*/
   		private function removeTransferBins($transfer_id)
   		{
-  			DB::table('feeds_movement_transfer')->where('transfer_id',$transfer_id)->delete();
+  			DB::table('feeds_movement_transfer_bins_v2')->where('transfer_id',$transfer_id)->delete();
   		}
 
   		/*
