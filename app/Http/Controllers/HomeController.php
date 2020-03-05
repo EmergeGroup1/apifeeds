@@ -101,7 +101,7 @@ class HomeController extends Controller
 				// execute the farrowing farms data cache builder
 				$this->forecastingFarrowingDataCache();
 
-				return "done caching";
+				return $forecastingData;//"done caching";
 
 		}
 
