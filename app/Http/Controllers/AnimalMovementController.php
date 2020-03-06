@@ -547,12 +547,26 @@ class AnimalMovementController extends Controller
                     'alias_label' 	=> $this->binLabel($v['bin_id']),
                     'farm_name'	=> $this->farmName($farm_id),
                     'bin_id'		=>	$v['bin_id'],
+                    'room_id'   =>  $v['room_id'],
+                    'room_number' => $this->roomNumber($v['room_id']),
                     'number_of_pigs'	=> $v['number_of_pigs']
                     );
           }
 
           return $data;
 
+      }
+
+      private function roomNumber($room_id)
+      {
+        $room = DB::table("feeds_farrowing_rooms")
+                  ->select('room_number')
+                  ->where("id",$room_id)
+                  ->first();
+        if(!empty($room)){
+          return $room->room_number;
+        }
+        return NULL;
       }
 
       /**
@@ -647,7 +661,7 @@ class AnimalMovementController extends Controller
             $group_name_to = $group_to_data != NULL ? $group_to_data->group_name : "";
             $farm_id_to = $group_to_data != NULL ? $group_to_data->farm_id : 1;
             $farm_name_to = Farms::where('id',$farm_id_to)->first();
-            $farm_name_to = $farm_name_to->name;
+            $farm_name_to = $farm_name_to != NULL ? $farm_name_to->name : NULL;
           }
 
           return array(
@@ -845,7 +859,7 @@ class AnimalMovementController extends Controller
       **/
       public function saveGroupAPI($data)
       {
-          $bins = $data['bins'];
+
           $number_of_pigs = $data['number_of_pigs'];
           $unique_id = $this->generateUniqueID();
 
@@ -865,20 +879,39 @@ class AnimalMovementController extends Controller
             'unique_id'				  =>	$unique_id
           );
 
-          foreach($bins as $k => $v){
-            $data_group_bins = array(
-              'bin_id'			    =>	$bins[$k],
-              'number_of_pigs'	=>	$number_of_pigs[$k],
-              'unique_id'			  =>	$unique_id
-            );
-            $this->saveGroupBins($data_group_bins);
+          if($data['type'] == "farrowing"){
+            $rooms = $data['rooms'];
+            foreach($rooms as $k => $v){
+              $data_group_bins = array(
+                'room_id'			    =>	$rooms[$k],
+                'number_of_pigs'	=>	$number_of_pigs[$k],
+                'unique_id'			  =>	$unique_id
+              );
+              DB::table('feeds_movement_groups_bins')->insert($data_group_bins);
+            }
+
+            $save = DB::table('feeds_movement_groups')->insert($data_group,$data['farm_id']);
+
+          } else {
+            $bins = $data['bins'];
+            foreach($bins as $k => $v){
+              $data_group_bins = array(
+                'bin_id'			    =>	$bins[$k],
+                'number_of_pigs'	=>	$number_of_pigs[$k],
+                'unique_id'			  =>	$unique_id
+              );
+              $this->saveGroupBins($data_group_bins);
+            }
+
+            $save = DB::table('feeds_movement_groups')->insert($data_group,$data['farm_id']);
+
+            foreach($bins as $k => $v){
+              $this->updateBinsHistoryNumberOfPigs($bins[$k],$number_of_pigs[$k],"create",$data['user_id']);
+            }
           }
 
-          $save = DB::table('feeds_movement_groups')->insert($data_group,$data['farm_id']);
 
-          foreach($bins as $k => $v){
-            $this->updateBinsHistoryNumberOfPigs($bins[$k],$number_of_pigs[$k],"create",$data['user_id']);
-          }
+
 
           if($save == 1){
             return "success";
@@ -925,7 +958,7 @@ class AnimalMovementController extends Controller
       public function updateGroupAPI($data)
       {
           $date_to_transfer = $this->dateToTransfer($data['type'],$data['date_created']);
-          $data_bin = $data['bins'];
+
           $number_of_pigs = $data['number_of_pigs'];
           $group_bin_id = $data['group_bin_id'];
 
@@ -956,13 +989,43 @@ class AnimalMovementController extends Controller
             }
             // delete bins
             DB::table('feeds_movement_groups_bins')->where('unique_id',$data['unique_id'])->delete();
-            foreach($data_bin as $k => $v){
-              $this->insertBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$data['user_id']);
+
+            if($data['type'] == "farrowing"){
+              $data_room = $data['rooms'];
+              foreach($data_room as $k => $v){
+                $data = array(
+                'room_id'			=>	$v,
+                'number_of_pigs'	=>	$number_of_pigs[$k],
+                'unique_id'			=>	$data['unique_id']
+                );
+                DB::table('feeds_movement_groups_bins')->insert($data);
+              }
+            } else {
+              $data_bin = $data['bins'];
+              foreach($data_bin as $k => $v){
+                $this->insertBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$data['user_id']);
+              }
             }
+
           } else {
             // update bins
-            foreach($data_bin as $k => $v){
-              $this->updateBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$group_bin_id[$k],$data['user_id']);
+            if($data['type'] == "farrowing"){
+              $data_room = $data['rooms'];
+              foreach($data_room as $k => $v){
+                $d = array(
+                'room_id'			=>	$v,
+                'number_of_pigs'	=>	$number_of_pigs[$k]
+                );
+
+                DB::table('feeds_movement_groups_bins')
+                ->where('id',$group_bin_id[$k])
+                ->where('unique_id',$data['unique_id'])
+                ->update($d);
+              }
+            } else {
+              foreach($data_bin as $k => $v){
+                $this->updateBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$group_bin_id[$k],$data['user_id']);
+              }
             }
 
           }
@@ -1291,10 +1354,20 @@ class AnimalMovementController extends Controller
         $transfer_bins = array();
         foreach($bins_from as $k => $v){
 
+          if($transfer['transfer_type'] == "farrowing_to_nursery"){
+            $room_from_id = $v;
+            $bin_id_from = NULL;
+          } else {
+            $room_from_id = NULL;
+            $bin_id_from = $v;
+          }
+
+
           //if($bins_from_pigs[$k]['value'] != 0){
               $transfer_bins[] = array(
                 'transfer_id'		=>	$transfer_id,
-                'bin_id_from'		=>	$v,
+                'bin_id_from'		=>	$bin_id_from,
+                'room_id_from'  =>  $room_from_id,
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
                 'dead'					=>	$num_of_pigs_dead[$k],
@@ -1303,7 +1376,8 @@ class AnimalMovementController extends Controller
 
               $transfer_bins_update = array(
                 'transfer_id'		=>	$transfer_id,
-                'bin_id_from'		=>	$v,
+                'bin_id_from'		=>	$bin_id_from,
+                'room_id_from'  =>  $room_from_id,
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
                 'dead'					=>	$num_of_pigs_dead[$k],
@@ -1543,7 +1617,7 @@ class AnimalMovementController extends Controller
       ** @param $group_id int
       ** @return Response
       **/
-      public function removeGroupAPI($group_id,$user_id)
+      public function removeGroupAPI($group_id,$user_id,$type)
       {
 
           // remove data on deceased and treatment
@@ -1560,7 +1634,10 @@ class AnimalMovementController extends Controller
               ->delete();
               //DB::table('feeds_deceased')->where('group_id',$v->id)->delete();
               //DB::table('feeds_treatment')->where('group_id',$v->id)->delete();
-              $this->removePigsHistory($v->bin_id,$user_id);
+
+              if($type != "farrowing"){
+                  $this->removePigsHistory($v->bin_id,$user_id);
+              }
             }
           }
           $this->removeTransferData($group_id);
@@ -1639,13 +1716,14 @@ class AnimalMovementController extends Controller
         if($transfer_type == 'farrowing_to_nursery'){
 
           // get the number_of_pigs for the bins in group from
-          $number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->first();
+          $number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('room_id',$transfer_bins['room_id_from'])->where('unique_id',$group_from_unique_id)->first();
+          //$number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->first();
           //$decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead'] + $poor); // + $transfer_bins['poor'];
           $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
           $decreased_pigs = $decreased_pigs < 0 ? 0 : $decreased_pigs;
 
           //update the feeds_movement_groups_bins for decreased transferred pigs
-          DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->update(['number_of_pigs'=>$decreased_pigs]);
+          DB::table('feeds_movement_groups_bins')->where('room_id',$transfer_bins['room_id_from'])->where('unique_id',$group_from_unique_id)->update(['number_of_pigs'=>$decreased_pigs]);
 
           // remove empty pigs group
           $pigs_count = $this->groupPigsCounter('feeds_movement_groups_bins',$group_from_unique_id);
@@ -1672,7 +1750,7 @@ class AnimalMovementController extends Controller
           } else {
             $this->animalGroupStatusUpdateChecker($group_from_id,'feeds_movement_groups');
             //if($decreased_pigs != 0){
-              $this->updateBinsHistoryNumberOfPigs($transfer_bins['bin_id_from'],$decreased_pigs,"update",$user_id);
+              //$this->updateBinsHistoryNumberOfPigs($transfer_bins['bin_id_from'],$decreased_pigs,"update",$user_id);
             //}
           }
 

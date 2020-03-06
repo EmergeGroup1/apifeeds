@@ -543,38 +543,39 @@ class FarmsController extends Controller
        */
       public function destroy($farmid)
       {
-  		Cache::forget('farms_lists');
 
-      Farms::findOrFail($farmid)->delete();
-  		// Delete related bins for the deleted farm
-  		DB::table('feeds_bins')->where('farm_id','=',$farmid)->delete();
-  		// Delete related farm users entries
-  		DB::table('feeds_farm_users')->where('farm_id',$farmid)->delete();
+    		Cache::forget('farms_lists');
 
-  		// delete related  bin_accepted_load
-  		DB::table('feeds_bins_accepted_load')->where('farm_id',$farmid)->delete();
-  		// delete data on history table
-  		DB::table('feeds_bin_history')->where('farm_id',$farmid)->delete();
+        Farms::findOrFail($farmid)->delete();
+    		// Delete related bins for the deleted farm
+    		DB::table('feeds_bins')->where('farm_id','=',$farmid)->delete();
+    		// Delete related farm users entries
+    		DB::table('feeds_farm_users')->where('farm_id',$farmid)->delete();
 
-  		// delete deliveries
-  		DB::table('feeds_deliveries')->where('farm_id',$farmid)->delete();
-  		// delete animal groups and transfers
-  		$this->removeRelatedData($farmid);
-  		// delete scheduled deliveries
-  		$this->removeFarmSchedule($farmid);
+    		// delete related  bin_accepted_load
+    		DB::table('feeds_bins_accepted_load')->where('farm_id',$farmid)->delete();
+    		// delete data on history table
+    		DB::table('feeds_bin_history')->where('farm_id',$farmid)->delete();
 
-  		//delete pending deliveries
-  		DB::table('feeds_deliveries_pending')->where('farm_id',$farmid)->delete();
+    		// delete deliveries
+    		DB::table('feeds_deliveries')->where('farm_id',$farmid)->delete();
+    		// delete animal groups and transfers
+    		$this->removeRelatedData($farmid);
+    		// delete scheduled deliveries
+    		$this->removeFarmSchedule($farmid);
 
-  		flash()->overlay("The farm has been successfully deleted!", "H&H Farms");
+    		//delete pending deliveries
+    		DB::table('feeds_deliveries_pending')->where('farm_id',$farmid)->delete();
 
-  		Cache::forget('farm_holder-'.$farmid);
-  		$home_controller = new HomeController;
-  		$home_controller->farmHolderBinClearCache($farmid);
-  		$home_controller->forecastingDataCache();
-  		unset($home_controller);
+    		flash()->overlay("The farm has been successfully deleted!", "H&H Farms");
 
-  		return redirect('farms');
+    		Cache::forget('farm_holder-'.$farmid);
+    		$home_controller = new HomeController;
+    		$home_controller->farmHolderBinClearCache($farmid);
+    		$home_controller->forecastingDataCache();
+    		unset($home_controller);
+
+    		return redirect('farms');
 
       }
 
@@ -626,17 +627,10 @@ class FarmsController extends Controller
   	   */
   		private function removeRelatedData($farm_id)
   		{
-  			$farrowing_group = DB::table('feeds_movement_farrowing_group')->where('farm_id',$farm_id)->get();
-  			$nursery_group = DB::table('feeds_movement_nursery_group')->where('farm_id',$farm_id)->get();
-  			$finisher_group = DB::table('feeds_movement_finisher_group')->where('farm_id',$farm_id)->get();
+  			$group = DB::table('feeds_movement_groups')->where('farm_id',$farm_id)->get();
+  			$this->removeGroups($group,'feeds_movement_groups_bins');
 
-  			$this->removeGroups($farrowing_group,'feeds_movement_farrowing_bins');
-  			$this->removeGroups($nursery_group,'feeds_movement_nursery_bins');
-  			$this->removeGroups($finisher_group,'feeds_movement_finisher_bins');
-
-  			DB::table('feeds_movement_farrowing_group')->where('farm_id',$farm_id)->delete();
-  			DB::table('feeds_movement_nursery_group')->where('farm_id',$farm_id)->delete();
-  			DB::table('feeds_movement_finisher_group')->where('farm_id',$farm_id)->delete();
+  			DB::table('feeds_movement_groups')->where('farm_id',$farm_id)->delete();
   		}
 
   		/*
@@ -664,8 +658,8 @@ class FarmsController extends Controller
 
   		private function removeTransfer($group_id)
   		{
-  			$transfer_from = DB::table('feeds_movement_transfer')->select('transfer_id')->where('group_from',$group_id)->get();
-  			$transfer_to = DB::table('feeds_movement_transfer')->select('transfer_id')->where('group_to',$group_id)->get();
+  			$transfer_from = DB::table('feeds_movement_transfer_v2')->select('transfer_id')->where('group_from',$group_id)->get();
+  			$transfer_to = DB::table('feeds_movement_transfer_v2')->select('transfer_id')->where('group_to',$group_id)->get();
 
   			if($transfer_from != NULL){
   				foreach($transfer_from as $k => $v){
@@ -679,8 +673,8 @@ class FarmsController extends Controller
   				}
   			}
 
-  			DB::table('feeds_movement_transfer')->where('group_from',$group_id)->delete();
-  			DB::table('feeds_movement_transfer')->where('group_to',$group_id)->delete();
+  			DB::table('feeds_movement_transfer_v2')->where('group_from',$group_id)->delete();
+  			DB::table('feeds_movement_transfer_v2')->where('group_to',$group_id)->delete();
   		}
 
   		/*
@@ -689,7 +683,7 @@ class FarmsController extends Controller
   		*/
   		private function removeTransferBins($transfer_id)
   		{
-  			DB::table('feeds_movement_transfer')->where('transfer_id',$transfer_id)->delete();
+  			DB::table('feeds_movement_transfer_bins_v2')->where('transfer_id',$transfer_id)->delete();
   		}
 
   		/*
@@ -1443,8 +1437,24 @@ class FarmsController extends Controller
   							->groupBy('feeds_farms.id')
   							->get();
 
-  				return $farms;
+  				return $this->totalRooms($this->toArray($farms));
   		}
+
+      /*
+      *
+      */
+      private function totalRooms($farms_data)
+      {
+
+          for($i = 0; $i<count($farms_data); $i++){
+            $t = DB::table('feeds_farrowing_rooms')
+                    ->where('farm_id',$farms_data[$i]['id'])
+                    ->count();
+            $farms_data[$i]['totalRooms'] = $t;
+          }
+
+          return $farms_data;
+      }
 
   		/**
   		 * Save the farm.
@@ -1631,6 +1641,311 @@ class FarmsController extends Controller
   			DB::table('feeds_bins_accepted_load')->where('bin_id',$bin_id)->delete();
   			// delete data on history table
   			DB::table('feeds_bin_history')->where('bin_id',$bin_id)->delete();
+
+  		}
+
+
+      /*
+      * list rooms api
+      */
+      public function listRoomsFarmAPI($farm_id)
+      {
+          $r = array();
+          $output = array();
+          $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->orderBy("room_number");
+
+          if($rooms->exists()){
+            $r = $rooms->get();
+
+            for($i=0; $i<count($r); $i++){
+              $output[$r[$i]->id] = array(
+                'id'  => $r[$i]->id,
+                'farm_id' => $r[$i]->farm_id,
+                'room_number'  => $r[$i]->room_number,
+                'pigs'  => $this->totalNumberOfPigsAnimalGroupAPI($r[$i]->id,$r[$i]->farm_id),
+                'groups' => $this->animalGroupBinsAPI($r[$i]->id)
+              );
+            }
+          }
+
+          return $output;
+      }
+
+      /*
+      * get the farrowing history pigs
+      */
+      private function pigsOfFarrowFarms($fr_id)
+      {
+          $pigs = 0;
+          $rooms = DB::table('feeds_farrowing_rooms_history')
+                      ->where('farrowing_room_id',$fr_id)
+                      ->orderBy("id","desc");
+
+          if($rooms->exists()){
+            $rooms = $rooms->first();
+            $pigs = $rooms->pigs;
+          }
+
+          return $pigs;
+      }
+
+
+
+      /*
+    	*	totalNumberOfPigsAnimalGroup
+    	*	get the total number of pigs based on the animal groups bin
+    	*/
+    	private function totalNumberOfPigsAnimalGroupAPI($room_id,$farm_id)
+    	{
+    		// check the farm type
+    		$type = $this->farmTypes($farm_id);
+    		$total_pigs = 0;
+
+    		if($type != NULL){
+
+    			$unique_id = $this->activeGroups('feeds_movement_groups');
+    			if($unique_id != NULL){
+    				$total_pigs = $this->animalGroupsBinsTotalNumberOfPigs($room_id,$unique_id);
+    			}
+
+    		} else {
+    			return $total_pigs;
+    		}
+
+    		return $total_pigs != NULL ? $total_pigs : 0;
+
+    	}
+
+    	/**
+    	** Gets the active groups
+    	** string $group_table Primary key
+    	** return array
+    	**/
+    	private function activeGroups($group_table)
+    	{
+
+    		$active_groups = DB::table($group_table)
+    											->select('unique_id')
+    											->where('status','!=','removed')
+    											->get();
+    		$active_groups = $this->toArray($active_groups);
+
+    		if($active_groups != NULL){
+    			return $active_groups;
+    		}
+
+    		return $active_groups;
+    	}
+
+      /*
+    	*	farrowingTotalNumberOfPigsAnimalGroup
+    	*	get the total number of pigs based on the animal groups bin
+    	*/
+    	private function animalGroupsBinsTotalNumberOfPigs($room_id,$unique_id)
+    	{
+    		$sum = DB::table('feeds_movement_groups_bins')
+    						->where('room_id',$room_id)
+    						->whereIn('unique_id',$unique_id)
+    						->sum('number_of_pigs');
+
+    		return $sum;
+    	}
+
+
+
+
+      /*
+    	*	farrowingBins()
+    	*/
+    	private function animalGroupBinsAPI($room_id)
+    	{
+    		$farrow_bins = DB::table('feeds_movement_groups_bins')->where('room_id',$room_id)->get();
+    		$total_pigs_per_bins = DB::table('feeds_movement_groups_bins')->where('room_id',$room_id)->sum('number_of_pigs');
+    		$farrow_bins = $this->toArray($farrow_bins);
+
+    		if($farrow_bins == NULL){
+    			return NULL;
+    		}
+
+    		$data = array();
+    		foreach($farrow_bins as $k => $v){
+    			$farrowing_groups = $this->animalGroupsAPI($v['unique_id']);
+    			if($farrowing_groups['group_name'] != NULL){
+    				$data[] = array(
+    					'type'					=>	'farrowing',
+    					'group_name'		=>	$farrowing_groups['group_name'],
+    					'group_id'			=>	$farrowing_groups['group_id'],
+    					'farm_id'			=>	$farrowing_groups['farm_id'],
+    					'number_of_pigs'	=>	$total_pigs_per_bins,
+    					'pigs_per_group'	=> $v['number_of_pigs'],
+    					'bin_id'			=>	$v['bin_id'],
+              'room_id'     =>  $v['room_id'],
+    					'unique_id'			=>	$v['unique_id']
+    				);
+    			}
+    		}
+
+    		if(count($data) == 1){
+    			if($data[0]['group_name'] == NULL){
+    				return NULL;
+    			}
+    		}
+
+    		if($data == NULL){
+    			return NULL;
+    		}
+
+    		return $data;
+
+    	}
+
+    	/*
+    	*	animalGroupsFarrowing()
+    	*	get the group info of the farrowing groups
+    	*/
+    	private function animalGroupsAPI($unique_id)
+    	{
+    		$farrowing = DB::table('feeds_movement_groups')->where('status','!=','removed')->where('unique_id',$unique_id)->get();
+    		$farrowing = $this->toArray($farrowing);
+
+    		return $farrowing != NULL ? $farrowing[0] : NULL;
+    	}
+
+
+
+      /**
+       * Convert object to array
+       *
+       * @return Response
+       */
+      private function toArray($data)
+      {
+    		$resultArray = json_decode(json_encode($data), true);
+
+    		return $resultArray;
+    	}
+
+
+
+      /**
+  		 * Save the farm room.
+  		 *
+  		 * @return Response
+  		 */
+  		public function saveRoomFarmAPI($d)
+  		{
+
+          if($this->roomCheck($d)){
+            return false;
+          }
+
+         // insert to feeds_farrowing_rooms
+  			 $fr_data = array(
+           'farm_id' => $d['farm_id'],
+           'room_number' => $d['room_number'],
+         );
+         DB::table('feeds_farrowing_rooms')->insert($fr_data);
+
+         $id = DB::table('feeds_farrowing_rooms')
+                  ->where('farm_id',$d['farm_id'])
+                  ->where('room_number',$d['room_number'])
+                  ->orderBy('id','desc')
+                  ->first();
+
+         // insert to feeds_farrowing_rooms_history
+         $frj_data = array(
+           'farm_id' => $d['farm_id'],
+           'farrowing_room_id'  => $id->id,
+           'date' => date("Y-m-d H:i:s"),
+           'update_type' => "Created New Room"
+          );
+          DB::table('feeds_farrowing_rooms_history')->insert($frj_data);
+
+          return $d;
+
+  		}
+
+
+
+  		/**
+  		 * room number check.
+  		 *
+  		 * @return Response
+  		 */
+  		public function roomCheck($d)
+  		{
+          $room = DB::table('feeds_farrowing_rooms')
+                    ->where('farm_id',$d['farm_id'])
+                    ->where('room_number',$d['room_number']);
+
+          if ($room->exists()) {
+            return true;
+          } else {
+            return false;
+          }
+
+      }
+
+
+  		/**
+  		 * update the farm room.
+  		 *
+  		 * @return Response
+  		 */
+  		public function updateRoomFarmAPI($d)
+  		{
+
+        if($d['prev_room_number'] != $d['room_number']){
+          if($this->roomCheck($d)){
+            return false;
+          }
+        }
+
+
+         // insert to feeds_farrowing_rooms
+         $fr_data = array(
+            'room_number' => $d['room_number'],
+          );
+          DB::table('feeds_farrowing_rooms')
+              ->where('id',$d['id'])
+              ->update($fr_data);
+
+          // delete record if the same date
+          DB::table('feeds_farrowing_rooms_history')
+              ->where('farrowing_room_id',$d['id'])
+              ->where('date','LIKE',date("Y-m-d")."%")
+              ->delete();
+
+          // insert to feeds_farrowing_rooms_history
+          $frj_data = array(
+            'farm_id' => $d['farm_id'],
+            'farrowing_room_id'  => $d['id'],
+            'date' => date("Y-m-d H:i:a"),
+            'update_type' => "Updated Room"
+           );
+           DB::table('feeds_farrowing_rooms_history')->insert($frj_data);
+
+           return $d;
+
+  		}
+
+  		/**
+  		 * Delete the farm room.
+  		 *
+  		 * @return Response
+  		 */
+  		public function deleteRoomFarmAPI($room_id)
+  		{
+
+          // delete farrowing room, history and animal groups
+          DB::table('feeds_farrowing_rooms')
+              ->where('id',$room_id)
+              ->delete();
+          DB::table('feeds_farrowing_rooms_history')
+              ->where('farrowing_room_id',$room_id)
+              ->delete();
+
+          // delete animal groups
 
   		}
 

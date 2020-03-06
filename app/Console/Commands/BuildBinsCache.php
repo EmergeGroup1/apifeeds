@@ -44,7 +44,7 @@ class BuildBinsCache extends Command
         $ch = curl_init();
 
         // set url
-        curl_setopt($ch, CURLOPT_URL, 'http://apifeeds.carrierinsite.com/binscachebuilder');
+        curl_setopt($ch, CURLOPT_URL, 'http://'.env('APP_DOMAIN').'/binscachebuilder');
 
         //return the transfer as a string
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);

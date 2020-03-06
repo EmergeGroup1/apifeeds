@@ -73,6 +73,23 @@ class APIController extends Controller
           $farms_default = Farms::where('column_type', 2)->where('farm_type','!=','farrowing')->where('status', 1)->orderBy('name')->get();
         } else if ($type == 3) {
           $farms_default = Farms::where('column_type', 3)->where('farm_type','!=','farrowing')->where('status', 1)->orderBy('name')->get();
+        } else if ($type == 4) {
+          $farms_default = Farms::where('farm_type','farrowing')->where('status', 1)->orderBy('name')->get();
+          $log_token = session('token');
+          $sort_type = $request->input('sort');
+
+          if ($sort_type == 1) {
+            $farms = json_decode(Storage::get('forecasting_farrowing_data_a_to_z.txt'));
+          } else {
+            $farms = json_decode(Storage::get('forecasting_farrowing_data_low_bins.txt'));
+          }
+
+          $data = $this->farmsBuilder($sort_type, $farms, $farms_default);
+
+          return array('farmID' => $data);
+
+        } else if ($type == 5) {
+          $farms_default = Farms::where('status', 1)->orderBy('name')->get();
         } else {
           return "no type passed";
         }
@@ -104,6 +121,18 @@ class APIController extends Controller
             "err" =>  1,
             "msg" =>  "No farm with that selected id"
           );
+        }
+
+        // make selection for farrowing rooms
+        if($farm->farm_type == "farrowing") {
+          $farms_controller = new FarmsController;
+          $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
+          unset($farms_controller);
+
+          return array(
+                  "rooms"     =>  $rooms,
+                  "farmName"  =>  $farm->name
+                );
         }
 
         $forecasting = json_decode(Storage::get('forecasting_data_low_bins.txt'));
@@ -304,6 +333,33 @@ class APIController extends Controller
         );
 
         break;
+
+        case "updateRoomPigs":
+
+          $token = $request->input('token');
+          $log_token = session('token');
+          if ($token != $log_token) {
+            return array("err" => "Invalid token, please login");
+          }
+
+          $farm_id = $request->input('farmID');
+          $room_id = $request->input('binID');
+          $number_of_pigs = $request->input('numberOfPigs');
+          $animal_unique_id = $request->input('animalUniqueID');
+          $user_id = $request->input('user_id');
+
+
+          // get the medications medication()
+          $home_controller = new HomeController;
+          $update_pigs = $home_controller->updateRoomPigsAPI($farm_id, $room_id, $number_of_pigs, $animal_unique_id, $user_id);
+          unset($home_controller);
+
+          return $update_pigs + array(
+            "err" =>  0,
+            "msg" =>  "Successfully updated pigs"
+          );
+
+          break;
 
       case "saveBatch":
 
@@ -1233,7 +1289,7 @@ class APIController extends Controller
 
         break;
 
-      case "listBinFarmAdmin":
+        case "listBinFarmAdmin":
 
         $farm_id = $request->input('farmID');
 
@@ -1326,6 +1382,99 @@ class APIController extends Controller
         }
 
         break;
+
+        case "listRoomsFarmAdmin":
+
+            $farm_id = $request->input('farm_id');
+
+            $farms_controller = new FarmsController;
+            $roomsList = $farms_controller->listRoomsFarmAPI($farm_id);
+            unset($farms_controller);
+
+            if (!empty($roomsList)) {
+              return array(
+                "err" =>  0,
+                "msg" =>  "Successfully Pulled Data",
+                "roomsList" => $roomsList
+              );
+            } else {
+              return array(
+                "err" =>  1,
+                "msg" =>  "Selected farm has no rooms yet"
+              );
+            }
+
+          break;
+
+
+        case "saveRoomFarmAdmin":
+
+          $data = array(
+            'farm_id'     =>  $request->input('farm_id'),
+            'room_number'  =>  $request->input('room_number'),
+            //'pigs'       =>  $request->input('pigs')
+          );
+
+          $farms_controller = new FarmsController;
+          $data = $farms_controller->saveRoomFarmAPI($data);
+          unset($farms_controller);
+
+          if (!empty($data)) {
+            return array(
+              "err" =>  0,
+              "msg" =>  "Successfully Pulled Data",
+              "rooms_data_saved" => $data
+            );
+          } else {
+            return $this->errorMessage();
+          }
+
+          break;
+
+        case "updateRoomFarmAdmin":
+
+          $data = array(
+            'id'     =>  $request->input('room_id'),
+            'room_number'  =>  $request->input('room_number'),
+            'pigs'       =>  $request->input('pigs'),
+            'farm_id' => $request->input('farm_id'),
+            'prev_room_number' => $request->input('prev_room_number')
+          );
+
+            $farms_controller = new FarmsController;
+            $roomLists = $farms_controller->updateRoomFarmAPI($data);
+            unset($farms_controller);
+
+            if (!empty($roomLists)) {
+              return array(
+                "err" =>  0,
+                "msg" =>  "Successfully Updated Data",
+                "room_data_updated" => $roomLists
+              );
+            } else {
+              return $this->errorMessage();
+            }
+
+            break;
+
+        case "deleteRoomFarmAdmin":
+
+          $farms_controller = new FarmsController;
+          $farms_controller->deleteRoomFarmAPI($request->input('room_id'));
+          unset($farms_controller);
+
+          if (!empty($request->input('room_id'))) {
+            return array(
+              "err"   =>  0,
+              "msg"   =>  "Successfully Deleted Room",
+              "roomid" =>  $request->input('room_id')
+            );
+          } else {
+            return $this->errorMessage();
+          }
+
+          break;
+
 
         /* End Farms Administraton */
 
@@ -1464,10 +1613,11 @@ class APIController extends Controller
       case "amDeleteGroup":
 
         $group_id = $request->input('group_id');
+        $type = $request->input('type');
         $user_id = $request->input('user_id');
 
         $am_controller = new AnimalMovementController;
-        $am_lists = $am_controller->removeGroupAPI($group_id, $user_id);
+        $am_lists = $am_controller->removeGroupAPI($group_id, $user_id, $type);
         unset($am_controller);
 
         if (!empty($am_lists)) {
@@ -1495,9 +1645,15 @@ class APIController extends Controller
           'status'            =>  'entered',
           'user_id'            =>  $request->input('user_id'),
           'type'              =>  $request->input('type'),
-          'bins'              =>  $request->input('bins'),
+          //'bins'              =>  $request->input('bins'),
           'number_of_pigs'    =>  $request->input('number_of_pigs')
         );
+
+        if($request->input('type') == "farrowing"){
+          $data['rooms'] = $request->input('rooms');
+        } else {
+          $data['bins'] = $request->input('bins');
+        }
 
         $am_controller = new AnimalMovementController;
         $am_lists = $am_controller->saveGroupAPI($data);
@@ -1531,10 +1687,16 @@ class APIController extends Controller
           'user_id'            =>  $request->input('user_id'),
           'type'              =>  $request->input('type'),
           'group_bin_id'      =>  $request->input('group_bin_id'),
-          'bins'              =>  $request->input('bins'),
+          //'bins'              =>  $request->input('bins'),
           'number_of_pigs'    =>  $request->input('number_of_pigs'),
           'unique_id'         =>  $request->input('unique_id')
         );
+
+        if($request->input('type') == "farrowing"){
+          $data['rooms'] = $request->input('rooms');
+        } else {
+          $data['bins'] = $request->input('bins');
+        }
 
         $am_controller = new AnimalMovementController;
         $am_lists = $am_controller->updateGroupAPI($data);
@@ -2228,11 +2390,11 @@ class APIController extends Controller
             'farmAbbr'            =>  strtoupper(substr(str_replace(" ", "", $v->name), 0, 2)),
             'farmType'            =>  $v->farm_type,
             'numberOfBins'        =>  (count((array) $v->bins) - 4) - 1,
-            'numberOfLowBins'     =>  $v->bins->lowBins,
-            'hasPendingDelivery'  =>  $v->delivery_status,
-            'daysRemaining'       =>  $this->binsDaysRemaining($v->bins),
-            'lastManulUpdate'     =>  $v->bins->last_manual_update,
-            'currentLAmount'      =>  $v->bins->lowest_amount_bin
+            'numberOfLowBins'     =>  $v->farm_type != "farrowing" ? $v->bins->lowBins : NULL,
+            'hasPendingDelivery'  =>  $v->farm_type != "farrowing" ? $v->delivery_status : NULL,
+            'daysRemaining'       =>  $v->farm_type != "farrowing" ? $this->binsDaysRemaining($v->bins) : NULL,
+            'lastManulUpdate'     =>  $v->farm_type != "farrowing" ? $v->bins->last_manual_update : NULL,
+            'currentLAmount'      =>  $v->farm_type != "farrowing" ? $v->bins->lowest_amount_bin : NULL
           );
         }
       }
