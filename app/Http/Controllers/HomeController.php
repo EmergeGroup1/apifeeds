@@ -141,6 +141,7 @@ class HomeController extends Controller
 		private function farmsDataBuilder($farms)
 		{
 				$forecastingData = array();
+				$bins_data = array();
 
 				for($i=0; $i<count($farms); $i++){
 					Cache::forget('farm_holder-'.$farms[$i]['id']);
@@ -149,6 +150,11 @@ class HomeController extends Controller
 						 $forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
 
 					} else {
+						if($farms[$i]['farm_type'] != "farrowing"){
+							$bins_data = $this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes']);
+						} else {
+							$bins_data = NULL;
+						}
 
 						$forecastingData[] = array(
 							'farm_id'					=>	$farms[$i]['id'],
@@ -156,7 +162,7 @@ class HomeController extends Controller
 							'farm_type'				=>	$farms[$i]['farm_type'],
 							'delivery_status'	=>	$this->pendingDeliveryItems($farms[$i]['id']),
 							'address'					=>	$farms[$i]['address'],
-							'bins'						=> 	$farms[$i]['farm_type'] != "farrowing" ? $this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes']) : NULL
+							'bins'						=> 	$bins_data
 						);
 
 						Cache::forever('farm_holder-'.$farms[$i]['id'],$forecastingData);
