@@ -2390,11 +2390,11 @@ class APIController extends Controller
             'farmAbbr'            =>  strtoupper(substr(str_replace(" ", "", $v->name), 0, 2)),
             'farmType'            =>  $v->farm_type,
             'numberOfBins'        =>  (count((array) $v->bins) - 4) - 1,
-            'numberOfLowBins'     =>  $v->farm_type != "farrowing" ? $v->bins->lowBins : NULL,
-            'hasPendingDelivery'  =>  $v->farm_type != "farrowing" ? $v->delivery_status : NULL,
-            'daysRemaining'       =>  $v->farm_type != "farrowing" ? $this->binsDaysRemaining($v->bins) : NULL,
-            'lastManulUpdate'     =>  $v->farm_type != "farrowing" ? $v->bins->last_manual_update : NULL,
-            'currentLAmount'      =>  $v->farm_type != "farrowing" ? $v->bins->lowest_amount_bin : NULL
+            'numberOfLowBins'     =>  $sort != 5 ? $v->bins->lowBins : NULL,
+            'hasPendingDelivery'  =>  $sort != 5 ? $v->delivery_status : NULL,
+            'daysRemaining'       =>  $sort != 5 ? $this->binsDaysRemaining($v->bins) : NULL,
+            'lastManulUpdate'     =>  $sort != 5 ? $v->bins->last_manual_update : NULL,
+            'currentLAmount'      =>  $sort != 5 ? $v->bins->lowest_amount_bin : NULL
           );
         }
       }
