@@ -114,7 +114,7 @@ class APIController extends Controller
         $farm_id = $request->input('farmID');
         $token = $request->input('token');
 
-        $farm = Farms::where('id', $farm_id)->first();
+        $farm_selected = Farms::where('id', $farm_id)->first();
 
         if ($farm == NULL) {
           return array(
@@ -155,7 +155,7 @@ class APIController extends Controller
         $output = array(
           'farmName'  =>  $farm['name'],
           'farmID'    =>  $farm_id,
-          'farmType'  =>  $farm->farm_type,
+          'farmType'  =>  $farm_selected->farm_type,
           'numberofLowbins' =>  $this->farmsBuilderNumberOfLowBins($forecasting, $farm_id),
           'notes'     =>  $farm['notes'],
           'bins'      =>  $bins
