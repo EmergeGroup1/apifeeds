@@ -116,7 +116,7 @@ class APIController extends Controller
 
         $farm_selected = Farms::where('id', $farm_id)->first();
 
-        if ($farm == NULL) {
+        if ($farm_selected == NULL) {
           return array(
             "err" =>  1,
             "msg" =>  "No farm with that selected id"
