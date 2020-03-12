@@ -1021,7 +1021,6 @@ class FarmsController extends Controller
   				$bins[$x]->feed_type = $this->recentFeedsHistory($bins[$x]->bin_id)[0]['feed_type'];
   				$bins[$x]->feed_type_name = $this->getFeedDescription($this->recentFeedsHistory($bins[$x]->bin_id)[0]['feed_type']);
   				$bins[$x]->num_of_pigs = $this->animalGroupBinTotalPigs($bins[$x]->bin_id,$farmid);
-          $bins[$x]->num_sow_of_pigs = $bins[$x]->num_sow_of_pigs;
   				$bins[$x]->amount = $this->recentFeedsHistory($bins[$x]->bin_id)[0]['amount'] . " Ton/s";
   				$x++;
 
