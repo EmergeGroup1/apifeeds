@@ -22,3 +22,4 @@ Route::get('schedulingcache','ScheduleController@scheduleCache');
 Route::get('forecastingdata','HomeController@forecastingDataOutput');
 Route::get('forecastdata','HomeController@forecastingDataCache');
 Route::get('binscachebuilder','HomeController@binsDataCacheBuilder');
+Route::get('binclearcache/{id}','HomeController@clearBinsCache');
