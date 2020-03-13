@@ -1624,7 +1624,7 @@ class FarmsController extends Controller
   							 'feed_type'				=>	$bin['feed_type'],
   							 'alias'						=>	$bin['alias'],
   							 'bin_size'					=>	$bin['bin_size'],
-  							 'user_id'					=>	$bin['user_id']
+  							 'user_id'					=>	$bin['user_id'],
                  'num_of_sow_pigs'  =>  $bin['sow'],
   							 );
 
