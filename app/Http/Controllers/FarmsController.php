@@ -313,7 +313,8 @@ class FarmsController extends Controller
   				}
   			} else {
   				//$this->insertHistoryPigs($data['farm_id'],$data['num_of_pigs'], $data['bin_id'],$data['feed_type'],$feed_types_data[0]['budgeted_amount']);
-  				$this->insertHistoryPigs($data['farm_id'],$bins_history->num_of_pigs, $data['bin_id'],$data['feed_type'],$budgeted_amount);
+  				//$this->insertHistoryPigs($data['farm_id'],$bins_history->num_of_pigs, $data['bin_id'],$data['feed_type'],$budgeted_amount);
+          $this->insertHistoryPigs($data['farm_id'],0, $data['bin_id'],$data['feed_type'],$budgeted_amount);
   			}
 
   			//call the cache builder
