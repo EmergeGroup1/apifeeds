@@ -2593,6 +2593,7 @@ class HomeController extends Controller
 						'bin_number'							=>	$bins[$i]['bin_number'],
 						'alias'										=>	$bins[$i]['alias'],
 						'num_of_pigs'							=>	$bins[$i]['num_of_pigs'],
+						'num_of_sow_pigs'					=>	$bins[$i]['num_of_sow_pigs'],
 						'total_number_of_pigs'		=>	$total_number_of_pigs,
 						'default_amount'					=>	$this->displayDefaultAmountofBin($bins[$i]['amount'], $up_hist[$i][0]['amount']),
 						'hex_color'								=>	$bins[$i]['hex_color'],

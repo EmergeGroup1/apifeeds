@@ -2483,6 +2483,7 @@ class APIController extends Controller
         'lastDelivery'                  =>  date("Y-m-d", strtotime($bins[$i]->next_deliverydd)),
         'lastUpdate'                    =>  date("Y-m-d h:i a", strtotime($bins[$i]->last_update)),
         //'lastUpdate'                    =>  date("Y-m-d H:i a",strtotime($bins[$i]->last_manual_update)),
+        'sow'                           =>  $bins[$i]->num_of_sow_pigs,
         'user'                          =>  $bins[$i]->username,
         'daysRemaining'                 =>  $bins[$i]->days_to_empty,
         'currentMedication'             =>  $bins[$i]->medication_name,
