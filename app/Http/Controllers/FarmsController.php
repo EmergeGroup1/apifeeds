@@ -279,16 +279,21 @@ class FarmsController extends Controller
 
   			$home_controller = new HomeController;
   			// for the update budgeted
-  			if($bins_history->feed_type != $data['feed_type']){
-  				// insert data to feeds_budgeted_amount_counter
-  				$budgeted_amount = $home_controller->budgetedAmountCounterUpdater($data['farm_id'],$data['bin_id'],$data['feed_type']);
-  			}else {
-  				// get the days counted for the auto update budgeted amount
-  				// feeds_feed_type_budgeted_amount_per_day
-  				// get the last date inserted on the feeds_budgeted_amount_counter and count it on today's date then get the day column for that budgeted amount
-  				// if the day column has 0 get the last day column where it has a value that is not equal to zero
-  				$budgeted_amount = $home_controller->daysCounterbudgetedAmount($data['farm_id'],$data['bin_id'],$data['feed_type'],date("Y-m-d H:i:s"));
-  			}
+        if($bins_history != NULL){
+          if($bins_history->feed_type != $data['feed_type']){
+            // insert data to feeds_budgeted_amount_counter
+            $budgeted_amount = $home_controller->budgetedAmountCounterUpdater($data['farm_id'],$data['bin_id'],$data['feed_type']);
+          }else {
+            // get the days counted for the auto update budgeted amount
+            // feeds_feed_type_budgeted_amount_per_day
+            // get the last date inserted on the feeds_budgeted_amount_counter and count it on today's date then get the day column for that budgeted amount
+            // if the day column has 0 get the last day column where it has a value that is not equal to zero
+            $budgeted_amount = $home_controller->daysCounterbudgetedAmount($data['farm_id'],$data['bin_id'],$data['feed_type'],date("Y-m-d H:i:s"));
+          }
+        } else {
+          $budgeted_amount = $home_controller->daysCounterbudgetedAmount($data['farm_id'],$data['bin_id'],$data['feed_type'],date("Y-m-d H:i:s"));
+        }
+
   			unset($home_controller);
 
   			// update the bin history
