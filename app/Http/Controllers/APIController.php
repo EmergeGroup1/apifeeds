@@ -1320,7 +1320,8 @@ class APIController extends Controller
           'bin_number'  =>  $request->input('binNumber'),
           'alias'       =>  $request->input('alias'),
           'bin_size'    =>  $request->input('binSize'),
-          'user_id'     =>  $request->input('userID')
+          'user_id'     =>  $request->input('userID'),
+          'sow'         =>  $request->input('sow'),
         );
 
         $farms_controller = new FarmsController;

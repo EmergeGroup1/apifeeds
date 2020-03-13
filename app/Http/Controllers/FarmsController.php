@@ -1577,6 +1577,7 @@ class FarmsController extends Controller
   							'bin_size'				=>	$bin['bin_size'],
   							'created_at'			=>	date('Y-m-d H:i:s'),
   							'updated_at'			=>	date('Y-m-d H:i:s'),
+                'num_of_sow_pigs' =>  $bin['sow'],
   							'user_id'					=>	$bin['user_id'],
   							'unique_id'				=>	$this->generator()
   							);
