@@ -274,6 +274,7 @@ class FarmsController extends Controller
   			//$bins->budgeted_amount = $feed_types_data[0]['budgeted_amount'];
   			$bins->feed_type =  $data['feed_type'];
   			$bins->bin_size =  $data['bin_size'];
+        $bins->num_of_sow_pigs = $data['num_of_sow_pigs'];
   			$bins->save();
 
   			$home_controller = new HomeController;
@@ -1624,6 +1625,7 @@ class FarmsController extends Controller
   							 'alias'						=>	$bin['alias'],
   							 'bin_size'					=>	$bin['bin_size'],
   							 'user_id'					=>	$bin['user_id']
+                 'num_of_sow_pigs'  =>  $bin['sow'],
   							 );
 
   				$this->updateBinAPI($data);

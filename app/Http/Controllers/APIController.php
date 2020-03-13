@@ -1348,7 +1348,8 @@ class APIController extends Controller
           'feed_type'   =>  $request->input('feedType'),
           'alias'       =>  $request->input('alias'),
           'bin_size'    =>  $request->input('binSize'),
-          'user_id'     =>  $request->input('userID')
+          'user_id'     =>  $request->input('userID'),
+          'sow'         =>  $request->input('sow'),
         );
 
         $farms_controller = new FarmsController;
