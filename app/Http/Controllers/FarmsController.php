@@ -309,12 +309,12 @@ class FarmsController extends Controller
   					$bins_history->save();
   				} else {
   					//$this->insertHistoryPigs($data['farm_id'],$data['num_of_pigs'], $data['bin_id'],$data['feed_type'],$feed_types_data[0]['budgeted_amount']);
-  					$this->insertHistoryPigs($data['farm_id'],$bins_history->num_of_pigs, $data['bin_id'],$data['feed_type'],$budgeted_amount);
+  					$this->insertHistoryPigs($data['farm_id'],$bins_history->num_of_pigs, $data['bin_id'],$data['feed_type'],$budgeted_amount,$data['user_id']);
   				}
   			} else {
   				//$this->insertHistoryPigs($data['farm_id'],$data['num_of_pigs'], $data['bin_id'],$data['feed_type'],$feed_types_data[0]['budgeted_amount']);
   				//$this->insertHistoryPigs($data['farm_id'],$bins_history->num_of_pigs, $data['bin_id'],$data['feed_type'],$budgeted_amount);
-          $this->insertHistoryPigs($data['farm_id'],0, $data['bin_id'],$data['feed_type'],$budgeted_amount);
+          $this->insertHistoryPigs($data['farm_id'],0, $data['bin_id'],$data['feed_type'],$budgeted_amount,$data['user_id']);
   			}
 
   			//call the cache builder
@@ -430,7 +430,7 @@ class FarmsController extends Controller
   		** @Int Value Number of Pigs @Int Value Bin ID
   		** Insert Data on History
   		**/
-  		public function insertHistoryPigs($farm_id, $numofpigs, $binid, $feed_type,$budgeted_amount) {
+  		public function insertHistoryPigs($farm_id, $numofpigs, $binid, $feed_type,$budgeted_amount,$user_id) {
 
   			if(is_numeric($numofpigs)) {
 
@@ -449,7 +449,7 @@ class FarmsController extends Controller
   						'bin_id' => $binid,
   						'farm_id' => $farm_id,
   						'num_of_pigs' => $numofpigs,
-  						'user_id' => Auth::id(),
+  						'user_id' => Auth::id() == NULL ? $user_id : Auth::id(),
   						'amount' => $lastupdate[0]->amount,
   						'update_type' => 'Manual Update Edit Bin Admin',
   						'created_at' => date("Y-m-d H:i:s"),
