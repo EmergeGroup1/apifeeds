@@ -345,7 +345,7 @@ class APIController extends Controller
           DB::table("feeds_bins")->where('bin_id',$bin_id)
             ->update(['num_of_sow_pigs'=>$number_of_pigs]);
 
-          return $update_pigs + array(
+          return array(
             "err" =>  0,
             "msg" =>  "Successfully updated pigs"
           );
