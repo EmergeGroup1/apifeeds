@@ -335,7 +335,24 @@ class APIController extends Controller
 
         break;
 
-        case "updateRoomPigs":
+        case "updateSow":
+
+          $bin_id = $request->input('binID');
+          $number_of_pigs = $request->input('totalpigs');
+
+
+          // get the medications medication()
+          DB::table("feeds_bins")->where('bin_id',$bin_id)
+            ->update(['num_of_sow_pigs'=>$number_of_pigs]);
+
+          return $update_pigs + array(
+            "err" =>  0,
+            "msg" =>  "Successfully updated pigs"
+          );
+
+          break;
+
+      case "updateRoomPigs":
 
           $token = $request->input('token');
           $log_token = session('token');
