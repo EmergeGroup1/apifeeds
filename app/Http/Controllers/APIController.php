@@ -170,6 +170,34 @@ class APIController extends Controller
 
         break;
 
+      case "listRooms":
+
+        $farm_id = $request->input('farmID');
+        $token = $request->input('token');
+
+        $farm_selected = Farms::where('id', $farm_id)->first();
+
+        if ($farm_selected == NULL) {
+          return array(
+            "err" =>  1,
+            "msg" =>  "No farm with that selected id"
+          );
+        }
+
+        // make selection for farrowing rooms
+        if($farm->farm_type == "farrowing") {
+          $farms_controller = new FarmsController;
+          $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
+          unset($farms_controller);
+
+          return array(
+                  "rooms"     =>  $rooms,
+                  "farmName"  =>  $farm->name
+                );
+        }
+
+        break;
+
       case "listBinSizes":
 
         $output = DB::table('feeds_bin_sizes')
@@ -346,7 +374,7 @@ class APIController extends Controller
             ->update(['num_of_sow_pigs'=>$number_of_pigs]);
 
           $home_controller = new HomeController;
-          $home_controller->clearBinsCache($bin_id); 
+          $home_controller->clearBinsCache($bin_id);
           unset($home_controller);
 
           return array(
