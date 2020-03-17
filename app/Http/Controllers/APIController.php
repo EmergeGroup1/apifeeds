@@ -124,7 +124,7 @@ class APIController extends Controller
         }
 
         // make selection for farrowing rooms
-        if($farm->farm_type == "farrowing") {
+        if($farm_selected->farm_type == "farrowing") {
           $farms_controller = new FarmsController;
           $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
           unset($farms_controller);
