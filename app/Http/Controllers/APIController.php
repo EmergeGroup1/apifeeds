@@ -113,7 +113,7 @@ class APIController extends Controller
 
         $farm_id = $request->input('farmID');
         $token = $request->input('token');
-
+        $rooms = array();
         $farm_selected = Farms::where('id', $farm_id)->first();
 
         if ($farm_selected == NULL) {
@@ -124,16 +124,11 @@ class APIController extends Controller
         }
 
         // make selection for farrowing rooms
-        // if($farm->farm_type == "farrowing") {
-        //   $farms_controller = new FarmsController;
-        //   $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
-        //   unset($farms_controller);
-        //
-        //   return array(
-        //           "rooms"     =>  $rooms,
-        //           "farmName"  =>  $farm->name
-        //         );
-        // }
+        if($farm->farm_type == "farrowing") {
+          $farms_controller = new FarmsController;
+          $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
+          unset($farms_controller);
+        }
 
         $forecasting = json_decode(Storage::get('forecasting_data_low_bins.txt'));
 
@@ -144,7 +139,6 @@ class APIController extends Controller
         //   $r[] =  $home_controller->binsData($forecasting[$i]->farm_id);
         // }
         // return $r;
-        $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
         $bins = $home_controller->binsData($farm_id);
         unset($home_controller);
 
