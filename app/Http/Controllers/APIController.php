@@ -144,6 +144,7 @@ class APIController extends Controller
         //   $r[] =  $home_controller->binsData($forecasting[$i]->farm_id);
         // }
         // return $r;
+        $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
         $bins = $home_controller->binsData($farm_id);
         unset($home_controller);
 
@@ -158,7 +159,8 @@ class APIController extends Controller
           'farmType'  =>  $farm_selected->farm_type,
           'numberofLowbins' =>  $this->farmsBuilderNumberOfLowBins($forecasting, $farm_id),
           'notes'     =>  $farm['notes'],
-          'bins'      =>  $bins
+          'bins'      =>  $bins,
+          'rooms'     =>  $rooms
         );
 
         $log_token = session('token');
