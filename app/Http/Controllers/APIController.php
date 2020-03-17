@@ -113,7 +113,7 @@ class APIController extends Controller
 
         $farm_id = $request->input('farmID');
         $token = $request->input('token');
-        $rooms = array();
+        $rooms = NULL;
         $farm_selected = Farms::where('id', $farm_id)->first();
 
         if ($farm_selected == NULL) {
