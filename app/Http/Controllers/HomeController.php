@@ -1970,7 +1970,7 @@ class HomeController extends Controller
 		$medication = Medication::where('med_id','=',$lastupdate[0]['medication'])->get()->toArray();
 
 
-		$numofpigs_ = $lastupdate[0]['num_of_pigs'] != NULL ? $lastupdate[0]['num_of_pigs'] : $bins[0]['num_of_pigs'];
+		$numofpigs_ = $lastupdate[0]['num_of_sow_pigs'] != NULL ? $lastupdate[0]['num_of_sow_pigs'] : $bins[0]['num_of_sow_pigs'];
 		if(!empty($lastupdate)){
 			$budgeted_ = $lastupdate[0]['budgeted_amount'] != NULL ? $lastupdate[0]['budgeted_amount'] : $feeds[0]['budgeted_amount'];
 		} else {
