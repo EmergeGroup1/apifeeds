@@ -6241,6 +6241,12 @@ class HomeController extends Controller
 			$medication_id = $undone_deliveries[$i]['medication_id'] != NULL ? $undone_deliveries[$i]['medication_id'] : $data[0]['medication'];
 			$feed_type_id = $undone_deliveries[$i]['feeds_type_id'] != NULL ? $undone_deliveries[$i]['feeds_type_id'] : $data[0]['feed_type'];
 
+			$farms_data = Farms::where('id', $farm_id)->first();
+
+			if($farms_data->farm_type == "farrowing"){
+				$num_of_sow_pigs = $bins[$i]['num_of_sow_pigs'];
+			}
+
 			// update
 			if($update_date === $if_date_today){
 
@@ -6254,6 +6260,7 @@ class HomeController extends Controller
 					'bin_id'								=>	$bin_id,
 					'farm_id'								=>	$farm_id,
 					'num_of_pigs'						=>	$num_of_pigs,
+					'num_of_sow_pigs'				=>	$num_of_sow_pigs,
 					'user_id'								=> 	$user,
 					'update_type'						=>	'Delivery Manual Update Admin',
 					'admin'									=>	1,
@@ -6289,6 +6296,7 @@ class HomeController extends Controller
 					'bin_id'						=>	$bin_id,
 					'farm_id'						=>	$farm_id,
 					'num_of_pigs'				=>	$num_of_pigs,
+					'num_of_sow_pigs'		=>	$num_of_sow_pigs,
 					'user_id'						=>	$user,
 					'amount'						=>	$amount + $undone_deliveries[$i]['amount'],
 					'update_type'				=>	'Delivery Manual Update Admin',
