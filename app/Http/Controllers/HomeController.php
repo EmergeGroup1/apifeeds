@@ -2018,8 +2018,6 @@ class HomeController extends Controller
 
 		$user = User::where('id',$data['userID'])->first();
 
-		$this->rebuildCacheAPI();
-
 		return json_encode(array(
 
 			'msg' 				=> 	$msg,
@@ -2635,7 +2633,7 @@ class HomeController extends Controller
 
 			$farms_data = Farms::where('id', $bins[$i]['farm_id'])->first();
 
-			if($farms_data->type == "farrowing"){
+			if($farms_data->farm_type == "farrowing"){
 				$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
 			}
 
@@ -2774,7 +2772,7 @@ class HomeController extends Controller
 
 					$farms_data = Farms::where('id', $farm_id)->first();
 
-					if($farms_data->type == "farrowing"){
+					if($farms_data->farm_type == "farrowing"){
 						$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
 					}
 
@@ -3217,7 +3215,7 @@ class HomeController extends Controller
 
 					$farms_data = Farms::where('id', $farm_id)->first();
 
-					if($farms_data->type == "farrowing"){
+					if($farms_data->farm_type == "farrowing"){
 						$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
 					}
 
