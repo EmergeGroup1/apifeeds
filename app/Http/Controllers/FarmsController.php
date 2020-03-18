@@ -1580,6 +1580,7 @@ class FarmsController extends Controller
   							'bin_number'			=>	$bin['bin_number'],
   							'alias'						=>	$bin['alias'],
   							'num_of_pigs'			=>	0,
+                'num_of_sow_pigs' =>  $bin['sow'],
   							'hex_color'				=>	'#'.str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT),
   							'bin_size'				=>	$bin['bin_size'],
   							'created_at'			=>	date('Y-m-d H:i:s'),

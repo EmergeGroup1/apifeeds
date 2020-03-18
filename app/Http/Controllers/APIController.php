@@ -306,9 +306,21 @@ class APIController extends Controller
         $_POST['amount'] = $request->input('amount');
         $_POST['user'] = $request->input('userID');
 
-        // get the medications medication()
         $home_controller = new HomeController;
-        $update_bin = $home_controller->updateBinAPI();
+
+        if($request->input('farmType') == "farrowing"){
+          $data = array(
+            'binID' => $request->input('binID'),
+            'amount'  => $request->input('amount'),
+            'userID'  =>  $request->input('userID')
+          );
+
+          $update_bin = $home_controller->updateSowAPI($data);
+
+        } else {
+          $update_bin = $home_controller->updateBinAPI();
+        }
+
         unset($home_controller);
 
         return $update_bin;

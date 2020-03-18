@@ -1863,6 +1863,183 @@ class HomeController extends Controller
 
 	}
 
+
+
+
+	/*
+	*	Update Bin
+	*	update the current bin based on yesterday or today's update on forecasting
+	*/
+	public function updateSowAPI($data) {
+
+		$msg = "OK";
+		$yesterday = 0;
+
+		// update today
+		$lastupdate = $this->todayBinUpdate($data['binID']);
+
+		$amount = $lastupdate[0]['amount'] - $data['amount'];
+		if($lastupdate[0]['amount'] < $data['amount']){
+				$amount = str_replace("-","",$amount);
+		} else {
+				$amount = "-".$amount;
+		}
+
+		// update yesterdays
+		if(empty($lastupdate)){
+			$lastupdate = $this->yesterdayBinUpdate($data['binID']);
+			$yesterday = 1;
+		}
+
+		$budgeted_amount_tons = 0;
+
+		if($data['amount'] > $lastupdate[0]['amount']){
+			$variance = $lastupdate[0]['variance'];
+			$actual_consumption_per_pig = $lastupdate[0]['consumption'];
+			$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
+		} else {
+			$new_amount = round(($lastupdate[0]['amount'] - $data['amount'])*2000,2);
+			if($lastupdate[0]['num_of_pigs'] == 0){
+					$actual_consumption_per_pig = $new_amount;
+			} else {
+					$actual_consumption_per_pig = $new_amount / $lastupdate[0]['num_of_sow_pigs'];
+			}
+			$variance = round($actual_consumption_per_pig - $lastupdate[0]['budgeted_amount'],2);
+			$update_type = $lastupdate[0]['update_type'];
+			if($update_type == 'Manual Update Bin Forecasting Admin' || $update_type == 'Manual Update Mobile Farmer' || $update_type == 'Delivery Manual Update Admin'){
+				$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
+			} else {
+				$budgeted_amount_tons = $lastupdate[0]['amount'];
+			}
+		}
+
+		$budgeted_amount_tons = $budgeted_amount_tons*2000 - ($lastupdate[0]['budgeted_amount'] * $lastupdate[0]['num_of_sow_pigs']);
+		$budgeted_amount_tons = $budgeted_amount_tons/2000;
+
+		$budgeted_amount = $this->daysCounterbudgetedAmount($lastupdate[0]['farm_id'],$_POST['bin'],$lastupdate[0]['feed_type'],date("Y-m-d H:i:s"));
+
+		$currentAmount = $this->currentBinCapacity($_POST['bin']);
+
+		//feeds
+		$feeds = FeedTypes::where('type_id','=',$lastupdate[0]['feed_type'])->get()->toArray();
+
+		// data to insert
+		$bin_history_data = array(
+				'update_date' 					=> 	date("Y-m-d H:i:s"),
+				'bin_id' 								=> 	$data['binID'],
+				'farm_id' 							=> 	$lastupdate[0]['farm_id'],
+				'num_of_pigs' 					=> 	$lastupdate[0]['num_of_pigs'],
+				'num_of_sow_pigs'				=>	$lastupdate[0]['num_of_sow_pigs'],
+				'user_id' 							=> 	$data['userID'],
+				'amount' 								=> 	$data['amount'],
+				'update_type' 					=> 	'Manual Update Bin Forecasting Admin',
+				'created_at' 						=> 	date("Y-m-d H:i:s"),
+				'budgeted_amount' 			=> 	$budgeted_amount,//$feeds[0]['budgeted_amount'],//$lastupdate[0]['budgeted_amount'],
+				'budgeted_amount_tons'	=>	$budgeted_amount_tons,
+				'actual_amount_tons'		=>	$data['amount'],
+				'remaining_amount' 			=> 	$lastupdate[0]['remaining_amount'],
+				'sub_amount' 						=> 	$lastupdate[0]['sub_amount'],
+				'variance' 							=> 	$variance,
+				'consumption' 					=> 	$actual_consumption_per_pig,
+				'admin' 								=> 	$data['userID'],
+				'feed_type'							=>	!empty($lastupdate[0]['feed_type']) ? $lastupdate[0]['feed_type'] : 51,
+				'unique_id'							=>	!empty($lastupdate[0]['unique_id']) ? $lastupdate[0]['unique_id'] : 'none'
+		);
+
+		if($yesterday == 0){
+			BinsHistory::where('history_id','=',$lastupdate[0]['history_id'])->update($bin_history_data);
+		}else{
+			BinsHistory::insert($bin_history_data);
+		}
+
+
+		if($data['amount'] > $lastupdate[0]['amount']){
+			$avg_variance = 0;
+			$avg_actual = 0;
+		}else{
+			//calculate average variance and actual consumption based on last 6 days
+			$avg_variance = round(($this->averageVariancelast6days($data['binID'])/$this->getNumberOfUpdates($data['binID'])),2);
+			$avg_actual = round(($this->averageActuallast6days($data['binID'])/$this->getNumberOfUpdates($data['binID'])),2);
+		}
+
+		//bins
+		$bins = Bins::where('bin_id','=',$data['binID'])->get()->toArray();
+		//bin Size
+		$bin_size = BinSize::where('size_id','=',$bins[0]['bin_size'])->get()->toArray();
+		//medication
+		$medication = Medication::where('med_id','=',$lastupdate[0]['medication'])->get()->toArray();
+
+
+		$numofpigs_ = $lastupdate[0]['num_of_pigs'] != NULL ? $lastupdate[0]['num_of_pigs'] : $bins[0]['num_of_pigs'];
+		if(!empty($lastupdate)){
+			$budgeted_ = $lastupdate[0]['budgeted_amount'] != NULL ? $lastupdate[0]['budgeted_amount'] : $feeds[0]['budgeted_amount'];
+		} else {
+			$budgeted_ = 0;
+		}
+
+		if($budgeted_ != 0.0){
+			if($numofpigs_ != 0){
+				$daysto = round($data['amount'] * 2000 / ($numofpigs_ * $budgeted_),0);
+			} else {
+				$daysto = 0;
+			}
+		} else {
+			$daysto = 0;
+		}
+
+
+		$history_id = !empty($lastupdate[0]['history_id']) ? $lastupdate[0]['history_id'] : NULL;
+
+		Cache::forget('bin-'.$data['binID']);
+
+		if($daysto > 3) {
+			$color = "success";
+		} elseif($daysto < 3) {
+			$color = "danger";
+		} else {
+			$color = "warning";
+		}
+
+		if($daysto > 5) {
+			$text = $daysto . " Days";
+		} else {
+			$text = $daysto . " Days";
+		}
+
+		$perc = ($daysto<=5 ? (($daysto*2)*10) : 100 );
+
+		$ring_amount = $this->getmyBinSize($bins[0]['bin_size']);
+		$ring = "Empty";
+		foreach($ring_amount as $k => $v){
+			if($_POST['amount'] == $k){
+				$ring = $v;
+			}
+		}
+
+		$user = User::where('id',$data['userID'])->first();
+
+		return json_encode(array(
+
+			'msg' 				=> 	$msg,
+			'empty' 			=> 	$this->emptyDate($daysto),
+			'daystoemp' 	=> 	$daysto,
+			'percentage' 	=> 	$perc,
+			'color' 			=> 	$color,
+			'text' 				=> 	$text,
+			'tdy' 				=> 	date('M d'),
+			'ringAmount'	=>	$ring,
+			//'avg_variance'	=>	$avg_variance,
+			//'avg_actual'	=>	$avg_actual,
+			'lastUpdate'	=>	date("M d"),
+			'user'				=> $user->username,
+			'farm_id'			=> $bin_history_data['farm_id']
+		));
+
+
+	}
+
+
+
 	/*
 	*	rebuild cache API
 	*/
