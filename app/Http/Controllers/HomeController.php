@@ -2018,6 +2018,8 @@ class HomeController extends Controller
 
 		$user = User::where('id',$data['userID'])->first();
 
+		$this->rebuildCacheAPI();
+
 		return json_encode(array(
 
 			'msg' 				=> 	$msg,
