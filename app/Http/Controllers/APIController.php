@@ -1413,6 +1413,10 @@ class APIController extends Controller
         $binsLists = $farms_controller->updateBinFarmAPI($data);
         unset($farms_controller);
 
+        $h_c = new HomeController;
+        $h_c->clearBinsCache($data['bin_id']);
+        unset($h_c);
+
         if (!empty($binsLists)) {
           return array(
             "err" =>  0,
