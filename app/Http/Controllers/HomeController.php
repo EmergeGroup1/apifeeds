@@ -3206,6 +3206,12 @@ class HomeController extends Controller
           $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
 					$update_type = $this->updateTypeCounter($up_hist[$i][0]['update_type'],$yesterday_update[$i],$up_hist[$i][0]['num_of_pigs'],$bins[$i]['bin_id']);
 
+					$farms_data = Farms::where('id', $farm_id)->first();
+
+					if($farms_data->type == "farrowing"){
+						$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
+					}
+
 					$binsData[] = array(
 						'bin_id'									=>	$bins[$i]['bin_id'],
 						'current_bin_capacity'		=>	$this->currentBinCapacity($bins[$i]['bin_id']),
