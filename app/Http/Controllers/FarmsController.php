@@ -303,7 +303,7 @@ class FarmsController extends Controller
   					$bins_history->update_date = date("Y-m-d H:i:s");
   					$bins_history->created_at = date("Y-m-d H:i:s");
   					$bins_history->user_id = $data['user_id'];
-  					//$bins_history->num_of_pigs = $data['num_of_pigs'];
+  					$bins_history->num_of_sow_pigs = $data['num_of_sow_pigs'];
   					$bins_history->feed_type = $data['feed_type'];
   					$bins_history->update_type = "Manual Update Edit Bin Admin";
   					$bins_history->save();
