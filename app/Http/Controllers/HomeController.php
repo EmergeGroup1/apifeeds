@@ -2630,6 +2630,13 @@ class HomeController extends Controller
 			$delivery = $this->nextDel_($bins[$i]['farm_id'],$bins[$i]['bin_id']);
 			$last_delivery = $this->lastDelivery($bins[$i]['farm_id'],$bins[$i]['bin_id'],$last_update);
 
+
+			$farms_data = Farms::where('id', $bins[$i]['farm_id'])->first();
+
+			if($farms_data->type == "farrowing"){
+				$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
+			}
+
 			//$bins_items = Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
 			//if($bins_items == NULL){
 				// rebuild cache data
