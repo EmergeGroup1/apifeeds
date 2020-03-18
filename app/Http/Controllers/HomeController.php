@@ -2763,6 +2763,12 @@ class HomeController extends Controller
 					$last_delivery = $this->lastDelivery($farm_id,$bins[$i]['bin_id'],$last_update);
 					$feed_type_update = $this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']));
 
+					$farms_data = Farms::where('id', $farm_id)->first();
+
+					if($farms_data->type == "farrowing"){
+						$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
+					}
+
 
 					// rebuild cache data
 					$bins_items = array(
