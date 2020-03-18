@@ -6244,7 +6244,7 @@ class HomeController extends Controller
 			$farms_data = Farms::where('id', $farm_id)->first();
 
 			if($farms_data->farm_type == "farrowing"){
-				$num_of_sow_pigs = $bins[$i]['num_of_sow_pigs'];
+				$num_of_sow_pigs = $data != NULL ? $data[0]['num_of_sow_pigs'] : $bins_data[0]['num_of_sow_pigs'];
 			}
 
 			// update
