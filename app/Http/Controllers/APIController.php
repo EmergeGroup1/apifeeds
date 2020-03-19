@@ -1197,6 +1197,10 @@ class APIController extends Controller
         $farmsLists = $farms_controller->listFarmAPI();
         unset($farms_controller);
 
+        $home_controller = new HomeController;
+        $home_controller->forecastingDataCache();
+        unset($home_controller);
+
         if (!empty($farmsLists)) {
           return array(
             "err" =>  0,
