@@ -3190,6 +3190,11 @@ class HomeController extends Controller
 					 ->orderBy('feeds_bins.bin_number','asc')
                      ->get();
 
+		$b_data = Bins::where('farm_id', $farm_id)->first();
+
+ 		if($b_data == NULL){
+ 			return NULL;
+ 		}
 
 		$bins = json_decode(json_encode($bins),true);
 
