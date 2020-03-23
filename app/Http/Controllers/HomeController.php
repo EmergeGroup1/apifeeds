@@ -5818,7 +5818,7 @@ class HomeController extends Controller
 
 			$counter = count($v['bins'])-1;
 			for($i=0; $i<=$counter; $i++){
-				return $this->updateBinHistory($v['bins'][$i]['bin_id'],NULL);
+				$this->updateBinHistory($v['bins'][$i]['bin_id'],NULL);
 			}
 
 		}
@@ -6123,9 +6123,7 @@ class HomeController extends Controller
 
 			// if update not exists, update data based on 0 consumption update
 			$history = $this->historyFinder($date_today,$bin_id);
-			return $history;
 			if(!empty($history[0])){
-
 				if($history[0]['consumption'] == 0.0){
 					$this->testUpdateNoConsumption($history,$date_today);
 				}
