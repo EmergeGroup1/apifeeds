@@ -5818,7 +5818,7 @@ class HomeController extends Controller
 
 			$counter = count($v['bins'])-1;
 			for($i=0; $i<=$counter; $i++){
-				$this->updateBinHistory($v['bins'][$i]['bin_id'],NULL);
+				return $this->updateBinHistory($v['bins'][$i]['bin_id'],NULL);
 			}
 
 		}
