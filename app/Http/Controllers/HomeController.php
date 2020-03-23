@@ -5824,7 +5824,7 @@ class HomeController extends Controller
 		}
 
 		// update the cache for forecasting
-		//$this->forecastingDataCacheBuilder();
+		$this->forecastingDataCacheBuilder();
 
 		/*
 		$first = $forecastingData[0]['bins'][0]['bin_id'];
@@ -5868,8 +5868,14 @@ class HomeController extends Controller
 			//$amount = $this->calculateBin($data[0]['num_of_pigs'],$data[0]['budgeted_amount'],$data[0]['amount']);
 			//$consumption = $this->calculateConPerPig($data[0]['num_of_pigs'],$data[0]['budgeted_amount'],$data[0]['amount']);
 
-			$amount = $this->calculateBin($data[0]['num_of_pigs'],$budgeted_amount,$data[0]['amount']);
-			$consumption = $this->calculateConPerPig($data[0]['num_of_pigs'],$budgeted_amount,$data[0]['amount']);
+			$farms_data = Farms::where('id', $data[0]['farm_id'])->first();
+			$pigs = $data[0]['num_of_pigs'];
+			if($farms_data->farm_type == "farrowing"){
+				$pigs = $data[0]['num_of_sow_pigs'];
+			}
+
+			$amount = $this->calculateBin($pigs,$budgeted_amount,$data[0]['amount']);
+			$consumption = $this->calculateConPerPig($pigs,$budgeted_amount,$data[0]['amount']);
 
 			$amount = $amount < 0 ? 0 : $amount;
 
@@ -5890,6 +5896,7 @@ class HomeController extends Controller
 				'bin_id'			=>	$data[0]['bin_id'],
 				'farm_id'			=>	$data[0]['farm_id'],
 				'num_of_pigs'		=>	$data[0]['num_of_pigs'],
+				'num_of_sow_pigs'	=>	$data[0]['num_of_sow_pigs'],
 				'user_id'			=>	1,//$data[0]['user_id'],
 				'amount'			=>	$amount,
 				'update_type'		=>	'Automatic Update Admin',
@@ -5920,29 +5927,29 @@ class HomeController extends Controller
 			$created_at = date('Y-m-d H:i:s', strtotime($date.$time));
 			$user_created_at = date('Y-m-d H:i:s', strtotime($created_at)+60*60);*/
 
-			$mobile_data = array(
-				'bin_id'			=>	!empty($bin_size->bin_number) ? $bin_size->bin_number : 0,
-				'farm_id'			=>	$data[0]['farm_id'],
-				'user_id'			=>	1,//$data[0]['user_id'],
-				'current_amount'	=>	$amount,
-				'created_at'		=>	date('Y-m-d H:i:s'),
-				'budgeted_amount'	=>	$budgeted_amount,//$feeds[0]['budgeted_amount'],
-				'actual_amount'		=>	$amount,
-				'bin_size'			=>	!empty($bin_size->size_id) ? $bin_size->size_id : 0,
-				'variance'			=>	0,
-				'consumption'		=>	$consumption,
-				'feed_type'			=>	$data[0]['feed_type'],
-				'medication'		=>	!empty($data[0]['medication']) ? $data[0]['medication'] : 8,
-				'med_name'			=>	!empty($med_name->med_name) ? $med_name->med_name : 0,
-				'feed_name'			=>	!empty($feed_name->name) ? $feed_name->name : '-',
-				'user_created_at'	=>	date('Y-m-d H:i:s'),
-				'num_of_pigs'		=>	$data[0]['num_of_pigs'],
-				'bin_no_id'			=>	$data[0]['bin_id'],
-				'status'			=>	2,
-				'unique_id'			=>	!empty($data[0]['unique_id']) ? $data[0]['unique_id'] : "none"
-			);
-
-			$this->mobileSaveAccepted($mobile_data);
+			// $mobile_data = array(
+			// 	'bin_id'			=>	!empty($bin_size->bin_number) ? $bin_size->bin_number : 0,
+			// 	'farm_id'			=>	$data[0]['farm_id'],
+			// 	'user_id'			=>	1,//$data[0]['user_id'],
+			// 	'current_amount'	=>	$amount,
+			// 	'created_at'		=>	date('Y-m-d H:i:s'),
+			// 	'budgeted_amount'	=>	$budgeted_amount,//$feeds[0]['budgeted_amount'],
+			// 	'actual_amount'		=>	$amount,
+			// 	'bin_size'			=>	!empty($bin_size->size_id) ? $bin_size->size_id : 0,
+			// 	'variance'			=>	0,
+			// 	'consumption'		=>	$consumption,
+			// 	'feed_type'			=>	$data[0]['feed_type'],
+			// 	'medication'		=>	!empty($data[0]['medication']) ? $data[0]['medication'] : 8,
+			// 	'med_name'			=>	!empty($med_name->med_name) ? $med_name->med_name : 0,
+			// 	'feed_name'			=>	!empty($feed_name->name) ? $feed_name->name : '-',
+			// 	'user_created_at'	=>	date('Y-m-d H:i:s'),
+			// 	'num_of_pigs'		=>	$data[0]['num_of_pigs'],
+			// 	'bin_no_id'			=>	$data[0]['bin_id'],
+			// 	'status'			=>	2,
+			// 	'unique_id'			=>	!empty($data[0]['unique_id']) ? $data[0]['unique_id'] : "none"
+			// );
+			//
+			// $this->mobileSaveAccepted($mobile_data);
 
 		//}
 
@@ -5959,8 +5966,15 @@ class HomeController extends Controller
 		//$amount = $this->calculateBin($data[0]['num_of_pigs'],$data[0]['budgeted_amount'],$data[0]['amount']);
 		//$consumption = $this->calculateConPerPig($data[0]['num_of_pigs'],$data[0]['budgeted_amount'],$data[0]['amount']);
 
-		$amount = $this->calculateBin($data[0]['num_of_pigs'],$budgeted_amount,$data[0]['amount']);
-		$consumption = $this->calculateConPerPig($data[0]['num_of_pigs'],$budgeted_amount,$data[0]['amount']);
+		$farms_data = Farms::where('id', $data[0]['farm_id'])->first();
+		$pigs = $data[0]['num_of_pigs'];
+		if($farms_data->farm_type == "farrowing"){
+			$pigs = $data[0]['num_of_sow_pigs'];
+		}
+
+
+		$amount = $this->calculateBin($pigs,$budgeted_amount,$data[0]['amount']);
+		$consumption = $this->calculateConPerPig($pigs,$budgeted_amount,$data[0]['amount']);
 
 		$amount = $amount < 0 ? 0 : $amount;
 
@@ -5972,6 +5986,7 @@ class HomeController extends Controller
 			'bin_id'			=>	$data[0]['bin_id'],
 			'farm_id'			=>	$data[0]['farm_id'],
 			'num_of_pigs'		=>	$data[0]['num_of_pigs'],
+			'num_of_sow_pigs'	=>	$data[0]['num_of_sow_pigs'],
 			'user_id'			=>	1,//$data[0]['user_id'],
 			'amount'			=>	$amount,
 			'update_type'		=>	'Automatic Update Admin',
