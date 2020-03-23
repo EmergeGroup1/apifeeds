@@ -6123,6 +6123,7 @@ class HomeController extends Controller
 
 			// if update not exists, update data based on 0 consumption update
 			$history = $this->historyFinder($date_today,$bin_id);
+			return $history;
 			if(!empty($history[0])){
 
 				if($history[0]['consumption'] == 0.0){
