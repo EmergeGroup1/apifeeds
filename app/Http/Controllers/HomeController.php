@@ -6261,7 +6261,7 @@ class HomeController extends Controller
 			$feed_type_id = $undone_deliveries[$i]['feeds_type_id'] != NULL ? $undone_deliveries[$i]['feeds_type_id'] : $data[0]['feed_type'];
 
 			$farms_data = Farms::where('id', $farm_id)->first();
-
+			$num_of_sow_pigs = $data[0]['num_of_sow_pigs'];
 			if($farms_data->farm_type == "farrowing"){
 				$num_of_sow_pigs = $data != NULL ? $data[0]['num_of_sow_pigs'] : $bins_data[0]['num_of_sow_pigs'];
 			}
