@@ -6130,7 +6130,7 @@ class HomeController extends Controller
 			// update based on yesterday's update
 			} else {
 				$history = $this->historyFinder($date_yesterday,$bin_id);
-				if(!empty($history[0])){
+				if($history != NULL){
 					$this->testUpdate($history,$date_today);
 				}
 			}
