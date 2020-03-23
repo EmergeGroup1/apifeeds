@@ -6147,7 +6147,7 @@ class HomeController extends Controller
 	private function historyFinder($date,$bin_id){
 		$date = date("Y-m-d",strtotime($date));
 		$data = BinsHistory::where('update_date','LIKE',$date.'%')
-					->where('bin_id','=',$bin_id)
+					->where('bin_id',$bin_id)
 					->orderBy('update_date','desc')
 					->get()
 					->toArray();
