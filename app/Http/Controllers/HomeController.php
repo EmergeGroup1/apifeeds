@@ -63,7 +63,7 @@ class HomeController extends Controller
 										DB::raw('feeds_farms.notes as notes'),
 										DB::raw('feeds_farms.update_notification as update_notification')
 										)
-										//->rightJoin('feeds_bins','feeds_farms.id','=','feeds_bins.farm_id')
+										->rightJoin('feeds_bins','feeds_farms.id','=','feeds_bins.farm_id')
 										->where('status',1)
 										->get()->toArray();
 
@@ -141,6 +141,7 @@ class HomeController extends Controller
 		private function farmsDataBuilder($farms)
 		{
 				$forecastingData = array();
+				$bins_data = array();
 
 				for($i=0; $i<count($farms); $i++){
 					Cache::forget('farm_holder-'.$farms[$i]['id']);
@@ -149,6 +150,11 @@ class HomeController extends Controller
 						 $forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
 
 					} else {
+						if($this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) != NULL){
+							$bins_data = $this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes']);
+						} else {
+							$bins_data = NULL;
+						}
 
 						$forecastingData[] = array(
 							'farm_id'					=>	$farms[$i]['id'],
@@ -156,7 +162,7 @@ class HomeController extends Controller
 							'farm_type'				=>	$farms[$i]['farm_type'],
 							'delivery_status'	=>	$this->pendingDeliveryItems($farms[$i]['id']),
 							'address'					=>	$farms[$i]['address'],
-							'bins'						=> 	$farms[$i]['farm_type'] != "farrowing" ? $this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes']) : NULL
+							'bins'						=> 	$bins_data
 						);
 
 						Cache::forever('farm_holder-'.$farms[$i]['id'],$forecastingData);
@@ -1857,6 +1863,183 @@ class HomeController extends Controller
 
 	}
 
+
+
+
+	/*
+	*	Update Bin
+	*	update the current bin based on yesterday or today's update on forecasting
+	*/
+	public function updateSowAPI($data) {
+
+		$msg = "OK";
+		$yesterday = 0;
+
+		// update today
+		$lastupdate = $this->todayBinUpdate($data['binID']);
+
+		$amount = $lastupdate[0]['amount'] - $data['amount'];
+		if($lastupdate[0]['amount'] < $data['amount']){
+				$amount = str_replace("-","",$amount);
+		} else {
+				$amount = "-".$amount;
+		}
+
+		// update yesterdays
+		if(empty($lastupdate)){
+			$lastupdate = $this->yesterdayBinUpdate($data['binID']);
+			$yesterday = 1;
+		}
+
+		$budgeted_amount_tons = 0;
+
+		if($data['amount'] > $lastupdate[0]['amount']){
+			$variance = $lastupdate[0]['variance'];
+			$actual_consumption_per_pig = $lastupdate[0]['consumption'];
+			$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
+		} else {
+			$new_amount = round(($lastupdate[0]['amount'] - $data['amount'])*2000,2);
+			if($lastupdate[0]['num_of_pigs'] == 0){
+					$actual_consumption_per_pig = $new_amount;
+			} else {
+					$actual_consumption_per_pig = $new_amount / $lastupdate[0]['num_of_sow_pigs'];
+			}
+			$variance = round($actual_consumption_per_pig - $lastupdate[0]['budgeted_amount'],2);
+			$update_type = $lastupdate[0]['update_type'];
+			if($update_type == 'Manual Update Bin Forecasting Admin' || $update_type == 'Manual Update Mobile Farmer' || $update_type == 'Delivery Manual Update Admin'){
+				$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
+			} else {
+				$budgeted_amount_tons = $lastupdate[0]['amount'];
+			}
+		}
+
+		$budgeted_amount_tons = $budgeted_amount_tons*2000 - ($lastupdate[0]['budgeted_amount'] * $lastupdate[0]['num_of_sow_pigs']);
+		$budgeted_amount_tons = $budgeted_amount_tons/2000;
+
+		$budgeted_amount = $this->daysCounterbudgetedAmount($lastupdate[0]['farm_id'],$_POST['bin'],$lastupdate[0]['feed_type'],date("Y-m-d H:i:s"));
+
+		$currentAmount = $this->currentBinCapacity($_POST['bin']);
+
+		//feeds
+		$feeds = FeedTypes::where('type_id','=',$lastupdate[0]['feed_type'])->get()->toArray();
+
+		// data to insert
+		$bin_history_data = array(
+				'update_date' 					=> 	date("Y-m-d H:i:s"),
+				'bin_id' 								=> 	$data['binID'],
+				'farm_id' 							=> 	$lastupdate[0]['farm_id'],
+				'num_of_pigs' 					=> 	$lastupdate[0]['num_of_pigs'],
+				'num_of_sow_pigs'				=>	$lastupdate[0]['num_of_sow_pigs'],
+				'user_id' 							=> 	$data['userID'],
+				'amount' 								=> 	$data['amount'],
+				'update_type' 					=> 	'Manual Update Bin Forecasting Admin',
+				'created_at' 						=> 	date("Y-m-d H:i:s"),
+				'budgeted_amount' 			=> 	$budgeted_amount,//$feeds[0]['budgeted_amount'],//$lastupdate[0]['budgeted_amount'],
+				'budgeted_amount_tons'	=>	$budgeted_amount_tons,
+				'actual_amount_tons'		=>	$data['amount'],
+				'remaining_amount' 			=> 	$lastupdate[0]['remaining_amount'],
+				'sub_amount' 						=> 	$lastupdate[0]['sub_amount'],
+				'variance' 							=> 	$variance,
+				'consumption' 					=> 	$actual_consumption_per_pig,
+				'admin' 								=> 	$data['userID'],
+				'feed_type'							=>	!empty($lastupdate[0]['feed_type']) ? $lastupdate[0]['feed_type'] : 51,
+				'unique_id'							=>	!empty($lastupdate[0]['unique_id']) ? $lastupdate[0]['unique_id'] : 'none'
+		);
+
+		if($yesterday == 0){
+			BinsHistory::where('history_id','=',$lastupdate[0]['history_id'])->update($bin_history_data);
+		}else{
+			BinsHistory::insert($bin_history_data);
+		}
+
+
+		if($data['amount'] > $lastupdate[0]['amount']){
+			$avg_variance = 0;
+			$avg_actual = 0;
+		}else{
+			//calculate average variance and actual consumption based on last 6 days
+			$avg_variance = round(($this->averageVariancelast6days($data['binID'])/$this->getNumberOfUpdates($data['binID'])),2);
+			$avg_actual = round(($this->averageActuallast6days($data['binID'])/$this->getNumberOfUpdates($data['binID'])),2);
+		}
+
+		//bins
+		$bins = Bins::where('bin_id','=',$data['binID'])->get()->toArray();
+		//bin Size
+		$bin_size = BinSize::where('size_id','=',$bins[0]['bin_size'])->get()->toArray();
+		//medication
+		$medication = Medication::where('med_id','=',$lastupdate[0]['medication'])->get()->toArray();
+
+
+		$numofpigs_ = $lastupdate[0]['num_of_sow_pigs'] != NULL ? $lastupdate[0]['num_of_sow_pigs'] : $bins[0]['num_of_sow_pigs'];
+		if(!empty($lastupdate)){
+			$budgeted_ = $lastupdate[0]['budgeted_amount'] != NULL ? $lastupdate[0]['budgeted_amount'] : $feeds[0]['budgeted_amount'];
+		} else {
+			$budgeted_ = 0;
+		}
+
+		if($budgeted_ != 0.0){
+			if($numofpigs_ != 0){
+				$daysto = round($data['amount'] * 2000 / ($numofpigs_ * $budgeted_),0);
+			} else {
+				$daysto = 0;
+			}
+		} else {
+			$daysto = 0;
+		}
+
+
+		$history_id = !empty($lastupdate[0]['history_id']) ? $lastupdate[0]['history_id'] : NULL;
+
+		Cache::forget('bin-'.$data['binID']);
+
+		if($daysto > 3) {
+			$color = "success";
+		} elseif($daysto < 3) {
+			$color = "danger";
+		} else {
+			$color = "warning";
+		}
+
+		if($daysto > 5) {
+			$text = $daysto . " Days";
+		} else {
+			$text = $daysto . " Days";
+		}
+
+		$perc = ($daysto<=5 ? (($daysto*2)*10) : 100 );
+
+		$ring_amount = $this->getmyBinSize($bins[0]['bin_size']);
+		$ring = "Empty";
+		foreach($ring_amount as $k => $v){
+			if($_POST['amount'] == $k){
+				$ring = $v;
+			}
+		}
+
+		$user = User::where('id',$data['userID'])->first();
+
+		return json_encode(array(
+
+			'msg' 				=> 	$msg,
+			'empty' 			=> 	$this->emptyDate($daysto),
+			'daystoemp' 	=> 	$daysto,
+			'percentage' 	=> 	$perc,
+			'color' 			=> 	$color,
+			'text' 				=> 	$text,
+			'tdy' 				=> 	date('M d'),
+			'ringAmount'	=>	$ring,
+			//'avg_variance'	=>	$avg_variance,
+			//'avg_actual'	=>	$avg_actual,
+			'lastUpdate'	=>	date("M d"),
+			'user'				=> $user->username,
+			'farm_id'			=> $bin_history_data['farm_id']
+		));
+
+
+	}
+
+
+
 	/*
 	*	rebuild cache API
 	*/
@@ -2447,6 +2630,13 @@ class HomeController extends Controller
 			$delivery = $this->nextDel_($bins[$i]['farm_id'],$bins[$i]['bin_id']);
 			$last_delivery = $this->lastDelivery($bins[$i]['farm_id'],$bins[$i]['bin_id'],$last_update);
 
+
+			$farms_data = Farms::where('id', $bins[$i]['farm_id'])->first();
+
+			if($farms_data->farm_type == "farrowing"){
+				$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
+			}
+
 			//$bins_items = Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
 			//if($bins_items == NULL){
 				// rebuild cache data
@@ -2455,6 +2645,7 @@ class HomeController extends Controller
 					'bin_id'									=>	$bins[$i]['bin_id'],
 					'bin_number'							=>	$bins[$i]['bin_number'],
 					'alias'										=>	$bins[$i]['alias'],
+					'num_of_sow_pigs'					=>	$bins[$i]['num_of_sow_pigs'],
 					'total_number_of_pigs'		=>	$total_number_of_pigs,
 					'num_of_pigs'							=>	$bins[$i]['num_of_pigs'],
 					'default_amount'					=>	$this->displayDefaultAmountofBin($bins[$i]['amount'], $up_hist[$i][0]['amount']),
@@ -2579,6 +2770,12 @@ class HomeController extends Controller
 					$last_delivery = $this->lastDelivery($farm_id,$bins[$i]['bin_id'],$last_update);
 					$feed_type_update = $this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']));
 
+					$farms_data = Farms::where('id', $farm_id)->first();
+
+					if($farms_data->farm_type == "farrowing"){
+						$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
+					}
+
 
 					// rebuild cache data
 					$bins_items = array(
@@ -2587,6 +2784,7 @@ class HomeController extends Controller
 						'bin_number'							=>	$bins[$i]['bin_number'],
 						'alias'										=>	$bins[$i]['alias'],
 						'num_of_pigs'							=>	$bins[$i]['num_of_pigs'],
+						'num_of_sow_pigs'					=>	$bins[$i]['num_of_sow_pigs'],
 						'total_number_of_pigs'		=>	$total_number_of_pigs,
 						'default_amount'					=>	$this->displayDefaultAmountofBin($bins[$i]['amount'], $up_hist[$i][0]['amount']),
 						'hex_color'								=>	$bins[$i]['hex_color'],
@@ -2992,6 +3190,11 @@ class HomeController extends Controller
 					 ->orderBy('feeds_bins.bin_number','asc')
                      ->get();
 
+		$b_data = Bins::where('farm_id', $farm_id)->first();
+
+ 		if($b_data == NULL){
+ 			return NULL;
+ 		}
 
 		$bins = json_decode(json_encode($bins),true);
 
@@ -3014,6 +3217,12 @@ class HomeController extends Controller
 					//$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroup($bins[$i]['bin_id'],$bins[$i]['farm_id']);
           $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
 					$update_type = $this->updateTypeCounter($up_hist[$i][0]['update_type'],$yesterday_update[$i],$up_hist[$i][0]['num_of_pigs'],$bins[$i]['bin_id']);
+
+					$farms_data = Farms::where('id', $farm_id)->first();
+
+					if($farms_data->farm_type == "farrowing"){
+						$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
+					}
 
 					$binsData[] = array(
 						'bin_id'									=>	$bins[$i]['bin_id'],
@@ -5615,7 +5824,7 @@ class HomeController extends Controller
 		}
 
 		// update the cache for forecasting
-		//$this->forecastingDataCacheBuilder();
+		$this->forecastingDataCacheBuilder();
 
 		/*
 		$first = $forecastingData[0]['bins'][0]['bin_id'];
@@ -5659,8 +5868,14 @@ class HomeController extends Controller
 			//$amount = $this->calculateBin($data[0]['num_of_pigs'],$data[0]['budgeted_amount'],$data[0]['amount']);
 			//$consumption = $this->calculateConPerPig($data[0]['num_of_pigs'],$data[0]['budgeted_amount'],$data[0]['amount']);
 
-			$amount = $this->calculateBin($data[0]['num_of_pigs'],$budgeted_amount,$data[0]['amount']);
-			$consumption = $this->calculateConPerPig($data[0]['num_of_pigs'],$budgeted_amount,$data[0]['amount']);
+			$farms_data = Farms::where('id', $data[0]['farm_id'])->first();
+			$pigs = $data[0]['num_of_pigs'];
+			if($farms_data->farm_type == "farrowing"){
+				$pigs = $data[0]['num_of_sow_pigs'];
+			}
+
+			$amount = $this->calculateBin($pigs,$budgeted_amount,$data[0]['amount']);
+			$consumption = $this->calculateConPerPig($pigs,$budgeted_amount,$data[0]['amount']);
 
 			$amount = $amount < 0 ? 0 : $amount;
 
@@ -5681,6 +5896,7 @@ class HomeController extends Controller
 				'bin_id'			=>	$data[0]['bin_id'],
 				'farm_id'			=>	$data[0]['farm_id'],
 				'num_of_pigs'		=>	$data[0]['num_of_pigs'],
+				'num_of_sow_pigs'	=>	$data[0]['num_of_sow_pigs'],
 				'user_id'			=>	1,//$data[0]['user_id'],
 				'amount'			=>	$amount,
 				'update_type'		=>	'Automatic Update Admin',
@@ -5711,29 +5927,29 @@ class HomeController extends Controller
 			$created_at = date('Y-m-d H:i:s', strtotime($date.$time));
 			$user_created_at = date('Y-m-d H:i:s', strtotime($created_at)+60*60);*/
 
-			$mobile_data = array(
-				'bin_id'			=>	!empty($bin_size->bin_number) ? $bin_size->bin_number : 0,
-				'farm_id'			=>	$data[0]['farm_id'],
-				'user_id'			=>	1,//$data[0]['user_id'],
-				'current_amount'	=>	$amount,
-				'created_at'		=>	date('Y-m-d H:i:s'),
-				'budgeted_amount'	=>	$budgeted_amount,//$feeds[0]['budgeted_amount'],
-				'actual_amount'		=>	$amount,
-				'bin_size'			=>	!empty($bin_size->size_id) ? $bin_size->size_id : 0,
-				'variance'			=>	0,
-				'consumption'		=>	$consumption,
-				'feed_type'			=>	$data[0]['feed_type'],
-				'medication'		=>	!empty($data[0]['medication']) ? $data[0]['medication'] : 8,
-				'med_name'			=>	!empty($med_name->med_name) ? $med_name->med_name : 0,
-				'feed_name'			=>	!empty($feed_name->name) ? $feed_name->name : '-',
-				'user_created_at'	=>	date('Y-m-d H:i:s'),
-				'num_of_pigs'		=>	$data[0]['num_of_pigs'],
-				'bin_no_id'			=>	$data[0]['bin_id'],
-				'status'			=>	2,
-				'unique_id'			=>	!empty($data[0]['unique_id']) ? $data[0]['unique_id'] : "none"
-			);
-
-			$this->mobileSaveAccepted($mobile_data);
+			// $mobile_data = array(
+			// 	'bin_id'			=>	!empty($bin_size->bin_number) ? $bin_size->bin_number : 0,
+			// 	'farm_id'			=>	$data[0]['farm_id'],
+			// 	'user_id'			=>	1,//$data[0]['user_id'],
+			// 	'current_amount'	=>	$amount,
+			// 	'created_at'		=>	date('Y-m-d H:i:s'),
+			// 	'budgeted_amount'	=>	$budgeted_amount,//$feeds[0]['budgeted_amount'],
+			// 	'actual_amount'		=>	$amount,
+			// 	'bin_size'			=>	!empty($bin_size->size_id) ? $bin_size->size_id : 0,
+			// 	'variance'			=>	0,
+			// 	'consumption'		=>	$consumption,
+			// 	'feed_type'			=>	$data[0]['feed_type'],
+			// 	'medication'		=>	!empty($data[0]['medication']) ? $data[0]['medication'] : 8,
+			// 	'med_name'			=>	!empty($med_name->med_name) ? $med_name->med_name : 0,
+			// 	'feed_name'			=>	!empty($feed_name->name) ? $feed_name->name : '-',
+			// 	'user_created_at'	=>	date('Y-m-d H:i:s'),
+			// 	'num_of_pigs'		=>	$data[0]['num_of_pigs'],
+			// 	'bin_no_id'			=>	$data[0]['bin_id'],
+			// 	'status'			=>	2,
+			// 	'unique_id'			=>	!empty($data[0]['unique_id']) ? $data[0]['unique_id'] : "none"
+			// );
+			//
+			// $this->mobileSaveAccepted($mobile_data);
 
 		//}
 
@@ -5750,8 +5966,15 @@ class HomeController extends Controller
 		//$amount = $this->calculateBin($data[0]['num_of_pigs'],$data[0]['budgeted_amount'],$data[0]['amount']);
 		//$consumption = $this->calculateConPerPig($data[0]['num_of_pigs'],$data[0]['budgeted_amount'],$data[0]['amount']);
 
-		$amount = $this->calculateBin($data[0]['num_of_pigs'],$budgeted_amount,$data[0]['amount']);
-		$consumption = $this->calculateConPerPig($data[0]['num_of_pigs'],$budgeted_amount,$data[0]['amount']);
+		$farms_data = Farms::where('id', $data[0]['farm_id'])->first();
+		$pigs = $data[0]['num_of_pigs'];
+		if($farms_data->farm_type == "farrowing"){
+			$pigs = $data[0]['num_of_sow_pigs'];
+		}
+
+
+		$amount = $this->calculateBin($pigs,$budgeted_amount,$data[0]['amount']);
+		$consumption = $this->calculateConPerPig($pigs,$budgeted_amount,$data[0]['amount']);
 
 		$amount = $amount < 0 ? 0 : $amount;
 
@@ -5763,6 +5986,7 @@ class HomeController extends Controller
 			'bin_id'			=>	$data[0]['bin_id'],
 			'farm_id'			=>	$data[0]['farm_id'],
 			'num_of_pigs'		=>	$data[0]['num_of_pigs'],
+			'num_of_sow_pigs'	=>	$data[0]['num_of_sow_pigs'],
 			'user_id'			=>	1,//$data[0]['user_id'],
 			'amount'			=>	$amount,
 			'update_type'		=>	'Automatic Update Admin',
@@ -5899,15 +6123,14 @@ class HomeController extends Controller
 
 			// if update not exists, update data based on 0 consumption update
 			$history = $this->historyFinder($date_today,$bin_id);
-			if(!empty($history[0])){
-
+			if($history != NULL){
 				if($history[0]['consumption'] == 0.0){
 					$this->testUpdateNoConsumption($history,$date_today);
 				}
 			// update based on yesterday's update
 			} else {
 				$history = $this->historyFinder($date_yesterday,$bin_id);
-				if(!empty($history[0])){
+				if($history != NULL){
 					$this->testUpdate($history,$date_today);
 				}
 			}
@@ -5924,7 +6147,7 @@ class HomeController extends Controller
 	private function historyFinder($date,$bin_id){
 		$date = date("Y-m-d",strtotime($date));
 		$data = BinsHistory::where('update_date','LIKE',$date.'%')
-					->where('bin_id','=',$bin_id)
+					->where('bin_id',$bin_id)
 					->orderBy('update_date','desc')
 					->get()
 					->toArray();
@@ -6037,6 +6260,12 @@ class HomeController extends Controller
 			$medication_id = $undone_deliveries[$i]['medication_id'] != NULL ? $undone_deliveries[$i]['medication_id'] : $data[0]['medication'];
 			$feed_type_id = $undone_deliveries[$i]['feeds_type_id'] != NULL ? $undone_deliveries[$i]['feeds_type_id'] : $data[0]['feed_type'];
 
+			$farms_data = Farms::where('id', $farm_id)->first();
+			$num_of_sow_pigs = $data[0]['num_of_sow_pigs'];
+			if($farms_data->farm_type == "farrowing"){
+				$num_of_sow_pigs = $data != NULL ? $data[0]['num_of_sow_pigs'] : $bins_data[0]['num_of_sow_pigs'];
+			}
+
 			// update
 			if($update_date === $if_date_today){
 
@@ -6050,6 +6279,7 @@ class HomeController extends Controller
 					'bin_id'								=>	$bin_id,
 					'farm_id'								=>	$farm_id,
 					'num_of_pigs'						=>	$num_of_pigs,
+					'num_of_sow_pigs'				=>	$num_of_sow_pigs,
 					'user_id'								=> 	$user,
 					'update_type'						=>	'Delivery Manual Update Admin',
 					'admin'									=>	1,
@@ -6085,6 +6315,7 @@ class HomeController extends Controller
 					'bin_id'						=>	$bin_id,
 					'farm_id'						=>	$farm_id,
 					'num_of_pigs'				=>	$num_of_pigs,
+					'num_of_sow_pigs'		=>	$num_of_sow_pigs,
 					'user_id'						=>	$user,
 					'amount'						=>	$amount + $undone_deliveries[$i]['amount'],
 					'update_type'				=>	'Delivery Manual Update Admin',

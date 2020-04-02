@@ -66,13 +66,13 @@ class APIController extends Controller
         $token = $request->input('token');
 
         if ($type == 0) {
-          $farms_default = Farms::where('status', 1)->where('farm_type','!=','farrowing')->orderBy('name')->get();
+          $farms_default = Farms::where('status', 1)->orderBy('name')->get();
         } else if ($type == 1) {
-          $farms_default = Farms::where('column_type', 1)->where('farm_type','!=','farrowing')->where('status', 1)->orderBy('name')->get();
+          $farms_default = Farms::where('column_type', 1)->where('status', 1)->orderBy('name')->get();
         } else if ($type == 2) {
-          $farms_default = Farms::where('column_type', 2)->where('farm_type','!=','farrowing')->where('status', 1)->orderBy('name')->get();
+          $farms_default = Farms::where('column_type', 2)->where('status', 1)->orderBy('name')->get();
         } else if ($type == 3) {
-          $farms_default = Farms::where('column_type', 3)->where('farm_type','!=','farrowing')->where('status', 1)->orderBy('name')->get();
+          $farms_default = Farms::where('column_type', 3)->where('status', 1)->orderBy('name')->get();
         } else if ($type == 4) {
           $farms_default = Farms::where('farm_type','farrowing')->where('status', 1)->orderBy('name')->get();
           $log_token = session('token');
@@ -113,10 +113,10 @@ class APIController extends Controller
 
         $farm_id = $request->input('farmID');
         $token = $request->input('token');
+        $rooms = NULL;
+        $farm_selected = Farms::where('id', $farm_id)->first();
 
-        $farm = Farms::where('id', $farm_id)->first();
-
-        if ($farm == NULL) {
+        if ($farm_selected == NULL) {
           return array(
             "err" =>  1,
             "msg" =>  "No farm with that selected id"
@@ -124,15 +124,10 @@ class APIController extends Controller
         }
 
         // make selection for farrowing rooms
-        if($farm->farm_type == "farrowing") {
+        if($farm_selected->farm_type == "farrowing") {
           $farms_controller = new FarmsController;
           $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
           unset($farms_controller);
-
-          return array(
-                  "rooms"     =>  $rooms,
-                  "farmName"  =>  $farm->name
-                );
         }
 
         $forecasting = json_decode(Storage::get('forecasting_data_low_bins.txt'));
@@ -155,9 +150,11 @@ class APIController extends Controller
         $output = array(
           'farmName'  =>  $farm['name'],
           'farmID'    =>  $farm_id,
+          'farmType'  =>  $farm_selected->farm_type,
           'numberofLowbins' =>  $this->farmsBuilderNumberOfLowBins($forecasting, $farm_id),
           'notes'     =>  $farm['notes'],
-          'bins'      =>  $bins
+          'bins'      =>  $bins,
+          'rooms'     =>  $rooms
         );
 
         $log_token = session('token');
@@ -166,6 +163,34 @@ class APIController extends Controller
         }
 
         return $output;
+
+        break;
+
+      case "listRooms":
+
+        $farm_id = $request->input('farmID');
+        $token = $request->input('token');
+
+        $farm_selected = Farms::where('id', $farm_id)->first();
+
+        if ($farm_selected == NULL) {
+          return array(
+            "err" =>  1,
+            "msg" =>  "No farm with that selected id"
+          );
+        }
+
+        // make selection for farrowing rooms
+        if($farm_selected->farm_type == "farrowing") {
+          $farms_controller = new FarmsController;
+          $rooms = $farms_controller->listRoomsFarmAPI($farm_id);
+          unset($farms_controller);
+
+          return array(
+                  "rooms"     =>  $rooms,
+                  "farmName"  =>  $farm_selected->name
+                );
+        }
 
         break;
 
@@ -281,9 +306,21 @@ class APIController extends Controller
         $_POST['amount'] = $request->input('amount');
         $_POST['user'] = $request->input('userID');
 
-        // get the medications medication()
         $home_controller = new HomeController;
-        $update_bin = $home_controller->updateBinAPI();
+
+        if($request->input('farmType') == "farrowing"){
+          $data = array(
+            'binID' => $request->input('binID'),
+            'amount'  => $request->input('amount'),
+            'userID'  =>  $request->input('userID')
+          );
+
+          $update_bin = $home_controller->updateSowAPI($data);
+
+        } else {
+          $update_bin = $home_controller->updateBinAPI();
+        }
+
         unset($home_controller);
 
         return $update_bin;
@@ -334,7 +371,28 @@ class APIController extends Controller
 
         break;
 
-        case "updateRoomPigs":
+        case "updateSow":
+
+          $bin_id = $request->input('binID');
+          $number_of_pigs = $request->input('totalpigs');
+
+
+          // get the medications medication()
+          DB::table("feeds_bins")->where('bin_id',$bin_id)
+            ->update(['num_of_sow_pigs'=>$number_of_pigs]);
+
+          $home_controller = new HomeController;
+          $home_controller->clearBinsCache($bin_id);
+          unset($home_controller);
+
+          return array(
+            "err" =>  0,
+            "msg" =>  "Successfully updated pigs"
+          );
+
+          break;
+
+      case "updateRoomPigs":
 
           $token = $request->input('token');
           $log_token = session('token');
@@ -1139,6 +1197,10 @@ class APIController extends Controller
         $farmsLists = $farms_controller->listFarmAPI();
         unset($farms_controller);
 
+        $home_controller = new HomeController;
+        $home_controller->forecastingDataCache();
+        unset($home_controller);
+
         if (!empty($farmsLists)) {
           return array(
             "err" =>  0,
@@ -1319,7 +1381,8 @@ class APIController extends Controller
           'bin_number'  =>  $request->input('binNumber'),
           'alias'       =>  $request->input('alias'),
           'bin_size'    =>  $request->input('binSize'),
-          'user_id'     =>  $request->input('userID')
+          'user_id'     =>  $request->input('userID'),
+          'sow'         =>  $request->input('sow'),
         );
 
         $farms_controller = new FarmsController;
@@ -1346,12 +1409,17 @@ class APIController extends Controller
           'feed_type'   =>  $request->input('feedType'),
           'alias'       =>  $request->input('alias'),
           'bin_size'    =>  $request->input('binSize'),
-          'user_id'     =>  $request->input('userID')
+          'user_id'     =>  $request->input('userID'),
+          'sow'         =>  $request->input('sow'),
         );
 
         $farms_controller = new FarmsController;
         $binsLists = $farms_controller->updateBinFarmAPI($data);
         unset($farms_controller);
+
+        $h_c = new HomeController;
+        $h_c->clearBinsCache($data['bin_id']);
+        unset($h_c);
 
         if (!empty($binsLists)) {
           return array(
@@ -2390,11 +2458,11 @@ class APIController extends Controller
             'farmAbbr'            =>  strtoupper(substr(str_replace(" ", "", $v->name), 0, 2)),
             'farmType'            =>  $v->farm_type,
             'numberOfBins'        =>  (count((array) $v->bins) - 4) - 1,
-            'numberOfLowBins'     =>  $v->farm_type != "farrowing" ? $v->bins->lowBins : NULL,
-            'hasPendingDelivery'  =>  $v->farm_type != "farrowing" ? $v->delivery_status : NULL,
-            'daysRemaining'       =>  $v->farm_type != "farrowing" ? $this->binsDaysRemaining($v->bins) : NULL,
-            'lastManulUpdate'     =>  $v->farm_type != "farrowing" ? $v->bins->last_manual_update : NULL,
-            'currentLAmount'      =>  $v->farm_type != "farrowing" ? $v->bins->lowest_amount_bin : NULL
+            'numberOfLowBins'     =>  $sort != 5 ? $v->bins->lowBins : NULL,
+            'hasPendingDelivery'  =>  $sort != 5 ? $v->delivery_status : NULL,
+            'daysRemaining'       =>  $sort != 5 ? $this->binsDaysRemaining($v->bins) : NULL,
+            'lastManulUpdate'     =>  $sort != 5 ? $v->bins->last_manual_update : NULL,
+            'currentLAmount'      =>  $sort != 5 ? $v->bins->lowest_amount_bin : NULL
           );
         }
       }
@@ -2480,6 +2548,7 @@ class APIController extends Controller
         'lastDelivery'                  =>  date("Y-m-d", strtotime($bins[$i]->next_deliverydd)),
         'lastUpdate'                    =>  date("Y-m-d h:i a", strtotime($bins[$i]->last_update)),
         //'lastUpdate'                    =>  date("Y-m-d H:i a",strtotime($bins[$i]->last_manual_update)),
+        'sow'                           =>  $bins[$i]->num_of_sow_pigs,
         'user'                          =>  $bins[$i]->username,
         'daysRemaining'                 =>  $bins[$i]->days_to_empty,
         'currentMedication'             =>  $bins[$i]->medication_name,

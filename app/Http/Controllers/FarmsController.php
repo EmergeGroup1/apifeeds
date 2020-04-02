@@ -274,20 +274,26 @@ class FarmsController extends Controller
   			//$bins->budgeted_amount = $feed_types_data[0]['budgeted_amount'];
   			$bins->feed_type =  $data['feed_type'];
   			$bins->bin_size =  $data['bin_size'];
+        $bins->num_of_sow_pigs = $data['num_of_sow_pigs'];
   			$bins->save();
 
   			$home_controller = new HomeController;
   			// for the update budgeted
-  			if($bins_history->feed_type != $data['feed_type']){
-  				// insert data to feeds_budgeted_amount_counter
-  				$budgeted_amount = $home_controller->budgetedAmountCounterUpdater($data['farm_id'],$data['bin_id'],$data['feed_type']);
-  			}else {
-  				// get the days counted for the auto update budgeted amount
-  				// feeds_feed_type_budgeted_amount_per_day
-  				// get the last date inserted on the feeds_budgeted_amount_counter and count it on today's date then get the day column for that budgeted amount
-  				// if the day column has 0 get the last day column where it has a value that is not equal to zero
-  				$budgeted_amount = $home_controller->daysCounterbudgetedAmount($data['farm_id'],$data['bin_id'],$data['feed_type'],date("Y-m-d H:i:s"));
-  			}
+        if($bins_history != NULL){
+          if($bins_history->feed_type != $data['feed_type']){
+            // insert data to feeds_budgeted_amount_counter
+            $budgeted_amount = $home_controller->budgetedAmountCounterUpdater($data['farm_id'],$data['bin_id'],$data['feed_type']);
+          }else {
+            // get the days counted for the auto update budgeted amount
+            // feeds_feed_type_budgeted_amount_per_day
+            // get the last date inserted on the feeds_budgeted_amount_counter and count it on today's date then get the day column for that budgeted amount
+            // if the day column has 0 get the last day column where it has a value that is not equal to zero
+            $budgeted_amount = $home_controller->daysCounterbudgetedAmount($data['farm_id'],$data['bin_id'],$data['feed_type'],date("Y-m-d H:i:s"));
+          }
+        } else {
+          $budgeted_amount = $home_controller->daysCounterbudgetedAmount($data['farm_id'],$data['bin_id'],$data['feed_type'],date("Y-m-d H:i:s"));
+        }
+
   			unset($home_controller);
 
   			// update the bin history
@@ -297,17 +303,18 @@ class FarmsController extends Controller
   					$bins_history->update_date = date("Y-m-d H:i:s");
   					$bins_history->created_at = date("Y-m-d H:i:s");
   					$bins_history->user_id = $data['user_id'];
-  					//$bins_history->num_of_pigs = $data['num_of_pigs'];
+  					$bins_history->num_of_sow_pigs = $data['num_of_sow_pigs'];
   					$bins_history->feed_type = $data['feed_type'];
   					$bins_history->update_type = "Manual Update Edit Bin Admin";
   					$bins_history->save();
   				} else {
   					//$this->insertHistoryPigs($data['farm_id'],$data['num_of_pigs'], $data['bin_id'],$data['feed_type'],$feed_types_data[0]['budgeted_amount']);
-  					$this->insertHistoryPigs($data['farm_id'],$bins_history->num_of_pigs, $data['bin_id'],$data['feed_type'],$budgeted_amount);
+  					$this->insertHistoryPigs($data['farm_id'],$bins_history->num_of_pigs, $data['bin_id'],$data['feed_type'],$budgeted_amount,$data['user_id']);
   				}
   			} else {
   				//$this->insertHistoryPigs($data['farm_id'],$data['num_of_pigs'], $data['bin_id'],$data['feed_type'],$feed_types_data[0]['budgeted_amount']);
-  				$this->insertHistoryPigs($data['farm_id'],$bins_history->num_of_pigs, $data['bin_id'],$data['feed_type'],$budgeted_amount);
+  				//$this->insertHistoryPigs($data['farm_id'],$bins_history->num_of_pigs, $data['bin_id'],$data['feed_type'],$budgeted_amount);
+          $this->insertHistoryPigs($data['farm_id'],0, $data['bin_id'],$data['feed_type'],$budgeted_amount,$data['user_id']);
   			}
 
   			//call the cache builder
@@ -423,7 +430,7 @@ class FarmsController extends Controller
   		** @Int Value Number of Pigs @Int Value Bin ID
   		** Insert Data on History
   		**/
-  		public function insertHistoryPigs($farm_id, $numofpigs, $binid, $feed_type,$budgeted_amount) {
+  		public function insertHistoryPigs($farm_id, $numofpigs, $binid, $feed_type,$budgeted_amount,$user_id) {
 
   			if(is_numeric($numofpigs)) {
 
@@ -442,7 +449,7 @@ class FarmsController extends Controller
   						'bin_id' => $binid,
   						'farm_id' => $farm_id,
   						'num_of_pigs' => $numofpigs,
-  						'user_id' => Auth::id(),
+  						'user_id' => Auth::id() == NULL ? $user_id : Auth::id(),
   						'amount' => $lastupdate[0]->amount,
   						'update_type' => 'Manual Update Edit Bin Admin',
   						'created_at' => date("Y-m-d H:i:s"),
@@ -1022,12 +1029,14 @@ class FarmsController extends Controller
   				$bins[$x]->feed_type_name = $this->getFeedDescription($this->recentFeedsHistory($bins[$x]->bin_id)[0]['feed_type']);
   				$bins[$x]->num_of_pigs = $this->animalGroupBinTotalPigs($bins[$x]->bin_id,$farmid);
   				$bins[$x]->amount = $this->recentFeedsHistory($bins[$x]->bin_id)[0]['amount'] . " Ton/s";
+          $bins[$x]->farm_type = $farm->farm_type;
   				$x++;
 
   			}
 
   			return $bins;
   		}
+
 
   		/*
   		*	Random hex color generator
@@ -1571,10 +1580,12 @@ class FarmsController extends Controller
   							'bin_number'			=>	$bin['bin_number'],
   							'alias'						=>	$bin['alias'],
   							'num_of_pigs'			=>	0,
+                'num_of_sow_pigs' =>  $bin['sow'],
   							'hex_color'				=>	'#'.str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT),
   							'bin_size'				=>	$bin['bin_size'],
   							'created_at'			=>	date('Y-m-d H:i:s'),
   							'updated_at'			=>	date('Y-m-d H:i:s'),
+                'num_of_sow_pigs' =>  $bin['sow'],
   							'user_id'					=>	$bin['user_id'],
   							'unique_id'				=>	$this->generator()
   							);
@@ -1620,7 +1631,8 @@ class FarmsController extends Controller
   							 'feed_type'				=>	$bin['feed_type'],
   							 'alias'						=>	$bin['alias'],
   							 'bin_size'					=>	$bin['bin_size'],
-  							 'user_id'					=>	$bin['user_id']
+  							 'user_id'					=>	$bin['user_id'],
+                 'num_of_sow_pigs'  =>  $bin['sow'],
   							 );
 
   				$this->updateBinAPI($data);
