@@ -1854,9 +1854,9 @@ class FarmsController extends Controller
   		public function saveRoomFarmAPI($d)
   		{
 
-          if($this->roomCheck($d)){
-            return false;
-          }
+          // if($this->roomCheck($d)){
+          //   return false;
+          // }
 
           $start_count = 1;
 
