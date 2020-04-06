@@ -1851,9 +1851,16 @@ class FarmsController extends Controller
             return false;
           }
 
+          $start_count = 1;
+
+          //get the max number of room
+          if($this->maxRoom($d['farm_id']) != NULL){
+            $start_count = $this->maxRoom($d['farm_id']);
+          }
+
           $fr_data = array();
           // count the rooms
-          for($i=0; $i<int($d['room_number']); $i++){
+          for($i=$start_count; $i<=int($d['room_number']); $i++){
             $fr_data[] = array(
               'farm_id' =>  $d['farm_id'],
               'room_number' =>  $i,
@@ -1864,7 +1871,7 @@ class FarmsController extends Controller
          // insert to feeds_farrowing_rooms
          DB::table('feeds_farrowing_rooms')->insert($fr_data);
 
-         for($i=0; $i<int($d['room_number']); $i++){
+         for($i=$start_count; $i<=int($d['room_number']); $i++){
 
            $id = DB::table('feeds_farrowing_rooms')
                     ->where('farm_id',$d['farm_id'])
@@ -1888,6 +1895,20 @@ class FarmsController extends Controller
 
   		}
 
+
+      /**
+  		 * Get the max number of room then add 1.
+  		 *
+  		 * @return Response
+  		 */
+  		public function maxRoom($farm_id)
+  		{
+        $last = DB::table('feeds_farrowing_rooms')
+                  ->where('farm_id',$$farm_id)
+                  ->max('room_number');
+
+        return $last + 1;
+      }
 
 
   		/**
