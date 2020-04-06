@@ -1952,10 +1952,6 @@ class FarmsController extends Controller
           }
         }
 
-        if($this->roomCheck($d)){
-          return NULL;
-        }
-
          // insert to feeds_farrowing_rooms
          $fr_data = array(
             'room_number' => $d['room_number'],
