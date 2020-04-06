@@ -1874,7 +1874,7 @@ class FarmsController extends Controller
 
             $fr_data = array(
               'farm_id' =>  $d['farm_id'],
-              'room_number' =>  $i,
+              'room_number' =>  "Room ".$i,
               'crates_number' =>  $d['crates_number']
             );
 
