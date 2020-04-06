@@ -1948,10 +1948,13 @@ class FarmsController extends Controller
 
         if($d['prev_room_number'] != $d['room_number']){
           if($this->roomCheck($d)){
-            return false;
+            return NULL;
           }
         }
 
+        if($this->roomCheck($d)){
+          return NULL;
+        }
 
          // insert to feeds_farrowing_rooms
          $fr_data = array(
@@ -1980,6 +1983,7 @@ class FarmsController extends Controller
            return $d;
 
   		}
+
 
   		/**
   		 * Delete the farm room.
