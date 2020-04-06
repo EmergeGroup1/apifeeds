@@ -1859,10 +1859,12 @@ class FarmsController extends Controller
           // }
 
           $start_count = 1;
-
+          $end_count = $d['room_number'];
           //get the max number of room
-          if($this->maxRoom($d['farm_id']) != NULL){
-            $start_count = $this->maxRoom($d['farm_id']);
+          $max_room = $this->maxRoom($d['farm_id']);
+          if($max_room != NULL){
+            $start_count = $max_room;
+            $end_count = ($d['room_number']-1) + $max_room;
           }
 
           $fr_data = array();
