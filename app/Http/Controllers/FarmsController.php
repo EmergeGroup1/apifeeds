@@ -1904,7 +1904,7 @@ class FarmsController extends Controller
   		public function maxRoom($farm_id)
   		{
         $last = DB::table('feeds_farrowing_rooms')
-                  ->where('farm_id',$$farm_id)
+                  ->where('farm_id',$farm_id)
                   ->max('room_number');
 
         return $last + 1;
