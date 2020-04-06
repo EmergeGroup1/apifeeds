@@ -1869,7 +1869,7 @@ class FarmsController extends Controller
           }
 
          // insert to feeds_farrowing_rooms
-         DB::table('feeds_farrowing_rooms')->insert($fr_data);
+         DB::table('feeds_farrowing_rooms')->save($fr_data);
 
          for($i=$start_count; $i<=(int)$d['room_number']; $i++){
 
