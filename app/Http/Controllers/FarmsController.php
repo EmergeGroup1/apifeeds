@@ -1851,27 +1851,38 @@ class FarmsController extends Controller
             return false;
           }
 
+          $fr_data = array();
+          // count the rooms
+          for($i=0; $i<int($d['room_number']); $i++){
+            $fr_data[] = array(
+              'farm_id' =>  $d['farm_id'],
+              'room_number' =>  $i,
+              'crates_number' =>  $d['crates_number']
+            );
+          }
+
          // insert to feeds_farrowing_rooms
-  			 $fr_data = array(
-           'farm_id' => $d['farm_id'],
-           'room_number' => $d['room_number'],
-         );
          DB::table('feeds_farrowing_rooms')->insert($fr_data);
 
-         $id = DB::table('feeds_farrowing_rooms')
-                  ->where('farm_id',$d['farm_id'])
-                  ->where('room_number',$d['room_number'])
-                  ->orderBy('id','desc')
-                  ->first();
+         for($i=0; $i<int($d['room_number']); $i++){
 
-         // insert to feeds_farrowing_rooms_history
-         $frj_data = array(
-           'farm_id' => $d['farm_id'],
-           'farrowing_room_id'  => $id->id,
-           'date' => date("Y-m-d H:i:s"),
-           'update_type' => "Created New Room"
-          );
-          DB::table('feeds_farrowing_rooms_history')->insert($frj_data);
+           $id = DB::table('feeds_farrowing_rooms')
+                    ->where('farm_id',$d['farm_id'])
+                    ->where('room_number',$i)
+                    ->orderBy('id','desc')
+                    ->first();
+
+           // insert to feeds_farrowing_rooms_history
+           $frj_data = array(
+             'farm_id' => $d['farm_id'],
+             'farrowing_room_id'  => $id->id,
+             'date' => date("Y-m-d H:i:s"),
+             'update_type' => "Created New Room"
+            );
+
+            DB::table('feeds_farrowing_rooms_history')->insert($frj_data);
+
+          }
 
           return $d;
 
