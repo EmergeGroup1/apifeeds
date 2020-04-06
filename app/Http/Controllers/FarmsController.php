@@ -1675,8 +1675,8 @@ class FarmsController extends Controller
                 'farm_id' => $r[$i]->farm_id,
                 'room_number'  => $r[$i]->room_number,
                 'crates_number' =>  $r[$i]->crates_number,
-                //'pigs'  => $this->totalNumberOfPigsAnimalGroupAPI($r[$i]->id,$r[$i]->farm_id),
-                //'groups' => $this->animalGroupBinsAPI($r[$i]->id)
+                'pigs'  => $this->totalNumberOfPigsAnimalGroupAPI($r[$i]->id,$r[$i]->farm_id),
+                'groups' => $this->animalGroupBinsAPI($r[$i]->id)
               );
             }
           }
