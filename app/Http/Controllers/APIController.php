@@ -1463,7 +1463,9 @@ class APIController extends Controller
               return array(
                 "err" =>  0,
                 "msg" =>  "Successfully Pulled Data",
-                "roomsList" => $roomsList
+                "roomsList" => $roomsList['data'],
+                "totalRooms"  =>  $roomsList['total_rooms'],
+                "totalCrates" =>  $roomsList['total_crates']
               );
             } else {
               return array(

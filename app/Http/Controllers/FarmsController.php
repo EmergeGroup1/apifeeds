@@ -1675,13 +1675,19 @@ class FarmsController extends Controller
                 'farm_id' => $r[$i]->farm_id,
                 'room_number'  => $r[$i]->room_number,
                 'crates_number' =>  $r[$i]->crates_number,
-                'pigs'  => $this->totalNumberOfPigsAnimalGroupAPI($r[$i]->id,$r[$i]->farm_id),
-                'groups' => $this->animalGroupBinsAPI($r[$i]->id)
+                //'pigs'  => $this->totalNumberOfPigsAnimalGroupAPI($r[$i]->id,$r[$i]->farm_id),
+                //'groups' => $this->animalGroupBinsAPI($r[$i]->id)
               );
             }
           }
 
-          return $output;
+          $r = array(
+            'data'  =>  $output,
+            'total_rooms' =>  DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->count("room_number"),
+            'total_crates'  =>  DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->sum("crates_number")
+          );
+
+          return $r;
       }
 
       /*
