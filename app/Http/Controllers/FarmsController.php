@@ -1859,11 +1859,11 @@ class FarmsController extends Controller
           }
 
           $fr_data = array();
-          
+
           // count the rooms
           for($i=$start_count; $i<=$d['room_number']; $i++){
 
-            $fr_data[] = array(
+            $fr_data = array(
               'farm_id' =>  $d['farm_id'],
               'room_number' =>  $i,
               'crates_number' =>  $d['crates_number']
