@@ -1874,7 +1874,7 @@ class FarmsController extends Controller
 
             $fr_data = array(
               'farm_id' =>  $d['farm_id'],
-              'room_number' =>  "Room ".$i,
+              'room_number' =>  $i,
               'crates_number' =>  $d['crates_number']
             );
 
@@ -1883,7 +1883,7 @@ class FarmsController extends Controller
 
             $id = DB::table('feeds_farrowing_rooms')
                      ->where('farm_id',$d['farm_id'])
-                     ->where('room_number',"Room ".$i)
+                     ->where('room_number',$i)
                      ->orderBy('id','desc')
                      ->first();
 
