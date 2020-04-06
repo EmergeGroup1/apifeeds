@@ -1912,7 +1912,7 @@ class FarmsController extends Controller
                   ->where('farm_id',$farm_id)
                   ->max('room_number');
 
-        return $last + 1;
+        return (int)$last + 1;
       }
 
 
