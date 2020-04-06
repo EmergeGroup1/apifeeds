@@ -1860,7 +1860,7 @@ class FarmsController extends Controller
 
           $fr_data = array();
           // count the rooms
-          for($i=$start_count; $i<=int($d['room_number']); $i++){
+          for($i=$start_count; $i<=(int)$d['room_number']; $i++){
             $fr_data[] = array(
               'farm_id' =>  $d['farm_id'],
               'room_number' =>  $i,
@@ -1871,7 +1871,7 @@ class FarmsController extends Controller
          // insert to feeds_farrowing_rooms
          DB::table('feeds_farrowing_rooms')->insert($fr_data);
 
-         for($i=$start_count; $i<=int($d['room_number']); $i++){
+         for($i=$start_count; $i<=(int)$d['room_number']; $i++){
 
            $id = DB::table('feeds_farrowing_rooms')
                     ->where('farm_id',$d['farm_id'])
