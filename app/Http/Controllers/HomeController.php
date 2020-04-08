@@ -2763,12 +2763,12 @@ class HomeController extends Controller
 					$last_update = json_decode(json_encode($this->lastUpdate($bins[$i]['bin_id'])), true);
 					$last_update_user = json_decode(json_encode($this->lastUpdateUser($bins[$i]['bin_id'])), true);
 					$up_hist[$i] = json_decode(json_encode($this->lastUpdate_numpigs($bins[$i]['bin_id'])), true);
-					$numofpigs_ = $this->displayDefaultNumberOfPigs($bins[$i]['num_of_pigs'], $up_hist[$i][0]['num_of_pigs']);
+					$numofpigs_ = $this->displayDefaultNumberOfPigs($bins[$i]['num_of_pigs'], $up_hist[$i]['num_of_pigs']);
 	        $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
-					$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i][0]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i][0]['budgeted_amount']);
+					$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i]['budgeted_amount']);
 					$delivery = $this->nextDel_($farm_id,$bins[$i]['bin_id']);
 					$last_delivery = $this->lastDelivery($farm_id,$bins[$i]['bin_id'],$last_update);
-					$feed_type_update = $this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']));
+					$feed_type_update = $this->feedName($this->getFeedTypeUpdate($up_hist[$i]['feed_type'],$bins[$i]['feed_type']));
 
 					$farms_data = Farms::where('id', $farm_id)->first();
 
@@ -2786,7 +2786,7 @@ class HomeController extends Controller
 						'num_of_pigs'							=>	$bins[$i]['num_of_pigs'],
 						'num_of_sow_pigs'					=>	$bins[$i]['num_of_sow_pigs'],
 						'total_number_of_pigs'		=>	$total_number_of_pigs,
-						'default_amount'					=>	$this->displayDefaultAmountofBin($bins[$i]['amount'], $up_hist[$i][0]['amount']),
+						'default_amount'					=>	$this->displayDefaultAmountofBin($bins[$i]['amount'], $up_hist[$i]['amount']),
 						'hex_color'								=>	$bins[$i]['hex_color'],
 						'bin_size'								=>	$bins[$i]['bin_size'],
 						'bin_size_name'						=>	$bins[$i]['bin_size_name'],
@@ -2794,19 +2794,19 @@ class HomeController extends Controller
 						'feed_type_name_orig'			=>	$feed_type_update->name,
 						// 'feed_type_name'					=>	$this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']))->description,
 						// 'feed_type_name_orig'			=>	$this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']))->name,
-						'feed_type_id'						=>	$up_hist[$i][0]['feed_type'],
+						'feed_type_id'						=>	$up_hist[$i]['feed_type'],
 						'budgeted_amount'					=>	$budgeted_,
-						'current_bin_amount_tons'	=>	$up_hist[$i][0]['amount'],
+						'current_bin_amount_tons'	=>	$up_hist[$i]['amount'],
 						'current_bin_amount_lbs'	=>	(int)$current_bin_amount_lbs,
 						'days_to_empty'						=>	$this->daysOfBins($current_bin_amount_lbs,$budgeted_,$total_number_of_pigs),
 						'empty_date'							=>	$this->emptyDate($this->daysOfBins($current_bin_amount_lbs,$budgeted_,$total_number_of_pigs)),
 						// 'days_to_empty'						=>	$this->daysOfBins($this->currentBinCapacity($bins[$i]['bin_id']),$budgeted_,$total_number_of_pigs),
 						// 'empty_date'							=>	$this->emptyDate($this->daysOfBins($this->currentBinCapacity($bins[$i]['bin_id']),$budgeted_,$total_number_of_pigs)),
 						'next_delivery'						=>	$delivery['name'],
-						'medication'							=>	$this->getMedDesc($up_hist[$i][0]['medication']),
-						'medication_name'					=>	$this->getMedName($up_hist[$i][0]['medication']),
-						'medication_id'						=>	$up_hist[$i][0]['medication'],
-						'last_update'							=>	$last_update_user[0]['update_date'],
+						'medication'							=>	$this->getMedDesc($up_hist[$i]['medication']),
+						'medication_name'					=>	$this->getMedName($up_hist[$i]['medication']),
+						'medication_id'						=>	$up_hist[$i]['medication'],
+						'last_update'							=>	$last_update_user['update_date'],
 						'next_deliverydd'					=>  $last_delivery,
 						'delivery_amount'					=>  $delivery['amount'],
             'default_val'							=>  $this->animalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']),
@@ -2814,7 +2814,7 @@ class HomeController extends Controller
 						'num_of_update'						=>  NULL,//$this->getNumberOfUpdates($bins[$i]['bin_id']),
 						'average_variance'				=>	NULL,//$this->averageVariancelast6days($bins[$i]['bin_id']),
 						'average_actual'					=>	NULL,//$this->averageActuallast6days($bins[$i]['bin_id']),
-						'username'								=>	$this->usernames($last_update_user[0]['user_id']),
+						'username'								=>	$this->usernames($last_update_user['user_id']),
 						'last_manual_update'			=>	$this->lastManualUpdate($bins[$i]['bin_id'])
 					);
 					Cache::forever('bins-'.$bins[$i]['bin_id'],$bins_items);
