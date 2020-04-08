@@ -2822,8 +2822,6 @@ class HomeController extends Controller
 
 				$binsData[] = $bins_items;
 
-				sleep(10);
-
 			}
 
 			$sorted_bins = $binsData;
@@ -3572,7 +3570,7 @@ class HomeController extends Controller
 					->where('bin_id','=',$bin_id)
 					->where('update_date','<=',date("Y-m-d")." 23:59:59")
 					->orderBy('update_date','DESC')
-					->first();
+					->take(1)->get()->toArray();
 		return $output;
 
 	}
