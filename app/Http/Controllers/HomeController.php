@@ -7068,13 +7068,13 @@ class HomeController extends Controller
 	*/
 	private function pendingDeliveryItems($farmId)
 	{
-		$farm_schedule = FarmSchedule::where('farm_id',$farmId)->where('status',0)->where('date_of_delivery','>',date('Y-m-d'))->count();
+		$farm_schedule = FarmSchedule::where('farm_id',$farmId)->sleect('status')->where('status',0)->where('date_of_delivery','>',date('Y-m-d'))->count();
 
 		if($farm_schedule > 0) {
 			return $farm_schedule;
 		}
 
-		$deliveries = Deliveries::where('farm_id',$farmId)->where('delivered',0)->where('delivery_label','active')->where('delivery_date','>',date('Y-m-d H:i:s'))->count();
+		$deliveries = Deliveries::where('farm_id',$farmId)->select('delivered')->where('delivered',0)->where('delivery_label','active')->where('delivery_date','>',date('Y-m-d H:i:s'))->count();
 		return $deliveries;
 	}
 
