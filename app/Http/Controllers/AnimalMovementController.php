@@ -415,7 +415,7 @@ class AnimalMovementController extends Controller
         $rooms = DB::table("feeds_movement_groups_bins")
           ->where('unique_id',$unique_id)
           ->select('room_id')
-          ->get();
+          ->get()->toArray();
 
         $crates = DB::table("feeds_farrowing_rooms")->whereIn('id',$rooms)->sum('crates_number');
 
