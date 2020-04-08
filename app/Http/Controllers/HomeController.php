@@ -5456,7 +5456,7 @@ class HomeController extends Controller
 							->where('date_of_delivery','>',date('Y-m-d'))
 							->where('status',0)
 							->orderBy('date_of_delivery','desc')
-							->take(1)->get()->toArray();
+							->first();
 
 		$amount_final = FarmSchedule::where('farm_id', $farm_id)
 							->where('bin_id',$bin_id)
@@ -5483,13 +5483,13 @@ class HomeController extends Controller
 			$output = array();
 
 			// feeds_id
-			$feed = $this->feedName($data[0]['feeds_type_id']);
+			$feed = $this->feedName($data->feeds_type_id);
 
 			// med_id
-			$med = $this->medName($data[0]['medication_id']);
+			$med = $this->medName($data->medication_id);
 
 			if($data[0]['feeds_type_id'] != NULL){
-				$output = $feed['name'] . ", " . $med['med_name'] .", ". date('m-d-Y',strtotime($data[0]['date_of_delivery']));
+				$output = $feed['name'] . ", " . $med['med_name'] .", ". date('m-d-Y',strtotime($data->date_of_delivery));
 			}
 
 
@@ -5498,10 +5498,10 @@ class HomeController extends Controller
 								->where('bin_id',$bin_id)
 								->orderBy('history_id','desc')
 								->orderBy('update_date','desc')
-								->take(1)->get()->toArray();
+								->first;
 
 			//$final = array('name'=> $output, 'amount' => $data != NULL ? $data[0]['amount'] . " T" : $amount[0]['amount'] . " T");
-			$final = array('name'=> $output, 'amount' => $data != NULL ? $amount_final . " T" : $amount[0]['amount'] . " T");
+			$final = array('name'=> $output, 'amount' => $data != NULL ? $amount_final . " T" : $amount->amount . " T");
 
 		}
 
