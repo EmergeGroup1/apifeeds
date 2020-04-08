@@ -3586,8 +3586,8 @@ class HomeController extends Controller
 					//->where('user_id','!=',1)
 					->where('update_type','LIKE','%manual%')
 					->orderBy('update_date','DESC')
-					->take(1)->get()->toArray();
-		return $output;
+					->first();
+		return $r = array(0=>$this->toArray($output));
 
 	}
 
