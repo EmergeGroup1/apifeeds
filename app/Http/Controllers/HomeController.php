@@ -3167,9 +3167,9 @@ class HomeController extends Controller
 
 		$output = FeedTypes::select('budgeted_amount')
 					->where('type_id','=',$feedtype)
-					->get()->toArray();
+					->first();
 
-		return !empty($output[0]['budgeted_amount']) ? $output[0]['budgeted_amount'] : 0;
+		return !empty($output->budgeted_amount) ? $output->budgeted_amount : 0;
 
 	}
 
@@ -3606,7 +3606,7 @@ class HomeController extends Controller
 					->orderBy('created_at','desc')
 					->first();
 
-		$output = array(0=>$this->toArray($output));			
+		$output = array(0=>$this->toArray($output));
 
 		// date yesterday
 		/*if(empty($output)){
