@@ -3169,9 +3169,9 @@ class HomeController extends Controller
 
 		$output = FeedTypes::select('budgeted_amount')
 					->where('type_id','=',$feedtype)
-					->get()->toArray();
+					->first()->toArray();
 
-		return !empty($output[0]['budgeted_amount']) ? $output[0]['budgeted_amount'] : 0;
+		return !empty($output['budgeted_amount']) ? $output['budgeted_amount'] : 0;
 
 	}
 
@@ -3572,7 +3572,7 @@ class HomeController extends Controller
 					->where('bin_id','=',$bin_id)
 					->where('update_date','<=',date("Y-m-d")." 23:59:59")
 					->orderBy('update_date','DESC')
-					->take(1)->get()->toArray();
+					->first()->toArray();
 		return $output;
 
 	}
@@ -3588,7 +3588,7 @@ class HomeController extends Controller
 					//->where('user_id','!=',1)
 					->where('update_type','LIKE','%manual%')
 					->orderBy('update_date','DESC')
-					->take(1)->get()->toArray();
+					->first()->toArray();
 		return $output;
 
 	}
@@ -3606,7 +3606,7 @@ class HomeController extends Controller
 					->where('bin_id','=',$bin_id)
 					//->where('update_date','<=',date('Y-m-d')." 23:59:59")
 					->orderBy('created_at','desc')
-					->take(1)->get()->toArray();
+					->first()->toArray();
 
 		// date yesterday
 		/*if(empty($output)){
@@ -5456,7 +5456,7 @@ class HomeController extends Controller
 							->where('date_of_delivery','>',date('Y-m-d'))
 							->where('status',0)
 							->orderBy('date_of_delivery','desc')
-							->take(1)->get()->toArray();
+							->first()->toArray();
 
 		$amount_final = FarmSchedule::where('farm_id', $farm_id)
 							->where('bin_id',$bin_id)
@@ -5483,13 +5483,13 @@ class HomeController extends Controller
 			$output = array();
 
 			// feeds_id
-			$feed = $this->feedName($data[0]['feeds_type_id']);
+			$feed = $this->feedName($data['feeds_type_id']);
 
 			// med_id
-			$med = $this->medName($data[0]['medication_id']);
+			$med = $this->medName($data['medication_id']);
 
-			if($data[0]['feeds_type_id'] != NULL){
-				$output = $feed['name'] . ", " . $med['med_name'] .", ". date('m-d-Y',strtotime($data[0]['date_of_delivery']));
+			if($data['feeds_type_id'] != NULL){
+				$output = $feed['name'] . ", " . $med['med_name'] .", ". date('m-d-Y',strtotime($data['date_of_delivery']));
 			}
 
 
@@ -5501,7 +5501,7 @@ class HomeController extends Controller
 								->take(1)->get()->toArray();
 
 			//$final = array('name'=> $output, 'amount' => $data != NULL ? $data[0]['amount'] . " T" : $amount[0]['amount'] . " T");
-			$final = array('name'=> $output, 'amount' => $data != NULL ? $amount_final . " T" : $amount[0]['amount'] . " T");
+			$final = array('name'=> $output, 'amount' => $data != NULL ? $amount_final . " T" : $amount['amount'] . " T");
 
 		}
 
