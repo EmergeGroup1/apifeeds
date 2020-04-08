@@ -2822,6 +2822,8 @@ class HomeController extends Controller
 
 				$binsData[] = $bins_items;
 
+				sleep(10);
+
 			}
 
 			$sorted_bins = $binsData;
