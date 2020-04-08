@@ -3571,7 +3571,7 @@ class HomeController extends Controller
 					->where('update_date','<=',date("Y-m-d")." 23:59:59")
 					->orderBy('update_date','DESC')
 					->first();
-		return $this->toArray($output);
+		return $r = array(0=>$this->toArray($output));
 
 	}
 
