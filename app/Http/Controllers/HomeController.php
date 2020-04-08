@@ -3570,8 +3570,8 @@ class HomeController extends Controller
 					->where('bin_id','=',$bin_id)
 					->where('update_date','<=',date("Y-m-d")." 23:59:59")
 					->orderBy('update_date','DESC')
-					->take(1)->get()->toArray();
-		return $output;
+					->first();
+		return $r[0] = $this->toArray($output);
 
 	}
 
