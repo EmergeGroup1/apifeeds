@@ -3604,7 +3604,9 @@ class HomeController extends Controller
 					->where('bin_id','=',$bin_id)
 					//->where('update_date','<=',date('Y-m-d')." 23:59:59")
 					->orderBy('created_at','desc')
-					->take(1)->get()->toArray();
+					->first();
+
+		$output = array(0=>$this->toArray($output));			
 
 		// date yesterday
 		/*if(empty($output)){
