@@ -385,7 +385,7 @@ class AnimalMovementController extends Controller
               'start_weight'			=>	$v['start_weight'],
               'end_weight'				=>	$v['end_weight'],
               'type'							=>	$v['type'],//$this->groupType($group_bins_table),
-              'crates'						=>	$v['crates'],
+              'crates'						=>	$this->cratesTotal($v['farm_id'],$v['unique_id']),//$v['crates'],
               'group_type_int'		=> 	$this->groupTypeInt($v['type']),
               'user_id'						=>	$v['user_id'],
               'farm_id'						=>	$v['farm_id'],
@@ -401,6 +401,25 @@ class AnimalMovementController extends Controller
           }
 
           return $data;
+
+      }
+
+      /**
+      ** crates()
+      ** get the corresponding deceased pigs of a group
+      ** @param $farm_id int
+      ** @return Response
+      **/
+      private function cratesTotal($farm_id,$unique_id)
+      {
+        $rooms = DB::table("feeds_movement_groups_bins")->where('farm_id',$farm_id)
+          ->where('unique_id',$unique_id)
+          ->select('room_id')
+          ->get();
+
+        $crates = DB::table("feeds_farrowing_rooms")->whereIn('id',$rooms)->sum('crates_number');
+
+        return $crates;
 
       }
 
