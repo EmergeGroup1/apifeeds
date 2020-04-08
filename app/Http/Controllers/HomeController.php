@@ -5612,7 +5612,7 @@ class HomeController extends Controller
 				->select('amount')
 				->where('feeds_bin_history.bin_id','=',$bin_id)
 				->orderBy('feeds_bin_history.created_at','desc')
-				->take(1)->get();
+				->first();
 
 		if($data == NULL){
 			$data = 0;
