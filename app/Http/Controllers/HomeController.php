@@ -5452,7 +5452,7 @@ class HomeController extends Controller
 	private function nextDel_($farm_id, $bin_id)
 	{
 
-		$data = FarmSchedule::where('farm_id', $farm_id)
+		$data = DB::table('feeds_farm_schedule')->where('farm_id', $farm_id)
 							->where('bin_id',$bin_id)
 							->where('date_of_delivery','>',date('Y-m-d'))
 							->where('status',0)
