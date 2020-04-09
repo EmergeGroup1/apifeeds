@@ -143,9 +143,8 @@ class APIController extends Controller
         unset($home_controller);
 
         $bins = json_decode($bins);
-        return $bins;
-        $bins = $this->binsBuilder($bins);
 
+        $bins = $this->binsBuilder($bins);
         $farm = Farms::where('id', $farm_id)->select('name', 'notes')->first()->toArray();
 
         $output = array(
