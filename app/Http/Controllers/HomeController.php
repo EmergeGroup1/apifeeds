@@ -5609,7 +5609,6 @@ class HomeController extends Controller
 	*/
 	public function currentBinCapacity($bin_id){
 
-
 		$data =  DB::table('feeds_bin_history')
 				//->select(DB::raw('round(feeds_bin_history.amount * 2000,0) AS amount'))
 				->select('amount')
@@ -5620,6 +5619,7 @@ class HomeController extends Controller
 		$r = $data == NULL ? 0 : round($data->amount * 2000,0);
 
 		return $r;
+		
 	}
 
 
