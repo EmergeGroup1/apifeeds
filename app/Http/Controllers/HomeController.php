@@ -2763,7 +2763,7 @@ class HomeController extends Controller
 					$current_bin_amount_lbs = $this->currentBinCapacity($bins[$i]['bin_id']);
 					$last_update = json_decode(json_encode($this->lastUpdate($bins[$i]['bin_id'])), true);
 					$last_update_user = json_decode(json_encode($this->lastUpdateUser($bins[$i]['bin_id'])), true);
-					$up_hist[$i] = json_decode(json_encode($this->lastUpdate_numpigs($bins[$i]['bin_id'])), true);
+					$up_hist[$i] = $this->lastUpdate_numpigs($bins[$i]['bin_id']);
 					$numofpigs_ = $this->displayDefaultNumberOfPigs($bins[$i]['num_of_pigs'], $up_hist[$i][0]['num_of_pigs']);
 	        $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
 					$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i][0]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i][0]['budgeted_amount']);
@@ -5619,7 +5619,7 @@ class HomeController extends Controller
 		$r = $data == NULL ? 0 : round($data->amount * 2000,0);
 
 		return $r;
-		
+
 	}
 
 
