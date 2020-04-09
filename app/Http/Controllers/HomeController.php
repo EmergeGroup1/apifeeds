@@ -5622,7 +5622,7 @@ class HomeController extends Controller
 		if($data == NULL){
 			$data = 0;
 		} else {
-			$data = round($v->amount * 2000,0);
+			$data = round($data->amount * 2000,0);
 		}
 
 		return $data;
