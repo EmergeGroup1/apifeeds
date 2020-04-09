@@ -2623,7 +2623,7 @@ class HomeController extends Controller
 			$current_bin_amount_lbs = $this->currentBinCapacity($bins[$i]['bin_id']);
 			$last_update = $this->toArray($this->lastUpdate($bins[$i]['bin_id']));
 			$last_update_user = $this->toArray($this->lastUpdateUser($bins[$i]['bin_id']));
-			$up_hist[$i] = $this->toArray($this->lastUpdate_numpigs($bins[$i]['bin_id']));
+			$up_hist[$i] = $this->lastUpdate_numpigs($bins[$i]['bin_id']);
 			//$numofpigs_ = $this->displayDefaultNumberOfPigs($bins[$i]['num_of_pigs'], $up_hist[$i][0]['num_of_pigs']);
 			//$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroup($bins[$i]['bin_id'],$bins[$i]['farm_id']);
       $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
