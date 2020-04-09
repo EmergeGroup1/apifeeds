@@ -5617,15 +5617,9 @@ class HomeController extends Controller
 				->orderBy('created_at','desc')
 				->first();
 
+		$r = $data == NULL ? 0 : round($data->amount * 2000,0);
 
-
-		if($data == NULL){
-			$data = 0;
-		} else {
-			$data = round($data->amount * 2000,0);
-		}
-
-		return $data;
+		return $r;
 	}
 
 
