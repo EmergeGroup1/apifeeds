@@ -5452,7 +5452,7 @@ class HomeController extends Controller
 	private function nextDel_($farm_id, $bin_id)
 	{
 
-		$data = DB::table('feeds_farm_schedule')->where('farm_id', $farm_id)
+		$data = FarmSchedule::where('farm_id', $farm_id)
 							->where('bin_id',$bin_id)
 							->where('date_of_delivery','>',date('Y-m-d'))
 							->where('status',0)
@@ -5499,7 +5499,7 @@ class HomeController extends Controller
 								->where('bin_id',$bin_id)
 								->orderBy('history_id','desc')
 								->orderBy('update_date','desc')
-								->first;
+								->first();
 
 			//$final = array('name'=> $output, 'amount' => $data != NULL ? $data[0]['amount'] . " T" : $amount[0]['amount'] . " T");
 			$final = array('name'=> $output, 'amount' => $data != NULL ? $amount_final . " T" : $amount->amount . " T");
