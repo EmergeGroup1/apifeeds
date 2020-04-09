@@ -2659,8 +2659,8 @@ class HomeController extends Controller
 					'budgeted_amount'					=>	$budgeted_,
 					'current_bin_amount_tons'	=>	$up_hist[$i][0]['amount'],
 					'current_bin_amount_lbs'	=>	(int)$current_bin_amount_lbs,
-					'days_to_empty'						=>	$this->daysOfBins($this->currentBinCapacity($bins[$i]['bin_id']),$budgeted_,$total_number_of_pigs),
-					'empty_date'							=>	$this->emptyDate($this->daysOfBins($this->currentBinCapacity($bins[$i]['bin_id']),$budgeted_,$total_number_of_pigs)),
+					'days_to_empty'						=>	$this->daysOfBins($current_bin_amount_lbs,$budgeted_,$total_number_of_pigs),
+					'empty_date'							=>	$this->emptyDate($this->daysOfBins($current_bin_amount_lbs,$budgeted_,$total_number_of_pigs)),
 					'next_delivery'						=>	$delivery['name'],
 					'medication'							=>	$this->getMedDesc($up_hist[$i][0]['medication']),
 					'medication_name'					=>	$this->getMedName($up_hist[$i][0]['medication']),
@@ -3170,7 +3170,7 @@ class HomeController extends Controller
 					->where('type_id','=',$feedtype)
 					->first();
 
-		return !empty($output->budgeted_amount) ? $output->budgeted_amount : 0;
+		return !empty($output) ? $output->budgeted_amount : 0;
 
 	}
 
