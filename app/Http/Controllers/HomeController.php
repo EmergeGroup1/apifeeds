@@ -1816,6 +1816,7 @@ class HomeController extends Controller
 		// unset($notification);
 
 		Cache::forget('bin-'.$_POST['bin']);
+		Cache::forget('bins-'.$_POST['bin']);
 
 		if($daysto > 3) {
 			$color = "success";
@@ -2622,7 +2623,7 @@ class HomeController extends Controller
 			$current_bin_amount_lbs = $this->currentBinCapacity($bins[$i]['bin_id']);
 			$last_update = $this->toArray($this->lastUpdate($bins[$i]['bin_id']));
 			$last_update_user = $this->toArray($this->lastUpdateUser($bins[$i]['bin_id']));
-			$up_hist[$i] = $this->toArray($this->lastUpdate_numpigs($bins[$i]['bin_id']));
+			$up_hist[$i] = $this->lastUpdate_numpigs($bins[$i]['bin_id']);
 			//$numofpigs_ = $this->displayDefaultNumberOfPigs($bins[$i]['num_of_pigs'], $up_hist[$i][0]['num_of_pigs']);
 			//$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroup($bins[$i]['bin_id'],$bins[$i]['farm_id']);
       $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
@@ -2658,8 +2659,8 @@ class HomeController extends Controller
 					'budgeted_amount'					=>	$budgeted_,
 					'current_bin_amount_tons'	=>	$up_hist[$i][0]['amount'],
 					'current_bin_amount_lbs'	=>	(int)$current_bin_amount_lbs,
-					'days_to_empty'						=>	$this->daysOfBins($this->currentBinCapacity($bins[$i]['bin_id']),$budgeted_,$total_number_of_pigs),
-					'empty_date'							=>	$this->emptyDate($this->daysOfBins($this->currentBinCapacity($bins[$i]['bin_id']),$budgeted_,$total_number_of_pigs)),
+					'days_to_empty'						=>	$this->daysOfBins($current_bin_amount_lbs,$budgeted_,$total_number_of_pigs),
+					'empty_date'							=>	$this->emptyDate($this->daysOfBins($current_bin_amount_lbs,$budgeted_,$total_number_of_pigs)),
 					'next_delivery'						=>	$delivery['name'],
 					'medication'							=>	$this->getMedDesc($up_hist[$i][0]['medication']),
 					'medication_name'					=>	$this->getMedName($up_hist[$i][0]['medication']),
@@ -2762,7 +2763,7 @@ class HomeController extends Controller
 					$current_bin_amount_lbs = $this->currentBinCapacity($bins[$i]['bin_id']);
 					$last_update = json_decode(json_encode($this->lastUpdate($bins[$i]['bin_id'])), true);
 					$last_update_user = json_decode(json_encode($this->lastUpdateUser($bins[$i]['bin_id'])), true);
-					$up_hist[$i] = json_decode(json_encode($this->lastUpdate_numpigs($bins[$i]['bin_id'])), true);
+					$up_hist[$i] = $this->lastUpdate_numpigs($bins[$i]['bin_id']);
 					$numofpigs_ = $this->displayDefaultNumberOfPigs($bins[$i]['num_of_pigs'], $up_hist[$i][0]['num_of_pigs']);
 	        $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
 					$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i][0]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i][0]['budgeted_amount']);
@@ -3169,7 +3170,7 @@ class HomeController extends Controller
 					->where('type_id','=',$feedtype)
 					->first();
 
-		return !empty($output->budgeted_amount) ? $output->budgeted_amount : 0;
+		return !empty($output) ? $output->budgeted_amount : 0;
 
 	}
 
@@ -5498,7 +5499,7 @@ class HomeController extends Controller
 								->where('bin_id',$bin_id)
 								->orderBy('history_id','desc')
 								->orderBy('update_date','desc')
-								->first;
+								->first();
 
 			//$final = array('name'=> $output, 'amount' => $data != NULL ? $data[0]['amount'] . " T" : $amount[0]['amount'] . " T");
 			$final = array('name'=> $output, 'amount' => $data != NULL ? $amount_final . " T" : $amount->amount . " T");
@@ -5608,27 +5609,17 @@ class HomeController extends Controller
 	*/
 	public function currentBinCapacity($bin_id){
 
-
 		$data =  DB::table('feeds_bin_history')
 				//->select(DB::raw('round(feeds_bin_history.amount * 2000,0) AS amount'))
 				->select('amount')
-				->where('feeds_bin_history.bin_id','=',$bin_id)
-				->orderBy('feeds_bin_history.created_at','desc')
+				->where('bin_id',$bin_id)
+				->orderBy('created_at','desc')
 				->first();
 
-		if($data == NULL){
-			$data = 0;
-		} else {
+		$r = $data == NULL ? 0 : round($data->amount * 2000,0);
 
-			$data = json_decode(json_encode($data), true);
+		return $r;
 
-			foreach($data as $k => $v){
-				$data = round($v['amount'] * 2000,0);
-			}
-
-		}
-
-		return $data;
 	}
 
 
