@@ -1816,6 +1816,7 @@ class HomeController extends Controller
 		// unset($notification);
 
 		Cache::forget('bin-'.$_POST['bin']);
+		Cache::forget('bins-'.$_POST['bin']);
 
 		if($daysto > 3) {
 			$color = "success";
