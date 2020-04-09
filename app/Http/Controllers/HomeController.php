@@ -5613,7 +5613,7 @@ class HomeController extends Controller
 		$data =  DB::table('feeds_bin_history')
 				//->select(DB::raw('round(feeds_bin_history.amount * 2000,0) AS amount'))
 				->select('amount')
-				->where('bin_id','=',$bin_id)
+				->where('bin_id',$bin_id)
 				->orderBy('created_at','desc')
 				->first();
 
