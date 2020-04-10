@@ -3015,7 +3015,7 @@ class HomeController extends Controller
 								->orderBy('created_at','desc')
 								->first();
 
-				$output[] = $bh;
+				$output[$bins[$i]->bin_id] = $bh;
 
 				Cache::forever('bins_history_amount_'.$bins[$i]->bin_id,$output);
 			}
