@@ -2878,20 +2878,21 @@ class HomeController extends Controller
 
 			for($i=0; $i<count($bins); $i++){
 
-				$bh = DB::table('feeds_bin_history')
-								->select('amount')
-								->where('bin_id',$bins[$i]->bin_id)
-								->orderBy('created_at','desc')
-								->first();
-
-				$output[] = array(
-					'bin_id'	=>	$bins[$i]->bin_id,
-					'amount'	=>	$bh->amount
-				);
+				// $bh = DB::table('feeds_bin_history')
+				// 				->select('amount')
+				// 				->where('bin_id',$bins[$i]->bin_id)
+				// 				->orderBy('created_at','desc')
+				// 				->first();
+				//
+				// $output[] = array(
+				// 	'bin_id'	=>	$bins[$i]->bin_id,
+				// 	'amount'	=>	$bh->amount
+				// );
 
 				Cache::forever('bins_history_amount_'.$bins[$i]->bin_id,$output);
+				$r = Cache::store('file')->get('bins_history_amount');
 
-				return $output;
+				return $r['amount'];
 			}
 
 			// save the new cache data
