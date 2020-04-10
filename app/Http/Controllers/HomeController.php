@@ -2861,22 +2861,26 @@ class HomeController extends Controller
    */
   public function cacheBinHistoryAmount()
   {
-			$output = array();
-			$bins = DB::table("feeds_bins")->select('bin_id')->get();
-
-			for($i=0; $i<count($bins); $i++){
-				$bh = DB::table('feeds_bin_history')
-								->select('amount')
-								->where('bin_id',$bins[$i]->bin_id)
-								->orderBy('created_at','desc')
-								->first();
-				$output[] = array(
-					'bin_id'	=>	$bins[$i]->bin_id,
-					'amount'	=>	$bh->amount
-				);
-			}
-
-			Cache::forever('bins_history_amount',$output);
+			// clear the cache first
+			// Cache::forever('bins_history_amount',NULL);
+			//
+			// $output = array();
+			// $bins = DB::table("feeds_bins")->select('bin_id')->get();
+			//
+			// for($i=0; $i<count($bins); $i++){
+			// 	$bh = DB::table('feeds_bin_history')
+			// 					->select('amount')
+			// 					->where('bin_id',$bins[$i]->bin_id)
+			// 					->orderBy('created_at','desc')
+			// 					->first();
+			// 	$output[] = array(
+			// 		'bin_id'	=>	$bins[$i]->bin_id,
+			// 		'amount'	=>	$bh->amount
+			// 	);
+			// }
+			//
+			// // save the new cache data
+			// Cache::forever('bins_history_amount',$output);
 
 			$r = Cache::store('file')->get('bins_history_amount');
 
