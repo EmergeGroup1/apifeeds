@@ -2897,7 +2897,7 @@ class HomeController extends Controller
 
 				$bins_items = Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
 				if($bins_items == NULL){
-					$ch_amount = Cache::store('file')->get('bins_history_amount_'.$bins[$i]['bin_id']);
+					$ch_amount = Cache::store('file')->get('bins_history_latest_'.$bins[$i]['bin_id']);
 					$current_bin_amount_lbs = round($ch_amount[$bins[$i]['bin_id']]['amount'] * 2000,0);
 					$last_update = json_decode(json_encode($this->lastUpdate($bins[$i]['bin_id'])), true);
 					$last_update_user = json_decode(json_encode($this->lastUpdateUser($bins[$i]['bin_id'])), true);
@@ -3010,14 +3010,13 @@ class HomeController extends Controller
 			for($i=0; $i<count($bins); $i++){
 
 				$bh = DB::table('feeds_bin_history')
-								->select('amount')
 								->where('bin_id',$bins[$i]->bin_id)
 								->orderBy('created_at','desc')
 								->first();
 
 				$output[$bins[$i]->bin_id] = $bh;
 
-				Cache::forever('bins_history_amount_'.$bins[$i]->bin_id,$output);
+				Cache::forever('bins_history_latest_'.$bins[$i]->bin_id,$output);
 			}
 
 			// save the new cache data
