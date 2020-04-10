@@ -2897,7 +2897,7 @@ class HomeController extends Controller
 
 				$bins_items = Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
 				if($bins_items == NULL){
-					$ch_amount = Cache::store('file')->get('bins_history_amount_'.$bins[$i]['bin_id'])
+					$ch_amount = Cache::store('file')->get('bins_history_amount_'.$bins[$i]['bin_id']);
 					$current_bin_amount_lbs = round($ch_amount[0]['amount'] * 2000,0);
 					$last_update = json_decode(json_encode($this->lastUpdate($bins[$i]['bin_id'])), true);
 					$last_update_user = json_decode(json_encode($this->lastUpdateUser($bins[$i]['bin_id'])), true);
