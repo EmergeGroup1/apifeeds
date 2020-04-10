@@ -32,7 +32,7 @@ class HomeController extends Controller
 		public function __construct()
 		{
 
-			$this->middleware('auth',['except' => ['forecastingDataCacheBuilder','forecastingDataCache','forecastingDataOutput','binsDataCacheBuilder','clearBinsCache','conAutoUpdate']]);
+			$this->middleware('auth',['except' => ['forecastingDataCacheBuilder','forecastingDataCache','forecastingDataOutput','binsDataCacheBuilder','clearBinsCache','conAutoUpdate','cacheBinHistoryAmount']]);
 
 		}
 
@@ -2851,6 +2851,32 @@ class HomeController extends Controller
 		$binsDataFinal = Storage::get('bins_data'.$farm_id.'.txt');
 
 		return $binsDataFinal;
+
+	}
+
+	/**
+   * cache all the amounts from bin history
+   *
+   * @return Response
+   */
+  private function cacheBinHistoryAmount()
+  {
+			$output = array();
+			$bins = DB::table("feeds_bins")->select('bin_id')->get();
+
+			for($i=0; $i<count($bins); $i++){
+				$bh = DB::table('feeds_bin_history')
+								->select('amount')
+								->where('bin_id',$bins[$i]->bin_id)
+								->orderBy('created_at','desc')
+								->first();
+				$output[] = array(
+					'bin_id'	=>	$bins[$i]->bin_id,
+					'amount'	=>	$bh->amount
+				);
+			}
+
+			return $output;
 
 	}
 
