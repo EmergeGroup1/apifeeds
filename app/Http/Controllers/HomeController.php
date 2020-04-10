@@ -2892,7 +2892,7 @@ class HomeController extends Controller
 				Cache::forever('bins_history_amount_'.$bins[$i]->bin_id,$output);
 				$r = Cache::store('file')->get('bins_history_amount');
 
-				return $r['amount'];
+				return $r;
 			}
 
 			// save the new cache data
