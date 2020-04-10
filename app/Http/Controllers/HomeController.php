@@ -2890,9 +2890,6 @@ class HomeController extends Controller
 				);
 
 				Cache::forever('bins_history_amount_'.$bins[$i]->bin_id,$output);
-				$r = Cache::store('file')->get('bins_history_amount_'.$bins[$i]->bin_id);
-
-				return $r[0]['amount'];
 			}
 
 			// save the new cache data
@@ -5664,9 +5661,9 @@ class HomeController extends Controller
 		// 		->orderBy('created_at','desc')
 		// 		->first();
 
-		$data = $this->toArray(Cache::store('file')->get('bins_history_amount_'.$bin_id));
+		$data = Cache::store('file')->get('bins_history_amount_'.$bin_id);
 
-		$r = $data == NULL ? 0 : round($data['amount'] * 2000,0);
+		$r = $data == NULL ? 0 : round($data[0]['amount'] * 2000,0);
 
 		return $r;
 
