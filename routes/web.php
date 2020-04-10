@@ -23,4 +23,4 @@ Route::get('forecastingdata','HomeController@forecastingDataOutput');
 Route::get('forecastdata','HomeController@forecastingDataCache');
 Route::get('binscachebuilder','HomeController@binsDataCacheBuilder');
 Route::get('binclearcache/{id}','HomeController@clearBinsCache');
-Route::get('historyamount','HomeController@cacheBinHistoryLatest');
+Route::get('historylatest','HomeController@cacheBinHistoryLatest');
