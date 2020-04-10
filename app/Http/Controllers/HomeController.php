@@ -2530,7 +2530,8 @@ class HomeController extends Controller
 	*	binsDataCacheBuilder
 	*/
 	public function binsDataCacheBuilder($farm_id = NULL){
-		//Cache::flush();
+
+		Cache::forever('cachebuilder-status',"true");
 
 		$this->cacheBinHistoryLatest();
 
@@ -2559,6 +2560,8 @@ class HomeController extends Controller
 			echo "farm_id: ".$farm_id." done caching<br/>";
 
 		}
+
+		Cache::forever('cachebuilder-status',"false");
 
 	}
 
