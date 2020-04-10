@@ -5661,7 +5661,7 @@ class HomeController extends Controller
 		// 		->orderBy('created_at','desc')
 		// 		->first();
 
-		$data = Cache::store('file')->get('bins_history_amount_'.$bin_id);
+		$data = $this->toArray(Cache::store('file')->get('bins_history_amount_'.$bin_id));
 
 		$r = $data == NULL ? 0 : round($data['amount'] * 2000,0);
 
