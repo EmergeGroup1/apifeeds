@@ -2890,6 +2890,8 @@ class HomeController extends Controller
 				);
 
 				Cache::forever('bins_history_amount_'.$bins[$i]->bin_id,$output);
+
+				return $output;
 			}
 
 			// save the new cache data
