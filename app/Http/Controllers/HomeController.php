@@ -2859,7 +2859,7 @@ class HomeController extends Controller
    *
    * @return Response
    */
-  private function cacheBinHistoryAmount()
+  public function cacheBinHistoryAmount()
   {
 			$output = array();
 			$bins = DB::table("feeds_bins")->select('bin_id')->get();
