@@ -32,7 +32,7 @@ class HomeController extends Controller
 		public function __construct()
 		{
 
-			$this->middleware('auth',['except' => ['forecastingDataCacheBuilder','forecastingDataCache','forecastingDataOutput','binsDataCacheBuilder','clearBinsCache','conAutoUpdate','cacheBinHistoryAmount']]);
+			$this->middleware('auth',['except' => ['forecastingDataCacheBuilder','forecastingDataCache','forecastingDataOutput','binsDataCacheBuilder','clearBinsCache','conAutoUpdate','cacheBinHistoryLatest']]);
 
 		}
 
@@ -2532,7 +2532,7 @@ class HomeController extends Controller
 	public function binsDataCacheBuilder($farm_id = NULL){
 		//Cache::flush();
 
-		$this->cacheBinHistoryAmount();
+		$this->cacheBinHistoryLatest();
 
 		if($farm_id == NULL){
 
@@ -3000,7 +3000,7 @@ class HomeController extends Controller
    *
    * @return Response
    */
-  public function cacheBinHistoryAmount()
+  public function cacheBinHistoryLatest()
   {
 			// clear the cache first
 
@@ -3015,10 +3015,7 @@ class HomeController extends Controller
 								->orderBy('created_at','desc')
 								->first();
 
-				$output[] = array(
-					'bin_id'	=>	$bins[$i]->bin_id,
-					'amount'	=>	$bh->amount
-				);
+				$output[] = $bh;
 
 				Cache::forever('bins_history_amount_'.$bins[$i]->bin_id,$output);
 			}
@@ -3026,7 +3023,7 @@ class HomeController extends Controller
 			// save the new cache data
 			//$r = Cache::store('file')->get('bins_history_amount');
 
-			//return $output;
+			return $output;
 
 	}
 
