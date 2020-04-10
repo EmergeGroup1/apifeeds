@@ -32,7 +32,7 @@ class HomeController extends Controller
 		public function __construct()
 		{
 
-			$this->middleware('auth',['except' => ['forecastingDataCacheBuilder','forecastingDataCache','forecastingDataOutput','binsDataCacheBuilder','clearBinsCache','conAutoUpdate']]);
+			$this->middleware('auth',['except' => ['forecastingDataCacheBuilder','forecastingDataCache','forecastingDataOutput','binsDataCacheBuilder','clearBinsCache','conAutoUpdate','cacheBinHistoryLatest']]);
 
 		}
 
@@ -2532,6 +2532,8 @@ class HomeController extends Controller
 	public function binsDataCacheBuilder($farm_id = NULL){
 		//Cache::flush();
 
+		$this->cacheBinHistoryLatest();
+
 		if($farm_id == NULL){
 
 			$bins = Bins::select('bin_id')->get()->toArray();
@@ -2544,7 +2546,7 @@ class HomeController extends Controller
 			$farms = Farms::select('id')->get()->toArray();
 			foreach($farms as $k => $v){
 				Cache::forget('farm_holder-'.$v['id']);
-				$this->binsData($v['id']);
+				$this->binsDataAutoUpdate($v['id']);
 				echo "farm_id: " . $v['id'] . " done caching<br/>";
 
 			}
@@ -2553,7 +2555,7 @@ class HomeController extends Controller
 
 			// clear the cache
 			Cache::forget('bins-'.$farm_id);
-			$this->binsData($farm_id);
+			$this->binsDataAutoUpdate($farm_id);
 			echo "farm_id: ".$farm_id." done caching<br/>";
 
 		}
@@ -2851,6 +2853,176 @@ class HomeController extends Controller
 		$binsDataFinal = Storage::get('bins_data'.$farm_id.'.txt');
 
 		return $binsDataFinal;
+
+	}
+
+
+
+
+
+	/*
+	*	Bins forecating Data
+	*/
+	public function binsDataAutoUpdate($farm_id) {
+
+		// get thecache value
+		$binsDataFinal = NULL; // Cache::store('file')->get('bins-'.$farm_id);
+
+		if($binsDataFinal == NULL){
+
+			//Cache::forget('bins-'.$farm_id);
+
+			$bins = DB::table('feeds_bins')
+						 ->select('feeds_bins.*',
+									'feeds_bin_sizes.name AS bin_size_name',
+									'feeds_feed_types.name AS feed_type_name',
+									'feeds_feed_types.budgeted_amount')
+						 ->leftJoin('feeds_bin_sizes','feeds_bin_sizes.size_id', '=', 'feeds_bins.bin_size')
+						 ->leftJoin('feeds_feed_types','feeds_feed_types.type_id', '=', 'feeds_bins.feed_type')
+						 ->where('farm_id', '=', $farm_id)
+						 ->orderBy('feeds_bins.bin_number','asc')
+						 ->get();
+
+			if($bins == NULL){
+				return false;
+			}
+
+
+			$bins = json_decode(json_encode($bins),true);
+
+			$binsData = array();
+
+			$binsCount = count($bins) - 1;
+			for($i=0; $i<=$binsCount; $i++){
+
+				$bins_items = Cache::store('file')->get('bins-'.$bins[$i]['bin_id']);
+				if($bins_items == NULL){
+					$ch_amount = Cache::store('file')->get('bins_history_latest_'.$bins[$i]['bin_id']);
+					$current_bin_amount_lbs = round($ch_amount[$bins[$i]['bin_id']]->amount * 2000,0);
+					$last_update = json_decode(json_encode($this->lastUpdate($bins[$i]['bin_id'])), true);
+					$last_update_user = json_decode(json_encode($this->lastUpdateUser($bins[$i]['bin_id'])), true);
+					$up_hist[$i] = $this->lastUpdate_numpigs($bins[$i]['bin_id']);
+					$numofpigs_ = $this->displayDefaultNumberOfPigs($bins[$i]['num_of_pigs'], $up_hist[$i][0]['num_of_pigs']);
+	        $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
+					$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i][0]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i][0]['budgeted_amount']);
+					$delivery = $this->nextDel_($farm_id,$bins[$i]['bin_id']);
+					$last_delivery = $this->lastDelivery($farm_id,$bins[$i]['bin_id'],$last_update);
+					$feed_type_update = $this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']));
+
+					$farms_data = Farms::where('id', $farm_id)->first();
+
+					if($farms_data->farm_type == "farrowing"){
+						$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
+					}
+
+
+					// rebuild cache data
+					$bins_items = array(
+						'bin_s'										=>  $this->getmyBinSize($bins[$i]['bin_size']),
+						'bin_id'									=>	$bins[$i]['bin_id'],
+						'bin_number'							=>	$bins[$i]['bin_number'],
+						'alias'										=>	$bins[$i]['alias'],
+						'num_of_pigs'							=>	$bins[$i]['num_of_pigs'],
+						'num_of_sow_pigs'					=>	$bins[$i]['num_of_sow_pigs'],
+						'total_number_of_pigs'		=>	$total_number_of_pigs,
+						'default_amount'					=>	$this->displayDefaultAmountofBin($bins[$i]['amount'], $up_hist[$i][0]['amount']),
+						'hex_color'								=>	$bins[$i]['hex_color'],
+						'bin_size'								=>	$bins[$i]['bin_size'],
+						'bin_size_name'						=>	$bins[$i]['bin_size_name'],
+						'feed_type_name'					=>	$feed_type_update->description,
+						'feed_type_name_orig'			=>	$feed_type_update->name,
+						// 'feed_type_name'					=>	$this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']))->description,
+						// 'feed_type_name_orig'			=>	$this->feedName($this->getFeedTypeUpdate($up_hist[$i][0]['feed_type'],$bins[$i]['feed_type']))->name,
+						'feed_type_id'						=>	$up_hist[$i][0]['feed_type'],
+						'budgeted_amount'					=>	$budgeted_,
+						'current_bin_amount_tons'	=>	$up_hist[$i][0]['amount'],
+						'current_bin_amount_lbs'	=>	(int)$current_bin_amount_lbs,
+						'days_to_empty'						=>	$this->daysOfBins($current_bin_amount_lbs,$budgeted_,$total_number_of_pigs),
+						'empty_date'							=>	$this->emptyDate($this->daysOfBins($current_bin_amount_lbs,$budgeted_,$total_number_of_pigs)),
+						// 'days_to_empty'						=>	$this->daysOfBins($this->currentBinCapacity($bins[$i]['bin_id']),$budgeted_,$total_number_of_pigs),
+						// 'empty_date'							=>	$this->emptyDate($this->daysOfBins($this->currentBinCapacity($bins[$i]['bin_id']),$budgeted_,$total_number_of_pigs)),
+						'next_delivery'						=>	$delivery['name'],
+						'medication'							=>	$this->getMedDesc($up_hist[$i][0]['medication']),
+						'medication_name'					=>	$this->getMedName($up_hist[$i][0]['medication']),
+						'medication_id'						=>	$up_hist[$i][0]['medication'],
+						'last_update'							=>	$last_update_user[0]['update_date'],
+						'next_deliverydd'					=>  $last_delivery,
+						'delivery_amount'					=>  $delivery['amount'],
+            'default_val'							=>  $this->animalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']),
+						'graph_data'							=>	NULL,//$this->graphData($bins[$i]['bin_id'],$total_number_of_pigs),
+						'num_of_update'						=>  NULL,//$this->getNumberOfUpdates($bins[$i]['bin_id']),
+						'average_variance'				=>	NULL,//$this->averageVariancelast6days($bins[$i]['bin_id']),
+						'average_actual'					=>	NULL,//$this->averageActuallast6days($bins[$i]['bin_id']),
+						'username'								=>	$this->usernames($last_update_user[0]['user_id']),
+						'last_manual_update'			=>	$this->lastManualUpdate($bins[$i]['bin_id'])
+					);
+					Cache::forever('bins-'.$bins[$i]['bin_id'],$bins_items);
+				}
+
+				$binsData[] = $bins_items;
+
+			}
+
+			$sorted_bins = $binsData;
+			usort($sorted_bins, function($a,$b){
+				if($a['days_to_empty'] == $b['days_to_empty']) return 0;
+				return ($a['days_to_empty']<$b['days_to_empty'])?-1:1;
+			});
+
+			$days_to_empty_first = array(
+				'first_list_days_to_empty'	=>	!empty($sorted_bins[0]['days_to_empty']) ? $sorted_bins[0]['days_to_empty'] : 0
+			);
+
+			$empty_bins = array(
+				'empty_bins'	=>	$this->countEmptyBins($binsData)
+			);
+			for($i=0; $i < count($binsData); $i++){
+				$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
+			}
+
+
+		} else {
+			$binsDataFinal = $binsDataFinal ;
+		}
+
+		Storage::put('bins_data'.$farm_id.'.txt',json_encode($binsDataFinal));
+		$binsDataFinal = Storage::get('bins_data'.$farm_id.'.txt');
+
+		return $binsDataFinal;
+
+	}
+
+
+
+
+	/**
+   * cache all the amounts from bin history
+   *
+   * @return Response
+   */
+  public function cacheBinHistoryLatest()
+  {
+			// clear the cache first
+
+			$output = array();
+			$bins = DB::table("feeds_bins")->select('bin_id')->get();
+
+			for($i=0; $i<count($bins); $i++){
+
+				$bh = DB::table('feeds_bin_history')
+								->where('bin_id',$bins[$i]->bin_id)
+								->orderBy('created_at','desc')
+								->first();
+
+				$output[$bins[$i]->bin_id] = $bh;
+
+				Cache::forever('bins_history_latest_'.$bins[$i]->bin_id,$output);
+			}
+
+			// save the new cache data
+			//$r = Cache::store('file')->get('bins_history_amount');
+
+			return $output;
 
 	}
 

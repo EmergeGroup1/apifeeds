@@ -30,10 +30,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        $schedule->command('forecastingdatacache')->everyMinute();
+        //$schedule->command('forecastingdatacache')->everyMinute();
         $schedule->command('schedulingcache')->everyMinute();
         $schedule->command('consumption')->dailyAt(env('CN_TIME'));
-        $schedule->command('turnonfarms')->dailyAt('01:00');
+        $schedule->command('turnonfarms')->dailyAt('00:30');
     	  $schedule->command('buildbinscache')->dailyAt('01:10');
     }
 
