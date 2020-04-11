@@ -5966,6 +5966,8 @@ class HomeController extends Controller
 	*/
 	public function conAutoUpdate(){
 
+		Cache::forever('cachebuilder-status',"true");
+
 		$farms = Farms::where('status',1)->get()->toArray();
 
 		$forecastingData = array();
