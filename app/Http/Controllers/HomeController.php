@@ -5994,7 +5994,7 @@ class HomeController extends Controller
 		}
 
 		// update the cache for forecasting
-		$this->forecastingDataCacheBuilder();
+		//$this->forecastingDataCacheBuilder();
 
 		/*
 		$first = $forecastingData[0]['bins'][0]['bin_id'];
