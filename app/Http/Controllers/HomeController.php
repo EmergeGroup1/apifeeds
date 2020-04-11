@@ -5996,8 +5996,6 @@ class HomeController extends Controller
 		// update the cache for forecasting
 		$this->forecastingDataCacheBuilder();
 
-		Cache::forever('cachebuilder-status',"false");
-
 		/*
 		$first = $forecastingData[0]['bins'][0]['bin_id'];
 
