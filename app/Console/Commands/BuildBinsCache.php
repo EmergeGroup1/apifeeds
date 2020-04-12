@@ -55,7 +55,7 @@ class BuildBinsCache extends Command
         // close curl resource to free up system resources
         curl_close($ch);
 
-        $this->forecastingDataCache();
+        //$this->forecastingDataCache();
     }
 
     /**
