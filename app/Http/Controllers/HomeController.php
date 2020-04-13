@@ -3393,6 +3393,7 @@ class HomeController extends Controller
 					//$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroup($bins[$i]['bin_id'],$bins[$i]['farm_id']);
           $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
 					$update_type = $this->updateTypeCounter($up_hist[$i][0]['update_type'],$yesterday_update[$i],$up_hist[$i][0]['num_of_pigs'],$bins[$i]['bin_id']);
+					$current_bin_cap = $this->currentBinCapacity($bins[$i]['bin_id']);
 
 					$farms_data = Farms::where('id', $farm_id)->first();
 
@@ -3402,9 +3403,9 @@ class HomeController extends Controller
 
 					$binsData[] = array(
 						'bin_id'									=>	$bins[$i]['bin_id'],
-						'current_bin_capacity'		=>	$this->currentBinCapacity($bins[$i]['bin_id']),
-						'days_to_empty'						=>	$this->daysOfBins($this->currentBinCapacity($bins[$i]['bin_id']),$budgeted_,$total_number_of_pigs),
-						'empty_date'							=>	$this->emptyDate($this->daysOfBins($this->currentBinCapacity($bins[$i]['bin_id']),$budgeted_,$total_number_of_pigs)),
+						'current_bin_capacity'		=>	$current_bin_cap,
+						'days_to_empty'						=>	$this->daysOfBins($current_bin_cap,$budgeted_,$total_number_of_pigs),
+						'empty_date'							=>	$this->emptyDate($this->daysOfBins($current_bin_cap,$budgeted_,$total_number_of_pigs)),
 						'update_type'							=>	$update_type,
 						'last_manual_update'			=>	$this->lastManualUpdate($bins[$i]['bin_id']),
 					);
