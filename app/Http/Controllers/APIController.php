@@ -2323,7 +2323,7 @@ class APIController extends Controller
         case "dtAdd":
 
           $data = array(
-            'death_date'  =>  $request->input('dateOfDate'),
+            'death_date'  =>  $request->input('dateOfDeath'),
             'farm_id'     =>  $request->input('farmID'),
             'group_id'    =>  $request->input('groupID'),
             'death_number'  =>  $request->input('deathNumber')
