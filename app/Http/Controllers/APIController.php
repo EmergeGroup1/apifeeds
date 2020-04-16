@@ -2312,20 +2312,38 @@ class APIController extends Controller
         /* End of Users API */
 
         /*
-        * User Accounts Role
+        * Death Tracker
         */
-        // update user
+        // list death
+        case "dtList":
 
-        // delete user
+        break;
 
-        // add role
+        // add death
+        case "dtAdd":
 
-        // update role
+          $data = array(
+            'death_date'  =>  $request-input('dateOfDate'),
+            'farm_id'     =>  $request-input('farmID'),
+            'group_id'    =>  $request-input('groupID'),
+            'death_number'  =>  $request-input('deathNumber')
+          );
 
-        // delete role
+          return $data; 
 
+        break;
+
+        // update death
+        case "dtUpdate":
+
+        break;
+
+        // delete death
+        case "dtDelete":
+
+        break;
         /*
-        * End of User Accounts
+        * End of Death Tracker
         */
 
       default:
