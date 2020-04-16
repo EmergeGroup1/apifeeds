@@ -2326,6 +2326,7 @@ class APIController extends Controller
             'death_date'  =>  $request->input('dateOfDeath'),
             'farm_id'     =>  $request->input('farmID'),
             'group_id'    =>  $request->input('groupID'),
+            'group_type'  =>  $request->input('groupType'),
             'death_number'  =>  $request->input('deathNumber')
           );
 
