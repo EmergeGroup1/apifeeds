@@ -2322,10 +2322,6 @@ class APIController extends Controller
         // add death
         case "dtAdd":
 
-
-          //
-          // DB::table("feeds_death_tracker")->insert($data);
-
           $data = $request->all();
           for($i=0; $i<count($data['deathNumber']); $i++){
             $dt = array(
@@ -2338,7 +2334,6 @@ class APIController extends Controller
             );
             DB::table("feeds_death_tracker")->insert($dt);
           }
-
 
         break;
 
