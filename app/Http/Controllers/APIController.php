@@ -2334,7 +2334,6 @@ class APIController extends Controller
           $data = $request->all();
           $home_crtl = new HomeController;
           $u_id = $home_crtl->generator();
-          unset($home_crtl);
 
           for($i=0; $i<count($data['deathNumber']); $i++){
             $dt = array(
@@ -2347,15 +2346,49 @@ class APIController extends Controller
               'unique_id'   =>  $u_id
             );
 
+            $group_uid = DB::table("feeds_movement_groups")
+                            ->where("group_id",$request->input('groupID'))
+                            ->select("unique_id");
+                            ->first();
+
+
             // deduct the death on rooms or bins, after deduction, update the cache
             if($request->has("roomID")){
 
+              $pigs = DB::table("feeds_movement_groups_bins")
+                        ->where('unique_id',$group_uid->unique_id)
+                        ->where('room_id',$data['roomID'][$i])
+                        ->select('number_of_pigs')
+                        ->first();
+
+              DB::table("feeds_movement_groups_bins")
+                ->where('unique_id',$group_uid->unique_id)
+                ->where('room_id',$data['roomID'][$i])
+                ->update(['number_of_pigs'=>$pigs-$data['deathNumber'][$i]]);
+
+                $home_crtl->clearBinsCache($data['roomID'][$i]);
+
             } else {
+
+              $pigs = DB::table("feeds_movement_groups_bins")
+                        ->where('unique_id',$group_uid->unique_id)
+                        ->where('bin_id',$data['binID'][$i])
+                        ->select('number_of_pigs')
+                        ->first();
+
+              DB::table("feeds_movement_groups_bins")
+                ->where('unique_id',$group_uid->unique_id)
+                ->where('bin_id',$data['binID'][$i])
+                ->update(['number_of_pigs'=>$pigs-$data['deathNumber'][$i]]);
+
+                $home_crtl->clearBinsCache($data['binID'][$i]);
 
             }
 
             DB::table("feeds_death_tracker")->insert($dt);
           }
+
+          unset($home_crtl);
 
           return $data;
 
@@ -2370,7 +2403,7 @@ class APIController extends Controller
         case "dtDelete":
 
           $data = $request->all();
-          
+
                   DB::table("feeds_death_tracker")
                         ->where('unique_id',$data['uid'])
                         ->delete();
