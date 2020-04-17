@@ -2319,7 +2319,7 @@ class APIController extends Controller
 
           $dt = DB::table("feeds_death_tracker")->groupBy('unique_id')
                 ->selectRaw('*, sum(death_number) as total_death')
-                ->get();
+                ->orderBy('death_id','desc')->get();
           return $dt;
 
         break;
