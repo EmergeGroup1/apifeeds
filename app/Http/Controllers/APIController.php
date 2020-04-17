@@ -2364,7 +2364,7 @@ class APIController extends Controller
               DB::table("feeds_movement_groups_bins")
                 ->where('unique_id',$group_uid->unique_id)
                 ->where('room_id',$data['roomID'][$i])
-                ->update(['number_of_pigs'=>$pigs-$data['deathNumber'][$i]]);
+                ->update(['number_of_pigs'=>($pigs->number_of_pigs - $data['deathNumber'][$i])]);
 
                 $home_crtl->clearBinsCache($data['roomID'][$i]);
 
@@ -2379,7 +2379,7 @@ class APIController extends Controller
               DB::table("feeds_movement_groups_bins")
                 ->where('unique_id',$group_uid->unique_id)
                 ->where('bin_id',$data['binID'][$i])
-                ->update(['number_of_pigs'=>$pigs-$data['deathNumber'][$i]]);
+                ->update(['number_of_pigs'=>($pigs->number_of_pigs - $data['deathNumber'][$i]));
 
                 $home_crtl->clearBinsCache($data['binID'][$i]);
 
