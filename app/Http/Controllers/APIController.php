@@ -2369,6 +2369,14 @@ class APIController extends Controller
         // delete death
         case "dtDelete":
 
+          $data = $request->all();
+          
+                  DB::table("feeds_death_tracker")
+                        ->where('unique_id',$data['uid'])
+                        ->delete();
+
+          return $data;
+
         break;
         /*
         * End of Death Tracker
