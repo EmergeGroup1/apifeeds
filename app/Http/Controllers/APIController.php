@@ -2322,19 +2322,24 @@ class APIController extends Controller
         // add death
         case "dtAdd":
 
-          // $data = array(
-          //   'death_date'  =>  $request->input('dateOfDeath'),
-          //   'farm_id'     =>  $request->input('farmID'),
-          //   'group_id'    =>  $request->input('groupID'),
-          //   'group_type'  =>  $request->input('groupType'),
-          //   'death_number'  =>  $request->input('deathNumber')
-          // );
+
           //
           // DB::table("feeds_death_tracker")->insert($data);
 
           $data = $request->all();
+          $dt = array();
+          for($i=0; $i<count($data['deathNumber']); $i++){
+            $dt[] = array(
+              'death_date'  =>  $request->input('dateOfDeath'),
+              'farm_id'     =>  $request->input('farmID'),
+              'group_id'    =>  $request->input('groupID'),
+              'bin_id'      =>  $data['binID'][$i],
+              'room_id'     =>  $data['roomID'][$i],
+              'death_number'  =>  $data['deathNumber'][$i]
+            );
+          }
 
-          return $data['deathNumber'];
+          return $dt;
 
         break;
 
