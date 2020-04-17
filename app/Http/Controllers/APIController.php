@@ -2328,6 +2328,10 @@ class APIController extends Controller
         case "dtAdd":
 
           $data = $request->all();
+          $home_crtl = new HomeController;
+          $u_id = $home_crtl->generator();
+          unset($home_crtl);
+
           for($i=0; $i<count($data['deathNumber']); $i++){
             $dt = array(
               'death_date'  =>  $request->input('dateOfDeath'),
@@ -2335,7 +2339,8 @@ class APIController extends Controller
               'group_id'    =>  $request->input('groupID'),
               'bin_id'      =>  $request->has("binID") ? $data['binID'][$i] : 0,
               'room_id'     =>  $request->has("roomID") ? $data['roomID'][$i] : 0,
-              'death_number'  =>  $data['deathNumber'][$i]
+              'death_number'  =>  $data['deathNumber'][$i],
+              'unique_id'   =>  $u_id
             );
 
             // deduct the death on rooms or bins, after deduction, update the cache
