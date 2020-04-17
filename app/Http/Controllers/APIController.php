@@ -2320,7 +2320,7 @@ class APIController extends Controller
           $data = $request->all();
 
           $dt = DB::table("feeds_death_tracker")
-                ->whereBetween('death_date',[$data['dateFrom'],$data['dateTo']])
+                ->whereBetween('death_date',[$data['start'],$data['end']])
                 ->groupBy('unique_id')
                 ->selectRaw('*, sum(death_number) as total_death')
                 ->orderBy('death_id','desc')->get();
