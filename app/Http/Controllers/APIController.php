@@ -2317,6 +2317,9 @@ class APIController extends Controller
         // list death
         case "dtList":
 
+          $dt = DB::table("feeds_death_tracker")->groupBy('group_id')->get();
+          return $dt;
+
         break;
 
         // add death
@@ -2337,7 +2340,7 @@ class APIController extends Controller
             if($request->has("roomID")){
 
             } else {
-              
+
             }
 
             DB::table("feeds_death_tracker")->insert($dt);
