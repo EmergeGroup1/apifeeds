@@ -2332,8 +2332,18 @@ class APIController extends Controller
               'room_id'     =>  $request->has("roomID") ? $data['roomID'][$i] : 0,
               'death_number'  =>  $data['deathNumber'][$i]
             );
+
+            // deduct the death on rooms or bins, after deduction, update the cache
+            if($request->has("roomID")){
+
+            } else {
+              
+            }
+
             DB::table("feeds_death_tracker")->insert($dt);
           }
+
+          return $data;
 
         break;
 
