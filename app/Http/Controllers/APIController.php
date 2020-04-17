@@ -2333,8 +2333,8 @@ class APIController extends Controller
               'death_date'  =>  $request->input('dateOfDeath'),
               'farm_id'     =>  $request->input('farmID'),
               'group_id'    =>  $request->input('groupID'),
-              'bin_id'      =>  $data->has("binID") ? $data['binID'][$i] : 0,
-              'room_id'     =>  $data->has("roomID") ? $data['roomID'][$i] : 0,
+              'bin_id'      =>  $request->input->has("binID") ? $data['binID'][$i] : 0,
+              'room_id'     =>  $request->input->has("roomID") ? $data['roomID'][$i] : 0,
               'death_number'  =>  $data['deathNumber'][$i]
             );
           }
