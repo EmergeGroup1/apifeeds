@@ -2327,9 +2327,8 @@ class APIController extends Controller
           // DB::table("feeds_death_tracker")->insert($data);
 
           $data = $request->all();
-          $dt = array();
           for($i=0; $i<count($data['deathNumber']); $i++){
-            $dt[] = array(
+            $dt = array(
               'death_date'  =>  $request->input('dateOfDeath'),
               'farm_id'     =>  $request->input('farmID'),
               'group_id'    =>  $request->input('groupID'),
@@ -2337,9 +2336,9 @@ class APIController extends Controller
               'room_id'     =>  $request->has("roomID") ? $data['roomID'][$i] : 0,
               'death_number'  =>  $data['deathNumber'][$i]
             );
+            DB::table("feeds_death_tracker")->insert($dt);
           }
 
-          return $dt;
 
         break;
 
