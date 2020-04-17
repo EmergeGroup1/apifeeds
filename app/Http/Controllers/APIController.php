@@ -2318,8 +2318,7 @@ class APIController extends Controller
         case "dtList":
 
           $dt = DB::table("feeds_death_tracker")->groupBy('group_id')
-                ->selectRaw('sum(death_number) as total_death')
-                ->select("*")
+                ->selectRaw('*, sum(death_number) as total_death')
                 ->get();
           return $dt;
 
