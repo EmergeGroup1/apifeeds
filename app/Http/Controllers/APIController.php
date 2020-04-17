@@ -2317,7 +2317,11 @@ class APIController extends Controller
         // list death
         case "dtList":
 
-          $dt = DB::table("feeds_death_tracker")->groupBy('unique_id')
+          $data = $request->all();
+
+          $dt = DB::table("feeds_death_tracker")
+                ->whereBetween('death_date',[$data['dateFrom'],$date['dateTo']]) 
+                ->groupBy('unique_id')
                 ->selectRaw('*, sum(death_number) as total_death')
                 ->orderBy('death_id','desc')->get();
           return $dt;
