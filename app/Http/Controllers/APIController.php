@@ -2332,7 +2332,9 @@ class APIController extends Controller
           //
           // DB::table("feeds_death_tracker")->insert($data);
 
-          return $request->all();
+          $data = $request->all();
+
+          return $data['deathNumber'];
 
         break;
 
