@@ -2336,7 +2336,7 @@ class APIController extends Controller
           $u_id = $home_crtl->generator();
 
           for($i=0; $i<count($data['deathNumber']); $i++){
-            $dt = array(
+            $dt[] = array(
               'death_date'  =>  $request->input('dateOfDeath'),
               'farm_id'     =>  $request->input('farmID'),
               'group_id'    =>  $request->input('groupID'),
@@ -2386,8 +2386,10 @@ class APIController extends Controller
 
             }
 
-            DB::table("feeds_death_tracker")->insert($dt);
+
           }
+
+          DB::table("feeds_death_tracker")->insert($dt);
 
           unset($home_crtl);
 
