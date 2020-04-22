@@ -2326,11 +2326,37 @@ class APIController extends Controller
                 ->orderBy('death_id','desc')->get();
 
           for($i=0; $i<count($dt); $i++){
+
             $dt[$i]->bins_rooms = DB::table("feeds_death_tracker")
-                                      ->join('feeds_bins','feeds_bins.bin_id','=','feeds_death_tracker.bin_id')
-                                      ->join('feeds_farrowing_rooms','feeds_farrowing_rooms.id','=','feeds_death_tracker.room_id')
-                                      ->where('feeds_death_tracker.unique_id',$dt[$i]->unique_id)
-                                      ->get();
+                                  ->where('feeds_death_tracker.unique_id',$dt[$i]->unique_id)
+                                  ->get();
+
+              for($y=0; $y<count(); $y++){
+
+                $dt[$i]->bins_rooms[$y]->room_number = "";
+
+                if($dt[$i]->bins_rooms[$y]->room_id !=0){
+
+                  $dt[$i]->bins_rooms[$y]->room_number = DB::table("feeds_farrowing_rooms")
+                                                            ->where('id',$dt[$i]->bins_rooms[$y]->room_id)
+                                                            ->select('room_number')
+                                                            ->value('room_number');
+
+                }
+
+                $dt[$i]->bins_rooms[$y]->bin_alias = "";
+                if($dt[$i]->bins_rooms[$y]->bin_id != 0){
+
+                  $dt[$i]->bins_rooms[$y]->bin_alias = DB::table("feeds_bins")
+                                                            ->where('bin_id',$dt[$i]->bins_rooms[$y]->bin_id)
+                                                            ->select('alias')
+                                                            ->value('alias');
+
+                }
+
+
+              }
+
           }
 
           return $dt;
