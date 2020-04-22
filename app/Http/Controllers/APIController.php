@@ -2325,7 +2325,7 @@ class APIController extends Controller
                 ->selectRaw('*, sum(death_number) as total_death')
                 ->orderBy('death_id','desc')->get();
 
-          for($i=0; $i<count($dt); $dt++){
+          for($i=0; $i<count($dt); $i++){
             $dt[$i]['bins_rooms'] = DB::table("feeds_death_tracker")
                                       ->where('unique_id',$dt[$i]->unique_id)
                                       ->get();
