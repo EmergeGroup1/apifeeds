@@ -2365,7 +2365,11 @@ class APIController extends Controller
                         ->first();
 
               // save the logs of original total number of pigs
-              $dtl[] = ['original_total_pigs' => $pigs->number_of_pigs];
+              $dtl[] = array(
+                        'death_unique_id' => $u_id,
+                        'room_id' =>  $data['roomID'][$i],
+                        'original_total_pigs' => $pigs->number_of_pigs
+                      );
 
               DB::table("feeds_movement_groups_bins")
                 ->where('unique_id',$group_uid->unique_id)
@@ -2383,7 +2387,11 @@ class APIController extends Controller
                         ->first();
 
               // save the logs of original total number of pigs
-              $dtl[] = ['original_total_pigs' => $pigs->number_of_pigs];
+              $dtl[] = array(
+                        'death_unique_id' => $u_id,
+                        'bin_id'  =>  $data['binID'][$i],
+                        'original_total_pigs' => $pigs->number_of_pigs
+                      );
 
               DB::table("feeds_movement_groups_bins")
                 ->where('unique_id',$group_uid->unique_id)
@@ -2394,8 +2402,7 @@ class APIController extends Controller
 
             }
 
-            // save the logs of original total number of pigs
-            $dtl[] = ['death_unique_id' => $u_id];
+
 
           }
 
@@ -2434,7 +2441,7 @@ class APIController extends Controller
     }
   }
 
-  
+
 
   /**
    * error message
