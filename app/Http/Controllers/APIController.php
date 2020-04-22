@@ -2334,6 +2334,7 @@ class APIController extends Controller
           $data = $request->all();
           $home_crtl = new HomeController;
           $u_id = $home_crtl->generator();
+          $dtl = array();
 
           for($i=0; $i<count($data['deathNumber']); $i++){
             $dt[] = array(
@@ -2353,6 +2354,7 @@ class APIController extends Controller
                             ->first();
 
 
+
             // deduct the death on rooms or bins, after deduction, update the cache
             if($request->has("roomID")){
 
@@ -2361,6 +2363,9 @@ class APIController extends Controller
                         ->where('room_id',$data['roomID'][$i])
                         ->select('number_of_pigs')
                         ->first();
+
+              // save the logs of original total number of pigs
+              $dtl[] = ['original_total_pigs' => $pigs->number_of_pigs];
 
               DB::table("feeds_movement_groups_bins")
                 ->where('unique_id',$group_uid->unique_id)
@@ -2377,6 +2382,9 @@ class APIController extends Controller
                         ->select('number_of_pigs')
                         ->first();
 
+              // save the logs of original total number of pigs
+              $dtl[] = ['original_total_pigs' => $pigs->number_of_pigs];
+
               DB::table("feeds_movement_groups_bins")
                 ->where('unique_id',$group_uid->unique_id)
                 ->where('bin_id',$data['binID'][$i])
@@ -2386,9 +2394,12 @@ class APIController extends Controller
 
             }
 
+            // save the logs of original total number of pigs
+            $dtl[] = ['death_unique_id' => $u_id];
 
           }
 
+          DB::table("feeds_death_tracker_logs")->insert($dtl);
           DB::table("feeds_death_tracker")->insert($dt);
 
           unset($home_crtl);
@@ -2422,6 +2433,8 @@ class APIController extends Controller
         return array("err" => "Something went wrong");
     }
   }
+
+  
 
   /**
    * error message
