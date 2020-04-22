@@ -2364,21 +2364,22 @@ class APIController extends Controller
                         ->select('number_of_pigs')
                         ->first();
 
+              // save the logs of original total number of pigs
+              $dtl[] = array(
+                        'death_unique_id' => $u_id,
+                        'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                        'user_id' =>  $data->input('userID'),
+                        'room_id' =>  $data['roomID'][$i],
+                        'original_total_pigs' => $pigs->number_of_pigs,
+                        'total_pigs'  =>  $pigs->number_of_pigs - $data['deathNumber'][$i]],
+                        'action'  =>  "add death record"
+                      );
+
               DB::table("feeds_movement_groups_bins")
                 ->where('unique_id',$group_uid->unique_id)
                 ->where('room_id',$data['roomID'][$i])
                 ->update(['number_of_pigs'=>$pigs->number_of_pigs - $data['deathNumber'][$i]]);
 
-                // save the logs of original total number of pigs
-                $dtl[] = array(
-                          'death_unique_id' => $u_id,
-                          'date_time_logs'  =>  date("Y-m-d H:i:s"),
-                          'user_id' =>  $data->input('userID'),
-                          'room_id' =>  $data['roomID'][$i],
-                          'original_total_pigs' => $pigs->number_of_pigs,
-                          'total_pigs'  =>  $pigs->number_of_pigs - $data['deathNumber'][$i]],
-                          'action'  =>  "add death record"
-                        );
 
                 $home_crtl->clearBinsCache($data['roomID'][$i]);
 
