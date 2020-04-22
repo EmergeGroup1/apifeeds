@@ -2367,6 +2367,8 @@ class APIController extends Controller
               // save the logs of original total number of pigs
               $dtl[] = array(
                         'death_unique_id' => $u_id,
+                        'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                        'user_id' =>  $data->input('userID'),
                         'room_id' =>  $data['roomID'][$i],
                         'original_total_pigs' => $pigs->number_of_pigs
                       );
@@ -2389,6 +2391,8 @@ class APIController extends Controller
               // save the logs of original total number of pigs
               $dtl[] = array(
                         'death_unique_id' => $u_id,
+                        'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                        'user_id' =>  $data->input('userID'),
                         'bin_id'  =>  $data['binID'][$i],
                         'original_total_pigs' => $pigs->number_of_pigs
                       );
