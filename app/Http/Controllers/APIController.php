@@ -2331,7 +2331,7 @@ class APIController extends Controller
                                   ->where('feeds_death_tracker.unique_id',$dt[$i]->unique_id)
                                   ->get();
 
-              for($y=0; $y<count(); $y++){
+              for($y=0; $y<count($dt[$i]->bins_rooms); $y++){
 
                 $dt[$i]->bins_rooms[$y]->room_number = "";
 
