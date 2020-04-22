@@ -2357,6 +2357,12 @@ class APIController extends Controller
 
               }
 
+            $dt[$i]->type = "farrowing";
+
+            if($dt[$i]->bin_id != 0){
+              $dt[$i]->type = "notfarrowing";
+            }
+
           }
 
           return $dt;
