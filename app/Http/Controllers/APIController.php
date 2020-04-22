@@ -2327,7 +2327,7 @@ class APIController extends Controller
 
           for($i=0; $i<count($dt); $dt++){
             $dt[$i]['bins_rooms'] = DB::table("feeds_death_tracker")
-                                      ->where('unique_id',$dt[$i]->uniqueID)
+                                      ->where('unique_id',$dt[$i]->unique_id)
                                       ->get();
           }
 
