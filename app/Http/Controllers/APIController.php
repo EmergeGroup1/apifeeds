@@ -2348,7 +2348,7 @@ class APIController extends Controller
             );
 
             $group_uid = DB::table("feeds_movement_groups")
-                            ->where("group_id",$dt['group_id'])
+                            ->where("group_id",$request->input('groupID'))
                             ->select("unique_id")
                             ->first();
 
