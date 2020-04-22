@@ -2368,7 +2368,7 @@ class APIController extends Controller
               $dtl[] = array(
                         'death_unique_id' => $u_id,
                         'date_time_logs'  =>  date("Y-m-d H:i:s"),
-                        'user_id' =>  $data->input('userID'),
+                        'user_id' =>  $request->input('userID'),
                         'room_id' =>  $data['roomID'][$i],
                         'original_total_pigs' => $pigs->number_of_pigs,
                         'total_pigs'  =>  $pigs->number_of_pigs - $data['deathNumber'][$i],
@@ -2395,7 +2395,7 @@ class APIController extends Controller
               $dtl[] = array(
                         'death_unique_id' => $u_id,
                         'date_time_logs'  =>  date("Y-m-d H:i:s"),
-                        'user_id' =>  $data->input('userID'),
+                        'user_id' =>  $request->input('userID'),
                         'bin_id'  =>  $data['binID'][$i],
                         'original_total_pigs' => $pigs->number_of_pigs,
                         'total_pigs'  =>  $pigs->number_of_pigs - $data['deathNumber'][$i],
