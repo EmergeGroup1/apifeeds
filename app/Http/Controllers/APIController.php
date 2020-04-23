@@ -2361,7 +2361,9 @@ class APIController extends Controller
 
             $dt[$i]->death_logs = DB::table("feeds_death_tracker_logs")
                                   ->where('death_unique_id',$dt[$i]->unique_id)
+                                  ->select('date_time_logs', 'sum(total_pigs) as total_pigs')
                                   ->get();
+
             for($z=0; $z<count($dt[$i]->death_logs); $z++){
               $dt[$i]->death_logs[$z]->datereadable = date("H:i a M-d-Y", strtotime($dt[$i]->death_logs[$z]->date_time_logs));
             }
