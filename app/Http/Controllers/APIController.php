@@ -2363,7 +2363,7 @@ class APIController extends Controller
                                   ->where('death_unique_id',$dt[$i]->unique_id)
                                   ->get();
             for($z=0; $z<count($dt[$i]->death_logs); $z++){
-              $dt[$i]->death_logs[$z]->datereadable = date("M-d-YY H:i a", strtotime($dt[$i]->death_logs[$z]->date_time_logs));
+              $dt[$i]->death_logs[$z]->datereadable = date("M-d-Y H:i a", strtotime($dt[$i]->death_logs[$z]->date_time_logs));
             }
 
             if($dt[$i]->bin_id != 0){
