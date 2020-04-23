@@ -2359,7 +2359,7 @@ class APIController extends Controller
 
             $dt[$i]->type = "farrowing";
 
-            $dt[$i]->bins_logs = DB::table("feeds_death_tracker_logs")
+            $dt[$i]->death_logs = DB::table("feeds_death_tracker_logs")
                                   ->where('death_unique_id',$dt[$i]->unique_id)
                                   ->get();
 
