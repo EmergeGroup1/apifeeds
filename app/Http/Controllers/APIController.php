@@ -2486,7 +2486,7 @@ class APIController extends Controller
                         ->where('unique_id',$data['uid'])
                         ->delete();
                   DB::table("feeds_death_tracker_logs")
-                        ->where('unique_id',$data['uid'])
+                        ->where('death_unique_id',$data['uid'])
                         ->delete();
 
           return $data;
