@@ -2419,7 +2419,7 @@ class APIController extends Controller
                         'user_id' =>  $request->input('userID'),
                         'room_id' =>  $data['roomID'][$i],
                         'original_total_pigs' => $pigs->number_of_pigs,
-                        'total_pigs'  =>  $pigs->number_of_pigs - $data['deathNumber'][$i],
+                        'total_pigs'  =>  $data['deathNumber'][$i],
                         'action'  =>  "add death record"
                       );
 
@@ -2446,7 +2446,7 @@ class APIController extends Controller
                         'user_id' =>  $request->input('userID'),
                         'bin_id'  =>  $data['binID'][$i],
                         'original_total_pigs' => $pigs->number_of_pigs,
-                        'total_pigs'  =>  $pigs->number_of_pigs - $data['deathNumber'][$i],
+                        'total_pigs'  => $data['deathNumber'][$i],
                         'action'  =>  "add death record"
                       );
 
