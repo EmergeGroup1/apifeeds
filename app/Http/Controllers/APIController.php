@@ -2478,6 +2478,10 @@ class APIController extends Controller
         // update death
         case "dtUpdate":
 
+          $data = $request->all();
+          
+          return $data;
+
         break;
 
         // delete death
