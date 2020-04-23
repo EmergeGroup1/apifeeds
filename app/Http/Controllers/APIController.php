@@ -2362,6 +2362,9 @@ class APIController extends Controller
             $dt[$i]->death_logs = DB::table("feeds_death_tracker_logs")
                                   ->where('death_unique_id',$dt[$i]->unique_id)
                                   ->get();
+            for($z=0; $z<count($dt[$i]->death_logs); $z++){
+              $dt[$i]->death_logs[$z]->datereadable = date("Y-m-d H:i a", strtotime)($dt[$i]->death_logs[$z]->date_time_logs));
+            }
 
             if($dt[$i]->bin_id != 0){
               $dt[$i]->type = "notfarrowing";
