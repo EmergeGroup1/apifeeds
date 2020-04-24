@@ -2404,64 +2404,30 @@ class APIController extends Controller
                             ->select("unique_id")
                             ->first();
 
+            $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,
+                                              $data['binID'][$i],
+                                              $data['roomID'][$i]);
 
+            // save the logs of original total number of pigs
+            $dtl[] = array(
+                      'death_unique_id' => $u_id,
+                      'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                      'user_id' =>  $request->input('userID'),
+                      'bin_id'  =>  $data['binID'][$i],
+                      'room_id' =>  $data['roomID'][$i],
+                      'original_total_pigs' => $pigs->number_of_pigs,
+                      'total_pigs'  => $data['deathNumber'][$i],
+                      'action'  =>  "add death record"
+                    );
 
             // deduct the death on rooms or bins, after deduction, update the cache
-            if($request->has("roomID")){
+            $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'][$i];
+            $this->updateBinsRooms($group_uid->unique_id,
+                                   $data['binID'][$i],
+                                   $data['roomID'][$i],
+                                   $num_of_pigs);
 
-              $pigs = DB::table("feeds_movement_groups_bins")
-                        ->where('unique_id',$group_uid->unique_id)
-                        ->where('room_id',$data['roomID'][$i])
-                        ->select('number_of_pigs')
-                        ->first();
-
-              // save the logs of original total number of pigs
-              $dtl[] = array(
-                        'death_unique_id' => $u_id,
-                        'date_time_logs'  =>  date("Y-m-d H:i:s"),
-                        'user_id' =>  $request->input('userID'),
-                        'room_id' =>  $data['roomID'][$i],
-                        'original_total_pigs' => $pigs->number_of_pigs,
-                        'total_pigs'  =>  $data['deathNumber'][$i],
-                        'action'  =>  "add death record"
-                      );
-
-              DB::table("feeds_movement_groups_bins")
-                ->where('unique_id',$group_uid->unique_id)
-                ->where('room_id',$data['roomID'][$i])
-                ->update(['number_of_pigs'=>$pigs->number_of_pigs - $data['deathNumber'][$i]]);
-
-
-                $home_crtl->clearBinsCache($data['roomID'][$i]);
-
-            } else {
-
-              $pigs = DB::table("feeds_movement_groups_bins")
-                        ->where('unique_id',$group_uid->unique_id)
-                        ->where('bin_id',$data['binID'][$i])
-                        ->select('number_of_pigs')
-                        ->first();
-
-              // save the logs of original total number of pigs
-              $dtl[] = array(
-                        'death_unique_id' => $u_id,
-                        'date_time_logs'  =>  date("Y-m-d H:i:s"),
-                        'user_id' =>  $request->input('userID'),
-                        'bin_id'  =>  $data['binID'][$i],
-                        'original_total_pigs' => $pigs->number_of_pigs,
-                        'total_pigs'  => $data['deathNumber'][$i],
-                        'action'  =>  "add death record"
-                      );
-
-              DB::table("feeds_movement_groups_bins")
-                ->where('unique_id',$group_uid->unique_id)
-                ->where('bin_id',$data['binID'][$i])
-                ->update(['number_of_pigs'=>$pigs->number_of_pigs - $data['deathNumber'][$i]]);
-
-                $home_crtl->clearBinsCache($data['binID'][$i]);
-
-            }
-
+            $home_crtl->clearBinsCache($data['binID'][$i]);
 
 
           }
@@ -2479,7 +2445,56 @@ class APIController extends Controller
         case "dtUpdate":
 
           $data = $request->all();
-          
+          $home_crtl = new HomeController;
+          $orig_total_pigs = 0;
+          $unique_id = $data['uID'][0];
+
+          for($i=0; $i<count($data['deathID']); $i++) {
+
+              $death_id = $data['deathID'][$i];
+              $death_number = $data['numberOfPigs'][$i];
+              $reason = $data['reason'][$i];
+              $bin_id = $data['binID'][$i];
+              $room_id = $data['roomID'][$i];
+
+              // update the death tracker
+              $update_data = array(
+                    'death_number'  =>  $death_number,
+                    'reason'  =>  $reason
+              );
+
+              DB::table("feeds_death_tracker")
+                ->where('death_id',$death_id)
+                -update($update_data);
+
+
+              $pigs = $this->groupRoomsBinsPigs($unique_id,$bin_id,$room_id);
+
+              // insert the new data to the death tracker logs
+              $death_logs[] = array(
+                'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                'user_id' =>  $data['user_id'],
+                'death_unique_id'  => $unique_id,
+   	            'bin_id'  =>  $bin_id,
+                'room_id' =>   $room_id,
+  	            'original_total_pigs' => $pigs->number_of_pigs,
+                'total_pigs' => $death_number,
+                'action' => "update death record"
+              );
+
+              $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'][$i];
+              $this->updateBinsRooms($group_uid->unique_id,
+                                     $data['binID'][$i],
+                                     $data['roomID'][$i],
+                                     $num_of_pigs);
+
+              $home_crtl->clearBinsCache($data['binID'][$i]);
+          }
+
+          DB::table("feeds_death_tracker_logs")->insert($death_logs);
+
+          unset($home_crtl);
+
           return $data;
 
         break;
@@ -2510,6 +2525,8 @@ class APIController extends Controller
 
 
 
+
+
   /**
    * error message
    */
@@ -2520,6 +2537,71 @@ class APIController extends Controller
       "msg" =>  "Something went wrong"
     );
   }
+
+
+  /**
+   * error message
+   */
+  private function deathTrackerData($death_id)
+  {
+      $dt = DB::table("feeds_death_tracker")
+                ->where('death_id',$death_id)
+                ->get();
+
+      return $dt;
+  }
+
+  /**
+   * error message
+   */
+  private function deathTrackerlosgData($unique_id)
+  {
+      $dt = DB::table("feeds_death_tracker")
+                ->where('death_id',$death_id)
+                ->get();
+
+      return $dt;
+  }
+
+  /**
+  * Get the number of pigs for rooms or bins in animal groups
+  */
+  private function groupRoomsBinsPigs($unique_id,$bin_id,$room_id)
+  {
+
+    $pigs = DB::table("feeds_movement_groups_bins");
+    $pigs = $pigs->where('unique_id',$unique_id);
+    if($bin_id != 0){
+      $pigs = $pigs->where('bin_id',$bin_id);
+    } else {
+      $pigs = $pigs->where('room_id',$room_id);
+    }
+    $pigs = $pigs->select('number_of_pigs');
+    $pigs = $pigs->first();
+
+    return $pigs;
+
+  }
+
+
+  /*
+  * Update the animal group number of pigs
+  */
+  private function updateBinsRooms($unique_id,$bin_id,$room_id,$num_of_pigs)
+  {
+
+    $update = DB::table("feeds_movement_groups_bins");
+    $update = $update->where('unique_id',$unique_id);
+    if($bin_id != 0){
+      $update = $update->where('bin_id',$bin_id);
+    } else {
+      $update = $update->where('room_id',$room_id);
+    }
+    $update = $update->update(['number_of_pigs'=>$num_of_pigs]);
+
+    return $update;
+  }
+
 
   /*
   	*	get the delivery time of the farm
