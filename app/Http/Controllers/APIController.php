@@ -2550,7 +2550,7 @@ class APIController extends Controller
   private function deathTrackerData($unique_id)
   {
       $dt = DB::table("feeds_death_tracker")
-                ->where('death_id',$death_id)
+                ->where('unique_id',$unique_id)
                 ->first();
 
       return $dt;
