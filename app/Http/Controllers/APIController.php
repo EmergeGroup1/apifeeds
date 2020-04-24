@@ -2427,7 +2427,7 @@ class APIController extends Controller
                                    $dt[$i]['room_id'],
                                    $num_of_pigs);
 
-            $home_crtl->clearBinsCache($data['binID'][$i]);
+            $home_crtl->clearBinsCache($dt[$i]['bin_id']);
 
 
           }
