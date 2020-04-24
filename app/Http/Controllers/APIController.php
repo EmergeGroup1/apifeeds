@@ -2445,6 +2445,8 @@ class APIController extends Controller
         case "dtUpdate":
 
           $data = $request->all();
+          return $data;
+          
           $home_crtl = new HomeController;
           $orig_total_pigs = 0;
           $unique_id = $data['uID'][0];
@@ -2457,6 +2459,11 @@ class APIController extends Controller
               $bin_id = $data['binID'][$i];
               $room_id = $data['roomID'][$i];
 
+
+
+
+              $pigs = $this->groupRoomsBinsPigs($unique_id,$bin_id,$room_id);
+
               // update the death tracker
               DB::table("feeds_death_tracker")
                 ->where('death_id',$death_id)
@@ -2464,9 +2471,6 @@ class APIController extends Controller
                       'death_number'  =>  $death_number,
                       'reason'  =>  $reason
                 ]);
-
-
-              $pigs = $this->groupRoomsBinsPigs($unique_id,$bin_id,$room_id);
 
               // insert the new data to the death tracker logs
               $death_logs[] = array(
