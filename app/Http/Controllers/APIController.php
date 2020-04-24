@@ -2458,14 +2458,12 @@ class APIController extends Controller
               $room_id = $data['roomID'][$i];
 
               // update the death tracker
-              $update_data = array(
-                    'death_number'  =>  $death_number,
-                    'reason'  =>  $reason
-              );
-
               DB::table("feeds_death_tracker")
                 ->where('death_id',$death_id)
-                -update($update_data);
+                ->update([
+                      'death_number'  =>  $death_number,
+                      'reason'  =>  $reason
+                ]);
 
 
               $pigs = $this->groupRoomsBinsPigs($unique_id,$bin_id,$room_id);
