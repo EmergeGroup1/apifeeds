@@ -2514,7 +2514,7 @@ class APIController extends Controller
                         ->delete();
                   DB::table("feeds_death_tracker_logs")
                         ->where('death_unique_id',$data['uid'])
-                        ->delete();
+                        ->update(["action"=>"deleted death record"]);
 
           return $data;
 
