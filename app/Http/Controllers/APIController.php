@@ -2465,7 +2465,7 @@ class APIController extends Controller
                               ->select("unique_id")
                               ->first();
 
-              $pigs = $this->groupRoomsBinsPigs($group_uid,$bin_id,$room_id);
+              $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,$bin_id,$room_id);
 
               // update the death tracker
               DB::table("feeds_death_tracker")
