@@ -2445,11 +2445,12 @@ class APIController extends Controller
         case "dtUpdate":
 
           $data = $request->all();
-          return $data;
-          
+
           $home_crtl = new HomeController;
           $orig_total_pigs = 0;
           $unique_id = $data['uID'][0];
+
+          $group_id = $this->deathTrackerData($unique_id);
 
           for($i=0; $i<count($data['deathID']); $i++) {
 
@@ -2459,10 +2460,12 @@ class APIController extends Controller
               $bin_id = $data['binID'][$i];
               $room_id = $data['roomID'][$i];
 
+              $group_uid = DB::table("feeds_movement_groups")
+                              ->where("group_id",$group_id->group_id)
+                              ->select("unique_id")
+                              ->first();
 
-
-
-              $pigs = $this->groupRoomsBinsPigs($unique_id,$bin_id,$room_id);
+              $pigs = $this->groupRoomsBinsPigs($group_uid,$bin_id,$room_id);
 
               // update the death tracker
               DB::table("feeds_death_tracker")
@@ -2544,11 +2547,11 @@ class APIController extends Controller
   /**
    * error message
    */
-  private function deathTrackerData($death_id)
+  private function deathTrackerData($unique_id)
   {
       $dt = DB::table("feeds_death_tracker")
                 ->where('death_id',$death_id)
-                ->get();
+                ->first();
 
       return $dt;
   }
