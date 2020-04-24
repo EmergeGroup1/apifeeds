@@ -2487,7 +2487,7 @@ class APIController extends Controller
                 'action' => "update death record"
               );
 
-              $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'][$i];
+              $num_of_pigs = $pigs->number_of_pigs - $death_number;
               $this->updateBinsRooms($group_uid->unique_id,
                                      $data['binID'][$i],
                                      $data['roomID'][$i],
