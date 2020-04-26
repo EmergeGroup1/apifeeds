@@ -2485,7 +2485,7 @@ class APIController extends Controller
               $this->updateBinsRooms($group_uid->unique_id,
                                      $data['binID'][$i],
                                      $data['roomID'][$i],
-                                     $num_of_pigs);
+                                     $death_number);
 
               $home_crtl->clearBinsCache($data['binID'][$i]);
           }
