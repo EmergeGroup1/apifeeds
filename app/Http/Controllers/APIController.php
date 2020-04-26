@@ -2399,10 +2399,7 @@ class APIController extends Controller
               'unique_id'   =>  $u_id
             );
 
-            $group_uid = DB::table("feeds_movement_groups")
-                            ->where("group_id",$request->input('groupID'))
-                            ->select("unique_id")
-                            ->first();
+            $group_uid = $this->animalGroupsData($request->input('groupID'));
 
             $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,
                                               $dt[$i]['bin_id'],
@@ -2460,10 +2457,7 @@ class APIController extends Controller
               $bin_id = $data['binID'][$i];
               $room_id = $data['roomID'][$i];
 
-              $group_uid = DB::table("feeds_movement_groups")
-                              ->where("group_id",$group_id->group_id)
-                              ->select("unique_id")
-                              ->first();
+              $group_uid = $this->animalGroupsData($group_id->group_id);
 
               $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,$bin_id,$room_id);
 
@@ -2509,12 +2503,16 @@ class APIController extends Controller
 
           $data = $request->all();
 
-                  DB::table("feeds_death_tracker")
-                        ->where('unique_id',$data['uid'])
-                        ->delete();
-                  DB::table("feeds_death_tracker_logs")
-                        ->where('death_unique_id',$data['uid'])
-                        ->update(["action"=>"deleted","user_id"=>$data['userID']]);
+          // bring back the dead pigs
+          $death = $this->deathTrackerBringBackData($data['uid']);
+
+          DB::table("feeds_death_tracker")
+                ->where('unique_id',$data['uid'])
+                ->delete();
+                
+          DB::table("feeds_death_tracker_logs")
+                ->where('death_unique_id',$data['uid'])
+                ->update(["action"=>"deleted","user_id"=>$data['userID']]);
 
           return $data;
 
@@ -2545,7 +2543,7 @@ class APIController extends Controller
 
 
   /**
-   * error message
+   * death tracker data.
    */
   private function deathTrackerData($unique_id)
   {
@@ -2557,16 +2555,44 @@ class APIController extends Controller
   }
 
   /**
-   * error message
+   * death tracker logs data.
    */
-  private function deathTrackerlosgData($unique_id)
+  private function deathTrackerBringBackData($unique_id)
   {
       $dt = DB::table("feeds_death_tracker")
-                ->where('death_id',$death_id)
+                ->where('unique_id',$unique_id)
                 ->get();
+
+      for($i=0; $i<count($dt); $i++){
+
+        $ag_data = $this->animalGroupsData($dt[$i]->group_id);
+
+        $back_pigs = $ag_data->number_of_pigs + $dt[$i]->death_number;
+
+        $this->updateBinsRooms($ag_data->unique_id,
+                               $dt[$i]->bin_id,
+                               $dt[$i]->room_id,
+                               $back_pigs);
+
+      }
 
       return $dt;
   }
+
+  /**
+  * animal group
+  */
+  private function animalGroupsData($group_id)
+  {
+
+    $group_data = DB::table("feeds_movement_groups")
+                    ->where("group_id",$group_id)
+                    ->first();
+
+    return $group_data;
+
+  }
+
 
   /**
   * Get the number of pigs for rooms or bins in animal groups
