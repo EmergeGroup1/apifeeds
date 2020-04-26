@@ -2368,8 +2368,7 @@ class APIController extends Controller
             $dt[$i]->death_logs = DB::table("feeds_death_tracker_logs")
                                   ->where('death_unique_id',$dt[$i]->unique_id)
                                   ->where('action','!=','deleted')
-                                  ->select('*', DB::raw('sum(total_pigs) as total_pigs'),DB::raw('sum(original_total_pigs) as original_total_pigs'))
-                                  ->groupBy('death_unique_id')
+                                  ->orderBy('log_id','desc')
                                   ->first();
 
             for($z=0; $z<count($dt[$i]->death_logs); $z++){
