@@ -2359,8 +2359,15 @@ class APIController extends Controller
 
             $dt[$i]->type = "farrowing";
 
+            // $dt[$i]->death_logs = DB::table("feeds_death_tracker_logs")
+            //                       ->where('death_unique_id',$dt[$i]->unique_id)
+            //                       ->select('*', DB::raw('sum(total_pigs) as total_pigs'),DB::raw('sum(original_total_pigs) as original_total_pigs'))
+            //                       ->groupBy('death_unique_id')
+            //                       ->get();
+
             $dt[$i]->death_logs = DB::table("feeds_death_tracker_logs")
                                   ->where('death_unique_id',$dt[$i]->unique_id)
+                                  ->where('action','!=','deleted')
                                   ->select('*', DB::raw('sum(total_pigs) as total_pigs'),DB::raw('sum(original_total_pigs) as original_total_pigs'))
                                   ->groupBy('death_unique_id')
                                   ->get();
