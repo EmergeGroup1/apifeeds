@@ -2509,7 +2509,7 @@ class APIController extends Controller
           DB::table("feeds_death_tracker")
                 ->where('unique_id',$data['uid'])
                 ->delete();
-                
+
           DB::table("feeds_death_tracker_logs")
                 ->where('death_unique_id',$data['uid'])
                 ->update(["action"=>"deleted","user_id"=>$data['userID']]);
@@ -2573,6 +2573,8 @@ class APIController extends Controller
                                $dt[$i]->bin_id,
                                $dt[$i]->room_id,
                                $back_pigs);
+                               
+        $home_crtl->clearBinsCache($dt[$i]->bin_id);
 
       }
 
