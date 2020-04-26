@@ -2563,6 +2563,7 @@ class APIController extends Controller
                 ->where('unique_id',$unique_id)
                 ->get();
 
+      $home_crtl = new HomeController;
       for($i=0; $i<count($dt); $i++){
 
         $ag_data = $this->animalGroupsData($dt[$i]->group_id);
@@ -2580,6 +2581,7 @@ class APIController extends Controller
         $home_crtl->clearBinsCache($dt[$i]->bin_id);
 
       }
+      unset($home_crtl);
 
       return $dt;
   }
