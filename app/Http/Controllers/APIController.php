@@ -2566,14 +2566,15 @@ class APIController extends Controller
       for($i=0; $i<count($dt); $i++){
 
         $ag_data = $this->animalGroupsData($dt[$i]->group_id);
+        $bins_rooms_data = $this->groupRoomsBinsPigs($ag_data->unique_id);
 
-        $back_pigs = $ag_data->number_of_pigs + $dt[$i]->death_number;
+        $back_pigs = $bins_rooms_data->number_of_pigs + $dt[$i]->death_number;
 
         $this->updateBinsRooms($ag_data->unique_id,
                                $dt[$i]->bin_id,
                                $dt[$i]->room_id,
                                $back_pigs);
-                               
+
         $home_crtl->clearBinsCache($dt[$i]->bin_id);
 
       }
