@@ -2447,8 +2447,6 @@ class APIController extends Controller
           $orig_total_pigs = 0;
           $unique_id = $data['uID'][0];
 
-          $group_id = $this->deathTrackerData($unique_id);
-
           for($i=0; $i<count($data['deathID']); $i++) {
 
               $death_id = $data['deathID'][$i];
@@ -2457,9 +2455,18 @@ class APIController extends Controller
               $bin_id = $data['binID'][$i];
               $room_id = $data['roomID'][$i];
 
-              $group_uid = $this->animalGroupsData($group_id->group_id);
+              $dt_data = $this->deathTrackerData($death_id);
+
+              $group_uid = $this->animalGroupsData($dt_data->group_id);
 
               $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,$bin_id,$room_id);
+
+              // if previously entered death is greater
+              //if($death_number > $dt_data->death_number){
+              $death_number = ($dt_data->death_number + $pigs->number_of_pigs) - $death_number;
+              // } else {
+              //   $death_number = $pigs->number_of_pigs - $death_number;
+              // }
 
               // update the death tracker
               DB::table("feeds_death_tracker")
@@ -2481,7 +2488,7 @@ class APIController extends Controller
                 'action' => "update death record"
               );
 
-              $num_of_pigs = $pigs->number_of_pigs - $death_number;
+              $num_of_pigs = $death_number;//$pigs->number_of_pigs - $death_number;
               $this->updateBinsRooms($group_uid->unique_id,
                                      $data['binID'][$i],
                                      $data['roomID'][$i],
@@ -2545,10 +2552,10 @@ class APIController extends Controller
   /**
    * death tracker data.
    */
-  private function deathTrackerData($unique_id)
+  private function deathTrackerData($death_id)
   {
       $dt = DB::table("feeds_death_tracker")
-                ->where('unique_id',$unique_id)
+                ->where('death_id',$death_id)
                 ->first();
 
       return $dt;
