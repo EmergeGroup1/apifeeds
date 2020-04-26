@@ -2369,7 +2369,7 @@ class APIController extends Controller
                                   ->where('death_unique_id',$dt[$i]->unique_id)
                                   ->where('action','!=','deleted')
                                   ->orderBy('log_id','desc')
-                                  ->first();
+                                  ->get();
 
             for($z=0; $z<count($dt[$i]->death_logs); $z++){
               $dt[$i]->death_logs[$z]->datereadable = date("H:i a M-d-Y", strtotime($dt[$i]->death_logs[$z]->date_time_logs));
