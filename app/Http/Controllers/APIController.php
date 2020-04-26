@@ -2461,13 +2461,6 @@ class APIController extends Controller
 
               $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,$bin_id,$room_id);
 
-              // if previously entered death is greater
-              //if($death_number > $dt_data->death_number){
-              $death_number = ($dt_data->death_number + $pigs->number_of_pigs) - $death_number;
-              // } else {
-              //   $death_number = $pigs->number_of_pigs - $death_number;
-              // }
-
               // update the death tracker
               DB::table("feeds_death_tracker")
                 ->where('death_id',$death_id)
@@ -2488,7 +2481,7 @@ class APIController extends Controller
                 'action' => "update death record"
               );
 
-              $num_of_pigs = $death_number;//$pigs->number_of_pigs - $death_number;
+              $death_number = ($dt_data->death_number + $pigs->number_of_pigs) - $death_number;
               $this->updateBinsRooms($group_uid->unique_id,
                                      $data['binID'][$i],
                                      $data['roomID'][$i],
