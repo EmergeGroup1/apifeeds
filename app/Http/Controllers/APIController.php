@@ -2370,7 +2370,7 @@ class APIController extends Controller
                                   ->where('action','!=','deleted')
                                   ->select('*', DB::raw('sum(total_pigs) as total_pigs'),DB::raw('sum(original_total_pigs) as original_total_pigs'))
                                   ->groupBy('death_unique_id')
-                                  ->get();
+                                  ->first();
 
             for($z=0; $z<count($dt[$i]->death_logs); $z++){
               $dt[$i]->death_logs[$z]->datereadable = date("H:i a M-d-Y", strtotime($dt[$i]->death_logs[$z]->date_time_logs));
