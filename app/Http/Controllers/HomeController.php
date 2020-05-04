@@ -3094,7 +3094,7 @@ class HomeController extends Controller
 	/*
 	*	farmTypes()
 	*/
-	private function farmTypes($farm_id)
+	public function farmTypes($farm_id)
 	{
 		$type = Farms::where('id',$farm_id)->select('farm_type')->first();
 
