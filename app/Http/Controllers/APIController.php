@@ -3212,6 +3212,12 @@ class APIController extends Controller
 
       $empty_date = $home_controller->emptyDateAPI($v->date,$v->bin_id,$bin_history->num_of_pigs,$bin_history->budgeted_amount,$v->amount);
 
+      $farmType = $home_controller->farmTypes($v->farm_id);
+      $bh_pigs = $bin_history->num_of_pigs;
+      if($farmType == "farrowing"){
+        $bh_pigs = $bin_history->num_of_sow_pigs;
+      }
+
       $batch[] = array(
         "id"               => $v->id,
         "farm_id"          => $v->farm_id,
@@ -3227,7 +3233,7 @@ class APIController extends Controller
         "compartment"      => $v->compartment,
         "bh_ft_text"       => $this->feedName($bin_history->feed_type),
         "bh_cons"          => $bin_history->budgeted_amount,
-        "bh_num_of_pigs"   => $bin_history->num_of_pigs,
+        "bh_num_of_pigs"   => $bh_pigs,
         "bh_empty_date"    => $empty_date,
       );
     }
