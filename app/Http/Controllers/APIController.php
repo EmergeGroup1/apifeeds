@@ -3210,8 +3210,6 @@ class APIController extends Controller
                         ->orderBy('history_id','desc')
                         ->first();
 
-      $empty_date = $home_controller->emptyDateAPI($v->date,$v->bin_id,$bin_history->num_of_pigs,$bin_history->budgeted_amount,$v->amount);
-
       $farmType = $home_controller->farmTypes($v->farm_id);
       $bh_pigs = $bin_history->num_of_pigs;
       if($farmType == "farrowing"){
@@ -3220,6 +3218,8 @@ class APIController extends Controller
                     ->first();
         $bh_pigs = $bh_bins->num_of_sow_pigs;
       }
+
+      $empty_date = $home_controller->emptyDateAPI($v->date,$v->bin_id,$bh_pigs,$bin_history->budgeted_amount,$v->amount);
 
       $batch[] = array(
         "id"               => $v->id,
@@ -3291,13 +3291,6 @@ class APIController extends Controller
       //$budgeted_amount
       $budgeted_amount = $home_controller->daysCounterbudgetedAmount($v->farm_id,$v->bin_id,$v->feed_type,date("Y-m-d H:i:s"));
 
-      $empty_date = $home_controller->emptyDateAPI($v->date,$v->bin_id,$bin_history->num_of_pigs,$budgeted_amount,$total_amount);
-
-      $total_amount = DB::table('feeds_batch')
-                          ->where('unique_id', $unique_id)
-                          ->where('bin_id', $v->bin_id)
-                          ->sum('amount');
-
       $farmType = $home_controller->farmTypes($v->farm_id);
       $bh_pigs = $bin_history->num_of_pigs;
       if($farmType == "farrowing"){
@@ -3306,6 +3299,15 @@ class APIController extends Controller
                     ->first();
         $bh_pigs = $bh_bins->num_of_sow_pigs;
       }
+
+      $empty_date = $home_controller->emptyDateAPI($v->date,$v->bin_id,$bh_pigs,$budgeted_amount,$total_amount);
+
+      $total_amount = DB::table('feeds_batch')
+                          ->where('unique_id', $unique_id)
+                          ->where('bin_id', $v->bin_id)
+                          ->sum('amount');
+
+
 
       $result[] = array(
         'bin_id'           => $v->bin_id,
