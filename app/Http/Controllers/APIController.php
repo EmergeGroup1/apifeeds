@@ -3218,7 +3218,7 @@ class APIController extends Controller
         $bh_bins = DB::table("feeds_bins")->select('num_of_sow_pigs')
                     ->where('bin_id',$v->bin_id)
                     ->first();
-        $bh_pigs = $bh_bins->num_of_sow_pigs;           
+        $bh_pigs = $bh_bins->num_of_sow_pigs;
       }
 
       $batch[] = array(
@@ -3298,6 +3298,15 @@ class APIController extends Controller
                           ->where('bin_id', $v->bin_id)
                           ->sum('amount');
 
+      $farmType = $home_controller->farmTypes($v->farm_id);
+      $bh_pigs = $bin_history->num_of_pigs;
+      if($farmType == "farrowing"){
+        $bh_bins = DB::table("feeds_bins")->select('num_of_sow_pigs')
+                    ->where('bin_id',$v->bin_id)
+                    ->first();
+        $bh_pigs = $bh_bins->num_of_sow_pigs;
+      }
+
       $result[] = array(
         'bin_id'           => $v->bin_id,
         'comp_min'         => $com_min,
@@ -3319,7 +3328,7 @@ class APIController extends Controller
         "compartment"      => $v->compartment,
         "bh_ft_text"       => $this->feedName($bin_history->feed_type),
         "bh_cons"          => $budgeted_amount,
-        "bh_num_of_pigs"   => $bin_history->num_of_pigs,
+        "bh_num_of_pigs"   => $bh_pigs,
         "bh_empty_date"    => $empty_date,
       );
     }
