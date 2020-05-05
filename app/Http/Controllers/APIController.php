@@ -3215,7 +3215,10 @@ class APIController extends Controller
       $farmType = $home_controller->farmTypes($v->farm_id);
       $bh_pigs = $bin_history->num_of_pigs;
       if($farmType == "farrowing"){
-        $bh_pigs = $bin_history->num_of_sow_pigs;
+        $bh_bins = DB::table("feeds_bins")->select('num_of_sow_pigs')
+                    ->where('bin_id',$v->bin_id)
+                    ->first();
+        $bh_pigs = $bh_bins->num_of_sow_pigs;           
       }
 
       $batch[] = array(
