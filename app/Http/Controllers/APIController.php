@@ -2523,6 +2523,49 @@ class APIController extends Controller
           return $data;
 
         break;
+
+        // read reason
+        case "dsRead":
+
+          $ds = DB::table("feeds_death_reason")->get();
+          return $ds;
+
+        break;
+
+        // add death reason
+        case "dsAdd":
+
+          $data = $request->all();
+          $reason = $data['reason'];
+
+          DB::table("feeds_death_reason")->insert(['reason'=>$reason]);
+
+          return $data;
+
+        break;
+
+        // update reason
+        case "dsUpdate":
+
+          $data = $request->all();
+          $id = $data['reason_id'];
+          $reason = $data['reason'];
+
+          return $data;
+
+        break;
+
+        // delete reason
+        case "dsDelete":
+
+          $data = $request->all();
+          $id = $data['reason_id'];
+          DB::table("feeds_death_reason")->where("reason_id",$id)->delete();
+
+          return $data;
+
+        break;
+
         /*
         * End of Death Tracker
         */
