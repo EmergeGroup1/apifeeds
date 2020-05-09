@@ -1669,7 +1669,8 @@ class APIController extends Controller
           return array(
             "err"     =>  0,
             "msg"     =>  "Successfully Get Animal Groups",
-            "am_list" =>  $am_lists
+            "am_list" =>  $am_lists,
+            "death_reasons" => $this->deathReasons()
           );
         } else {
           return array(
@@ -2614,7 +2615,13 @@ class APIController extends Controller
   }
 
 
-
+  /**
+   * error message
+   */
+  private function deathReasons()
+  {
+    return DB::table("feeds_death_resons")->get();
+  }
 
 
   /**
