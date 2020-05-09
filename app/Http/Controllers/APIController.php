@@ -2527,7 +2527,7 @@ class APIController extends Controller
         // read reason
         case "dsRead":
 
-          $ds = DB::table("feeds_death_reason")->get();
+          $ds = DB::table("feeds_death_reasons")->get();
           return $ds;
 
         break;
@@ -2538,7 +2538,7 @@ class APIController extends Controller
           $data = $request->all();
           $reason = $data['reason'];
 
-          DB::table("feeds_death_reason")->insert(['reason'=>$reason]);
+          DB::table("feeds_death_reasons")->insert(['reason'=>$reason]);
 
           return $data;
 
@@ -2560,7 +2560,7 @@ class APIController extends Controller
 
           $data = $request->all();
           $id = $data['reason_id'];
-          DB::table("feeds_death_reason")->where("reason_id",$id)->delete();
+          DB::table("feeds_death_reasons")->where("reason_id",$id)->delete();
 
           return $data;
 
