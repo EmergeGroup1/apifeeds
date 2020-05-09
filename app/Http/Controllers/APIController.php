@@ -2535,7 +2535,7 @@ class APIController extends Controller
             "data"    =>  $ds
           );
 
-          if($ds == NULL){
+          if($ds == ""){
             $result['msg'] = "empty";
           }
 
