@@ -2529,11 +2529,17 @@ class APIController extends Controller
 
           $ds = DB::table("feeds_death_reasons")->get();
 
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $ds
+          );
+
           if($ds == NULL){
-            return "empty";
+            $result['msg'] = "empty";
           }
-          
-          return $ds;
+
+          return $result;
 
         break;
 
