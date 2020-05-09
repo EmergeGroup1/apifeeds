@@ -2527,7 +2527,7 @@ class APIController extends Controller
         // read reason
         case "drRead":
 
-          $ds = DB::table("feeds_death_reasons")->get();
+          $ds = DB::table("feeds_death_reasons")->orderBy('reason_id','desc')->get();
 
           $result = array(
             "err"     =>  0,
