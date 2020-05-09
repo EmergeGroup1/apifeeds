@@ -2559,8 +2559,8 @@ class APIController extends Controller
         case "drUpdate":
 
           $data = $request->all();
-          $id = $data['reason_id'];
-          $reason = $data['reason'];
+          // $id = $data['reason_id'];
+          // $reason = $data['reason'];
 
           return $data;
 
