@@ -2528,6 +2528,11 @@ class APIController extends Controller
         case "dsRead":
 
           $ds = DB::table("feeds_death_reasons")->get();
+
+          if($ds == NULL){
+            return "empty";
+          }
+          
           return $ds;
 
         break;
