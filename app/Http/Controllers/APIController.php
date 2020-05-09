@@ -2559,8 +2559,12 @@ class APIController extends Controller
         case "drUpdate":
 
           $data = $request->all();
-          // $id = $data['reason_id'];
-          // $reason = $data['reason'];
+          $id = $data['reason_id'];
+          $reason = $data['reason'];
+
+          DB::table("feeds_death_reasons")
+          ->where('reason_id',$id)
+          ->update(['reason'=>$reason]);
 
           return $data;
 
