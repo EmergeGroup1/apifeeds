@@ -2549,6 +2549,17 @@ class APIController extends Controller
           $data = $request->all();
           $reason = $data['reason'];
 
+          $validation = Validator::make($data, [
+  						'reason' => 'required|min:4'
+  				]);
+
+          if($validation->fails()){
+  					return array(
+  						'err' => 1,
+  						'msg' => $validation->errors()->all()
+  					);
+  				}
+
           DB::table("feeds_death_reasons")->insert(['reason'=>$reason]);
 
           return $data;
