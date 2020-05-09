@@ -2573,6 +2573,18 @@ class APIController extends Controller
           $id = $data['reason_id'];
           $reason = $data['reason'];
 
+          $validation = Validator::make($data, [
+  						'reason' => 'required|min:4'
+  				]);
+
+          if($validation->fails()){
+  					return array(
+  						'err' => 1,
+  						'msg' => $validation->errors()->all()
+  					);
+  				}
+
+
           DB::table("feeds_death_reasons")
           ->where('reason_id',$id)
           ->update(['reason'=>$reason]);
