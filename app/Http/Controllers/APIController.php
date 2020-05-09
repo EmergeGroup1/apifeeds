@@ -2547,6 +2547,7 @@ class APIController extends Controller
         case "dsAdd":
 
           $data = $request->all();
+          return $data;
           $reason = $data['reason'];
 
           DB::table("feeds_death_reasons")->insert(['reason'=>$reason]);
