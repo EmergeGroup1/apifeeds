@@ -2620,7 +2620,7 @@ class APIController extends Controller
    */
   private function deathReasons()
   {
-    return DB::table("feeds_death_resons")->get();
+    return DB::table("feeds_death_reasons")->get();
   }
 
 
