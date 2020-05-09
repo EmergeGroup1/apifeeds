@@ -2525,7 +2525,7 @@ class APIController extends Controller
         break;
 
         // read reason
-        case "dsRead":
+        case "drRead":
 
           $ds = DB::table("feeds_death_reasons")->get();
 
@@ -2544,7 +2544,7 @@ class APIController extends Controller
         break;
 
         // add death reason
-        case "dsAdd":
+        case "drAdd":
 
           $data = $request->all();
           $reason = $data['reason'];
@@ -2556,7 +2556,7 @@ class APIController extends Controller
         break;
 
         // update reason
-        case "dsUpdate":
+        case "drUpdate":
 
           $data = $request->all();
           $id = $data['reason_id'];
