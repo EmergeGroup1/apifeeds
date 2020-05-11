@@ -1669,7 +1669,8 @@ class APIController extends Controller
           return array(
             "err"     =>  0,
             "msg"     =>  "Successfully Get Animal Groups",
-            "am_list" =>  $am_lists
+            "am_list" =>  $am_lists,
+            "death_reasons" => $this->deathReasons()
           );
         } else {
           return array(
@@ -2523,6 +2524,87 @@ class APIController extends Controller
           return $data;
 
         break;
+
+        // read reason
+        case "drRead":
+
+          $ds = DB::table("feeds_death_reasons")->orderBy('reason_id','desc')->get();
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $ds
+          );
+
+          if(empty($ds)){
+            $result['msg'] = "empty";
+          }
+
+          return $result;
+
+        break;
+
+        // add death reason
+        case "drAdd":
+
+          $data = $request->all();
+          $reason = $data['reason'];
+
+          $validation = Validator::make($data, [
+  						'reason' => 'required|min:4'
+  				]);
+
+          if($validation->fails()){
+  					return array(
+  						'err' => 1,
+  						'msg' => $validation->errors()->all()
+  					);
+  				}
+
+          DB::table("feeds_death_reasons")->insert(['reason'=>$reason]);
+
+          return $data;
+
+        break;
+
+        // update reason
+        case "drUpdate":
+
+          $data = $request->all();
+          $id = $data['reason_id'];
+          $reason = $data['reason'];
+
+          $validation = Validator::make($data, [
+  						'reason' => 'required|min:4'
+  				]);
+
+          if($validation->fails()){
+  					return array(
+  						'err' => 1,
+  						'msg' => $validation->errors()->all()
+  					);
+  				}
+
+
+          DB::table("feeds_death_reasons")
+          ->where('reason_id',$id)
+          ->update(['reason'=>$reason]);
+
+          return $data;
+
+        break;
+
+        // delete reason
+        case "dsDelete":
+
+          $data = $request->all();
+          $id = $data['reason_id'];
+          DB::table("feeds_death_reasons")->where("reason_id",$id)->delete();
+
+          return $data;
+
+        break;
+
         /*
         * End of Death Tracker
         */
@@ -2533,7 +2615,13 @@ class APIController extends Controller
   }
 
 
-
+  /**
+   * error message
+   */
+  private function deathReasons()
+  {
+    return DB::table("feeds_death_reasons")->orderBy('reason','asc')->get();
+  }
 
 
   /**
@@ -3210,7 +3298,16 @@ class APIController extends Controller
                         ->orderBy('history_id','desc')
                         ->first();
 
-      $empty_date = $home_controller->emptyDateAPI($v->date,$v->bin_id,$bin_history->num_of_pigs,$bin_history->budgeted_amount,$v->amount);
+      $farmType = $home_controller->farmTypes($v->farm_id);
+      $bh_pigs = $bin_history->num_of_pigs;
+      if($farmType == "farrowing"){
+        $bh_bins = DB::table("feeds_bins")->select('num_of_sow_pigs')
+                    ->where('bin_id',$v->bin_id)
+                    ->first();
+        $bh_pigs = $bh_bins->num_of_sow_pigs;
+      }
+
+      $empty_date = $home_controller->emptyDateAPI($v->date,$v->bin_id,$bh_pigs,$bin_history->budgeted_amount,$v->amount);
 
       $batch[] = array(
         "id"               => $v->id,
@@ -3227,7 +3324,7 @@ class APIController extends Controller
         "compartment"      => $v->compartment,
         "bh_ft_text"       => $this->feedName($bin_history->feed_type),
         "bh_cons"          => $bin_history->budgeted_amount,
-        "bh_num_of_pigs"   => $bin_history->num_of_pigs,
+        "bh_num_of_pigs"   => $bh_pigs,
         "bh_empty_date"    => $empty_date,
       );
     }
@@ -3282,12 +3379,23 @@ class APIController extends Controller
       //$budgeted_amount
       $budgeted_amount = $home_controller->daysCounterbudgetedAmount($v->farm_id,$v->bin_id,$v->feed_type,date("Y-m-d H:i:s"));
 
-      $empty_date = $home_controller->emptyDateAPI($v->date,$v->bin_id,$bin_history->num_of_pigs,$budgeted_amount,$total_amount);
+      $farmType = $home_controller->farmTypes($v->farm_id);
+      $bh_pigs = $bin_history->num_of_pigs;
+      if($farmType == "farrowing"){
+        $bh_bins = DB::table("feeds_bins")->select('num_of_sow_pigs')
+                    ->where('bin_id',$v->bin_id)
+                    ->first();
+        $bh_pigs = $bh_bins->num_of_sow_pigs;
+      }
+
+      $empty_date = $home_controller->emptyDateAPI($v->date,$v->bin_id,$bh_pigs,$budgeted_amount,$total_amount);
 
       $total_amount = DB::table('feeds_batch')
                           ->where('unique_id', $unique_id)
                           ->where('bin_id', $v->bin_id)
                           ->sum('amount');
+
+
 
       $result[] = array(
         'bin_id'           => $v->bin_id,
@@ -3310,7 +3418,7 @@ class APIController extends Controller
         "compartment"      => $v->compartment,
         "bh_ft_text"       => $this->feedName($bin_history->feed_type),
         "bh_cons"          => $budgeted_amount,
-        "bh_num_of_pigs"   => $bin_history->num_of_pigs,
+        "bh_num_of_pigs"   => $bh_pigs,
         "bh_empty_date"    => $empty_date,
       );
     }
