@@ -80,7 +80,12 @@ class AnimalMovementController extends Controller
               Storage::put('animal_movement_data.txt',json_encode($output));
               $output = Storage::get('animal_movement_data.txt');
               //return array("output"=>json_decode($output));
-              return array("output"=>json_decode($output),"nursery_groups"=>json_decode($nursery_groups),"finisher_groups"=>json_decode($finisher_groups));
+              return array(
+                  "output"          =>  json_decode($output),
+                  "nursery_groups"  =>  json_decode($nursery_groups),
+                  "finisher_groups" =>  json_decode($finisher_groups),
+                  "farm_groups"     =>  $this->farmAMGroups()
+              );
 
             case 'farrowing_to_nursery':
 
