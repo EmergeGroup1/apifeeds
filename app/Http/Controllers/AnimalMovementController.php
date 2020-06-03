@@ -141,13 +141,13 @@ class AnimalMovementController extends Controller
         for($i=0; $i<count($farms); $i++)
         {
 
-          for($j=0; $j>count($groups); $j++)
+          for($j=0; $j<count($groups); $j++)
           {
 
-            // if($farms[$i]['id'] == $groups[$j]['farm_id'])
-            // {
+            if($farms[$i]['id'] == $groups[$j]['farm_id'])
+            {
                 $farm_groups[] = $groups[$j];
-            // }
+            }
 
           }
 
