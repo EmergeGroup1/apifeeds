@@ -164,7 +164,7 @@ class AnimalMovementController extends Controller
         }
 
         for($k=0; $k<count($output); $k++){
-          if($output[$k]['groups'] == NULL || empty($output[$k]['groups'])){
+          if(count($output[$k]['groups']) == 0){
             unset($output[$k]);
           }
         }
