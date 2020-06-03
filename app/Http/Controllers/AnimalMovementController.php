@@ -131,8 +131,6 @@ class AnimalMovementController extends Controller
 
         $output = array();
 
-
-
         $groups = json_decode(Storage::get('animal_movement_data.txt'));
 
         $farms = Farms::select('id','name')->get()->toArray();
@@ -140,6 +138,7 @@ class AnimalMovementController extends Controller
 
         for($i=0; $i<count($farms); $i++)
         {
+
           $farm_groups = array();
 
           for($j=0; $j<count($groups); $j++)
@@ -148,21 +147,19 @@ class AnimalMovementController extends Controller
             if($farms[$i]['id'] == $groups[$j]->farm_id)
             {
                 $farm_groups[] = $groups[$j];
-
-                $output[] = array(
-
-                  'farm_id' =>  $farms[$i]['id'],
-
-                  'farm_name' =>  $farms[$i]['name'],
-
-                  'groups'  => $farm_groups
-
-                );
             }
 
           }
 
+          $output[] = array(
 
+            'farm_id' =>  $farms[$i]['id'],
+
+            'farm_name' =>  $farms[$i]['name'],
+
+            'groups'  => $farm_groups
+
+          );
 
         }
 
