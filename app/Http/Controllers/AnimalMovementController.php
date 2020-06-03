@@ -118,6 +118,50 @@ class AnimalMovementController extends Controller
       }
 
       /**
+      ** sort the animal groups by farms
+      ** @return array
+      **/
+      private function farmAMGroups()
+      {
+
+        $output = array();
+
+        $farm_groups = array();
+
+        $groups = json_decode(Storage::get('animal_movement_data.txt'));
+
+        $farms = Farms::select('id','name')->get()->toArray();
+
+
+        for($i=0; $i<count($farms); $i++)
+        {
+
+          for($j=0; $j>count($groups); $j++)
+          {
+
+            if($farms[$i]['id'] == $groups[$j]['farm_id'])
+            {
+                $farm_groups = $groups[$j];
+            }
+
+          }
+
+          $output[] = array(
+
+            'farm_id' =>  $farms[$i]['id'],
+
+            'farm_name' =>  $farms[$i]['name'],
+
+            'groups'  => $farm_groups
+
+          );
+
+        }
+
+        return $output;
+      }
+
+      /**
       ** sort the animal groups
       ** @param $data array
       ** @param $type string
