@@ -165,7 +165,7 @@ class AnimalMovementController extends Controller
 
         for($k=0; $k<count($output); $k++){
           if(count($output[$k]['groups']) > 0){
-            unset($output{$k});
+            unset($output[$k]);
           }
         }
 
