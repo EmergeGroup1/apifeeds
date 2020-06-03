@@ -133,7 +133,7 @@ class AnimalMovementController extends Controller
 
         $groups = json_decode(Storage::get('animal_movement_data.txt'));
 
-        $farms = Farms::select('id','name')->get()->toArray();
+        $farms = Farms::select('id','name')->orderBy('name','desc')->get()->toArray();
 
 
         for($i=0; $i<count($farms); $i++)
