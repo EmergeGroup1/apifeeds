@@ -148,19 +148,21 @@ class AnimalMovementController extends Controller
             if($farms[$i]['id'] == $groups[$j]->farm_id)
             {
                 $farm_groups[] = $groups[$j];
+
+                $output[] = array(
+
+                  'farm_id' =>  $farms[$i]['id'],
+
+                  'farm_name' =>  $farms[$i]['name'],
+
+                  'groups'  => $farm_groups
+
+                );
             }
 
           }
 
-          $output[] = array(
 
-            'farm_id' =>  $farms[$i]['id'],
-
-            'farm_name' =>  $farms[$i]['name'],
-
-            'groups'  => $farm_groups
-
-          );
 
         }
 
