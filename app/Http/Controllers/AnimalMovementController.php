@@ -46,12 +46,12 @@ class AnimalMovementController extends Controller
       public function animalMovementFilterAPI($data)
       {
           $type = $data['type'];
-          $s_farm = $data['s_farm'];
 
           $data = array(
             'date_from'	=>	date("Y-m-d",strtotime($data['date_from'])),
             'date_to'	=>	date("Y-m-d",strtotime($data['date_to'])),
-            'sort'		=>	$data['sort']
+            'sort'		=>	$data['sort'],
+            's_farm'  =>  $data['s_farm']
           );
 
           $nursery_groups = DB::table("feeds_movement_groups")
