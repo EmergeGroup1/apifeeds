@@ -1658,7 +1658,8 @@ class APIController extends Controller
           'type'      =>  $request->input('type'), // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
           'date_from' =>  $request->input('date_from'), // (date)
           'date_to'   =>  $request->input('date_to'), // (date)
-          'sort'      =>  $request->input('sort') // (string) not_scheduled, day_remaining
+          'sort'      =>  $request->input('sort'), // (string) not_scheduled, day_remaining
+          's_farm'    =>  $request->input('s_farm') // selected farm
         );
 
         $am_controller = new AnimalMovementController;

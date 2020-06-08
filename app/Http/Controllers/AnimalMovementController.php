@@ -46,6 +46,7 @@ class AnimalMovementController extends Controller
       public function animalMovementFilterAPI($data)
       {
           $type = $data['type'];
+          $s_farm = $data['s_farm'];
 
           $data = array(
             'date_from'	=>	date("Y-m-d",strtotime($data['date_from'])),
@@ -410,6 +411,7 @@ class AnimalMovementController extends Controller
       {
           $groups = DB::table($group_table)
                 ->where('status','created')
+                ->where('farm_id',$data['s_farm'])
                 ->whereIn('type',$type)
                 ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
                 ->orderBy('date_to_transfer','asc')
