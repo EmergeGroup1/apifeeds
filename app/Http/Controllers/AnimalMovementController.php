@@ -410,13 +410,13 @@ class AnimalMovementController extends Controller
       private function filterTransferCreated($data,$type,$group_table,$group_bins_table)
       {
           $groups = DB::table($group_table);
-          $groups = $groups->where('status','created')
+          $groups = $groups->where('status','created');
           if($data['s_farm'] != "all"){
             $groups = $groups->where('farm_id',$data['s_farm'])
           }
-          $groups = $groups->whereIn('type',$type)
-          $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']])
-          $groups = $groups->orderBy('date_to_transfer','asc')
+          $groups = $groups->whereIn('type',$type);
+          $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
+          $groups = $groups->orderBy('date_to_transfer','asc');
           $groups = $groups->get();
           $groups = $this->toArray($groups);
           $groups = $this->filterTransferBins($groups,$group_table,$group_bins_table);
