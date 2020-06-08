@@ -232,11 +232,12 @@ class AnimalMovementController extends Controller
           if($type == "hah"){
             return $this->filterTransferOwnerGroupTypes($data);
           }
-          $groups = DB::table("feeds_movement_groups")
-                ->where('type',$type)
-                ->whereNotIn('status',['finalized','removed','created'])
-                ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
-                ->get();
+          $groups = DB::table("feeds_movement_groups");
+          $groups = $groups->where('type',$type);
+          $groups = $groups->where('farm_id',$data['s_farm']);
+          $groups = $groups->whereNotIn('status',['finalized','removed','created']);
+          $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
+          $groups = $groups->get();
           $groups = $this->toArray($groups);
           $groups = $this->filterTransferBins($groups,"feeds_movement_groups","feeds_movement_groups_bins");
 
