@@ -412,7 +412,7 @@ class AnimalMovementController extends Controller
           $groups = DB::table($group_table);
           $groups = $groups->where('status','created');
           if($data['s_farm'] != "all"){
-            $groups = $groups->where('farm_id',$data['s_farm'])
+            $groups = $groups->where('farm_id',$data['s_farm']);
           }
           $groups = $groups->whereIn('type',$type);
           $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
