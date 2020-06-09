@@ -85,7 +85,8 @@ class AnimalMovementController extends Controller
                   "output"          =>  json_decode($output),
                   "nursery_groups"  =>  json_decode($nursery_groups),
                   "finisher_groups" =>  json_decode($finisher_groups),
-                  "farm_groups"     =>  $this->farmAMGroups()
+                  "farm_groups"     =>  $this->farmAMGroups(),
+                  "death_reasons"   =>  $this->deathReasons()
               );
 
             case 'farrowing_to_nursery':
@@ -164,12 +165,6 @@ class AnimalMovementController extends Controller
 
         }
 
-        // for($k=0; $k<count($output); $k++){
-        //   if(count($output[$k]['groups']) <= 0){
-        //     unset($output[$k]);
-        //   }
-        // }
-
         foreach($output as $key => $val)
         {
           if(count($val['groups']) <= 0){
@@ -178,6 +173,15 @@ class AnimalMovementController extends Controller
         }
 
         return $output;
+      }
+
+      /**
+      ** sort the animal groups by farms
+      ** @return array
+      **/
+      private function deathReasons()
+      {
+        return DB::table('feeds_death_reasons')->get();
       }
 
       /**
