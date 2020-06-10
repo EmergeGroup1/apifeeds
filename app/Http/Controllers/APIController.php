@@ -2606,6 +2606,40 @@ class APIController extends Controller
 
         break;
 
+
+        /*
+        * Group Death Feature
+        */
+        case "gdrAdd":
+
+        break;
+
+        case "gdrUpdate":
+
+        break;
+
+        case "gdrDelete":
+
+        break;
+        // End of Death Feature
+
+
+        /*
+        * Group Treated Feature
+        */
+        case "gtrAdd":
+
+        break;
+
+        case "gtrUpdate":
+
+        break;
+
+        case "gtrDelete":
+
+        break;
+        // End of Treated Feature
+
         /*
         * End of Death Tracker
         */
