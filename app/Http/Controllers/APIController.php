@@ -2705,7 +2705,8 @@ class APIController extends Controller
 
           $data = $request->all();
 
-
+          $home_crtl = new HomeController;
+          $u_id = $home_crtl->generator();
           $dtl = array();
 
           $dt = array(
