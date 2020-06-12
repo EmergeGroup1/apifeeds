@@ -2658,7 +2658,7 @@ class APIController extends Controller
           unset($home_crtl);
 
           // return the list of deaths with corresponding group id
-          $death_lists = DB::table("feeds_groups_dead_pigs")->get();
+          $death_lists = $this->amDeadPigs();
 
           return $death_lists;
 
@@ -2720,6 +2720,34 @@ class APIController extends Controller
     );
   }
 
+
+  /**
+   * animal movement pig tracker dead pigs data.
+   */
+  private function amDeadPigs()
+  {
+
+      $dp = DB::table("feeds_groups_dead_pigs")->get();
+      $data = array();
+
+      for($i=0; $<count($dp); $i++){
+        $data[] = array(
+          'amount'      => $dp[$i]->amount,
+          'bin_id'      => $dp[$i]->bin_id,
+          'cause'       => DB::table("feeds_death_reasons")->where('reason_id',$dp[$i]->cause)->get('reason'),
+          'death_date'  => $dp[$i]->death_date
+          'death_id'    => $dp[$i]->death_id,
+          'farm_id'     => $dp[$i]->farm_id
+          'group_id'    => $dp[$i]->group_id
+          'notes'       => $dp[$i]->notes
+          'room_id'     => $dp[$i]->room_id
+          'unique_id'   => $dp[$i]->unique_id
+        );
+      }
+
+      return $data;
+
+  }
 
   /**
    * death tracker data.
