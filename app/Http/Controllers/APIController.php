@@ -2633,7 +2633,7 @@ class APIController extends Controller
           // $group_uid = $this->animalGroupsData($dt['group_id']);
 
           $group_data = DB::table("feeds_movement_groups")
-                          ->where("group_id",$dt['group_id'])
+                          ->where("group_id",(int)$dt['group_id'])
                           ->first();
 
           return $group_data;
