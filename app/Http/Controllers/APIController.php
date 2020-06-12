@@ -2630,9 +2630,13 @@ class APIController extends Controller
             'unique_id'     =>  $u_id
           );
 
-          $group_uid = $this->animalGroupsData($dt['group_id']);
+          // $group_uid = $this->animalGroupsData($dt['group_id']);
 
-          return $group_uid;
+          $group_data = DB::table("feeds_movement_groups")
+                          ->where("group_id",$dt['group_id'])
+                          ->first();
+
+          return $group_data;
 
           $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,
                                             $dt['bin_id'],
