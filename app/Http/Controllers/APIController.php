@@ -2699,7 +2699,7 @@ class APIController extends Controller
           unset($home_crtl);
 
           // return the list of deaths with corresponding group id
-          $death_lists = $this->amDeadPigs($dt['group_id']);
+          $death_lists = $this->amDeadPigs($data['groupID']);
 
           $result = array(
             "err"     =>  0,
