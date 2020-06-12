@@ -2744,7 +2744,7 @@ class APIController extends Controller
 
           // DB::table("feeds_death_tracker_logs")->insert($dtl);
           DB::table("feeds_groups_dead_pigs")
-            ->where('death_id',$data['dateOfDeath'])
+            ->where('death_id',$data['deathID'])
             ->update($dt);
 
           unset($home_crtl);
