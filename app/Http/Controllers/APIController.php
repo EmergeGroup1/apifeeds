@@ -2734,7 +2734,7 @@ class APIController extends Controller
         $data[] = array(
           'amount'      => $dp[$i]->amount,
           'bin_id'      => $dp[$i]->bin_id,
-          'cause'       => DB::table("feeds_death_reasons")->select('reason_id,reason')->where('reason_id',$dp[$i]->cause)->get(),
+          'cause'       => DB::table("feeds_death_reasons")->select('reason_id')->where('reason_id',$dp[$i]->cause)->get(),
           'death_date'  => $dp[$i]->death_date,
           'death_id'    => $dp[$i]->death_id,
           'farm_id'     => $dp[$i]->farm_id,
