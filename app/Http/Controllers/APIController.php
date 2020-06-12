@@ -2624,8 +2624,8 @@ class APIController extends Controller
             'group_id'      =>  $request->input('groupID'),
             'bin_id'        =>  $request->has("binID") ? $data['binID'][$i] : 0,
             'room_id'       =>  $request->has("roomID") ? $data['roomID'][$i] : 0,
-            'reason'        =>  $data['reason'][$i] == "" ? "No entered reason." : $data['reason'][$i],
-            'death_number'  =>  $data['deathNumber'][$i],
+            'reason'        =>  $request->has("reason"),
+            'death_number'  =>  $request->has("deathNumber"),
             'notes'         =>  $request->has("notes"),
             'unique_id'     =>  $u_id
           );
