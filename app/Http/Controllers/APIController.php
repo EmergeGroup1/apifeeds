@@ -2653,14 +2653,14 @@ class APIController extends Controller
           $home_crtl->clearBinsCache($dt['bin_id']);
 
           // DB::table("feeds_death_tracker_logs")->insert($dtl);
-          DB::table("feeds_death_tracker")->insert($dt);
+          DB::table("feeds_groups_dead_pigs")->insert($dt);
 
           unset($home_crtl);
 
           // return the list of deaths with corresponding group id
-          $death_lists = DB::table("feeds_death_tracker")->get();
+          $death_lists = DB::table("feeds_groups_dead_pigs")->get();
 
-          return $data;
+          return $death_lists;
 
         break;
 
