@@ -1683,6 +1683,37 @@ class APIController extends Controller
         break;
 
 
+        case "amListRefresh":
+
+          $data = array(
+            'type'      =>  $request->input('type'), // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
+            'date_from' =>  $request->input('date_from'), // (date)
+            'date_to'   =>  $request->input('date_to'), // (date)
+            'sort'      =>  $request->input('sort'), // (string) not_scheduled, day_remaining
+            's_farm'    =>  $request->input('s_farm') // selected farm
+          );
+
+          $am_controller = new AnimalMovementController;
+          $am_lists = $am_controller->animalMovementFilterAPI($data);
+          unset($am_controller);
+
+          if (!empty($am_lists['output'])) {
+            return array(
+              "err"     =>  0,
+              "msg"     =>  "Successfully Get Animal Groups",
+              "am_list" =>  $am_lists,
+              "death_reasons" => $this->deathReasons()
+            );
+          } else {
+            return array(
+              "err" =>  1,
+              "msg" =>  "No Records Found"
+            );
+          }
+
+          break;
+
+
       case "amDeleteGroup":
 
         $group_id = $request->input('group_id');
