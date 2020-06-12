@@ -494,7 +494,7 @@ class AnimalMovementController extends Controller
               'amount'      => $dp[$i]->amount,
               'bin_id'      => $dp[$i]->bin_id,
               'cause'       => DB::table("feeds_death_reasons")->where('reason_id',$dp[$i]->cause)->get(),
-              'death_date'  => date("mm-dd-yyyy",strtotime($dp[$i]->death_date)),
+              'death_date'  => date("m-d-yyyy",strtotime($dp[$i]->death_date)),
               'death_id'    => $dp[$i]->death_id,
               'farm_id'     => $dp[$i]->farm_id,
               'group_id'    => $dp[$i]->group_id,
