@@ -2733,7 +2733,9 @@ class APIController extends Controller
   private function amDeadPigs($group_id)
   {
 
-      $dp = DB::table("feeds_groups_dead_pigs")->where('group_id',$group_id)->get();
+      $dp = DB::table("feeds_groups_dead_pigs")
+              ->where('group_id',$group_id)
+              ->orderBy('daeth_date','desc')->get();
       $data = array();
 
       for($i=0; $i<count($dp); $i++){
