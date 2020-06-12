@@ -2621,11 +2621,11 @@ class APIController extends Controller
             'death_date'    =>  $request->input('dateOfDeath'),
             'farm_id'       =>  $request->input('farmID'),
             'group_id'      =>  $request->input('groupID'),
-            'bin_id'        =>  $request->has("binID"),
-            'room_id'       =>  $request->has("roomID"),
-            'cause'         =>  $request->has("reason"),
-            'amount'        =>  $request->has("deathNumber"),
-            'notes'         =>  $request->has("notes"),
+            'bin_id'        =>  $request->input("binID"),
+            'room_id'       =>  $request->input("roomID"),
+            'cause'         =>  $request->input("reason"),
+            'amount'        =>  $request->input("deathNumber"),
+            'notes'         =>  $request->input("notes"),
             'unique_id'     =>  $u_id
           );
 
