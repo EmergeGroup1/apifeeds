@@ -2614,7 +2614,6 @@ class APIController extends Controller
 
           $data = $request->all();
 
-          return $data;
           $home_crtl = new HomeController;
           $u_id = $home_crtl->generator();
           $dtl = array();
@@ -2630,6 +2629,8 @@ class APIController extends Controller
             'notes'         =>  $data['notes'],
             'unique_id'     =>  $u_id
           );
+
+          return $dt;
 
           $group_uid = $this->animalGroupsData($dt['group_id']);
 
