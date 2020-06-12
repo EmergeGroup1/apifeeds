@@ -2645,7 +2645,7 @@ class APIController extends Controller
 
           // deduct the death on rooms or bins, after deduction, update the cache
           $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'];
-          $this->updateBinsRooms($group_uid->unique_id,
+          $this->updateBinsRooms($group_data[0]->unique_id,
                                  $dt['bin_id'],
                                  $dt['room_id'],
                                  $num_of_pigs);
