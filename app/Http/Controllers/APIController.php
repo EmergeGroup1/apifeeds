@@ -2631,6 +2631,8 @@ class APIController extends Controller
 
           $group_uid = $this->animalGroupsData($request->input('groupID'));
 
+          return $group_uid;
+
           $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,
                                             $dt['bin_id'],
                                             $dt['room_id']);
