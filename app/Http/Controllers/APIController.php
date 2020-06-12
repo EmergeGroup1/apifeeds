@@ -2658,7 +2658,7 @@ class APIController extends Controller
           unset($home_crtl);
 
           // return the list of deaths with corresponding group id
-          $death_lists = $this->amDeadPigs();
+          $death_lists = $this->amDeadPigs($dt['group_id']);
 
           return $death_lists;
 
@@ -2724,10 +2724,10 @@ class APIController extends Controller
   /**
    * animal movement pig tracker dead pigs data.
    */
-  private function amDeadPigs()
+  private function amDeadPigs($group_id)
   {
 
-      $dp = DB::table("feeds_groups_dead_pigs")->get();
+      $dp = DB::table("feeds_groups_dead_pigs")->where('group_id',$group_id)->get();
       $data = array();
 
       for($i=0; $i<count($dp); $i++){

@@ -470,7 +470,7 @@ class AnimalMovementController extends Controller
               'bin_data'					=>	$this->binsDataFilter($v['unique_id'],$group_bins_table,$v['farm_id']),
               'transfer_data'			=> 	$this->transferData($v['group_id']),
               'sched_pigs'				=>	$this->scheduledTransaferPigs($v['group_id']),
-              'death'             =>  $this->amDeadPigs(),
+              'death'             =>  $this->amDeadPigs($v['group_id']),
               'treated'           =>  ""
             );
 
@@ -483,10 +483,10 @@ class AnimalMovementController extends Controller
       /**
        * animal movement pig tracker dead pigs data.
        */
-      private function amDeadPigs()
+      private function amDeadPigs($group_id)
       {
 
-          $dp = DB::table("feeds_groups_dead_pigs")->get();
+          $dp = DB::table("feeds_groups_dead_pigs")->where('group_id',$group_id)->get();
           $data = array();
 
           for($i=0; $i<count($dp); $i++){
