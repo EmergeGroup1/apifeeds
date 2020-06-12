@@ -493,7 +493,7 @@ class AnimalMovementController extends Controller
             $data[] = array(
               'amount'      => $dp[$i]->amount,
               'bin_id'      => $dp[$i]->bin_id,
-              'cause'       => DB::table("feeds_death_reasons")->where('reason_id',$dp[$i]->cause)->get('reason'),
+              'cause'       => DB::table("feeds_death_reasons")->where('reason_id',$dp[$i]->cause)->get(),
               'death_date'  => $dp[$i]->death_date,
               'death_id'    => $dp[$i]->death_id,
               'farm_id'     => $dp[$i]->farm_id,
