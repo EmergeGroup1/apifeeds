@@ -2673,7 +2673,7 @@ class APIController extends Controller
                                             $dt['bin_id'],
                                             $dt['room_id']);
 
-          $dtl[] = array(
+          $dtl = array(
                     'death_unique_id' => $u_id,
                     'date_time_logs'  =>  date("Y-m-d H:i:s"),
                     'user_id' =>  $data['userID'],
