@@ -2737,10 +2737,10 @@ class APIController extends Controller
           'cause'       => DB::table("feeds_death_reasons")->where('reason_id',$dp[$i]->cause)->get('reason'),
           'death_date'  => $dp[$i]->death_date
           'death_id'    => $dp[$i]->death_id,
-          'farm_id'     => $dp[$i]->farm_id
-          'group_id'    => $dp[$i]->group_id
-          'notes'       => $dp[$i]->notes
-          'room_id'     => $dp[$i]->room_id
+          'farm_id'     => $dp[$i]->farm_id,
+          'group_id'    => $dp[$i]->group_id,
+          'notes'       => $dp[$i]->notes,
+          'room_id'     => $dp[$i]->room_id,
           'unique_id'   => $dp[$i]->unique_id
         );
       }
