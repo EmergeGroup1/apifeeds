@@ -2703,9 +2703,80 @@ class APIController extends Controller
 
         case "gdrUpdate":
 
+          $data = $request->all();
+
+
+          $dtl = array();
+
+          $dt = array(
+            'death_date'    =>  date("Y-m-d H:i:s", strtotime($data['dateOfDeath'])),
+            'farm_id'       =>  $data['farmID'],
+            'group_id'      =>  $data['groupID'],
+            'bin_id'        =>  $data['binID'],
+            'room_id'       =>  $data['roomID'],
+            'cause'         =>  $data['reason'],
+            'amount'        =>  $data['deathNumber'],
+            'notes'         =>  $data['notes']
+          );
+
+          // $group_uid = $this->animalGroupsData($dt['group_id']);
+
+          $group_data = DB::table("feeds_movement_groups")
+                          ->select('unique_id')
+                          ->where("group_id",$dt['group_id'])
+                          ->get();
+
+
+          $pigs = $this->groupRoomsBinsPigs($group_data[0]->unique_id,
+                                            $dt['bin_id'],
+                                            $dt['room_id']);
+
+
+          // deduct the death on rooms or bins, after deduction, update the cache
+          $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'];
+          $this->updateBinsRooms($group_data[0]->unique_id,
+                                 $dt['bin_id'],
+                                 $dt['room_id'],
+                                 $num_of_pigs);
+
+          $home_crtl->clearBinsCache($dt['bin_id']);
+
+          // DB::table("feeds_death_tracker_logs")->insert($dtl);
+          DB::table("feeds_groups_dead_pigs")
+            ->where('death_id',$data['dateOfDeath'])
+            ->update($dt);
+
+          unset($home_crtl);
+
+          // return the list of deaths with corresponding group id
+          $death_lists = $this->amDeadPigs($dt['group_id']);
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $death_lists
+          );
+
+          return $result;
+
         break;
 
         case "gdrDelete":
+
+          $data = $request->all();
+
+          // bring back the dead pigs
+          $death = $this->deathTrackerBringBackData($data['uid']);
+
+          DB::table("feeds_death_tracker")
+                ->where('unique_id',$data['uid'])
+                ->delete();
+
+          DB::table("feeds_death_tracker_logs")
+                ->where('death_unique_id',$data['uid'])
+                ->update(["action"=>"deleted","user_id"=>$data['userID']]);
+
+          return $data;
 
         break;
         // End of Death Feature
