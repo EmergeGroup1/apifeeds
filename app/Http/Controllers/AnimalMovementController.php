@@ -487,7 +487,7 @@ class AnimalMovementController extends Controller
       {
 
           $dp = DB::table("feeds_groups_dead_pigs")->where('group_id',$group_id)
-                  ->orderBy('daeth_date','desc')->get();
+                  ->orderBy('death_date','desc')->get();
           $data = array();
 
           for($i=0; $i<count($dp); $i++){
