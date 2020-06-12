@@ -2635,26 +2635,15 @@ class APIController extends Controller
           $group_uid = $this->animalGroupsData($request->input('groupID'));
 
           $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,
-                                            $dt[$i]['bin_id'],
-                                            $dt[$i]['room_id']);
+                                            $dt['bin_id'],
+                                            $dt['room_id']);
 
-          // save the logs of original total number of pigs
-          // $dtl[] = array(
-          //           'death_unique_id' => $u_id,
-          //           'date_time_logs'  =>  date("Y-m-d H:i:s"),
-          //           'user_id' =>  $request->input('userID'),
-          //           'bin_id'  =>  $dt[$i]['bin_id'],
-          //           'room_id' =>  $dt[$i]['room_id'],
-          //           'original_total_pigs' => $pigs->number_of_pigs,
-          //           'total_pigs'  => $data['deathNumber'][$i],
-          //           'action'  =>  "add death record"
-          //         );
 
           // deduct the death on rooms or bins, after deduction, update the cache
-          $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'][$i];
+          $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'];
           $this->updateBinsRooms($group_uid->unique_id,
-                                 $dt[$i]['bin_id'],
-                                 $dt[$i]['room_id'],
+                                 $dt['bin_id'],
+                                 $dt['room_id'],
                                  $num_of_pigs);
 
           $home_crtl->clearBinsCache($dt[$i]['bin_id']);
