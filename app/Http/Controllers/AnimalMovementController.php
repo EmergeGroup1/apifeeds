@@ -489,7 +489,7 @@ class AnimalMovementController extends Controller
           $dp = DB::table("feeds_groups_dead_pigs")->get();
           $data = array();
 
-          for($i=0; $<count($dp); $i++){
+          for($i=0; $<count($dp); $i++;){
             $data[] = array(
               'amount'      => $dp[$i]->amount,
               'bin_id'      => $dp[$i]->bin_id,
