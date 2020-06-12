@@ -2613,6 +2613,8 @@ class APIController extends Controller
         case "gdrAdd":
 
           $data = $request->all();
+
+          return $data;
           $home_crtl = new HomeController;
           $u_id = $home_crtl->generator();
           $dtl = array();
