@@ -2629,7 +2629,7 @@ class APIController extends Controller
             'unique_id'     =>  $u_id
           );
 
-          $group_uid = $this->animalGroupsData($dt['groupID']);
+          $group_uid = $this->animalGroupsData($dt['group_id']);
 
           return $group_uid;
 
