@@ -2612,6 +2612,9 @@ class APIController extends Controller
         */
         case "gdrAdd":
 
+          $data = $request->all();
+          return $data;
+
         break;
 
         case "gdrUpdate":
