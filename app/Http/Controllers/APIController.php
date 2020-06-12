@@ -2623,7 +2623,7 @@ class APIController extends Controller
             'group_id'      =>  $data['groupID'],
             'bin_id'        =>  $data['binID'],
             'room_id'       =>  $data['roomID'],
-            'cause'         =>  $data['reason']),
+            'cause'         =>  $data['reason'],
             'amount'        =>  $data['deathNumber'],
             'notes'         =>  $data['notes'],
             'unique_id'     =>  $u_id
