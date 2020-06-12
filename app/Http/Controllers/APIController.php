@@ -2623,13 +2623,11 @@ class APIController extends Controller
             'group_id'      =>  $request->input('groupID'),
             'bin_id'        =>  $request->has("binID"),
             'room_id'       =>  $request->has("roomID"),
-            'reason'        =>  $request->has("reason"),
-            'death_number'  =>  $request->has("deathNumber"),
+            'cause'         =>  $request->has("reason"),
+            'amount'        =>  $request->has("deathNumber"),
             'notes'         =>  $request->has("notes"),
             'unique_id'     =>  $u_id
           );
-
-          return $dt;
 
           $group_uid = $this->animalGroupsData($request->input('groupID'));
 
@@ -2651,6 +2649,9 @@ class APIController extends Controller
           DB::table("feeds_death_tracker")->insert($dt);
 
           unset($home_crtl);
+
+          // return the list of deaths with corresponding group id
+          $death_lists = DB::table("")
 
           return $data;
 
