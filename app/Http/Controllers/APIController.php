@@ -2660,7 +2660,13 @@ class APIController extends Controller
           // return the list of deaths with corresponding group id
           $death_lists = $this->amDeadPigs($dt['group_id']);
 
-          return $death_lists;
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $death_lists
+          );
+
+          return $result;
 
         break;
 
