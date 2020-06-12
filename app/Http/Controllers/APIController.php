@@ -2680,7 +2680,7 @@ class APIController extends Controller
                     'bin_id'  =>  $dt['bin_id'],
                     'room_id' =>  $dt['room_id'],
                     'original_pigs' => $pigs->number_of_pigs,
-                    'pigs'  => $data['amount'],
+                    'pigs'  => $data['deathNumber'],
                     'action'  =>  "add death record"
                   );
 
