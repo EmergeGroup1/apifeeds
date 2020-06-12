@@ -2618,14 +2618,14 @@ class APIController extends Controller
           $dtl = array();
 
           $dt = array(
-            'death_date'    =>  $request->input('dateOfDeath'),
-            'farm_id'       =>  $request->input('farmID'),
-            'group_id'      =>  $request->input('groupID'),
-            'bin_id'        =>  $request->input("binID"),
-            'room_id'       =>  $request->input("roomID"),
-            'cause'         =>  $request->input("reason"),
-            'amount'        =>  $request->input("deathNumber"),
-            'notes'         =>  $request->input("notes"),
+            'death_date'    =>  $$data['dateOfDeath'],
+            'farm_id'       =>  $data['farmID'],
+            'group_id'      =>  $data['groupID'],
+            'bin_id'        =>  $data['binID'],
+            'room_id'       =>  $data['roomID'],
+            'cause'         =>  $data['reason']),
+            'amount'        =>  $data['deathNumber'],
+            'notes'         =>  $data['notes'],
             'unique_id'     =>  $u_id
           );
 
