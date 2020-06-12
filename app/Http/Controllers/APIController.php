@@ -2673,6 +2673,16 @@ class APIController extends Controller
                                             $dt['bin_id'],
                                             $dt['room_id']);
 
+          $dtl[] = array(
+                    'death_unique_id' => $u_id,
+                    'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                    'user_id' =>  $data['userID'],
+                    'bin_id'  =>  $dt['bin_id'],
+                    'room_id' =>  $dt['room_id'],
+                    'original_pigs' => $pigs->number_of_pigs,
+                    'pigs'  => $data['amount'],
+                    'action'  =>  "add death record"
+                  );
 
           // deduct the death on rooms or bins, after deduction, update the cache
           $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'];
@@ -2683,7 +2693,7 @@ class APIController extends Controller
 
           $home_crtl->clearBinsCache($dt['bin_id']);
 
-          // DB::table("feeds_death_tracker_logs")->insert($dtl);
+          DB::table("feeds_groups_dead_pigs_logs")->insert($dtl);
           DB::table("feeds_groups_dead_pigs")->insert($dt);
 
           unset($home_crtl);
@@ -2759,6 +2769,9 @@ class APIController extends Controller
           );
 
           return $result;
+
+
+
 
         break;
 
