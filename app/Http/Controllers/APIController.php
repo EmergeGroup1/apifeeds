@@ -2651,7 +2651,7 @@ class APIController extends Controller
           unset($home_crtl);
 
           // return the list of deaths with corresponding group id
-          $death_lists = DB::table("")
+          $death_lists = DB::table("feeds_death_tracker")->get();
 
           return $data;
 
