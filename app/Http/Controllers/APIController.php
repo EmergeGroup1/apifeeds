@@ -2638,7 +2638,7 @@ class APIController extends Controller
                           ->get();
 
 
-          $pigs = $this->groupRoomsBinsPigs($group_uid[0]->unique_id,
+          $pigs = $this->groupRoomsBinsPigs($group_data[0]->unique_id,
                                             $dt['bin_id'],
                                             $dt['room_id']);
 
