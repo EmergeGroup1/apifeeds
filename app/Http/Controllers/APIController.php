@@ -2618,7 +2618,7 @@ class APIController extends Controller
           $dtl = array();
 
           $dt = array(
-            'death_date'    =>  $$data['dateOfDeath'],
+            'death_date'    =>  $data['dateOfDeath'],
             'farm_id'       =>  $data['farmID'],
             'group_id'      =>  $data['groupID'],
             'bin_id'        =>  $data['binID'],
