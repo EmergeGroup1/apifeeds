@@ -2617,7 +2617,6 @@ class APIController extends Controller
           $u_id = $home_crtl->generator();
           $dtl = array();
 
-
           $dt = array(
             'death_date'    =>  $request->input('dateOfDeath'),
             'farm_id'       =>  $request->input('farmID'),
