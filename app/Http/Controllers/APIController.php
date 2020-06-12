@@ -2613,56 +2613,53 @@ class APIController extends Controller
         case "gdrAdd":
 
           $data = $request->all();
-          return $data;
-
-          $data = $request->all();
           $home_crtl = new HomeController;
           $u_id = $home_crtl->generator();
           $dtl = array();
 
-          for($i=0; $i<count($data['deathNumber']); $i++){
-            $dt[] = array(
-              'death_date'  =>  $request->input('dateOfDeath'),
-              'farm_id'     =>  $request->input('farmID'),
-              'group_id'    =>  $request->input('groupID'),
-              'bin_id'      =>  $request->has("binID") ? $data['binID'][$i] : 0,
-              'room_id'     =>  $request->has("roomID") ? $data['roomID'][$i] : 0,
-              'reason'      =>  $data['reason'][$i] == "" ? "No entered reason." : $data['reason'][$i],
-              'death_number'  =>  $data['deathNumber'][$i],
-              'unique_id'   =>  $u_id
-            );
 
-            $group_uid = $this->animalGroupsData($request->input('groupID'));
+          $dt = array(
+            'death_date'    =>  $request->input('dateOfDeath'),
+            'farm_id'       =>  $request->input('farmID'),
+            'group_id'      =>  $request->input('groupID'),
+            'bin_id'        =>  $request->has("binID") ? $data['binID'][$i] : 0,
+            'room_id'       =>  $request->has("roomID") ? $data['roomID'][$i] : 0,
+            'reason'        =>  $data['reason'][$i] == "" ? "No entered reason." : $data['reason'][$i],
+            'death_number'  =>  $data['deathNumber'][$i],
+            'notes'         =>  $request->has("notes"),
+            'unique_id'     =>  $u_id
+          );
 
-            $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,
-                                              $dt[$i]['bin_id'],
-                                              $dt[$i]['room_id']);
+          return $dt;
 
-            // save the logs of original total number of pigs
-            $dtl[] = array(
-                      'death_unique_id' => $u_id,
-                      'date_time_logs'  =>  date("Y-m-d H:i:s"),
-                      'user_id' =>  $request->input('userID'),
-                      'bin_id'  =>  $dt[$i]['bin_id'],
-                      'room_id' =>  $dt[$i]['room_id'],
-                      'original_total_pigs' => $pigs->number_of_pigs,
-                      'total_pigs'  => $data['deathNumber'][$i],
-                      'action'  =>  "add death record"
-                    );
+          $group_uid = $this->animalGroupsData($request->input('groupID'));
 
-            // deduct the death on rooms or bins, after deduction, update the cache
-            $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'][$i];
-            $this->updateBinsRooms($group_uid->unique_id,
-                                   $dt[$i]['bin_id'],
-                                   $dt[$i]['room_id'],
-                                   $num_of_pigs);
+          $pigs = $this->groupRoomsBinsPigs($group_uid->unique_id,
+                                            $dt[$i]['bin_id'],
+                                            $dt[$i]['room_id']);
 
-            $home_crtl->clearBinsCache($dt[$i]['bin_id']);
+          // save the logs of original total number of pigs
+          // $dtl[] = array(
+          //           'death_unique_id' => $u_id,
+          //           'date_time_logs'  =>  date("Y-m-d H:i:s"),
+          //           'user_id' =>  $request->input('userID'),
+          //           'bin_id'  =>  $dt[$i]['bin_id'],
+          //           'room_id' =>  $dt[$i]['room_id'],
+          //           'original_total_pigs' => $pigs->number_of_pigs,
+          //           'total_pigs'  => $data['deathNumber'][$i],
+          //           'action'  =>  "add death record"
+          //         );
 
+          // deduct the death on rooms or bins, after deduction, update the cache
+          $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'][$i];
+          $this->updateBinsRooms($group_uid->unique_id,
+                                 $dt[$i]['bin_id'],
+                                 $dt[$i]['room_id'],
+                                 $num_of_pigs);
 
-          }
+          $home_crtl->clearBinsCache($dt[$i]['bin_id']);
 
-          DB::table("feeds_death_tracker_logs")->insert($dtl);
+          // DB::table("feeds_death_tracker_logs")->insert($dtl);
           DB::table("feeds_death_tracker")->insert($dt);
 
           unset($home_crtl);
