@@ -529,7 +529,7 @@ class AnimalMovementController extends Controller
       {
         $death_logs = DB::table("feeds_groups_dead_pigs_logs")
                           ->where('death_unique_id', $unique_id)
-                          ->orderBy('death_id','asc')->get();
+                          ->orderBy('log_id','asc')->get();
 
         $output = 0;
 
