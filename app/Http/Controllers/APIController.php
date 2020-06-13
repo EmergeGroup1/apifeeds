@@ -2809,6 +2809,8 @@ class APIController extends Controller
                 ->where('death_id',$data['death_id'])
                 ->get();
 
+          $home_crtl = new HomeController;
+
           for($i=0; $i<count($dp_data); $i++){
 
             $ag_data = $this->animalGroupsData($dp_data[$i]->group_id);
@@ -2826,6 +2828,8 @@ class APIController extends Controller
             $home_crtl->clearBinsCache($dp_data[$i]->bin_id);
 
           }
+
+          unset($home_crtl);
 
           DB::table("feeds_groups_dead_pigs")
                 ->where('death_id',$data['death_id'])
