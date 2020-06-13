@@ -483,7 +483,7 @@ class AnimalMovementController extends Controller
       /**
        * animal movement pig tracker dead pigs data.
        */
-      private function amDeadPigs($group_id)
+      public function amDeadPigs($group_id)
       {
 
           $dp = DB::table("feeds_groups_dead_pigs")->where('group_id',$group_id)
