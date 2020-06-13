@@ -528,7 +528,7 @@ class AnimalMovementController extends Controller
       private function origGroupPigs($uniuqe_id)
       {
         $death_logs = DB::table("feeds_groups_dead_pigs_logs")
-                          ->where('death_unique_id', $dp[$i]->unique_id)
+                          ->where('death_unique_id', $unique_id)
                           ->orderBy('death_id','asc')->get();
 
         $output = 0;
