@@ -492,7 +492,7 @@ class AnimalMovementController extends Controller
 
           for($i=0; $i<count($dp); $i++){
 
-            $death_logs = DB::table("feeds_groups_dead_pigs")
+            $death_logs = DB::table("feeds_groups_dead_pigs_logs")
                               ->where('death_unique_id', $dp[$i]->unique_id)
                               ->get();
 
