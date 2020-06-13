@@ -2790,7 +2790,20 @@ class APIController extends Controller
           //       ->where('death_unique_id',$data['uid'])
           //       ->update(["action"=>"deleted","user_id"=>$data['userID']]);
 
-          return $data;
+          DB::table("feeds_groups_dead_pigs")
+                ->where('death_id',$data['death_id'])
+                ->delete();
+
+          // return the list of deaths with corresponding group id
+          $death_lists = $this->amDeadPigs($data['group_id']);
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $death_lists
+          );
+
+          return $result;
 
         break;
         // End of Death Feature
