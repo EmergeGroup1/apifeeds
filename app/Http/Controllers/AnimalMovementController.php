@@ -525,7 +525,7 @@ class AnimalMovementController extends Controller
       ** @param $farm_id int
       ** @return Response
       **/
-      private function origGroupPigs($uniuqe_id)
+      private function origGroupPigs($unique_id)
       {
         $death_logs = DB::table("feeds_groups_dead_pigs_logs")
                           ->where('death_unique_id', $unique_id)
