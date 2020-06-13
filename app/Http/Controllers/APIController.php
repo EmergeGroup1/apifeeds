@@ -2931,7 +2931,7 @@ class APIController extends Controller
                 ->where('death_id',$death_id)
                 ->get();
 
-      for($i=0; $i<count($dt); $i++){
+      for($i=0; $i<count($dt); $i++;){
         $dt[$i]->datereadable = date("m-d-Y H:i a", strtotime($dt[$i]->date_time_logs))
       }
 
