@@ -2781,7 +2781,10 @@ class APIController extends Controller
           unset($home_crtl);
 
           // return the list of deaths with corresponding group id
-          $death_lists = $this->amDeadPigs($dt['group_id']);
+          $aml_ctrl = new AnimalMovementController;
+          $death_lists = $aml_ctrl->amDeadPigs($dt['group_id']);
+          unset($aml_ctrl);
+          
 
           $result = array(
             "err"     =>  0,

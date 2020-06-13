@@ -497,7 +497,7 @@ class AnimalMovementController extends Controller
                               ->get();
             for($j=0; $j<count($death_logs); $j++){
               $death_logs[$j]->datereadable = date("m-d-Y H:i a", strtotime($death_logs[$j]->date_time_logs));
-              $death_logs[$j]->origgrouppigs = $this->origGroupPigs($dp[$i]->unique_id);
+              $death_logs[$j]->origgrouppigs = $this->origGroupPigs($group_id);
             }
 
             $data[] = array(
@@ -525,10 +525,10 @@ class AnimalMovementController extends Controller
       ** @param $farm_id int
       ** @return Response
       **/
-      private function origGroupPigs($unique_id)
+      private function origGroupPigs($group_id)
       {
         $death_logs = DB::table("feeds_groups_dead_pigs_logs")
-                          ->where('death_unique_id', $unique_id)
+                          ->where('group_id', $group_id)
                           ->orderBy('log_id','asc')->get();
 
         $output = 0;
