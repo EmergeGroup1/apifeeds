@@ -511,8 +511,7 @@ class AnimalMovementController extends Controller
               'notes'       => $dp[$i]->notes,
               'room_id'     => $dp[$i]->room_id,
               'unique_id'   => $dp[$i]->unique_id,
-              'death_logs'  => $death_logs,
-              'group_total_pigs'  =>  $this->origGroupPigs($group_id)
+              'death_logs'  => $death_logs
             );
           }
 

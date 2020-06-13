@@ -2707,7 +2707,8 @@ class APIController extends Controller
           $result = array(
             "err"     =>  0,
             "msg"     =>  "with result",
-            "data"    =>  $death_lists
+            "data"    =>  $death_lists,
+            "total_group_pigs" => $num_of_pigs
           );
 
           return $result;
@@ -2789,7 +2790,8 @@ class APIController extends Controller
           $result = array(
             "err"     =>  0,
             "msg"     =>  "with result",
-            "data"    =>  $death_lists
+            "data"    =>  $death_lists,
+            "total_group_pigs" => $death_number
           );
 
           return $result;
@@ -2845,7 +2847,8 @@ class APIController extends Controller
           $result = array(
             "err"     =>  0,
             "msg"     =>  "with result",
-            "data"    =>  $death_lists
+            "data"    =>  $death_lists,
+            "total_group_pigs"  => $back_pigs
           );
 
           return $result;
