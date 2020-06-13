@@ -2784,7 +2784,7 @@ class APIController extends Controller
           $aml_ctrl = new AnimalMovementController;
           $death_lists = $aml_ctrl->amDeadPigs($dt['group_id']);
           unset($aml_ctrl);
-          
+
 
           $result = array(
             "err"     =>  0,
@@ -2942,9 +2942,9 @@ class APIController extends Controller
                 ->where('death_id',$death_id)
                 ->get();
 
-      for($i=0; $i<count($dt); $i++){
-        $dt[$i]->datereadable = date("m-d-Y H:i a", strtotime($dt[$i]->date_time_logs));
-      }
+      // for($i=0; $i<count($dt); $i++){
+      //   $dt[$i]->datereadable = date("m-d-Y H:i a", strtotime($dt[$i]->date_time_logs));
+      // }
 
       return $dt;
   }
