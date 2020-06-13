@@ -2699,7 +2699,9 @@ class APIController extends Controller
           unset($home_crtl);
 
           // return the list of deaths with corresponding group id
-          $death_lists = $this->amDeadPigs($data['groupID']);
+          $aml_crtl = new AnimalMovementController;
+          $death_lists = $aml_ctrl->amDeadPigs($data['groupID']);
+          unset($aml_ctrl);
 
           $result = array(
             "err"     =>  0,
@@ -2890,6 +2892,10 @@ class APIController extends Controller
                           ->where('death_unique_id', $dp[$i]->unique_id)
                           ->where('action','!=','deleted')
                           ->get();
+
+        for($j=0; $j<count($death_logs); $j++){
+          $death_logs[$j]->datereadable = date("m-d-Y H:i a", strtotime($death_logs[$j]->date_time_logs));
+        }
 
         $data[] = array(
           'amount'      => $dp[$i]->amount,
