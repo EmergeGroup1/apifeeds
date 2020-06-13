@@ -491,6 +491,11 @@ class AnimalMovementController extends Controller
           $data = array();
 
           for($i=0; $i<count($dp); $i++){
+
+            $death_logs = DB::table("feeds_groups_dead_pigs")
+                              ->where('death_unique_id', $dp[$i]->unique_id)
+                              ->get();
+
             $data[] = array(
               'amount'      => $dp[$i]->amount,
               'bin_id'      => $dp[$i]->bin_id,
@@ -502,6 +507,7 @@ class AnimalMovementController extends Controller
               'notes'       => $dp[$i]->notes,
               'room_id'     => $dp[$i]->room_id,
               'unique_id'   => $dp[$i]->unique_id,
+              'death_logs'
             );
           }
 
