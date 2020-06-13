@@ -2749,8 +2749,8 @@ class APIController extends Controller
                     'death_unique_id' => $data['uid'],
                     'date_time_logs'  =>  date("Y-m-d H:i:s"),
                     'user_id' =>  $data['userID'],
-                    'bin_id'  =>  $dt['binID'],
-                    'room_id' =>  $dt['roomID'],
+                    'bin_id'  =>  $data['binID'],
+                    'room_id' =>  $data['roomID'],
                     'original_pigs' => $pigs->number_of_pigs,
                     'pigs'  => $data['deathNumber'],
                     'action'  =>  "update death record"
