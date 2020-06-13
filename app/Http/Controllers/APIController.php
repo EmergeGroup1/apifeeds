@@ -2676,6 +2676,7 @@ class APIController extends Controller
           $dtl = array(
                     'death_unique_id' => $u_id,
                     'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                    'group_id'  =>  $dt['group_id'],
                     'user_id' =>  $data['userID'],
                     'bin_id'  =>  $dt['bin_id'],
                     'room_id' =>  $dt['room_id'],
@@ -2752,6 +2753,7 @@ class APIController extends Controller
           $dtl = array(
                     'death_unique_id' => $data['uid'],
                     'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                    'group_id'  =>  $data['groupID'],
                     'user_id' =>  $data['userID'],
                     'bin_id'  =>  $data['binID'],
                     'room_id' =>  $data['roomID'],
