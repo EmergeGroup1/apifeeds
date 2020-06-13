@@ -2882,6 +2882,11 @@ class APIController extends Controller
       $data = array();
 
       for($i=0; $i<count($dp); $i++){
+
+        $death_logs = DB::table("feeds_groups_dead_pigs")
+                          ->where('death_unique_id', $dp[$i]->unique_id)
+                          ->get();
+
         $data[] = array(
           'amount'      => $dp[$i]->amount,
           'bin_id'      => $dp[$i]->bin_id,
@@ -2892,7 +2897,8 @@ class APIController extends Controller
           'group_id'    => $dp[$i]->group_id,
           'notes'       => $dp[$i]->notes,
           'room_id'     => $dp[$i]->room_id,
-          'unique_id'   => $dp[$i]->unique_id
+          'unique_id'   => $dp[$i]->unique_id,
+          'daeth_logs'  => $death_logs
         );
       }
 
