@@ -2734,6 +2734,8 @@ class APIController extends Controller
 
           // $group_uid = $this->animalGroupsData($dt['group_id']);
 
+          $dp_data = $this->deathTrackerDataV2($data['deathID']);
+
           $group_data = DB::table("feeds_movement_groups")
                           ->select('unique_id')
                           ->where("group_id",$dt['group_id'])
@@ -2757,12 +2759,13 @@ class APIController extends Controller
                   );
 
 
+          $death_number = ($dp_data->death_number + $pigs->number_of_pigs) - $data['deathNumber'];        
           // deduct the death on rooms or bins, after deduction, update the cache
-          $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'];
+          // $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'];
           $this->updateBinsRooms($group_data[0]->unique_id,
                                  $dt['bin_id'],
                                  $dt['room_id'],
-                                 $num_of_pigs);
+                                 $death_number);
 
           $home_crtl->clearBinsCache($dt['bin_id']);
 
@@ -2913,6 +2916,18 @@ class APIController extends Controller
   private function deathTrackerData($death_id)
   {
       $dt = DB::table("feeds_death_tracker")
+                ->where('death_id',$death_id)
+                ->first();
+
+      return $dt;
+  }
+
+  /**
+   * death tracker data.
+   */
+  private function deathTrackerDataV2($death_id)
+  {
+      $dt = DB::table("feeds_groups_dead_pigs")
                 ->where('death_id',$death_id)
                 ->first();
 
