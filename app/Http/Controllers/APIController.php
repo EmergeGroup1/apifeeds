@@ -2779,16 +2779,16 @@ class APIController extends Controller
 
           $data = $request->all();
 
-          // bring back the dead pigs
-          $death = $this->deathTrackerBringBackData($data['uid']);
-
-          DB::table("feeds_death_tracker")
-                ->where('unique_id',$data['uid'])
-                ->delete();
-
-          DB::table("feeds_death_tracker_logs")
-                ->where('death_unique_id',$data['uid'])
-                ->update(["action"=>"deleted","user_id"=>$data['userID']]);
+          // // bring back the dead pigs
+          // $death = $this->deathTrackerBringBackData($data['uid']);
+          //
+          // DB::table("feeds_death_tracker")
+          //       ->where('unique_id',$data['uid'])
+          //       ->delete();
+          //
+          // DB::table("feeds_death_tracker_logs")
+          //       ->where('death_unique_id',$data['uid'])
+          //       ->update(["action"=>"deleted","user_id"=>$data['userID']]);
 
           return $data;
 
