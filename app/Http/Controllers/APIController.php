@@ -2836,7 +2836,7 @@ class APIController extends Controller
                 ->delete();
 
           DB::table("feeds_groups_dead_pigs_logs")
-                ->where('death_id',$data['death_id'])
+                ->where('death_unique_id',$data['death_unique_id'])
                 ->update(["action"=>"deleted","user_id"=>$data['user_id']]);
 
           // return the list of deaths with corresponding group id
