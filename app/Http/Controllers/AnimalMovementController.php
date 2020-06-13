@@ -511,11 +511,33 @@ class AnimalMovementController extends Controller
               'notes'       => $dp[$i]->notes,
               'room_id'     => $dp[$i]->room_id,
               'unique_id'   => $dp[$i]->unique_id,
-              'death_logs'  => $death_logs
+              'death_logs'  => $death_logs,
+              'bor'         => $this->groupBORPigs($dp[$i]->group_id)
             );
           }
 
           return $data;
+
+      }
+
+      /**
+      ** origGroupPigs()
+      ** get the corresponding deceased pigs of a group
+      ** @param $farm_id int
+      ** @return Response
+      **/
+      private function groupBORPigs($group_id)
+      {
+        $group = DB::table("feeds_movement_groups")
+                          ->where('group_id', $group_id)
+                          ->select("unique_id")
+                          ->get();
+
+        $group_bor = DB::table("feeds_movement_group_bins")
+                      ->where('unique_id',$group[0]->unique_id);
+                      ->get();
+
+        return $group_bor;
 
       }
 
