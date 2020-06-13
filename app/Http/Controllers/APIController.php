@@ -2803,20 +2803,37 @@ class APIController extends Controller
 
           $data = $request->all();
 
-          // // bring back the dead pigs
-          // $death = $this->deathTrackerBringBackData($data['uid']);
-          //
-          // DB::table("feeds_death_tracker")
-          //       ->where('unique_id',$data['uid'])
-          //       ->delete();
-          //
-          // DB::table("feeds_death_tracker_logs")
-          //       ->where('death_unique_id',$data['uid'])
-          //       ->update(["action"=>"deleted","user_id"=>$data['userID']]);
+          // bring back the data first before deleting the death record
+          // get the death_id then the pigs and update the data based on room_id or bin_id
+          $dp_data = DB::table("feeds_groups_dead_pigs")
+                ->where('death_id',$data['death_id'])
+                ->get();
+
+          for($i=0; $i<count($dp_data); $i++){
+
+            $ag_data = $this->animalGroupsData($dp_data[$i]->group_id);
+            $bins_rooms_data = $this->groupRoomsBinsPigs($ag_data->unique_id,
+                                                        $dp_data[$i]->bin_id,
+                                                        $dp_data[$i]->room_id);
+
+            $back_pigs = $bins_rooms_data->number_of_pigs + $dp_data[$i]->amount;
+
+            $this->updateBinsRooms($ag_data->unique_id,
+                                   $dp_data[$i]->bin_id,
+                                   $dp_data[$i]->room_id,
+                                   $back_pigs);
+
+            $home_crtl->clearBinsCache($dp_data[$i]->bin_id);
+
+          }
 
           DB::table("feeds_groups_dead_pigs")
                 ->where('death_id',$data['death_id'])
                 ->delete();
+
+          DB::table("feeds_groups_dead_pigs_logs")
+                ->where('death_id',$data['death_id'])
+                ->update(["action"=>"deleted","user_id"=>$data['user_id']]);
 
           // return the list of deaths with corresponding group id
           $death_lists = $this->amDeadPigs($data['group_id']);
