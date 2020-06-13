@@ -534,7 +534,7 @@ class AnimalMovementController extends Controller
                           ->get();
 
         $group_bor = DB::table("feeds_movement_group_bins")
-                      ->where('unique_id',$group[0]->unique_id);
+                      ->where('unique_id',$group[0]->unique_id)
                       ->get();
 
         return $group_bor;
