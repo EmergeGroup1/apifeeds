@@ -2711,6 +2711,8 @@ class APIController extends Controller
 
         break;
 
+
+
         case "gdrUpdate":
 
           $data = $request->all();
@@ -2743,6 +2745,18 @@ class APIController extends Controller
                                             $dt['room_id']);
 
 
+          $dtl = array(
+                    'death_unique_id' => $data['uid'],
+                    'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                    'user_id' =>  $data['userID'],
+                    'bin_id'  =>  $dt['binID'],
+                    'room_id' =>  $dt['roomID'],
+                    'original_pigs' => $pigs->number_of_pigs,
+                    'pigs'  => $data['deathNumber'],
+                    'action'  =>  "update death record"
+                  );
+
+
           // deduct the death on rooms or bins, after deduction, update the cache
           $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'];
           $this->updateBinsRooms($group_data[0]->unique_id,
@@ -2752,7 +2766,7 @@ class APIController extends Controller
 
           $home_crtl->clearBinsCache($dt['bin_id']);
 
-          // DB::table("feeds_death_tracker_logs")->insert($dtl);
+          DB::table("feeds_groups_dead_pigs_logs")->insert($dtl);
           DB::table("feeds_groups_dead_pigs")
             ->where('death_id',$data['deathID'])
             ->update($dt);
@@ -2771,9 +2785,9 @@ class APIController extends Controller
           return $result;
 
 
-
-
         break;
+
+
 
         case "gdrDelete":
 
