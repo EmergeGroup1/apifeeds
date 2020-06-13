@@ -493,7 +493,7 @@ class AnimalMovementController extends Controller
           for($i=0; $i<count($dp); $i++){
 
             $death_logs = DB::table("feeds_groups_dead_pigs_logs")
-                              ->where('death_unique_id', $dp[$i]->unique_id)
+                              ->where('group_id', $group_id)
                               ->get();
             for($j=0; $j<count($death_logs); $j++){
               $death_logs[$j]->datereadable = date("m-d-Y H:i a", strtotime($death_logs[$j]->date_time_logs));
