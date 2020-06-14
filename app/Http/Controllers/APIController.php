@@ -2887,10 +2887,13 @@ class APIController extends Controller
    */
   private function totalPigs($group_id)
   {
-    $uid = DB::table("feeds_movement_groups")->where('group_id',$group_id)->get('unique_id');
+    $uid = DB::table("feeds_movement_groups")
+              ->where('group_id',$group_id)
+              ->select('unique_id')
+              ->get();
 
     $am_ctrl = new AnimalMovementController;
-    $total_pigs = $am_ctrl->totalPigs($uid);
+    $total_pigs = $am_ctrl->totalPigs($uid[0]->unique_id);
     unset($am_ctrl);
 
     return $total_pigs;
