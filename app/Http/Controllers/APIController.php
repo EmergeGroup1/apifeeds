@@ -2886,8 +2886,27 @@ class APIController extends Controller
 
         case "gtrUpdate":
 
-          $data = $request->all();
-          return $data;
+        $data = $request->all();
+        unset($data['action']);
+
+        $treated_id = $data['treated_id'];
+        unset($data['treated_id']);
+
+        DB::table("feeds_groups_treated_pigs")
+              ->where("treated_id",$treated_id)
+              ->update($data);
+
+        $aml_ctrl = new AnimalMovementController;
+        $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
+        unset($aml_ctrl);
+
+        $result = array(
+          "err"     =>  0,
+          "msg"     =>  "with result",
+          "data"    =>  $tr_lists
+        );
+
+        return $result;
 
         break;
 
