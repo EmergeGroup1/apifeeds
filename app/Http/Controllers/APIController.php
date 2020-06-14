@@ -2708,7 +2708,7 @@ class APIController extends Controller
             "err"     =>  0,
             "msg"     =>  "with result",
             "data"    =>  $death_lists,
-            "total_group_pigs" => $num_of_pigs
+            "total_group_pigs" => $this->totalPigs($data['group_id'])
           );
 
           return $result;
@@ -2791,7 +2791,7 @@ class APIController extends Controller
             "err"     =>  0,
             "msg"     =>  "with result",
             "data"    =>  $death_lists,
-            "total_group_pigs" => $death_number
+            "total_group_pigs" => $this->totalPigs($dt['group_id'])
           );
 
           return $result;
@@ -2848,7 +2848,7 @@ class APIController extends Controller
             "err"     =>  0,
             "msg"     =>  "with result",
             "data"    =>  $death_lists,
-            "total_group_pigs"  => $back_pigs
+            "total_group_pigs"  => $this->totalPigs($data['group_id'])
           );
 
           return $result;
@@ -2880,6 +2880,20 @@ class APIController extends Controller
       default:
         return array("err" => "Something went wrong");
     }
+  }
+
+  /**
+   * error message
+   */
+  private function totalPigs($group_id)
+  {
+    $uid = DB::table("feeds_movement_groups")->where('group_id',$group_id)->get('unique_id');
+
+    $am_ctrl = new AnimalMovementController;
+    $total_pigs = $am_ctrl->totalPigs($uid);
+    unset($am_ctrl);
+
+    return $total_pigs;
   }
 
 
