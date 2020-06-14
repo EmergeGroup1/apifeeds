@@ -489,10 +489,14 @@ class AnimalMovementController extends Controller
                 ->where('group_id',$group_id)
                 ->orderBy('date','desc')->get();
 
+          for($i=0; $i<count($tr); $i++){
+            $tr[$i]->datereadable = date("m-d-Y", strtotime($tr[$i]->date));
+          }
+
           return $tr;
       }
 
-      
+
       /**
        * animal movement pig tracker dead pigs data.
        */
