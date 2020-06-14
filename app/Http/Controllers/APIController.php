@@ -2865,6 +2865,9 @@ class APIController extends Controller
         case "gtrAdd":
 
           $data = $request->all();
+          unset($data['action']);
+
+          return $data;
 
           DB::table("feeds_groups_treated_pigs")
                 ->insert($data);
