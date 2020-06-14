@@ -2865,7 +2865,15 @@ class APIController extends Controller
         case "gtrAdd":
 
           $data = $request->all();
-          return $data;
+
+          DB::table("feeds_groups_treated_pigs")
+                ->insert($data);
+
+          $aml_ctrl = new AnimalMovementController;
+          $tr_lists = $aml_ctrl->amTreatedPigs();
+          unset($aml_ctrl);
+
+          return $tr_lists;
 
         break;
 

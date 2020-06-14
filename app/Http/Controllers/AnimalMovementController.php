@@ -471,7 +471,7 @@ class AnimalMovementController extends Controller
               'transfer_data'			=> 	$this->transferData($v['group_id']),
               'sched_pigs'				=>	$this->scheduledTransaferPigs($v['group_id']),
               'death'             =>  $this->amDeadPigs($v['group_id']),
-              'treated'           =>  ""
+              'treated'           =>  $this->amTreatedPigs($v['group_id'])
             );
 
           }
@@ -480,6 +480,19 @@ class AnimalMovementController extends Controller
 
       }
 
+      /**
+       * animal movement groups treated dead pigs data.
+       */
+      public function amTreatedPigs($group_id)
+      {
+          $tr = DB::table("feeds_groups_treated_pigs")
+                ->where('group_id',$group_id)
+                ->orderBy('date','desc')->get();
+
+          return $tr;
+      }
+
+      
       /**
        * animal movement pig tracker dead pigs data.
        */
