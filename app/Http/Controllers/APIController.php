@@ -2877,8 +2877,7 @@ class APIController extends Controller
           $result = array(
             "err"     =>  0,
             "msg"     =>  "with result",
-            "data"    =>  $tr_lists,
-            "total_group_pigs" => $this->totalPigs($dt['group_id'])
+            "data"    =>  $tr_lists
           );
 
           return $result;
