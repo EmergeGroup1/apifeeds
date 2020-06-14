@@ -2874,7 +2874,14 @@ class APIController extends Controller
           $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
           unset($aml_ctrl);
 
-          return $tr_lists;
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $tr_lists,
+            "total_group_pigs" => $this->totalPigs($dt['group_id'])
+          );
+
+          return $result;
 
         break;
 
