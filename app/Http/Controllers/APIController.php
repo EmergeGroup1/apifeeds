@@ -2842,7 +2842,9 @@ class APIController extends Controller
                 ->update(["action"=>"deleted","user_id"=>$data['user_id']]);
 
           // return the list of deaths with corresponding group id
-          $death_lists = $this->amDeadPigs($data['group_id']);
+          $aml_ctrl = new AnimalMovementController;
+          $death_lists = $aml_ctrl->amDeadPigs($data['group_id']);
+          unset($aml_ctrl);
 
           $result = array(
             "err"     =>  0,
