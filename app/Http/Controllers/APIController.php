@@ -2894,6 +2894,11 @@ class APIController extends Controller
         case "gtrDelete":
 
           $data = $request->all();
+
+          DB::table("feeds_groups_treated_pigs")
+            ->where('treated_id',$data['treated_id'])
+            ->delete();
+
           return $data;
 
         break;
