@@ -2871,7 +2871,7 @@ class APIController extends Controller
                 ->insert($data);
 
           $aml_ctrl = new AnimalMovementController;
-          $tr_lists = $aml_ctrl->amTreatedPigs();
+          $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
           unset($aml_ctrl);
 
           return $tr_lists;
