@@ -2864,13 +2864,22 @@ class APIController extends Controller
         */
         case "gtrAdd":
 
+          $data = $request->all();
+          return $data;
+
         break;
 
         case "gtrUpdate":
 
+          $data = $request->all();
+          return $data;
+
         break;
 
         case "gtrDelete":
+
+          $data = $request->all();
+          return $data;
 
         break;
         // End of Treated Feature
