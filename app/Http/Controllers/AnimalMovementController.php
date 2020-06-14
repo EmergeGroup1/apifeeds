@@ -1015,7 +1015,7 @@ class AnimalMovementController extends Controller
       **
       ** @return Response
       **/
-      private function totalPigs($unique_id)
+      public function totalPigs($unique_id)
       {
           $total = DB::table('feeds_movement_groups_bins')
                     ->where('unique_id',$unique_id)->sum('number_of_pigs');
