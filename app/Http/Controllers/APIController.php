@@ -2708,7 +2708,7 @@ class APIController extends Controller
             "err"     =>  0,
             "msg"     =>  "with result",
             "data"    =>  $death_lists,
-            "total_group_pigs" => $this->totalPigs($data['group_id'])
+            "total_group_pigs" => $this->totalPigs($data['groupID'])
           );
 
           return $result;
