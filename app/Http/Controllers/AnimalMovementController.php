@@ -501,7 +501,7 @@ class AnimalMovementController extends Controller
 
 
 
-          return $dead;
+          return ($dead/$total_pigs);
       }
 
 
