@@ -473,7 +473,7 @@ class AnimalMovementController extends Controller
               'death'             =>  $this->amDeadPigs($v['group_id']),
               'treated'           =>  $this->amTreatedPigs($v['group_id']),
               'death_perc'        =>  $this->daethPercentage($v['group_id']),
-              'treated_perc'      =>  ''
+            'treated_perc'      =>  $this->treatedPercentage($v['group_id'])
             );
 
           }
@@ -483,7 +483,7 @@ class AnimalMovementController extends Controller
       }
 
       /**
-       * animal movement groups treated dead pigs data.
+       * get the percentage death loss of a group.
        */
       public function daethPercentage($group_id)
       {
@@ -503,6 +503,32 @@ class AnimalMovementController extends Controller
 
           if($dead != 0){
             $perc = $dead/$total_pigs;
+          }
+
+          return number_format($perc, 2);
+      }
+
+      /**
+       * Get the treated percentage on the group.
+       */
+      public function treatedPercentage($group_id)
+      {
+          $treated = DB::table("feeds_groups_treated_pigs")
+                ->where('group_id',$group_id)
+                ->sum('amount');
+
+          $uid = DB::table("feeds_movement_groups")
+                          ->where("group_id",$group_id)
+                          ->get("unique_id");
+
+          $total_pigs = DB::table("feeds_movement_groups_bins")
+                            ->where("unique_id",$uid[0]->unique_id)
+                            ->sum("number_of_pigs");
+
+          $perc = 0;
+
+          if($dead != 0){
+            $perc = $treated/$total_pigs;
           }
 
           return number_format($perc, 2);
