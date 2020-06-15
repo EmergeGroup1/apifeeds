@@ -505,7 +505,10 @@ class AnimalMovementController extends Controller
           $sum_pigs = $sum_pigs + $groups_bins_rooms[$i]->number_of_pigs;
         }
 
-        $average = $sum_pigs/count($groups_bins_rooms);
+        if($sum_pigs != 0){
+          $average = $sum_pigs/count($groups_bins_rooms);
+        }
+
 
         return $average;
 
