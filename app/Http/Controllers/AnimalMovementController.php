@@ -499,9 +499,13 @@ class AnimalMovementController extends Controller
                             ->where("unique_id",$uid[0]->unique_id)
                             ->sum("number_of_pigs");
 
+          $perc = 0;
 
+          if($dead != 0){
+            $perc = $dead/$total_pigs;
+          }
 
-          return $dead/$total_pigs;
+          return $perc;
       }
 
 
