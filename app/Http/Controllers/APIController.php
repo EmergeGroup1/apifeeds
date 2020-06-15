@@ -2790,9 +2790,9 @@ class APIController extends Controller
           // return the list of deaths with corresponding group id
           $aml_ctrl = new AnimalMovementController;
           $death_lists = $aml_ctrl->amDeadPigs($dt['group_id']);
-          $death_perc = $aml_ctrl->deathPercentage($data['groupID']);
-          $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
-          $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['groupID']);
+          $death_perc = $aml_ctrl->deathPercentage($data['group_id']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
+          $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['group_id']);
           unset($aml_ctrl);
 
 
@@ -2856,9 +2856,9 @@ class APIController extends Controller
           // return the list of deaths with corresponding group id
           $aml_ctrl = new AnimalMovementController;
           $death_lists = $aml_ctrl->amDeadPigs($data['group_id']);
-          $death_perc = $aml_ctrl->deathPercentage($data['groupID']);
-          $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
-          $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['groupID']);
+          $death_perc = $aml_ctrl->deathPercentage($data['group_id']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
+          $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['group_id']);
           unset($aml_ctrl);
 
           $result = array(
@@ -2890,7 +2890,7 @@ class APIController extends Controller
 
           $aml_ctrl = new AnimalMovementController;
           $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
-          $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
           unset($aml_ctrl);
 
           $result = array(
@@ -2918,7 +2918,7 @@ class APIController extends Controller
 
           $aml_ctrl = new AnimalMovementController;
           $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
-          $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
           unset($aml_ctrl);
 
           $result = array(
@@ -2942,7 +2942,7 @@ class APIController extends Controller
 
             $aml_ctrl = new AnimalMovementController;
             $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
-            $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
+            $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
             unset($aml_ctrl);
 
             $result = array(
