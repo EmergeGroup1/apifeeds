@@ -2702,12 +2702,18 @@ class APIController extends Controller
           // return the list of deaths with corresponding group id
           $aml_ctrl = new AnimalMovementController;
           $death_lists = $aml_ctrl->amDeadPigs($data['groupID']);
+          $death_perc = $aml_ctrl->deathPercentage($data['groupID']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
+          $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['groupID']);
           unset($aml_ctrl);
 
           $result = array(
             "err"     =>  0,
             "msg"     =>  "with result",
             "data"    =>  $death_lists,
+            "death_perc"  =>  $death_perc,
+            "treated_perc"  =>  $treated_perc,
+            "pigs_per_crate"  =>  $pigs_per_crate,
             "total_group_pigs" => $this->totalPigs($data['groupID'])
           );
 
@@ -2784,6 +2790,9 @@ class APIController extends Controller
           // return the list of deaths with corresponding group id
           $aml_ctrl = new AnimalMovementController;
           $death_lists = $aml_ctrl->amDeadPigs($dt['group_id']);
+          $death_perc = $aml_ctrl->deathPercentage($data['groupID']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
+          $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['groupID']);
           unset($aml_ctrl);
 
 
@@ -2791,6 +2800,9 @@ class APIController extends Controller
             "err"     =>  0,
             "msg"     =>  "with result",
             "data"    =>  $death_lists,
+            "death_perc"  =>  $death_perc,
+            "treated_perc"  =>  $treated_perc,
+            "pigs_per_crate"  =>  $pigs_per_crate,
             "total_group_pigs" => $this->totalPigs($dt['group_id'])
           );
 
@@ -2844,12 +2856,18 @@ class APIController extends Controller
           // return the list of deaths with corresponding group id
           $aml_ctrl = new AnimalMovementController;
           $death_lists = $aml_ctrl->amDeadPigs($data['group_id']);
+          $death_perc = $aml_ctrl->deathPercentage($data['groupID']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
+          $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['groupID']);
           unset($aml_ctrl);
 
           $result = array(
             "err"     =>  0,
             "msg"     =>  "with result",
             "data"    =>  $death_lists,
+            "death_perc"  =>  $death_perc,
+            "treated_perc"  =>  $treated_perc,
+            "pigs_per_crate"  =>  $pigs_per_crate,
             "total_group_pigs"  => $this->totalPigs($data['group_id'])
           );
 
@@ -2872,11 +2890,13 @@ class APIController extends Controller
 
           $aml_ctrl = new AnimalMovementController;
           $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
           unset($aml_ctrl);
 
           $result = array(
             "err"     =>  0,
             "msg"     =>  "with result",
+            "treated_perc"  =>  $treated_perc,
             "data"    =>  $tr_lists
           );
 
@@ -2886,27 +2906,29 @@ class APIController extends Controller
 
         case "gtrUpdate":
 
-        $data = $request->all();
-        unset($data['action']);
+          $data = $request->all();
+          unset($data['action']);
 
-        $treated_id = $data['treated_id'];
-        unset($data['treated_id']);
+          $treated_id = $data['treated_id'];
+          unset($data['treated_id']);
 
-        DB::table("feeds_groups_treated_pigs")
-              ->where("treated_id",$treated_id)
-              ->update($data);
+          DB::table("feeds_groups_treated_pigs")
+                ->where("treated_id",$treated_id)
+                ->update($data);
 
-        $aml_ctrl = new AnimalMovementController;
-        $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
-        unset($aml_ctrl);
+          $aml_ctrl = new AnimalMovementController;
+          $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
+          unset($aml_ctrl);
 
-        $result = array(
-          "err"     =>  0,
-          "msg"     =>  "with result",
-          "data"    =>  $tr_lists
-        );
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "treated_perc"  =>  $treated_perc,
+            "data"    =>  $tr_lists
+          );
 
-        return $result;
+          return $result;
 
         break;
 
@@ -2918,7 +2940,19 @@ class APIController extends Controller
             ->where('treated_id',$data['treated_id'])
             ->delete();
 
-          return $data;
+            $aml_ctrl = new AnimalMovementController;
+            $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
+            $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
+            unset($aml_ctrl);
+
+            $result = array(
+              "err"     =>  0,
+              "msg"     =>  "with result",
+              "treated_perc"  =>  $treated_perc,
+              "data"    =>  $tr_lists
+            );
+
+            return $result;
 
         break;
         // End of Treated Feature
