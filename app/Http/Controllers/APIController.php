@@ -2823,6 +2823,8 @@ class APIController extends Controller
                 ->where('death_id',$data['death_id'])
                 ->get();
 
+          $bring_back_dp = array();
+
           $home_crtl = new HomeController;
 
           for($i=0; $i<count($dp_data); $i++){
@@ -2840,6 +2842,13 @@ class APIController extends Controller
                                    $back_pigs);
 
             $home_crtl->clearBinsCache($dp_data[$i]->bin_id);
+
+            $bring_back_dp[] = array(
+              'bin_id'  =>  $dp_data[$i]->bin_id,
+              'room_id' =>  $dp_data[$i]->room_id,
+              'number_of_pigs'  =>  $back_pigs,
+              'unique_id' =>  $ag_data->unique_id
+            );
 
           }
 
@@ -2868,7 +2877,7 @@ class APIController extends Controller
             "death_perc"  =>  $death_perc,
             "treated_perc"  =>  $treated_perc,
             "pigs_per_crate"  =>  $pigs_per_crate,
-            "bring_back_pigs" =>  $dp_data,
+            "bring_back_pigs" =>  $bring_back_dp,
             "total_group_pigs"  => $this->totalPigs($data['group_id'])
           );
 
