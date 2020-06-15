@@ -2912,6 +2912,8 @@ class APIController extends Controller
           $treated_id = $data['treated_id'];
           unset($data['treated_id']);
 
+          $data['date'] = date("Y-m-d H:i:s", strtotime($data['date']));
+
           DB::table("feeds_groups_treated_pigs")
                 ->where("treated_id",$treated_id)
                 ->update($data);
