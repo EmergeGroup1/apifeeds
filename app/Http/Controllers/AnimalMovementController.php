@@ -495,8 +495,13 @@ class AnimalMovementController extends Controller
                           ->where("group_id",$group_id)
                           ->get("unique_id");
 
+          $total_pigs = DB::table("feeds_movement_groups_bins")
+                            ->where("unique_id",$uid->unique_id)
+                            ->sum("number_of_pigs");
 
-          return $uid;
+
+
+          return $dead;
       }
 
 
