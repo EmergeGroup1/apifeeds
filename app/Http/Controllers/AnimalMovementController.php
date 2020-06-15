@@ -473,7 +473,8 @@ class AnimalMovementController extends Controller
               'death'             =>  $this->amDeadPigs($v['group_id']),
               'treated'           =>  $this->amTreatedPigs($v['group_id']),
               'death_perc'        =>  $this->daethPercentage($v['group_id']),
-              'treated_perc'      =>  $this->treatedPercentage($v['group_id'])
+              'treated_perc'      =>  $this->treatedPercentage($v['group_id']),
+              'pigs_per_crate'    =>  $this->avePigsPerCrate($v['group_id'])
             );
 
           }
@@ -481,6 +482,35 @@ class AnimalMovementController extends Controller
           return $data;
 
       }
+
+      /**
+       * get the average pigs per crates in farrowing groups
+       */
+      public function avePigsPerCrate($group_id)
+      {
+        $uid = DB::table("feeds_movement_groups")
+                        ->where("group_id",$group_id)
+                        ->get("unique_id");
+
+        $unique_id = $uid[0]->unique_id;
+
+        $groups_bins_rooms = DB::table("feeds_movement_groups_bins")
+                          ->where("unique_id",$uid[0]->unique_id)
+                          ->where("room_id","!=",0)
+                          ->get();
+
+        $sum_pigs = 0;
+        $average = 0;
+        for($i=0; $i<count($groups_bins_rooms); $i++){
+          $sum_pigs = $sum_pigs + $groups_bins_rooms[$i]->number_of_pigs;
+        }
+
+        $average = $sum_pigs/count($groups_bins_rooms);
+
+        return $average;
+
+      }
+
 
       /**
        * get the percentage death loss of a group.
