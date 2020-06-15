@@ -2868,6 +2868,7 @@ class APIController extends Controller
             "death_perc"  =>  $death_perc,
             "treated_perc"  =>  $treated_perc,
             "pigs_per_crate"  =>  $pigs_per_crate,
+            "bring_back_pigs" =>  $dp_data,
             "total_group_pigs"  => $this->totalPigs($data['group_id'])
           );
 
@@ -3006,47 +3007,6 @@ class APIController extends Controller
     );
   }
 
-
-  /**
-   * animal movement pig tracker dead pigs data.
-   */
-  private function amDeadPigs($group_id)
-  {
-
-      $dp = DB::table("feeds_groups_dead_pigs")
-              ->where('group_id',$group_id)
-              ->orderBy('death_date','desc')->get();
-      $data = array();
-
-      for($i=0; $i<count($dp); $i++){
-
-        $death_logs = DB::table("feeds_groups_dead_pigs_logs")
-                          ->where('death_unique_id', $dp[$i]->unique_id)
-                          ->where('action','!=','deleted')
-                          ->get();
-
-        for($j=0; $j<count($death_logs); $j++){
-          $death_logs[$j]->datereadable = date("m-d-Y H:i a", strtotime($death_logs[$j]->date_time_logs));
-        }
-
-        $data[] = array(
-          'amount'      => $dp[$i]->amount,
-          'bin_id'      => $dp[$i]->bin_id,
-          'cause'       => DB::table("feeds_death_reasons")->where('reason_id',$dp[$i]->cause)->get(),
-          'death_date'  => date("m-d-Y",strtotime($dp[$i]->death_date)),
-          'death_id'    => $dp[$i]->death_id,
-          'farm_id'     => $dp[$i]->farm_id,
-          'group_id'    => $dp[$i]->group_id,
-          'notes'       => $dp[$i]->notes,
-          'room_id'     => $dp[$i]->room_id,
-          'unique_id'   => $dp[$i]->unique_id,
-          'death_logs'  => $death_logs
-        );
-      }
-
-      return $data;
-
-  }
 
   /**
    * death tracker data.
