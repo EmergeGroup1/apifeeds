@@ -472,7 +472,7 @@ class AnimalMovementController extends Controller
               'sched_pigs'				=>	$this->scheduledTransaferPigs($v['group_id']),
               'death'             =>  $this->amDeadPigs($v['group_id']),
               'treated'           =>  $this->amTreatedPigs($v['group_id']),
-              'death_perc'        =>  $this->daethPercentage($v['group_id']),
+              'death_perc'        =>  $this->deathPercentage($v['group_id']),
               'treated_perc'      =>  $this->treatedPercentage($v['group_id']),
               'pigs_per_crate'    =>  $this->avePigsPerCrate($v['group_id'])
             );
@@ -510,7 +510,7 @@ class AnimalMovementController extends Controller
         }
 
 
-        return $average;
+        return number_format($average,0);
 
       }
 
@@ -518,7 +518,7 @@ class AnimalMovementController extends Controller
       /**
        * get the percentage death loss of a group.
        */
-      public function daethPercentage($group_id)
+      public function deathPercentage($group_id)
       {
           $dead = DB::table("feeds_groups_dead_pigs")
                 ->where('group_id',$group_id)
