@@ -2732,7 +2732,7 @@ class APIController extends Controller
           $dtl = array();
 
           $dt = array(
-            'death_date'    =>  date("Y-m-d H:i:s", strtotime($data['date'])),
+            'death_date'    =>  date("Y-m-d H:i:s", strtotime($data['dateOfDeath'])),
             'farm_id'       =>  $data['farmID'],
             'group_id'      =>  $data['groupID'],
             'bin_id'        =>  $data['binID'],
