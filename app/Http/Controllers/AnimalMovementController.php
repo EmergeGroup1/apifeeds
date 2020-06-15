@@ -473,7 +473,7 @@ class AnimalMovementController extends Controller
               'death'             =>  $this->amDeadPigs($v['group_id']),
               'treated'           =>  $this->amTreatedPigs($v['group_id']),
               'death_perc'        =>  $this->daethPercentage($v['group_id']),
-            'treated_perc'      =>  $this->treatedPercentage($v['group_id'])
+              'treated_perc'      =>  $this->treatedPercentage($v['group_id'])
             );
 
           }
@@ -527,7 +527,7 @@ class AnimalMovementController extends Controller
 
           $perc = 0;
 
-          if($dead != 0){
+          if($treated != 0){
             $perc = $treated/$total_pigs;
           }
 
