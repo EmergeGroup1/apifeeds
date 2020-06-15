@@ -471,7 +471,9 @@ class AnimalMovementController extends Controller
               'transfer_data'			=> 	$this->transferData($v['group_id']),
               'sched_pigs'				=>	$this->scheduledTransaferPigs($v['group_id']),
               'death'             =>  $this->amDeadPigs($v['group_id']),
-              'treated'           =>  $this->amTreatedPigs($v['group_id'])
+              'treated'           =>  $this->amTreatedPigs($v['group_id']),
+              'death_perc'        =>  $this->daethPercentage($v['group_id']),
+              'treated_perc'      =>  ''
             );
 
           }
@@ -479,6 +481,24 @@ class AnimalMovementController extends Controller
           return $data;
 
       }
+
+      /**
+       * animal movement groups treated dead pigs data.
+       */
+      public function daethPercentage($group_id)
+      {
+          $dead = DB::table("feeds_groups_dead_pigs")
+                ->where('group_id',$group_id)
+                ->sum('amount');
+
+          $uid = DB::table("feeds_movement_groups")
+                          ->where("group_id",$group_id)
+                          ->get("unique_id");
+
+
+          return $uid;
+      }
+
 
       /**
        * animal movement groups treated dead pigs data.
