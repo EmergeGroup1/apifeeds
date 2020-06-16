@@ -554,7 +554,7 @@ class AnimalMovementController extends Controller
           $perc = 0;
 
           if($dead != 0){
-            $perc = $dead/$total_pigs;
+            $perc = ($dead/$total_pigs) * 100;
           }
 
           return number_format($perc, 2);
@@ -580,7 +580,7 @@ class AnimalMovementController extends Controller
           $perc = 0;
 
           if($treated != 0){
-            $perc = $treated/$total_pigs;
+            $perc = ($treated/$total_pigs) * 100;
           }
 
           return number_format($perc, 2);
