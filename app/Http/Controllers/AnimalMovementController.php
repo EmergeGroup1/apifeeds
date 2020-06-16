@@ -511,7 +511,17 @@ class AnimalMovementController extends Controller
 
           $crates = $farrowing_rooms[0]->crates_number;
 
-          $ave_pigs_per_crates = $ave_pigs_per_crates + ($groups_bins_rooms[$i]->number_of_pigs /  $crates);
+          if($crates != 0){
+
+            $ave_pigs_per_crates = $ave_pigs_per_crates + ($groups_bins_rooms[$i]->number_of_pigs /  $crates);
+
+          } else {
+
+            $ave_pigs_per_crates = $ave_pigs_per_crates + $groups_bins_rooms[$i]->number_of_pigs;
+
+          }
+
+
 
         }
 
