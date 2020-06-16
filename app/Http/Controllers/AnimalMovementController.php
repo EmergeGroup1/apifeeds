@@ -522,7 +522,6 @@ class AnimalMovementController extends Controller
           }
 
 
-
         }
 
         if($sum_pigs != 0){
