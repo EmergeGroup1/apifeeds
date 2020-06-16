@@ -501,12 +501,22 @@ class AnimalMovementController extends Controller
 
         $sum_pigs = 0;
         $average = 0;
+        $ave_pigs_per_crates = 0;
         for($i=0; $i<count($groups_bins_rooms); $i++){
+
           $sum_pigs = $sum_pigs + $groups_bins_rooms[$i]->number_of_pigs;
+          $farrowing_rooms = DB::table("feeds_farrowing_rooms")
+                                ->where('room_id',$room_id)
+                                ->get();
+
+          $crates = $farrowing_rooms[0]->crates_number;
+
+          $ave_pigs_per_crates = $ave_pigs_per_crates + ($groups_bins_rooms[$i]->number_of_pigs /  $crates);
+
         }
 
         if($sum_pigs != 0){
-          $average = $sum_pigs/count($groups_bins_rooms);
+          $average = $ave_pigs_per_crates; //$sum_pigs/count($groups_bins_rooms);
         }
 
 
@@ -602,7 +612,7 @@ class AnimalMovementController extends Controller
                               ->where('action','!=','deleted')
                               ->where('action','!=','add death record')
                               ->get();
-                              
+
             for($j=0; $j<count($death_logs); $j++){
               $death_logs[$j]->datereadable = date("m-d-Y H:i a", strtotime($death_logs[$j]->date_time_logs));
               $death_logs[$j]->origgrouppigs = $this->origGroupPigs($group_id);
