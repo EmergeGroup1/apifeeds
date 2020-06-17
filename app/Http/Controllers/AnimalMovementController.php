@@ -196,6 +196,7 @@ class AnimalMovementController extends Controller
           $output_one = $this->filterTransferGroupTypes($data,$type);
 
           $checker = Storage::exists($file_name);
+
           if($checker == true){
             Storage::delete($file_name);
           }
@@ -238,7 +239,9 @@ class AnimalMovementController extends Controller
           }
           $groups = DB::table("feeds_movement_groups");
           $groups = $groups->where('type',$type);
-          $groups = $groups->where('farm_id',$data['s_farm']);
+          if($data['s_farm'] != "all"){
+            $groups = $groups->where('farm_id',$data['s_farm']);
+          }
           $groups = $groups->whereNotIn('status',['finalized','removed']);
           $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
           $groups = $groups->get();
