@@ -3154,6 +3154,7 @@ class HomeController extends Controller
 		$farrowing = DB::table('feeds_movement_groups')
 									//->where('status','!=','removed')
 									->where('unique_id',$unique_id)->get();
+									
 		$farrowing = $this->toArray($farrowing);
 
 		return $farrowing != NULL ? $farrowing[0] : NULL;
