@@ -1825,7 +1825,7 @@ class APIController extends Controller
           'group_from'      =>  $request->input('group_from'),
           'group_to'        =>  $request->input('group_to'),
           'driver_id'        =>  $request->input('driver_id'),
-          'date'            =>   date("Y-m-d", strtotime($request->input('date'))),
+          'date'            =>   date("m-d-Y", strtotime($request->input('date'))),
           'number_of_pigs'  =>  $request->input('number_of_pigs')
         );
 
