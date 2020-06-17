@@ -1825,9 +1825,11 @@ class APIController extends Controller
           'group_from'      =>  $request->input('group_from'),
           'group_to'        =>  $request->input('group_to'),
           'driver_id'        =>  $request->input('driver_id'),
-          'date'            =>   date("m-d-Y", strtotime($request->input('date'))),
+          'date'            =>   $request->input('date'),
           'number_of_pigs'  =>  $request->input('number_of_pigs')
         );
+
+        return \Carbon\Carbon::parse($data['date'])->format('d/m/Y')
 
         $am_controller = new AnimalMovementController;
         $am_lists = $am_controller->createTransferAPI($data);
