@@ -304,16 +304,11 @@ class AnimalMovementController extends Controller
       **/
       private function filterAll($data,$type)
       {
-          if($type == "hah"){
-            $farm_ids = $this->farmOwners();
-            $groups = $this->filterTransferOwner($data,$farm_ids,'feeds_movement_groups','feeds_movement_groups_bins');
-          }else{
-            $groups = $this->filterTransfer($data,'feeds_movement_groups','feeds_movement_groups_bins');
-          }
-          $output_one = $groups;
 
           if($data['sort'] == 'day_remaining'){
-            usort($output_one, function($a,$b){
+
+              $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              usort($groups, function($a,$b){
 
               return ($a['date_to_transfer'] - $b['date_to_transfer'])
                     ?: ($a['group_type_int'] - $b['group_type_int'])
@@ -323,6 +318,16 @@ class AnimalMovementController extends Controller
 
             return $output_one;
           }
+
+          if($type == "hah"){
+            $farm_ids = $this->farmOwners();
+            $groups = $this->filterTransferOwner($data,$farm_ids,'feeds_movement_groups','feeds_movement_groups_bins');
+          }else{
+            $groups = $this->filterTransfer($data,'feeds_movement_groups','feeds_movement_groups_bins');
+          }
+          $output_one = $groups;
+
+
           $type = ['farrowing','nursery','finisher'];
           $output_two = $this->filterAdditional($data,$type);
 
@@ -377,6 +382,30 @@ class AnimalMovementController extends Controller
               $groups = $groups->where('farm_id',$data['s_farm']);
           }
           $groups = $groups->whereNotIn('status',['finalized','removed','created']);
+          $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
+          $groups = $groups->orderBy('date_to_transfer','desc');
+          $groups = $groups->get();
+          $groups = $this->toArray($groups);
+          $groups = $this->filterTransferBins($groups,$group_table,$group_bins_table);
+
+          return $groups;
+      }
+
+
+      /**
+      ** Filter for all farrowing to nursery groups
+      ** @param $data array
+      ** @param $group_table string
+      ** @param $group_bins_table string
+      ** @return array
+      **/
+      private function filterTransferDayRemaining($data,$group_table,$group_bins_table)
+      {
+          $groups = DB::table($group_table);
+          if($data['s_farm'] != "all"){
+              $groups = $groups->where('farm_id',$data['s_farm']);
+          }
+          $groups = $groups->whereNotIn('status',['finalized','removed']);
           $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
           $groups = $groups->orderBy('date_to_transfer','desc');
           $groups = $groups->get();
