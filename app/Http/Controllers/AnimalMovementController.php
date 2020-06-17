@@ -558,7 +558,7 @@ class AnimalMovementController extends Controller
 
 
 
-        if($sum_pigs != 0){
+        if($sum_pigs != 0 && $pigs_per_crate != 0){
 
           $average = $sum_pigs/$pigs_per_crate; //$sum_pigs/count($groups_bins_rooms);
         }
