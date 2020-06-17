@@ -1829,7 +1829,10 @@ class APIController extends Controller
           'number_of_pigs'  =>  $request->input('number_of_pigs')
         );
 
-        return substr($request->input('date'), -5);
+        $year = substr($request->input('date'), -4);
+        $month_day = substr($request->input('date'), 5);
+
+        return $month_day . "-" . $year;
 
         $am_controller = new AnimalMovementController;
         $am_lists = $am_controller->createTransferAPI($data);
