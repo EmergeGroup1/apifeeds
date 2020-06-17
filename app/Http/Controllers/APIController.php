@@ -1662,6 +1662,8 @@ class APIController extends Controller
           's_farm'    =>  $request->input('s_farm') // selected farm
         );
 
+        return $data;
+
         $am_controller = new AnimalMovementController;
         $am_lists = $am_controller->animalMovementFilterAPI($data);
         unset($am_controller);
