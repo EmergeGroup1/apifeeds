@@ -1658,7 +1658,8 @@ class APIController extends Controller
           'type'      =>  $request->input('type'), // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
           'date_from' =>  $request->input('date_from'), // (date)
           'date_to'   =>  $request->input('date_to'), // (date)
-          'sort'      =>  $request->input('sort') // (string) not_scheduled, day_remaining
+          'sort'      =>  $request->input('sort'), // (string) not_scheduled, day_remaining
+          's_farm'    =>  $request->input('s_farm') // selected farm
         );
 
         $am_controller = new AnimalMovementController;
@@ -1680,6 +1681,37 @@ class APIController extends Controller
         }
 
         break;
+
+
+        case "amListRefresh":
+
+          $data = array(
+            'type'      =>  $request->input('type'), // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
+            'date_from' =>  $request->input('date_from'), // (date)
+            'date_to'   =>  date("Y-m-d"), // (date)
+            'sort'      =>  $request->input('sort'), // (string) not_scheduled, day_remaining
+            's_farm'    =>  "all" // selected farm
+          );
+
+          $am_controller = new AnimalMovementController;
+          $am_lists = $am_controller->animalMovementFilterAPI($data);
+          unset($am_controller);
+
+          if (!empty($am_lists['output'])) {
+            return array(
+              "err"     =>  0,
+              "msg"     =>  "Successfully Get Animal Groups",
+              "am_list" =>  $am_lists,
+              "death_reasons" => $this->deathReasons()
+            );
+          } else {
+            return array(
+              "err" =>  1,
+              "msg" =>  "No Records Found"
+            );
+          }
+
+          break;
 
 
       case "amDeleteGroup":
@@ -1788,12 +1820,16 @@ class APIController extends Controller
 
       case "amCreateTransfer":
 
+        $year = substr($request->input('date'), -4);
+        $month_day = substr($request->input('date'), 0, 5);
+        $date = $year . "-" . $month_day;
+
         $data = array(
           'transfer_type'    =>  $request->input('transfer_type'),
           'group_from'      =>  $request->input('group_from'),
           'group_to'        =>  $request->input('group_to'),
           'driver_id'        =>  $request->input('driver_id'),
-          'date'            =>   date("Y-m-d", strtotime($request->input('date'))),
+          'date'            =>   $date,
           'number_of_pigs'  =>  $request->input('number_of_pigs')
         );
 
@@ -2605,6 +2641,338 @@ class APIController extends Controller
 
         break;
 
+
+        /*
+        * Group Death Feature
+        */
+        case "gdrAdd":
+
+          $data = $request->all();
+
+          $home_crtl = new HomeController;
+          $u_id = $home_crtl->generator();
+          $dtl = array();
+
+          $dt = array(
+            'death_date'    =>  $data['dateOfDeath'],
+            'farm_id'       =>  $data['farmID'],
+            'group_id'      =>  $data['groupID'],
+            'bin_id'        =>  $data['binID'],
+            'room_id'       =>  $data['roomID'],
+            'cause'         =>  $data['reason'],
+            'amount'        =>  $data['deathNumber'],
+            'notes'         =>  $data['notes'],
+            'unique_id'     =>  $u_id
+          );
+
+          // $group_uid = $this->animalGroupsData($dt['group_id']);
+
+          $group_data = DB::table("feeds_movement_groups")
+                          ->select('unique_id')
+                          ->where("group_id",$dt['group_id'])
+                          ->get();
+
+
+          $pigs = $this->groupRoomsBinsPigs($group_data[0]->unique_id,
+                                            $dt['bin_id'],
+                                            $dt['room_id']);
+
+          $dtl = array(
+                    'death_unique_id' => $u_id,
+                    'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                    'group_id'  =>  $dt['group_id'],
+                    'user_id' =>  $data['userID'],
+                    'bin_id'  =>  $dt['bin_id'],
+                    'room_id' =>  $dt['room_id'],
+                    'original_pigs' => $pigs->number_of_pigs,
+                    'pigs'  => $data['deathNumber'],
+                    'action'  =>  "add death record"
+                  );
+
+          // deduct the death on rooms or bins, after deduction, update the cache
+          $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'];
+          $this->updateBinsRooms($group_data[0]->unique_id,
+                                 $dt['bin_id'],
+                                 $dt['room_id'],
+                                 $num_of_pigs);
+
+          $home_crtl->clearBinsCache($dt['bin_id']);
+
+          DB::table("feeds_groups_dead_pigs_logs")->insert($dtl);
+          DB::table("feeds_groups_dead_pigs")->insert($dt);
+
+          unset($home_crtl);
+
+          // return the list of deaths with corresponding group id
+          $aml_ctrl = new AnimalMovementController;
+          $death_lists = $aml_ctrl->amDeadPigs($data['groupID']);
+          $death_perc = $aml_ctrl->deathPercentage($data['groupID']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
+          $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['groupID']);
+          unset($aml_ctrl);
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $death_lists,
+            "death_perc"  =>  $death_perc,
+            "treated_perc"  =>  $treated_perc,
+            "pigs_per_crate"  =>  $pigs_per_crate,
+            "total_group_pigs" => $this->totalPigs($data['groupID'])
+          );
+
+          return $result;
+
+        break;
+
+
+
+        case "gdrUpdate":
+
+          $data = $request->all();
+
+          $home_crtl = new HomeController;
+          $u_id = $home_crtl->generator();
+          $dtl = array();
+
+          $dt = array(
+            'death_date'    =>  date("Y-m-d H:i:s", strtotime($data['dateOfDeath'])),
+            'farm_id'       =>  $data['farmID'],
+            'group_id'      =>  $data['groupID'],
+            'bin_id'        =>  $data['binID'],
+            'room_id'       =>  $data['roomID'],
+            'cause'         =>  $data['reason'],
+            'amount'        =>  $data['deathNumber'],
+            'notes'         =>  $data['notes']
+          );
+
+          // $group_uid = $this->animalGroupsData($dt['group_id']);
+
+          $dp_data = $this->deathTrackerDataV2($data['deathID']);
+
+          $group_data = DB::table("feeds_movement_groups")
+                          ->select('unique_id')
+                          ->where("group_id",$dt['group_id'])
+                          ->get();
+
+
+          $pigs = $this->groupRoomsBinsPigs($group_data[0]->unique_id,
+                                            $dt['bin_id'],
+                                            $dt['room_id']);
+
+
+          $dtl = array(
+                    'death_unique_id' => $data['uid'],
+                    'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                    'group_id'  =>  $data['groupID'],
+                    'user_id' =>  $data['userID'],
+                    'bin_id'  =>  $data['binID'],
+                    'room_id' =>  $data['roomID'],
+                    'original_pigs' => $pigs->number_of_pigs,
+                    'pigs'  => $data['deathNumber'],
+                    'action'  =>  "update death record"
+                  );
+
+
+          $death_number = ($dp_data[0]->amount + $pigs->number_of_pigs) - $data['deathNumber'];
+          // deduct the death on rooms or bins, after deduction, update the cache
+          // $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'];
+          $this->updateBinsRooms($group_data[0]->unique_id,
+                                 $dt['bin_id'],
+                                 $dt['room_id'],
+                                 $death_number);
+
+          $home_crtl->clearBinsCache($dt['bin_id']);
+
+          DB::table("feeds_groups_dead_pigs_logs")->insert($dtl);
+          DB::table("feeds_groups_dead_pigs")
+            ->where('death_id',$data['deathID'])
+            ->update($dt);
+
+          unset($home_crtl);
+
+          // return the list of deaths with corresponding group id
+          $aml_ctrl = new AnimalMovementController;
+          $death_lists = $aml_ctrl->amDeadPigs($dt['group_id']);
+          $death_perc = $aml_ctrl->deathPercentage($dt['group_id']);
+          $treated_perc = $aml_ctrl->treatedPercentage($dt['group_id']);
+          $pigs_per_crate = $aml_ctrl->avePigsPerCrate($dt['group_id']);
+          unset($aml_ctrl);
+
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $death_lists,
+            "death_perc"  =>  $death_perc,
+            "treated_perc"  =>  $treated_perc,
+            "pigs_per_crate"  =>  $pigs_per_crate,
+            "total_group_pigs" => $this->totalPigs($dt['group_id'])
+          );
+
+          return $result;
+
+
+        break;
+
+
+
+        case "gdrDelete":
+
+          $data = $request->all();
+
+          // bring back the data first before deleting the death record
+          // get the death_id then the pigs and update the data based on room_id or bin_id
+          $dp_data = DB::table("feeds_groups_dead_pigs")
+                ->where('death_id',$data['death_id'])
+                ->get();
+
+          $bring_back_dp = array();
+
+          $home_crtl = new HomeController;
+
+          for($i=0; $i<count($dp_data); $i++){
+
+            $ag_data = $this->animalGroupsData($dp_data[$i]->group_id);
+            $bins_rooms_data = $this->groupRoomsBinsPigs($ag_data->unique_id,
+                                                        $dp_data[$i]->bin_id,
+                                                        $dp_data[$i]->room_id);
+
+            $back_pigs = $bins_rooms_data->number_of_pigs + $dp_data[$i]->amount;
+
+            $this->updateBinsRooms($ag_data->unique_id,
+                                   $dp_data[$i]->bin_id,
+                                   $dp_data[$i]->room_id,
+                                   $back_pigs);
+
+            $home_crtl->clearBinsCache($dp_data[$i]->bin_id);
+
+            $bring_back_dp[] = array(
+              'bin_id'  =>  $dp_data[$i]->bin_id,
+              'room_id' =>  $dp_data[$i]->room_id,
+              'number_of_pigs'  =>  $back_pigs,
+              'unique_id' =>  $ag_data->unique_id
+            );
+
+          }
+
+          unset($home_crtl);
+
+          DB::table("feeds_groups_dead_pigs")
+                ->where('death_id',$data['death_id'])
+                ->delete();
+
+          DB::table("feeds_groups_dead_pigs_logs")
+                ->where('death_unique_id',$data['unique_id'])
+                ->update(["action"=>"deleted","user_id"=>$data['user_id']]);
+
+          // return the list of deaths with corresponding group id
+          $aml_ctrl = new AnimalMovementController;
+          $death_lists = $aml_ctrl->amDeadPigs($data['group_id']);
+          $death_perc = $aml_ctrl->deathPercentage($data['group_id']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
+          $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['group_id']);
+          unset($aml_ctrl);
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $death_lists,
+            "death_perc"  =>  $death_perc,
+            "treated_perc"  =>  $treated_perc,
+            "pigs_per_crate"  =>  $pigs_per_crate,
+            "bring_back_pigs" =>  $bring_back_dp,
+            "total_group_pigs"  => $this->totalPigs($data['group_id'])
+          );
+
+          return $result;
+
+        break;
+        // End of Death Feature
+
+
+        /*
+        * Group Treated Feature
+        */
+        case "gtrAdd":
+
+          $data = $request->all();
+          unset($data['action']);
+
+          DB::table("feeds_groups_treated_pigs")
+                ->insert($data);
+
+          $aml_ctrl = new AnimalMovementController;
+          $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
+          unset($aml_ctrl);
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "treated_perc"  =>  $treated_perc,
+            "data"    =>  $tr_lists
+          );
+
+          return $result;
+
+        break;
+
+        case "gtrUpdate":
+
+          $data = $request->all();
+          unset($data['action']);
+
+          $treated_id = $data['treated_id'];
+          unset($data['treated_id']);
+
+          $data['date'] = date("Y-m-d H:i:s", strtotime($data['date']));
+
+          DB::table("feeds_groups_treated_pigs")
+                ->where("treated_id",$treated_id)
+                ->update($data);
+
+          $aml_ctrl = new AnimalMovementController;
+          $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
+          $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
+          unset($aml_ctrl);
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "treated_perc"  =>  $treated_perc,
+            "data"    =>  $tr_lists
+          );
+
+          return $result;
+
+        break;
+
+        case "gtrDelete":
+
+          $data = $request->all();
+
+          DB::table("feeds_groups_treated_pigs")
+            ->where('treated_id',$data['treated_id'])
+            ->delete();
+
+            $aml_ctrl = new AnimalMovementController;
+            $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
+            $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
+            unset($aml_ctrl);
+
+            $result = array(
+              "err"     =>  0,
+              "msg"     =>  "with result",
+              "treated_perc"  =>  $treated_perc,
+              "data"    =>  $tr_lists
+            );
+
+            return $result;
+
+        break;
+        // End of Treated Feature
+
         /*
         * End of Death Tracker
         */
@@ -2612,6 +2980,23 @@ class APIController extends Controller
       default:
         return array("err" => "Something went wrong");
     }
+  }
+
+  /**
+   * error message
+   */
+  private function totalPigs($group_id)
+  {
+    $uid = DB::table("feeds_movement_groups")
+              ->where('group_id',$group_id)
+              ->select('unique_id')
+              ->get();
+
+    $am_ctrl = new AnimalMovementController;
+    $total_pigs = $am_ctrl->totalPigs($uid[0]->unique_id);
+    unset($am_ctrl);
+
+    return $total_pigs;
   }
 
 
@@ -2644,6 +3029,22 @@ class APIController extends Controller
       $dt = DB::table("feeds_death_tracker")
                 ->where('death_id',$death_id)
                 ->first();
+
+      return $dt;
+  }
+
+  /**
+   * death tracker data.
+   */
+  private function deathTrackerDataV2($death_id)
+  {
+      $dt = DB::table("feeds_groups_dead_pigs")
+                ->where('death_id',$death_id)
+                ->get();
+
+      // for($i=0; $i<count($dt); $i++){
+      //   $dt[$i]->datereadable = date("m-d-Y H:i a", strtotime($dt[$i]->date_time_logs));
+      // }
 
       return $dt;
   }
