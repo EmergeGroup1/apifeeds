@@ -534,6 +534,7 @@ class AnimalMovementController extends Controller
         $sum_pigs = 0;
         $average = 0;
         $ave_pigs_per_crates = 0;
+        $pigs_per_crate = 0;
         for($i=0; $i<count($groups_bins_rooms); $i++){
 
           $sum_pigs = $sum_pigs + $groups_bins_rooms[$i]->number_of_pigs;
@@ -541,23 +542,25 @@ class AnimalMovementController extends Controller
                                 ->where('id',$groups_bins_rooms[$i]->room_id)
                                 ->get();
 
-          $crates = $farrowing_rooms[0]->crates_number;
+          $pigs_per_crate = $pigs_per_crate + $farrowing_rooms[0]->crates_number;
 
-          if($crates != 0){
-
-            $ave_pigs_per_crates = $ave_pigs_per_crates + ($groups_bins_rooms[$i]->number_of_pigs /  $crates);
-
-          } else {
-
-            $ave_pigs_per_crates = $ave_pigs_per_crates + $groups_bins_rooms[$i]->number_of_pigs;
-
-          }
-
+          // if($crates != 0){
+          //
+          //   $ave_pigs_per_crates = $ave_pigs_per_crates + ($groups_bins_rooms[$i]->number_of_pigs /  $crates);
+          //
+          // } else {
+          //
+          //   $ave_pigs_per_crates = $ave_pigs_per_crates + $groups_bins_rooms[$i]->number_of_pigs;
+          //
+          // }
 
         }
 
+
+
         if($sum_pigs != 0){
-          $average = $ave_pigs_per_crates; //$sum_pigs/count($groups_bins_rooms);
+
+          $average = $sum_pigs/$pigs_per_crate; //$sum_pigs/count($groups_bins_rooms);
         }
 
 
