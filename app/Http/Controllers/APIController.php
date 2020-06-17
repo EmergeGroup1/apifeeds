@@ -1829,7 +1829,7 @@ class APIController extends Controller
           'number_of_pigs'  =>  $request->input('number_of_pigs')
         );
 
-        return \Carbon\Carbon::createFromFormat('d/m/Y',$request->input('date'));
+        return $request->input('date');
 
         $am_controller = new AnimalMovementController;
         $am_lists = $am_controller->createTransferAPI($data);
