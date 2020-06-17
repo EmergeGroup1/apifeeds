@@ -316,7 +316,7 @@ class AnimalMovementController extends Controller
 
             });
 
-            return $output_one;
+            return $groups;
           }
 
           if($type == "hah"){
