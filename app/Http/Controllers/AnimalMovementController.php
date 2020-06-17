@@ -1431,7 +1431,7 @@ class AnimalMovementController extends Controller
             'group_to'				=>	$data['group_to'],
             'status'					=>	"created",
             'driver_id'				=>	$data['driver_id'],
-            'date'						=> 	$data['date'],
+            'date'						=> 	date("Y-m-d", strtotime($data['date'])),
             'shipped'					=>	$data['number_of_pigs'],
             'initial_count'		=>	$data['number_of_pigs']
           );
