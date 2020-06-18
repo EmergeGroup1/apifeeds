@@ -1948,7 +1948,7 @@ class APIController extends Controller
           $farm_id = DB::table("feeds_movement_groups")
                       ->where("group_id",$transfer_data['group_to'])
                       ->select('farm_id')
-                      ->get('farm_id');
+                      ->first();
 
           $u_id = $home_crtl->generator();
 
