@@ -651,6 +651,7 @@ class AnimalMovementController extends Controller
             $death_logs = DB::table("feeds_groups_dead_pigs_logs")
                               ->where('group_id', $group_id)
                               ->whereNotIn('action',['deleted','add death record','add death record'])
+                              ->where("death_id",$dp[$i]->death_id)
                               ->get();
 
             for($j=0; $j<count($death_logs); $j++){
