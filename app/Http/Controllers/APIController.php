@@ -1956,10 +1956,10 @@ class APIController extends Controller
             'death_date'    =>  date("Y-m-d"),
             'farm_id'       =>  $farm_id[0]->farm_id,
             'group_id'      =>  $transfer_data['group_to'],
-            'bin_id'        =>  $data['bins_to'],
+            'bin_id'        =>  $data[$i]['bins_to'],
             'room_id'       =>  0,
             'cause'         =>  13,
-            'amount'        =>  $data['num_of_pigs_dead'],
+            'amount'        =>  $data[$i]['num_of_pigs_dead'],
             'notes'         =>  "--",
             'unique_id'     =>  $u_id
           );
