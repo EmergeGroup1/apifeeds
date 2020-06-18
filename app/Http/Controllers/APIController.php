@@ -1954,7 +1954,7 @@ class APIController extends Controller
           $u_id = $home_crtl->generator();
 
           $dt[] = array(
-            'death_date'    =>  dat("Y-m-d"),
+            'death_date'    =>  date("Y-m-d"),
             'farm_id'       =>  $farm_id[0]->farm_id,
             'group_id'      =>  $transfer_data['group_to'],
             'bin_id'        =>  $data['bins_to'],
