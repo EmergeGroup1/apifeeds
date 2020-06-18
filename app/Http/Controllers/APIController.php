@@ -1941,7 +1941,6 @@ class APIController extends Controller
         );
 
 
-        $dt = array();
         $home_crtl = new HomeController;
 
         for($i=0; $i<count($data); $i++){
@@ -1953,7 +1952,7 @@ class APIController extends Controller
 
           $u_id = $home_crtl->generator();
 
-          $dt[] = array(
+          $dt = array(
             'death_date'    =>  date("Y-m-d"),
             'farm_id'       =>  $farm_id[0]->farm_id,
             'group_id'      =>  $transfer_data['group_to'],
