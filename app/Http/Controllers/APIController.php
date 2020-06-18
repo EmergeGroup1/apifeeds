@@ -1940,6 +1940,8 @@ class APIController extends Controller
           'num_of_pigs_poor' => $request->input('num_of_pigs_poor')
         );
 
+        return $data;
+
         $am_controller = new AnimalMovementController;
         $am_transfer = $am_controller->finalizeTransfer($data);
         unset($am_controller);
