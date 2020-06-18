@@ -1948,13 +1948,13 @@ class APIController extends Controller
           $farm_id = DB::table("feeds_movement_groups")
                       ->where("group_id",$transfer_data['group_to'])
                       ->select('farm_id')
-                      ->get();
+                      ->get('farm_id');
 
           $u_id = $home_crtl->generator();
 
           $dt = array(
             'death_date'    =>  date("Y-m-d"),
-            'farm_id'       =>  $farm_id[0]->farm_id,
+            'farm_id'       =>  $farm_id->farm_id,
             'group_id'      =>  $transfer_data['group_to'],
             'bin_id'        =>  $data[$i]['bins_to'],
             'room_id'       =>  0,
