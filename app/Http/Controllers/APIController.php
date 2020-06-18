@@ -1943,7 +1943,7 @@ class APIController extends Controller
 
         $home_crtl = new HomeController;
 
-        for($i=0; $i<count($data); $i++){
+        for($i=0; $i<count($data['bins_to']); $i++){
 
           $farm_id = DB::table("feeds_movement_groups")
                       ->where("group_id",$transfer_data['group_to'])
@@ -1956,10 +1956,10 @@ class APIController extends Controller
             'death_date'    =>  date("Y-m-d"),
             'farm_id'       =>  $farm_id->farm_id,
             'group_id'      =>  $transfer_data['group_to'],
-            'bin_id'        =>  $data[$i]['bins_to'],
+            'bin_id'        =>  $data['bins_to'][$i],
             'room_id'       =>  0,
             'cause'         =>  13,
-            'amount'        =>  $data[$i]['num_of_pigs_dead'],
+            'amount'        =>  $data['num_of_pigs_dead'][$i],
             'notes'         =>  "--",
             'unique_id'     =>  $u_id
           );
