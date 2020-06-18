@@ -1940,7 +1940,37 @@ class APIController extends Controller
           'num_of_pigs_poor' => $request->input('num_of_pigs_poor')
         );
 
-        return $data;
+
+        $dt = array();
+        $home_crtl = new HomeController;
+
+        for($i=0; $i<count($data); $i++){
+
+          $farm_id = DB::table("feeds_movement_groups")
+                      ->where("group_id",$transfer_data['group_to'])
+                      ->select('farm_id')
+                      ->get();
+
+          $u_id = $home_crtl->generator();
+
+          $dt[] = array(
+            'death_date'    =>  dat("Y-m-d"),
+            'farm_id'       =>  $farm_id[0]->farm_id,
+            'group_id'      =>  $transfer_data['group_to'],
+            'bin_id'        =>  $data['bins_to'],
+            'room_id'       =>  0,
+            'cause'         =>  13,
+            'amount'        =>  $data['num_of_pigs_dead'],
+            'notes'         =>  "--",
+            'unique_id'     =>  $u_id
+          );
+
+          DB::table("feeds_groups_dead_pigs")->insert($dt);
+
+        }
+        unset($home_crtl);
+
+
 
         $am_controller = new AnimalMovementController;
         $am_transfer = $am_controller->finalizeTransfer($data);
@@ -3094,6 +3124,23 @@ class APIController extends Controller
                     ->first();
 
     return $group_data;
+
+  }
+
+  private function groupsDeathRecordAdd($data)
+  {
+
+    $dt = array(
+      'death_date'    =>  $data['dateOfDeath'],
+      'farm_id'       =>  $data['farmID'],
+      'group_id'      =>  $data['groupID'],
+      'bin_id'        =>  $data['binID'],
+      'room_id'       =>  $data['roomID'],
+      'cause'         =>  $data['reason'],
+      'amount'        =>  $data['deathNumber'],
+      'notes'         =>  $data['notes'],
+      'unique_id'     =>  $u_id
+    );
 
   }
 
