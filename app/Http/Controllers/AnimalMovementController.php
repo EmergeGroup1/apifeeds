@@ -556,10 +556,7 @@ class AnimalMovementController extends Controller
 
         }
 
-
-
         if($sum_pigs != 0 && $pigs_per_crate != 0){
-
           $average = $sum_pigs/$pigs_per_crate; //$sum_pigs/count($groups_bins_rooms);
         }
 
@@ -653,8 +650,7 @@ class AnimalMovementController extends Controller
 
             $death_logs = DB::table("feeds_groups_dead_pigs_logs")
                               ->where('group_id', $group_id)
-                              ->where('action','!=','deleted')
-                              ->where('action','!=','add death record')
+                              ->whereNotIn('action',['deleted','add death record','add death record'])
                               ->get();
 
             for($j=0; $j<count($death_logs); $j++){
