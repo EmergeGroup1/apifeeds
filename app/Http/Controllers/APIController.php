@@ -2782,6 +2782,8 @@ class APIController extends Controller
             'notes'         =>  $data['notes']
           );
 
+          return $dt;
+
           // $group_uid = $this->animalGroupsData($dt['group_id']);
 
           $dp_data = $this->deathTrackerDataV2($data['deathID']);
