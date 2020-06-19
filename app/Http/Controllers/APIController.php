@@ -2783,7 +2783,6 @@ class APIController extends Controller
             'notes'         =>  $data['notes']
           );
 
-          return $dt;
 
           DB::table("feeds_groups_dead_pigs")
             ->where('death_id',$data['deathID'])
