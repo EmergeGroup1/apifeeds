@@ -2967,10 +2967,8 @@ class APIController extends Controller
           $treated_id = $data['treated_id'];
           unset($data['treated_id']);
 
-          $year = substr($data['date'], -4);
-          $month_day = substr($data['date'], 0, 5);
-          $date = $year . "-" . $month_day;
-          $data['date'] = $date;
+
+          $data['date'] = $data['date'] . " 00:00:00";
 
           DB::table("feeds_groups_treated_pigs")
                 ->where("treated_id",$treated_id)
