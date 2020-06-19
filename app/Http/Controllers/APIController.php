@@ -2766,11 +2766,12 @@ class APIController extends Controller
           $u_id = $home_crtl->generator();
           $dtl = array();
 
-          return $data['dateOfDeath'];
+
 
           $month_day = substr($data['dateOfDeath'], -5);
           $year = substr($data['dateOfDeath'], 0, 4);
           $date =  $year. "-" .$month_day;
+          return $date;
           $date = date("Y-m-d H:i:s",strtotime($date));
 
 
