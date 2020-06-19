@@ -2766,8 +2766,13 @@ class APIController extends Controller
           $u_id = $home_crtl->generator();
           $dtl = array();
 
+          $year = substr($data['dateOfDeath'], -4);
+          $month_day = substr($data['dateOfDeath'], 0, 5);
+          $date = $year . "-" . $month_day;
+          $data['dateOfDeath'] = $date;
+
           $dt = array(
-            'death_date'    =>  date("Y-m-d H:i:s", strtotime($data['dateOfDeath'])),
+            'death_date'    =>  $data['dateOfDeath'],
             'farm_id'       =>  $data['farmID'],
             'group_id'      =>  $data['groupID'],
             'bin_id'        =>  $data['binID'],
@@ -2957,7 +2962,10 @@ class APIController extends Controller
           $treated_id = $data['treated_id'];
           unset($data['treated_id']);
 
-          $data['date'] = date("Y-m-d H:i:s", strtotime($data['date']));
+          $year = substr($data['date'], -4);
+          $month_day = substr($data['date'], 0, 5);
+          $date = $year . "-" . $month_day;
+          $data['date'] = $date;
 
           DB::table("feeds_groups_treated_pigs")
                 ->where("treated_id",$treated_id)
