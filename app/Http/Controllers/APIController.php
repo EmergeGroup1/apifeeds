@@ -1964,7 +1964,9 @@ class APIController extends Controller
             'unique_id'     =>  $u_id
           );
 
-          DB::table("feeds_groups_dead_pigs")->insert($dt);
+          if($data['num_of_pigs_dead'][$i] != 0){
+            DB::table("feeds_groups_dead_pigs")->insert($dt);
+          }
 
         }
         unset($home_crtl);
