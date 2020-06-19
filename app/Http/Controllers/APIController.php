@@ -2768,7 +2768,7 @@ class APIController extends Controller
 
           $month_day = substr($data['dateOfDeath'], -5);
           $year = substr($data['dateOfDeath'], 0, 4);
-          $date =  $year. "-" .$month_day . " " . date("H:is");
+          $date =  $year. "-" .$month_day . " 00:00:00";
 
 
           $dt = array(
@@ -2781,8 +2781,6 @@ class APIController extends Controller
             'amount'        =>  $data['deathNumber'],
             'notes'         =>  $data['notes']
           );
-
-          return $dt;
 
           DB::table("feeds_groups_dead_pigs")
             ->where('death_id',$data['deathID'])
