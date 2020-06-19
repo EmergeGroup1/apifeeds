@@ -2684,6 +2684,10 @@ class APIController extends Controller
           $u_id = $home_crtl->generator();
           $dtl = array();
 
+          if($data['notes'] == "" || $data['notes'] == NULL){
+            $data['notes'] = "--";
+          }
+
           $dt = array(
             'death_date'    =>  $data['dateOfDeath'],
             'farm_id'       =>  $data['farmID'],
@@ -2767,6 +2771,9 @@ class APIController extends Controller
           $dtl = array();
 
 
+          if($data['notes'] == "" || $data['notes'] == NULL){
+            $data['notes'] = "--";
+          }
 
           // $month_day = substr($data['dateOfDeath'], -5);
           // $year = substr($data['dateOfDeath'], 0, 4);
@@ -2939,6 +2946,9 @@ class APIController extends Controller
 
           $data = $request->all();
           unset($data['action']);
+          if($data['notes'] == "" || $data['notes'] == NULL){
+            $data['notes'] = "--";
+          }
 
           DB::table("feeds_groups_treated_pigs")
                 ->insert($data);
@@ -2963,6 +2973,9 @@ class APIController extends Controller
 
           $data = $request->all();
           unset($data['action']);
+          if($data['notes'] == "" || $data['notes'] == NULL){
+            $data['notes'] = "--";
+          }
 
           $treated_id = $data['treated_id'];
           unset($data['treated_id']);
