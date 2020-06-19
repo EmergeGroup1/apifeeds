@@ -3037,6 +3037,11 @@ class APIController extends Controller
             ->where('group_id',$data['group_id'])
             ->get();
 
+          $group_transfer_shipped = DB::table("feeds_movement_transfer_v2")
+                              ->where("group_from",$data['group_id'])
+                              ->whereIn("status",["created","edited"])
+                              ->sum("shipped");
+
           $total_pigs = DB::table("feeds_movement_groups_bins")
                           ->where("unique_id",$uid[0]->unique_id)
                           ->sum('number_of_pigs');
@@ -3044,7 +3049,7 @@ class APIController extends Controller
           $result = array(
             "err"     =>  0,
             "msg"     =>  "with result",
-            "data"    =>  $total_pigs
+            "data"    =>  $total_pigs - $group_transfer_shipped
           );
 
           return $result;
