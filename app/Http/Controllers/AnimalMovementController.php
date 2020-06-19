@@ -2183,7 +2183,7 @@ class AnimalMovementController extends Controller
         DB::table($group_table)->where('unique_id',$unique_id)->update(['status'=>'entered']); // chamge the status to entered because we need to bring back the empty groups
         $bins = DB::table($bins_table)->where('unique_id',$unique_id)->get();
         foreach($bins as $k => $v){
-          if($v != NULL){
+          if($v != NULL && $v->bin_id != 0){
             $this->updateBinsHistoryNumberOfPigs($v->bin_id,0,"remove",$user_id);
           }
         }
