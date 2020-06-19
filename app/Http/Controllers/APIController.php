@@ -2769,11 +2769,11 @@ class APIController extends Controller
           $year = substr($data['dateOfDeath'], -4);
           $month_day = substr($data['dateOfDeath'], 0, 5);
           $date = $year . "-" . $month_day;
-          //$data['dateOfDeath'] = $date . " 00:00:00";
+          $data['dateOfDeath'] = date("Y-m-d H:i:s",strtotime($date . " 00:00:00"));
 
 
           $dt = array(
-            'death_date'    =>  $date . " 00:00:00",
+            'death_date'    =>  $data['dateOfDeath'],
             'farm_id'       =>  $data['farmID'],
             'group_id'      =>  $data['groupID'],
             'bin_id'        =>  $data['binID'],
@@ -2782,6 +2782,8 @@ class APIController extends Controller
             'amount'        =>  $data['deathNumber'],
             'notes'         =>  $data['notes']
           );
+
+          return $dt;
 
           DB::table("feeds_groups_dead_pigs")
             ->where('death_id',$data['deathID'])
