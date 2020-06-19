@@ -2773,7 +2773,7 @@ class APIController extends Controller
 
 
           $dt = array(
-            'death_date'    =>  $date,
+            'death_date'    =>  $date . " 00:00:00",
             'farm_id'       =>  $data['farmID'],
             'group_id'      =>  $data['groupID'],
             'bin_id'        =>  $data['binID'],
