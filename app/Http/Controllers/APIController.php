@@ -2771,7 +2771,6 @@ class APIController extends Controller
           $date = $year . "-" . $month_day;
           $data['dateOfDeath'] = $date . " 00:00:00";
 
-          return $data['dateOfDeath'];
 
           $dt = array(
             'death_date'    =>  $data['dateOfDeath'],
