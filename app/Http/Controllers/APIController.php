@@ -2769,11 +2769,11 @@ class APIController extends Controller
           $year = substr($data['dateOfDeath'], -4);
           $month_day = substr($data['dateOfDeath'], 0, 5);
           $date = $year . "-" . $month_day;
-          $data['dateOfDeath'] = $date . " 00:00:00";
+          //$data['dateOfDeath'] = $date . " 00:00:00";
 
 
           $dt = array(
-            'death_date'    =>  date("Y-m-d H:i:s", strtotime($data['dateOfDeath'])),
+            'death_date'    =>  $date,
             'farm_id'       =>  $data['farmID'],
             'group_id'      =>  $data['groupID'],
             'bin_id'        =>  $data['binID'],
@@ -2782,6 +2782,10 @@ class APIController extends Controller
             'amount'        =>  $data['deathNumber'],
             'notes'         =>  $data['notes']
           );
+
+          DB::table("feeds_groups_dead_pigs")
+            ->where('death_id',$data['deathID'])
+            ->update($dt);
 
           // $group_uid = $this->animalGroupsData($dt['group_id']);
 
@@ -2822,9 +2826,7 @@ class APIController extends Controller
           $home_crtl->clearBinsCache($dt['bin_id']);
 
           DB::table("feeds_groups_dead_pigs_logs")->insert($dtl);
-          DB::table("feeds_groups_dead_pigs")
-            ->where('death_id',$data['deathID'])
-            ->update($dt);
+
 
           unset($home_crtl);
 
