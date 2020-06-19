@@ -3028,6 +3028,28 @@ class APIController extends Controller
             return $result;
 
         break;
+
+        case "totalGroupPigs":
+
+          $data = $request->all();
+
+          $uid = DB::table("feeds_movement_groups")
+            ->where('group_id',$data['group_id'])
+            ->get();
+
+          $total_pigs = DB::table("feeds_movement_groups_bins")
+                          ->where("unique_id",$uid[0]->unique_id)
+                          ->sum('number_of_pigs');
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $total_pigs
+          );
+
+          return $result;
+
+        break;
         // End of Treated Feature
 
         /*
