@@ -2179,7 +2179,8 @@ class AnimalMovementController extends Controller
       */
       private function removeEmptyPigsGroups($group_table,$bins_table,$unique_id,$user_id)
       {
-        DB::table($group_table)->where('unique_id',$unique_id)->update(['status'=>'removed']);
+        // DB::table($group_table)->where('unique_id',$unique_id)->update(['status'=>'removed']);
+        DB::table($group_table)->where('unique_id',$unique_id)->update(['status'=>'entered']); // chamge the status to entered because we need to bring back the empty groups
         $bins = DB::table($bins_table)->where('unique_id',$unique_id)->get();
         foreach($bins as $k => $v){
           if($v != NULL){
