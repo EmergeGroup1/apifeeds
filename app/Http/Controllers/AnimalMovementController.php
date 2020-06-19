@@ -630,6 +630,7 @@ class AnimalMovementController extends Controller
 
           for($i=0; $i<count($tr); $i++){
             $tr[$i]->datereadable = date("m-d-Y", strtotime($tr[$i]->date));
+            $tr[$i]->datereadableymd = date("Y-m-d", strtotime($tr[$i]->date));
           }
 
           return $tr;
