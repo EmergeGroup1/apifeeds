@@ -611,7 +611,7 @@ class AnimalMovementController extends Controller
 
           $perc = 0;
 
-          if($treated != 0){
+          if($treated != 0 && $total_pigs != 0){
             $perc = ($treated/$total_pigs) * 100;
           }
 
