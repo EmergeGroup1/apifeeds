@@ -2769,7 +2769,7 @@ class APIController extends Controller
           $month_day = substr($data['dateOfDeath'], -5);
           $year = substr($data['dateOfDeath'], 0, 4);
           $date =  $year. "-" .$month_day;
-          $date = date("Y:m-d H:i:s",strtotime($date));
+          $date = date("Y-m-d H:i:s",strtotime($date));
 
 
           $dt = array(
