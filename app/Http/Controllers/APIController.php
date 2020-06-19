@@ -2775,9 +2775,6 @@ class APIController extends Controller
             $data['notes'] = "--";
           }
 
-          // $month_day = substr($data['dateOfDeath'], -5);
-          // $year = substr($data['dateOfDeath'], 0, 4);
-          // $date =  $year. "-" .$month_day;
           $date = date("Y-m-d",strtotime($data['dateOfDeath']))." 00:00:00";
 
 
@@ -2792,9 +2789,7 @@ class APIController extends Controller
             'notes'         =>  $data['notes']
           );
 
-          DB::table("feeds_groups_dead_pigs")
-            ->where('death_id',$data['deathID'])
-            ->update($dt);
+
 
           // $group_uid = $this->animalGroupsData($dt['group_id']);
 
@@ -2810,6 +2805,10 @@ class APIController extends Controller
                                             $dt['bin_id'],
                                             $dt['room_id']);
 
+          $current_dead = DB::table("feeds_groups_dead_pigs")
+                            ->select('amount')
+                            ->where('death_id',$data['deathID'])
+                            ->get();
 
           $dtl = array(
                     'death_unique_id' => $data['uid'],
@@ -2819,7 +2818,7 @@ class APIController extends Controller
                     'bin_id'  =>  $data['binID'],
                     'room_id' =>  $data['roomID'],
                     'original_pigs' => $pigs->number_of_pigs,
-                    'pigs'  => $data['deathNumber'],
+                    'pigs'  => $current_dead[0]->amount,//$data['deathNumber'],
                     'action'  =>  "update death record"
                   );
 
@@ -2835,6 +2834,9 @@ class APIController extends Controller
           $home_crtl->clearBinsCache($dt['bin_id']);
 
           DB::table("feeds_groups_dead_pigs_logs")->insert($dtl);
+          DB::table("feeds_groups_dead_pigs")
+            ->where('death_id',$data['deathID'])
+            ->update($dt);
 
 
           unset($home_crtl);
