@@ -2766,8 +2766,8 @@ class APIController extends Controller
           $u_id = $home_crtl->generator();
           $dtl = array();
 
-          $year = substr($data['dateOfDeath'], -5);
-          $month_day = substr($data['dateOfDeath'], 0, 5);
+          $month_day = substr($data['dateOfDeath'], -5);
+          $year = substr($data['dateOfDeath'], 0, 4);
           $date =  $month_day;
 
 
