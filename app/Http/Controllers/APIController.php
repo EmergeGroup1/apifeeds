@@ -1940,6 +1940,39 @@ class APIController extends Controller
           'num_of_pigs_poor' => $request->input('num_of_pigs_poor')
         );
 
+
+        $home_crtl = new HomeController;
+
+        for($i=0; $i<count($data['bins_to']); $i++){
+
+          $farm_id = DB::table("feeds_movement_groups")
+                      ->where("group_id",$transfer_data['group_to'])
+                      ->select('farm_id')
+                      ->first();
+
+          $u_id = $home_crtl->generator();
+
+          $dt = array(
+            'death_date'    =>  date("Y-m-d"),
+            'farm_id'       =>  $farm_id->farm_id,
+            'group_id'      =>  $transfer_data['group_to'],
+            'bin_id'        =>  $data['bins_to'][$i],
+            'room_id'       =>  0,
+            'cause'         =>  13,
+            'amount'        =>  $data['num_of_pigs_dead'][$i],
+            'notes'         =>  "--",
+            'unique_id'     =>  $u_id
+          );
+
+          if($data['num_of_pigs_dead'][$i] != 0){
+            DB::table("feeds_groups_dead_pigs")->insert($dt);
+          }
+
+        }
+        unset($home_crtl);
+
+
+
         $am_controller = new AnimalMovementController;
         $am_transfer = $am_controller->finalizeTransfer($data);
         unset($am_controller);
@@ -2653,6 +2686,10 @@ class APIController extends Controller
           $u_id = $home_crtl->generator();
           $dtl = array();
 
+          if($data['notes'] == "" || $data['notes'] == NULL){
+            $data['notes'] = "--";
+          }
+
           $dt = array(
             'death_date'    =>  $data['dateOfDeath'],
             'farm_id'       =>  $data['farmID'],
@@ -2735,8 +2772,16 @@ class APIController extends Controller
           $u_id = $home_crtl->generator();
           $dtl = array();
 
+
+          if($data['notes'] == "" || $data['notes'] == NULL){
+            $data['notes'] = "--";
+          }
+
+          $date = date("Y-m-d",strtotime($data['dateOfDeath']))." 00:00:00";
+
+
           $dt = array(
-            'death_date'    =>  date("Y-m-d H:i:s", strtotime($data['dateOfDeath'])),
+            'death_date'    =>  $date,
             'farm_id'       =>  $data['farmID'],
             'group_id'      =>  $data['groupID'],
             'bin_id'        =>  $data['binID'],
@@ -2745,6 +2790,8 @@ class APIController extends Controller
             'amount'        =>  $data['deathNumber'],
             'notes'         =>  $data['notes']
           );
+
+
 
           // $group_uid = $this->animalGroupsData($dt['group_id']);
 
@@ -2760,6 +2807,10 @@ class APIController extends Controller
                                             $dt['bin_id'],
                                             $dt['room_id']);
 
+          $current_dead = DB::table("feeds_groups_dead_pigs")
+                            ->select('amount')
+                            ->where('death_id',$data['deathID'])
+                            ->get();
 
           $dtl = array(
                     'death_unique_id' => $data['uid'],
@@ -2769,7 +2820,7 @@ class APIController extends Controller
                     'bin_id'  =>  $data['binID'],
                     'room_id' =>  $data['roomID'],
                     'original_pigs' => $pigs->number_of_pigs,
-                    'pigs'  => $data['deathNumber'],
+                    'pigs'  => $current_dead[0]->amount,//$data['deathNumber'],
                     'action'  =>  "update death record"
                   );
 
@@ -2788,6 +2839,7 @@ class APIController extends Controller
           DB::table("feeds_groups_dead_pigs")
             ->where('death_id',$data['deathID'])
             ->update($dt);
+
 
           unset($home_crtl);
 
@@ -2898,6 +2950,9 @@ class APIController extends Controller
 
           $data = $request->all();
           unset($data['action']);
+          if($data['notes'] == "" || $data['notes'] == NULL){
+            $data['notes'] = "--";
+          }
 
           DB::table("feeds_groups_treated_pigs")
                 ->insert($data);
@@ -2922,11 +2977,15 @@ class APIController extends Controller
 
           $data = $request->all();
           unset($data['action']);
+          if($data['notes'] == "" || $data['notes'] == NULL){
+            $data['notes'] = "--";
+          }
 
           $treated_id = $data['treated_id'];
           unset($data['treated_id']);
 
-          $data['date'] = date("Y-m-d H:i:s", strtotime($data['date']));
+
+          $data['date'] = $data['date'] . " 00:00:00";
 
           DB::table("feeds_groups_treated_pigs")
                 ->where("treated_id",$treated_id)
@@ -2969,6 +3028,33 @@ class APIController extends Controller
             );
 
             return $result;
+
+        break;
+
+        case "totalGroupPigs":
+
+          $data = $request->all();
+
+          $uid = DB::table("feeds_movement_groups")
+            ->where('group_id',$data['group_id'])
+            ->get();
+
+          $group_transfer_shipped = DB::table("feeds_movement_transfer_v2")
+                              ->where("group_from",$data['group_id'])
+                              ->whereIn("status",["created","edited"])
+                              ->sum("shipped");
+
+          $total_pigs = DB::table("feeds_movement_groups_bins")
+                          ->where("unique_id",$uid[0]->unique_id)
+                          ->sum('number_of_pigs');
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $total_pigs - $group_transfer_shipped
+          );
+
+          return $result;
 
         break;
         // End of Treated Feature
@@ -3092,6 +3178,23 @@ class APIController extends Controller
                     ->first();
 
     return $group_data;
+
+  }
+
+  private function groupsDeathRecordAdd($data)
+  {
+
+    $dt = array(
+      'death_date'    =>  $data['dateOfDeath'],
+      'farm_id'       =>  $data['farmID'],
+      'group_id'      =>  $data['groupID'],
+      'bin_id'        =>  $data['binID'],
+      'room_id'       =>  $data['roomID'],
+      'cause'         =>  $data['reason'],
+      'amount'        =>  $data['deathNumber'],
+      'notes'         =>  $data['notes'],
+      'unique_id'     =>  $u_id
+    );
 
   }
 

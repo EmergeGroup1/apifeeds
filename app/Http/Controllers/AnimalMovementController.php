@@ -556,10 +556,7 @@ class AnimalMovementController extends Controller
 
         }
 
-
-
         if($sum_pigs != 0 && $pigs_per_crate != 0){
-
           $average = $sum_pigs/$pigs_per_crate; //$sum_pigs/count($groups_bins_rooms);
         }
 
@@ -588,7 +585,7 @@ class AnimalMovementController extends Controller
 
           $perc = 0;
 
-          if($dead != 0){
+          if($dead != 0 && $total_pigs != 0){
             $perc = ($dead/$total_pigs) * 100;
           }
 
@@ -614,7 +611,7 @@ class AnimalMovementController extends Controller
 
           $perc = 0;
 
-          if($treated != 0){
+          if($treated != 0 && $total_pigs != 0){
             $perc = ($treated/$total_pigs) * 100;
           }
 
@@ -633,6 +630,7 @@ class AnimalMovementController extends Controller
 
           for($i=0; $i<count($tr); $i++){
             $tr[$i]->datereadable = date("m-d-Y", strtotime($tr[$i]->date));
+            $tr[$i]->datereadableymd = date("Y-m-d", strtotime($tr[$i]->date));
           }
 
           return $tr;
@@ -653,8 +651,8 @@ class AnimalMovementController extends Controller
 
             $death_logs = DB::table("feeds_groups_dead_pigs_logs")
                               ->where('group_id', $group_id)
-                              ->where('action','!=','deleted')
-                              ->where('action','!=','add death record')
+                              ->whereNotIn('action',['deleted','add death record'])
+                              ->where("death_unique_id",$dp[$i]->unique_id)
                               ->get();
 
             for($j=0; $j<count($death_logs); $j++){
@@ -667,6 +665,7 @@ class AnimalMovementController extends Controller
               'bin_id'      => $dp[$i]->bin_id,
               'cause'       => DB::table("feeds_death_reasons")->where('reason_id',$dp[$i]->cause)->get(),
               'death_date'  => date("m-d-Y",strtotime($dp[$i]->death_date)),
+              'death_date_ymd'  => date("Y-m-d",strtotime($dp[$i]->death_date)),
               'death_id'    => $dp[$i]->death_id,
               'farm_id'     => $dp[$i]->farm_id,
               'group_id'    => $dp[$i]->group_id,
@@ -2180,10 +2179,11 @@ class AnimalMovementController extends Controller
       */
       private function removeEmptyPigsGroups($group_table,$bins_table,$unique_id,$user_id)
       {
-        DB::table($group_table)->where('unique_id',$unique_id)->update(['status'=>'removed']);
+        // DB::table($group_table)->where('unique_id',$unique_id)->update(['status'=>'removed']);
+        DB::table($group_table)->where('unique_id',$unique_id)->update(['status'=>'entered']); // chamge the status to entered because we need to bring back the empty groups
         $bins = DB::table($bins_table)->where('unique_id',$unique_id)->get();
         foreach($bins as $k => $v){
-          if($v != NULL){
+          if($v != NULL && $v->bin_id != 0){
             $this->updateBinsHistoryNumberOfPigs($v->bin_id,0,"remove",$user_id);
           }
         }
