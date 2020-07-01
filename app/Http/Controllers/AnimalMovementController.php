@@ -1371,7 +1371,7 @@ class AnimalMovementController extends Controller
                 'number_of_pigs'	=>	$number_of_pigs[$k]
                 );
 
-                if(!$group_bin_id[$k]){
+                if(!isset($group_bin_id[$k])){
                   DB::table('feeds_movement_groups_bins')
                   ->insert([
                     'room_id'			    =>	$v,
