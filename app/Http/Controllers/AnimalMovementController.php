@@ -1371,10 +1371,20 @@ class AnimalMovementController extends Controller
                 'number_of_pigs'	=>	$number_of_pigs[$k]
                 );
 
-                DB::table('feeds_movement_groups_bins')
-                ->where('id',$group_bin_id[$k])
-                ->where('unique_id',$data['unique_id'])
-                ->update($d);
+                if(!$group_bin_id[$k]){
+                  DB::table('feeds_movement_groups_bins')
+                  ->insert([
+                    'room_id'			    =>	$v,
+                    'number_of_pigs'	=>	$number_of_pigs[$k],
+                    'unique_id'       => $data['unique_id']
+                  ]);
+                } else {
+                  DB::table('feeds_movement_groups_bins')
+                  ->where('id',$group_bin_id[$k])
+                  ->where('unique_id',$data['unique_id'])
+                  ->update($d);
+                }
+
 
                 DB::table('feeds_farrowing_rooms')->where('id',$v)
                   ->update(["crates_number"=>$crates[$k]]);
