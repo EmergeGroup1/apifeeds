@@ -561,7 +561,7 @@ class AnimalMovementController extends Controller
         }
 
 
-        return number_format($average,0);
+        return number_format((float)$average, 2, '.', '');
 
       }
 
