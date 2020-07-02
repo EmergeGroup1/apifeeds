@@ -1363,6 +1363,7 @@ class AnimalMovementController extends Controller
           } else {
             // update bins
             if($data['type'] == "farrowing"){
+
               $data_room = $data['rooms'];
               $crates = $data['crates'];
 
@@ -1372,7 +1373,7 @@ class AnimalMovementController extends Controller
                   'number_of_pigs'	=>	$number_of_pigs[$k]
                 );
 
-                if(!isset($group_bin_id[$k])){
+                if($group_bin_id[$k] == "none"){
                   DB::table('feeds_movement_groups_bins')
                   ->insert([
                     'room_id'			    =>	$v,
