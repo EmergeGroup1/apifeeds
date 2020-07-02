@@ -1365,10 +1365,11 @@ class AnimalMovementController extends Controller
             if($data['type'] == "farrowing"){
               $data_room = $data['rooms'];
               $crates = $data['crates'];
+
               foreach($data_room as $k => $v){
                 $d = array(
-                'room_id'			=>	$v,
-                'number_of_pigs'	=>	$number_of_pigs[$k]
+                  'room_id'			=>	$v,
+                  'number_of_pigs'	=>	$number_of_pigs[$k]
                 );
 
                 if(!isset($group_bin_id[$k])){
@@ -1376,7 +1377,7 @@ class AnimalMovementController extends Controller
                   ->insert([
                     'room_id'			    =>	$v,
                     'number_of_pigs'	=>	$number_of_pigs[$k],
-                    'unique_id'       => $data['unique_id']
+                    'unique_id'       =>  $data['unique_id']
                   ]);
                 } else {
                   DB::table('feeds_movement_groups_bins')
@@ -1385,10 +1386,10 @@ class AnimalMovementController extends Controller
                   ->update($d);
                 }
 
-
                 DB::table('feeds_farrowing_rooms')->where('id',$v)
                   ->update(["crates_number"=>$crates[$k]]);
               }
+
             } else {
               foreach($data_bin as $k => $v){
                 $this->updateBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$group_bin_id[$k],$data['user_id']);
