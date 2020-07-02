@@ -1361,35 +1361,56 @@ class AnimalMovementController extends Controller
             }
 
           } else {
+
             // update bins
             if($data['type'] == "farrowing"){
 
               $data_room = $data['rooms'];
               $crates = $data['crates'];
+              $gb_ids = array();
+
+              for($i=0; $i<count($group_bin_id); $i++){
+                if($group_bin_id[$i] != "none"){
+                    $gb_ids[] = $group_bin_id[$k];
+                }
+              }
+
+              // delete unselected rooms
+              DB::table('feeds_movement_groups_bins')
+                ->whereNotIn("id",$gb_ids)
+                ->where('unique_id',$data['unique_id'])
+                ->delete();
 
               foreach($data_room as $k => $v){
+
                 $d = array(
                   'room_id'			=>	$v,
                   'number_of_pigs'	=>	$number_of_pigs[$k]
                 );
 
                 if($group_bin_id[$k] == "none"){
+
                   DB::table('feeds_movement_groups_bins')
                   ->insert([
                     'room_id'			    =>	$v,
                     'number_of_pigs'	=>	$number_of_pigs[$k],
                     'unique_id'       =>  $data['unique_id']
                   ]);
+
                 } else {
+
                   DB::table('feeds_movement_groups_bins')
                   ->where('id',$group_bin_id[$k])
                   ->where('unique_id',$data['unique_id'])
                   ->update($d);
+
                 }
 
                 DB::table('feeds_farrowing_rooms')->where('id',$v)
                   ->update(["crates_number"=>$crates[$k]]);
+
               }
+
 
             } else {
               foreach($data_bin as $k => $v){
