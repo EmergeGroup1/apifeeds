@@ -1371,7 +1371,7 @@ class AnimalMovementController extends Controller
 
               for($i=0; $i<count($group_bin_id); $i++){
                 if($group_bin_id[$i] != "none"){
-                    $gb_ids[] = $group_bin_id[$k];
+                    $gb_ids[] = $group_bin_id[$i];
                 }
               }
 
