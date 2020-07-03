@@ -1686,10 +1686,10 @@ class APIController extends Controller
         case "amListRefresh":
 
           $data = array(
-            'type'      =>  $request->input('type'), // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
-            'date_from' =>  $request->input('date_from'), // (date)
+            'type'      =>  "all", // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
+            'date_from' =>  date("Y-m-d", strtotime('-1280 days')), // (date)
             'date_to'   =>  date("Y-m-d"), // (date)
-            'sort'      =>  $request->input('sort'), // (string) not_scheduled, day_remaining
+            'sort'      =>  "not_scheduled", // (string) not_scheduled, day_remaining
             's_farm'    =>  "all" // selected farm
           );
 
