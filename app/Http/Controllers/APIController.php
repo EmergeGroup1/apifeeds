@@ -2667,7 +2667,88 @@ class APIController extends Controller
 
           $data = $request->all();
           $id = $data['reason_id'];
-          DB::table("feeds_death_reasons")->where("reason_id",$id)->delete();
+          DB::table("feeds_treatments")->where("reason_id",$id)->delete();
+
+          return $data;
+
+        break;
+
+
+        // read treatment
+        case "trRead":
+
+          $ts = DB::table("feeds_treatments")->orderBy('t_id','desc')->get();
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $ts
+          );
+
+          if(empty($ts)){
+            $result['msg'] = "empty";
+          }
+
+          return $result;
+
+        break;
+
+        // add treatment
+        case "trAdd":
+
+          $data = $request->all();
+          $treatmnent = $data['treatment'];
+
+          $validation = Validator::make($data, [
+  						'treatment' => 'required|min:4'
+  				]);
+
+          if($validation->fails()){
+  					return array(
+  						'err' => 1,
+  						'msg' => $validation->errors()->all()
+  					);
+  				}
+
+          DB::table("feeds_treatments")->insert(['treatment'=>$reason]);
+
+          return $data;
+
+        break;
+
+        // update treatment
+        case "trUpdate":
+
+          $data = $request->all();
+          $id = $data['t_id'];
+          $reason = $data['treatment'];
+
+          $validation = Validator::make($data, [
+  						'reason' => 'required|min:4'
+  				]);
+
+          if($validation->fails()){
+  					return array(
+  						'err' => 1,
+  						'msg' => $validation->errors()->all()
+  					);
+  				}
+
+
+          DB::table("feeds_treatments")
+          ->where('t_id',$id)
+          ->update(['reason'=>$reason]);
+
+          return $data;
+
+        break;
+
+        // delete Treatment
+        case "trDelete":
+
+          $data = $request->all();
+          $id = $data['t_id'];
+          DB::table("feeds_treatments")->where("t_id",$id)->delete();
 
           return $data;
 
