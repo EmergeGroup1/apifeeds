@@ -86,7 +86,8 @@ class AnimalMovementController extends Controller
                   "nursery_groups"  =>  json_decode($nursery_groups),
                   "finisher_groups" =>  json_decode($finisher_groups),
                   "farm_groups"     =>  $this->farmAMGroups(),
-                  "death_reasons"   =>  $this->deathReasons()
+                  "death_reasons"   =>  $this->deathReasons(),
+                  "treatments"      =>  $this->treatments()
               );
 
             case 'farrowing_to_nursery':
@@ -176,12 +177,21 @@ class AnimalMovementController extends Controller
       }
 
       /**
-      ** sort the animal groups by farms
+      ** get all the dath reasons
       ** @return array
       **/
       private function deathReasons()
       {
         return DB::table('feeds_death_reasons')->get();
+      }
+
+      /**
+      ** get all the treatments
+      ** @return array
+      **/
+      private function treatments()
+      {
+        return DB::table('feeds_treatments')->get();
       }
 
       /**
