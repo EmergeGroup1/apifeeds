@@ -641,7 +641,7 @@ class AnimalMovementController extends Controller
           for($i=0; $i<count($tr); $i++){
             $tr[$i]->datereadable = date("m-d-Y", strtotime($tr[$i]->date));
             $tr[$i]->datereadableymd = date("Y-m-d", strtotime($tr[$i]->date));
-            $tr[$i]->treatment_text = DB::table("feeds_treatments")->where("t_id",$tr[$i]->treatment)->get("treatment");
+            $tr[$i]->treatment_text = DB::table("feeds_treatments")->where("t_id",$tr[$i]->treatment)->first("treatment");
           }
 
           return $tr;
