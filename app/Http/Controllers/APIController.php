@@ -2710,7 +2710,7 @@ class APIController extends Controller
   					);
   				}
 
-          DB::table("feeds_treatments")->insert(['treatment'=>$reason]);
+          DB::table("feeds_treatments")->insert(['treatment'=>$treatmnent]);
 
           return $data;
 
