@@ -1701,8 +1701,7 @@ class APIController extends Controller
             return array(
               "err"     =>  0,
               "msg"     =>  "Successfully Get Animal Groups",
-              "am_list" =>  $am_lists,
-              "death_reasons" => $this->deathReasons()
+              "am_list" =>  $am_lists
             );
           } else {
             return array(
