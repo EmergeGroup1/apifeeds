@@ -2737,7 +2737,7 @@ class APIController extends Controller
 
           DB::table("feeds_treatments")
           ->where('t_id',$id)
-          ->update(['tratment'=>$treatment]);
+          ->update(['treatment'=>$treatment]);
 
           return $data;
 
