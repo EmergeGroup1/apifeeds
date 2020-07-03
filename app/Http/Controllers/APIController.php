@@ -2721,10 +2721,10 @@ class APIController extends Controller
 
           $data = $request->all();
           $id = $data['t_id'];
-          $reason = $data['treatment'];
+          $treatment = $data['treatment'];
 
           $validation = Validator::make($data, [
-  						'reason' => 'required|min:4'
+  						'treatment' => 'required|min:4'
   				]);
 
           if($validation->fails()){
@@ -2737,7 +2737,7 @@ class APIController extends Controller
 
           DB::table("feeds_treatments")
           ->where('t_id',$id)
-          ->update(['reason'=>$reason]);
+          ->update(['tratment'=>$treatment]);
 
           return $data;
 
