@@ -1686,10 +1686,10 @@ class APIController extends Controller
         case "amListRefresh":
 
           $data = array(
-            'type'      =>  $request->input('type'), // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
-            'date_from' =>  $request->input('date_from'), // (date)
+            'type'      =>  "all", // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
+            'date_from' =>  date("Y-m-d", strtotime('-1280 days')), // (date)
             'date_to'   =>  date("Y-m-d"), // (date)
-            'sort'      =>  $request->input('sort'), // (string) not_scheduled, day_remaining
+            'sort'      =>  "not_scheduled", // (string) not_scheduled, day_remaining
             's_farm'    =>  "all" // selected farm
           );
 
@@ -1701,8 +1701,7 @@ class APIController extends Controller
             return array(
               "err"     =>  0,
               "msg"     =>  "Successfully Get Animal Groups",
-              "am_list" =>  $am_lists,
-              "death_reasons" => $this->deathReasons()
+              "am_list" =>  $am_lists
             );
           } else {
             return array(
@@ -2668,7 +2667,88 @@ class APIController extends Controller
 
           $data = $request->all();
           $id = $data['reason_id'];
-          DB::table("feeds_death_reasons")->where("reason_id",$id)->delete();
+          DB::table("feeds_treatments")->where("reason_id",$id)->delete();
+
+          return $data;
+
+        break;
+
+
+        // read treatment
+        case "trRead":
+
+          $ts = DB::table("feeds_treatments")->orderBy('t_id','desc')->get();
+
+          $result = array(
+            "err"     =>  0,
+            "msg"     =>  "with result",
+            "data"    =>  $ts
+          );
+
+          if(empty($ts)){
+            $result['msg'] = "empty";
+          }
+
+          return $result;
+
+        break;
+
+        // add treatment
+        case "trAdd":
+
+          $data = $request->all();
+          $treatmnent = $data['treatment'];
+
+          $validation = Validator::make($data, [
+  						'treatment' => 'required|min:4'
+  				]);
+
+          if($validation->fails()){
+  					return array(
+  						'err' => 1,
+  						'msg' => $validation->errors()->all()
+  					);
+  				}
+
+          DB::table("feeds_treatments")->insert(['treatment'=>$treatmnent]);
+
+          return $data;
+
+        break;
+
+        // update treatment
+        case "trUpdate":
+
+          $data = $request->all();
+          $id = $data['t_id'];
+          $treatment = $data['treatment'];
+
+          $validation = Validator::make($data, [
+  						'treatment' => 'required|min:4'
+  				]);
+
+          if($validation->fails()){
+  					return array(
+  						'err' => 1,
+  						'msg' => $validation->errors()->all()
+  					);
+  				}
+
+
+          DB::table("feeds_treatments")
+          ->where('t_id',$id)
+          ->update(['treatment'=>$treatment]);
+
+          return $data;
+
+        break;
+
+        // delete Treatment
+        case "trDelete":
+
+          $data = $request->all();
+          $id = $data['t_id'];
+          DB::table("feeds_treatments")->where("t_id",$id)->delete();
 
           return $data;
 
