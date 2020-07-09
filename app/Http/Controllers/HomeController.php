@@ -4692,7 +4692,7 @@ class HomeController extends Controller
 				'delivery_number'	=>	$deliveries[$i]->delivery_number,
 				'status'		=>	 $this->deliveriesStatusAPI($deliveries[$i]->unique_id),
 				'delivery_date'	=>	$deliveries[$i]->delivery_date,
-				'delivery_time'	=>	date("H:i a",strtotime($deliveries[$i]->delivery_date)),
+				'delivery_time'	=>	date("h:i a",strtotime($deliveries[$i]->delivery_date)),
 				'farm_names'	=>	$deliveries[$i]->farm_names,
 				'truck_name'	=>	$deliveries[$i]->truck_name,
 				'driver'	=>	$deliveries[$i]->driver,
