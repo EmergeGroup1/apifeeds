@@ -3386,6 +3386,7 @@ class HomeController extends Controller
 			//Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
 			 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id'])) {
 
+					// $binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id'])[$i];
 					$binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id'])[$i];
 
 			 } else {
