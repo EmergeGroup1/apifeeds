@@ -3154,7 +3154,7 @@ class HomeController extends Controller
 		$farrowing = DB::table('feeds_movement_groups')
 									//->where('status','!=','removed')
 									->where('unique_id',$unique_id)->get();
-									
+
 		$farrowing = $this->toArray($farrowing);
 
 		return $farrowing != NULL ? $farrowing[0] : NULL;
@@ -4692,6 +4692,7 @@ class HomeController extends Controller
 				'delivery_number'	=>	$deliveries[$i]->delivery_number,
 				'status'		=>	 $this->deliveriesStatusAPI($deliveries[$i]->unique_id),
 				'delivery_date'	=>	$deliveries[$i]->delivery_date,
+				'delivery_time'	=>	date("H:i a",strtotime($deliveries[$i]->delivery_date)),
 				'farm_names'	=>	$deliveries[$i]->farm_names,
 				'truck_name'	=>	$deliveries[$i]->truck_name,
 				'driver'	=>	$deliveries[$i]->driver,
