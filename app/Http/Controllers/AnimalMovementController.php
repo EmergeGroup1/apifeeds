@@ -224,6 +224,58 @@ class AnimalMovementController extends Controller
 
             return $output;
 
+          } else if($data['sort'] == "num_of_pigs"){
+
+            usort($output_one, function($a,$b){
+              if($a['total_pigs'] == $b['total_pigs'])
+              return ($a['total_pigs'] < $b['total_pigs']);
+              return ($a['total_pigs'] > $b['total_pigs'])?1:-1;
+            });
+
+            Storage::put($file_name,json_encode($output_one));
+            $output = Storage::get($file_name);
+
+            return $output;
+
+          } else if($data['sort'] == "pigs_per_crate"){
+
+            usort($output_one, function($a,$b){
+              if($a['pigs_per_crate'] == $b['pigs_per_crate'])
+              return ($a['pigs_per_crate'] < $b['pigs_per_crate']);
+              return ($a['pigs_per_crate'] > $b['pigs_per_crate'])?1:-1;
+            });
+
+            Storage::put($file_name,json_encode($output_one));
+            $output = Storage::get($file_name);
+
+            return $output;
+
+          } else if($data['sort'] == "death_loss"){
+
+            usort($output_one, function($a,$b){
+              if($a['death_perc'] == $b['death_perc'])
+              return ($a['death_perc'] < $b['death_perc']);
+              return ($a['death_perc'] > $b['death_perc'])?1:-1;
+            });
+
+            Storage::put($file_name,json_encode($output_one));
+            $output = Storage::get($file_name);
+
+            return $output;
+
+          } else { //treated
+
+            usort($output_one, function($a,$b){
+              if($a['treated_perc'] == $b['treated_perc'])
+              return ($a['treated_perc'] < $b['treated_perc']);
+              return ($a['treated_perc'] > $b['treated_perc'])?1:-1;
+            });
+
+            Storage::put($file_name,json_encode($output_one));
+            $output = Storage::get($file_name);
+
+            return $output;
+
           }
 
           $output_two = $this->filterTransferCreated($data,$type,'feeds_movement_groups','feeds_movement_groups_bins');
