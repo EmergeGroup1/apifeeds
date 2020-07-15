@@ -63,7 +63,7 @@ class AnimalMovementController extends Controller
           for($i=0; $i<count($nursery_groups); $i++){
             $nursery_groups[$i]['farm_name'] = DB::table("feeds_farms")
             ->select("name")->where("id",$nursery_groups[$i]['farm_id'])
-            ->get("name")->name;
+            ->first()->name;
           }
 
           Storage::put('nursery_groups_list.txt',json_encode($nursery_groups));
