@@ -401,7 +401,7 @@ class AnimalMovementController extends Controller
               $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
               usort($groups, function($a,$b){
 
-              return ($b['pigs_per_crate'] - $a['pigs_per_crate'])
+              return ($b['pigs_per_crate'] == $a['pigs_per_crate'])
                     ?: ($b['pigs_per_crate'] > $a['pigs_per_crate'])
                     ?: ($a['pigs_per_crate'] < $b['pigs_per_crate']);
 
