@@ -228,8 +228,8 @@ class AnimalMovementController extends Controller
 
             usort($output_one, function($a,$b){
               if($a['total_pigs'] == $b['total_pigs'])
-              return ($a['total_pigs'] < $b['total_pigs']);
-              return ($a['total_pigs'] > $b['total_pigs'])?1:-1;
+              return ($a['total_pigs'] > $b['total_pigs']);
+              return ($a['total_pigs'] < $b['total_pigs'])?1:-1;
             });
 
             Storage::put($file_name,json_encode($output_one));
