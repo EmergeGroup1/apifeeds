@@ -74,6 +74,13 @@ class AnimalMovementController extends Controller
                               ->where('type','=','finisher')
                               ->orderBy('group_name','asc')->get();
           $finisher_groups = $this->toArray($finisher_groups);
+
+          for($i=0; $i<count($finisher_groups); $i++){
+            $finisher_groups[$i]['farm_name'] = DB::table("feeds_farms")
+            ->select("name")->where("id",$finisher_groups[$i]['farm_id'])
+            ->first()->name;
+          }
+
           Storage::put('finisher_groups_list.txt',json_encode($finisher_groups));
           $finisher_groups = Storage::get('finisher_groups_list.txt');
 
