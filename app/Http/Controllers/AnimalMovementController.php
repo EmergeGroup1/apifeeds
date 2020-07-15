@@ -76,9 +76,14 @@ class AnimalMovementController extends Controller
           $finisher_groups = $this->toArray($finisher_groups);
 
           for($i=0; $i<count($finisher_groups); $i++){
-            $finisher_groups[$i]['farm_name'] = DB::table("feeds_farms")
-            ->select("name")->where("id",$finisher_groups[$i]['farm_id'])
-            ->first()->name;
+            $query = DB::table("feeds_farms")->select("name")
+                      ->where("id",$finisher_groups[$i]['farm_id']);
+            if($query->get() != NULL){
+              $finisher_groups[$i]['farm_name'] = $query->first()->name;
+            } else {
+              $finisher_groups[$i]['farm_name'] = "Not Found/Deleted";
+            }
+
           }
 
           Storage::put('finisher_groups_list.txt',json_encode($finisher_groups));
