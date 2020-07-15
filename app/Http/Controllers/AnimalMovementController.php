@@ -388,9 +388,9 @@ class AnimalMovementController extends Controller
               $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
               usort($groups, function($a,$b){
 
-              return ($b['total_pigs'] - $a['total_pigs'])
-                    ?: ($b['total_pigs'] - $a['total_pigs'])
-                    ?: ($a['total_pigs'] - $b['total_pigs']);
+              return ($b['total_pigs'] == $a['total_pigs'])
+                    ?: ($b['total_pigs'] > $a['total_pigs'])
+                    ?: ($a['total_pigs'] < $b['total_pigs']);
 
               });
 
@@ -414,9 +414,9 @@ class AnimalMovementController extends Controller
               $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
               usort($groups, function($a,$b){
 
-              return ($b['death_perc'] - $a['death_perc'])
-                    ?: ($b['death_perc'] - $a['death_perc'])
-                    ?: ($a['death_perc'] - $b['death_perc']);
+              return ($b['death_perc'] == $a['death_perc'])
+                    ?: ($b['death_perc'] > $a['death_perc'])
+                    ?: ($a['death_perc'] < $b['death_perc']);
 
               });
 
@@ -427,9 +427,9 @@ class AnimalMovementController extends Controller
               $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
               usort($groups, function($a,$b){
 
-              return ($b['treated_perc'] - $a['treated_perc'])
-                    ?: ($b['treated_perc'] - $a['treated_perc'])
-                    ?: ($a['treated_perc'] - $b['treated_perc']);
+              return ($b['treated_perc'] == $a['treated_perc'])
+                    ?: ($b['treated_perc'] > $a['treated_perc'])
+                    ?: ($a['treated_perc'] < $b['treated_perc']);
 
               });
 
