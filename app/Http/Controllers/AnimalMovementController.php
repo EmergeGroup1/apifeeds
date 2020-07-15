@@ -82,7 +82,7 @@ class AnimalMovementController extends Controller
             $query = DB::table("feeds_farms")->select("name")
                       ->where("id",$finisher_groups[$i]['farm_id']);
             if($query->first() != NULL){
-              $finisher_groups[$i]['farm_name'] = $query->name;
+              $finisher_groups[$i]['farm_name'] = $query->first()->name;
             }
 
           }
