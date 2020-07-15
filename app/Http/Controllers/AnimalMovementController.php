@@ -402,8 +402,8 @@ class AnimalMovementController extends Controller
               usort($groups, function($a,$b){
 
               return ($b['pigs_per_crate'] - $a['pigs_per_crate'])
-                    ?: ($b['pigs_per_crate'] - $a['pigs_per_crate'])
-                    ?: ($a['pigs_per_crate'] - $b['pigs_per_crate']);
+                    ?: ($b['pigs_per_crate'] > $a['pigs_per_crate'])
+                    ?: ($a['pigs_per_crate'] < $b['pigs_per_crate']);
 
               });
 
