@@ -379,9 +379,62 @@ class AnimalMovementController extends Controller
                     ?: ($a['group_type_int'] - $b['group_type_int'])
                     ?: ($b['group_type_int'] - $a['group_type_int']);
 
-            });
+              });
 
-            return $groups;
+              return $groups;
+
+          } else if($data['sort'] == "num_of_pigs"){
+
+              $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              usort($groups, function($a,$b){
+
+              return ($a['total_pigs'] - $b['total_pigs'])
+                    ?: ($a['total_pigs'] - $b['total_pigs'])
+                    ?: ($b['total_pigs'] - $a['total_pigs']);
+
+              });
+
+              return $groups;
+
+          } else if($data['sort'] == "pigs_per_crate"){
+
+              $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              usort($groups, function($a,$b){
+
+              return ($a['pigs_per_crate'] - $b['pigs_per_crate'])
+                    ?: ($a['pigs_per_crate'] - $b['pigs_per_crate'])
+                    ?: ($b['pigs_per_crate'] - $a['pigs_per_crate']);
+
+              });
+
+              return $groups;
+
+          } else if($data['sort'] == "death_loss"){
+
+              $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              usort($groups, function($a,$b){
+
+              return ($a['death_perc'] - $b['death_perc'])
+                    ?: ($a['death_perc'] - $b['death_perc'])
+                    ?: ($b['death_perc'] - $a['death_perc']);
+
+              });
+
+              return $groups;
+
+          } else { //treated
+
+              $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              usort($groups, function($a,$b){
+
+              return ($a['treated_perc'] - $b['treated_perc'])
+                    ?: ($a['treated_perc'] - $b['treated_perc'])
+                    ?: ($b['treated_perc'] - $a['treated_perc']);
+
+              });
+
+              return $groups;
+
           }
 
           if($type == "hah"){
