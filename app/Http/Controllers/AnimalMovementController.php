@@ -223,8 +223,7 @@ class AnimalMovementController extends Controller
       **/
       private function animalGroupSorter($data,$type,$file_name)
       {
-          $group_status = ['finalized','removed'];
-          $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
+
 
           $checker = Storage::exists($file_name);
 
@@ -233,6 +232,9 @@ class AnimalMovementController extends Controller
           }
 
           if($data['sort'] == 'day_remaining'){
+
+            $group_status = ['finalized','removed'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
 
             usort($output_one, function($a,$b){
               if($a['date_to_transfer'] == $b['date_to_transfer'])
@@ -247,6 +249,9 @@ class AnimalMovementController extends Controller
 
           } else if($data['sort'] == "num_of_pigs"){
 
+            $group_status = ['finalized','removed'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
+
             usort($output_one, function($a,$b){
               // if($a['total_pigs'] == $b['total_pigs'])
               return ($a['total_pigs'] <=> $b['total_pigs']);
@@ -259,6 +264,9 @@ class AnimalMovementController extends Controller
             return $output;
 
           } else if($data['sort'] == "pigs_per_crate"){
+
+            $group_status = ['finalized','removed'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
 
             usort($output_one, function($a,$b){
               if($a['pigs_per_crate'] == $b['pigs_per_crate'])
@@ -273,6 +281,9 @@ class AnimalMovementController extends Controller
 
           } else if($data['sort'] == "death_loss"){
 
+            $group_status = ['finalized','removed'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
+
             usort($output_one, function($a,$b){
               if($a['death_perc'] == $b['death_perc'])
               return ($a['death_perc'] < $b['death_perc']);
@@ -285,6 +296,9 @@ class AnimalMovementController extends Controller
             return $output;
 
           } else if($data['sort'] == "treated") { //treated
+
+            $group_status = ['finalized','removed'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
 
             usort($output_one, function($a,$b){
               if($a['treated_perc'] == $b['treated_perc'])
