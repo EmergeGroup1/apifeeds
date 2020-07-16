@@ -2812,8 +2812,11 @@ class APIController extends Controller
                                  $dt['bin_id'],
                                  $dt['room_id'],
                                  $num_of_pigs);
+                                 
+          if($dt['bin_id'] != 0){
+              $home_crtl->clearBinsCache($dt['bin_id']);
+          }
 
-          $home_crtl->clearBinsCache($dt['bin_id']);
 
           DB::table("feeds_groups_dead_pigs_logs")->insert($dtl);
           DB::table("feeds_groups_dead_pigs")->insert($dt);
