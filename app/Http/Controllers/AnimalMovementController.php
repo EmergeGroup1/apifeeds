@@ -223,7 +223,8 @@ class AnimalMovementController extends Controller
       **/
       private function animalGroupSorter($data,$type,$file_name)
       {
-          $output_one = $this->filterTransferGroupTypes($data,$type);
+          $group_status = ['finalized','removed'];
+          $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
 
           $checker = Storage::exists($file_name);
 
@@ -298,6 +299,9 @@ class AnimalMovementController extends Controller
 
           }
 
+          $group_status = ['finalized','removed','created'];
+          $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
+
           $output_two = $this->filterTransferCreated($data,$type,'feeds_movement_groups','feeds_movement_groups_bins');
 
           $output = array_merge($output_one,$output_two);
@@ -314,7 +318,7 @@ class AnimalMovementController extends Controller
       ** @param $type string
       ** @return Response
       **/
-      private function filterTransferGroupTypes($data,$type)
+      private function filterTransferGroupTypes($data,$type,$group_status)
       {
           if($type == "hah"){
             return $this->filterTransferOwnerGroupTypes($data);
@@ -324,7 +328,7 @@ class AnimalMovementController extends Controller
           if($data['s_farm'] != "all"){
             $groups = $groups->where('farm_id',$data['s_farm']);
           }
-          $groups = $groups->whereNotIn('status',['finalized','removed','edited']);
+          $groups = $groups->whereNotIn('status',$group_status);
           $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
           $groups = $groups->get();
           $groups = $this->toArray($groups);
