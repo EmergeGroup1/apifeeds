@@ -284,7 +284,7 @@ class AnimalMovementController extends Controller
 
             return $output;
 
-          } else { //treated
+          } else if($data['sort'] == "treated") { //treated
 
             usort($output_one, function($a,$b){
               if($a['treated_perc'] == $b['treated_perc'])
@@ -297,19 +297,23 @@ class AnimalMovementController extends Controller
 
             return $output;
 
+          } else { // not_scheduled
+
+            $group_status = ['finalized','removed','created'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
+
+            $output_two = $this->filterTransferCreated($data,$type,'feeds_movement_groups','feeds_movement_groups_bins');
+
+            $output = array_merge($output_one,$output_two);
+
+            Storage::put($file_name,json_encode($output));
+            $output = Storage::get($file_name);
+
+            return $output;
+
           }
 
-          $group_status = ['finalized','removed','created'];
-          $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
 
-          $output_two = $this->filterTransferCreated($data,$type,'feeds_movement_groups','feeds_movement_groups_bins');
-
-          $output = array_merge($output_one,$output_two);
-
-          Storage::put($file_name,json_encode($output));
-          $output = Storage::get($file_name);
-
-          return $output;
       }
 
       /**
