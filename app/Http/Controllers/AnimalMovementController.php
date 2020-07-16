@@ -341,6 +341,7 @@ class AnimalMovementController extends Controller
           if($type == "hah"){
             return $this->filterTransferOwnerGroupTypes($data);
           }
+
           $groups = DB::table("feeds_movement_groups");
           $groups = $groups->where('type',$type);
           if($data['s_farm'] != "all"){
@@ -464,7 +465,7 @@ class AnimalMovementController extends Controller
 
               return $groups;
 
-          } else { //treated
+          } else  if($data['sort'] == "treated"){ //treated
 
               $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
               usort($groups, function($a,$b){
@@ -477,23 +478,27 @@ class AnimalMovementController extends Controller
 
               return $groups;
 
+          } else {
+
+              if($type == "hah"){
+                $farm_ids = $this->farmOwners();
+                $groups = $this->filterTransferOwner($data,$farm_ids,'feeds_movement_groups','feeds_movement_groups_bins');
+              }else{
+                $groups = $this->filterTransfer($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              }
+              $output_one = $groups;
+
+
+              $type = ['farrowing','nursery','finisher'];
+              $output_two = $this->filterAdditional($data,$type);
+
+              $output = array_merge($output_one,$output_two);
+
+              return $output;
+
           }
 
-          if($type == "hah"){
-            $farm_ids = $this->farmOwners();
-            $groups = $this->filterTransferOwner($data,$farm_ids,'feeds_movement_groups','feeds_movement_groups_bins');
-          }else{
-            $groups = $this->filterTransfer($data,'feeds_movement_groups','feeds_movement_groups_bins');
-          }
-          $output_one = $groups;
 
-
-          $type = ['farrowing','nursery','finisher'];
-          $output_two = $this->filterAdditional($data,$type);
-
-          $output = array_merge($output_one,$output_two);
-
-          return $output;
       }
 
       /**
