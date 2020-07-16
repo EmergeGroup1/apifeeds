@@ -324,7 +324,7 @@ class AnimalMovementController extends Controller
           if($data['s_farm'] != "all"){
             $groups = $groups->where('farm_id',$data['s_farm']);
           }
-          $groups = $groups->whereNotIn('status',['finalized','removed']);
+          $groups = $groups->whereNotIn('status',['finalized','removed','edited']);
           $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
           $groups = $groups->get();
           $groups = $this->toArray($groups);
