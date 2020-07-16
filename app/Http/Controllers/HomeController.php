@@ -3441,10 +3441,12 @@ class HomeController extends Controller
 						return ($a['last_manual_update'] < $b['last_manual_update'])?-1:1;
 					});
 				}
+				if(isset($sorted_bins[0]['last_manual_update'])){
+					$last_manual_update = array(
+						'last_manual_update'	=>	$sorted_bins[0]['last_manual_update']
+					);
+				}
 
-				$last_manual_update = array(
-					'last_manual_update'	=>	$sorted_bins[0]['last_manual_update']
-				);
 
 				$empty_bins = array(
 					'empty_bins'	=>	$this->countEmptyBins($binsData)
