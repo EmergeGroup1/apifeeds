@@ -1909,9 +1909,9 @@ class AnimalMovementController extends Controller
 
           if($transfer['transfer_type'] == "farrowing_to_nursery"){
             $room_from_id = $v;
-            $bin_id_from = NULL;
+            $bin_id_from = 0;
           } else {
-            $room_from_id = NULL;
+            $room_from_id = 0;
             $bin_id_from = $v;
           }
 
