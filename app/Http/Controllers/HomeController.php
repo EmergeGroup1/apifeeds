@@ -3425,7 +3425,7 @@ class HomeController extends Controller
 				$sorted_bins = $binsData;
 
 				usort($sorted_bins, function($a,$b){
-					if(isset$a['days_to_empty']){
+					if(isset($a['days_to_empty'])){
 						if($a['days_to_empty'] == $b['days_to_empty']) return 0;
 						return ($a['days_to_empty'] < $b['days_to_empty'])?-1:1;
 					}
@@ -3439,7 +3439,7 @@ class HomeController extends Controller
 
 				$sorted_bins = $binsData;
 				usort($sorted_bins, function($a,$b){
-					if(isset$a['last_manual_update']){
+					if(isset($a['last_manual_update'])){
 						if($a['last_manual_update'] == $b['last_manual_update']) return 0;
 						return ($a['last_manual_update'] < $b['last_manual_update'])?-1:1;
 					}
