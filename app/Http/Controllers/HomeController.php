@@ -3477,15 +3477,18 @@ class HomeController extends Controller
 
 				$update_types = array();
 				for($i=0; $i < count($binsData); $i++){
-					if(isset($binsData[$i]['update_type']) == 1){
-						//$update_types[] = array(
-							//'update_type'	=> ""
-						//);
-					} else {
-						$update_types[] = array(
-							'update_type'	=> $binsData[$i]['update_type']
-						);
+					if(isset($binsData[$i]['update_type'])){
+						if($binsData[$i]['update_type'] == 1){
+							//$update_types[] = array(
+								//'update_type'	=> ""
+							//);
+						} else {
+							$update_types[] = array(
+								'update_type'	=> $binsData[$i]['update_type']
+							);
+						}
 					}
+
 					$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
 				}
 
