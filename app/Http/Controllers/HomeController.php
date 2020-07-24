@@ -3459,7 +3459,7 @@ class HomeController extends Controller
 
 				$low_bins = array();
 				for($i=0; $i < count($binsData); $i++){
-					
+
 					if(isset($binsData[$i]['days_to_empty'])){
 
 						if($binsData[$i]['days_to_empty'] <= 2){
@@ -3477,7 +3477,7 @@ class HomeController extends Controller
 
 				$update_types = array();
 				for($i=0; $i < count($binsData); $i++){
-					if($binsData[$i]['update_type'] == 1){
+					if(isset($binsData[$i]['update_type']) == 1){
 						//$update_types[] = array(
 							//'update_type'	=> ""
 						//);
