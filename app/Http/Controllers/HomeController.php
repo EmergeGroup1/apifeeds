@@ -3446,7 +3446,7 @@ class HomeController extends Controller
 				});
 
 				$last_manual_update = array(
-					'last_manual_update'	=>	$sorted_bins[0]['last_manual_update']
+					'last_manual_update'	=>	isset($sorted_bins[0]['last_manual_update']) ? $sorted_bins[0]['last_manual_update'] : 0
 				);
 
 				$empty_bins = array(
