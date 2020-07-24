@@ -3459,13 +3459,18 @@ class HomeController extends Controller
 
 				$low_bins = array();
 				for($i=0; $i < count($binsData); $i++){
+					
+					if(isset($binsData[$i]['days_to_empty'])){
 
-					if($binsData[$i]['days_to_empty'] <= 2){
-						$low_bins[] = array(
-							'lowBins'	=> $binsData[$i]['days_to_empty']
-						);
+						if($binsData[$i]['days_to_empty'] <= 2){
+							$low_bins[] = array(
+								'lowBins'	=> $binsData[$i]['days_to_empty']
+							);
+						}
+						//$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
+
 					}
-					//$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
+
 				}
 
 				$low_bins_counter = array('lowBins'	=> count($low_bins));
