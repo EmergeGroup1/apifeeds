@@ -3423,7 +3423,7 @@ class HomeController extends Controller
 				}
 
 				$sorted_bins = $binsData;
-				if(isset($a['days_to_empty'])){
+				if(isset($sorted_bins['days_to_empty'])){
 					usort($sorted_bins, function($a,$b){
 						if($a['days_to_empty'] == $b['days_to_empty']) return 0;
 						return ($a['days_to_empty'] < $b['days_to_empty'])?-1:1;
@@ -3436,10 +3436,12 @@ class HomeController extends Controller
 				);
 
 				$sorted_bins = $binsData;
-				usort($sorted_bins, function($a,$b){
-					if($a['last_manual_update'] == $b['last_manual_update']) return 0;
-					return ($a['last_manual_update'] < $b['last_manual_update'])?-1:1;
-				});
+				if(isset($sorted_bins['days_to_empty'])){
+					usort($sorted_bins, function($a,$b){
+						if($a['last_manual_update'] == $b['last_manual_update']) return 0;
+						return ($a['last_manual_update'] < $b['last_manual_update'])?-1:1;
+					});
+				}
 
 				$last_manual_update = array(
 					'last_manual_update'	=>	$sorted_bins[0]['last_manual_update']
