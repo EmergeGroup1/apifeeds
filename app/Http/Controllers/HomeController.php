@@ -3632,8 +3632,10 @@ class HomeController extends Controller
 		$counter = 0;
 
 		for($i=0; $i < count($bins); $i++){
-			if($bins[$i]['days_to_empty'] == 0 || $bins[$i]['days_to_empty'] == 1 || $bins[$i]['days_to_empty'] == 2){
-				$counter++;
+			if(isset($bins[$i]['days_to_empty'])){
+				if($bins[$i]['days_to_empty'] == 0 || $bins[$i]['days_to_empty'] == 1 || $bins[$i]['days_to_empty'] == 2){
+					$counter++;
+				}
 			}
 		}
 
