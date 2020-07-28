@@ -2478,7 +2478,7 @@ class AnimalMovementController extends Controller
 
           $farm_name = Farms::where("id",$groups[$i]->farm_id)->select("name")->first("name");
 
-          $output[] = $farm_name[0]->name;
+          $output[] = $farm_name['name'];
         }
 
         return $output;
