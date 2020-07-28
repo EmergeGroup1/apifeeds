@@ -2478,9 +2478,26 @@ class AnimalMovementController extends Controller
 
           $farm_name = Farms::where("id",$groups[$i]->farm_id)->first("name");
 
+          $bor_name = "";
+          $bor_n = "";
+          if($groups[$i]->type == "farrowing"){
+            for($j=0; $j<count($bin_or_rooms); $j++){
+              $rooms = DB::table("feeds_farrowing_rooms")->where("id",$bin_or_rooms[$j]->room_id)->first("room_number");
+
+              $bor_n .= $rooms['room_number'] . ", ";
+            }
+            $bor_name = "Room/s: " . $bor_n;
+          } else {
+            for($j=0; $j<count($bin_or_rooms); $j++){
+              $bins = Bins::where("bin_id",$bin_or_rooms[$j]->bin_id)->first("bin_number");
+
+              $bor_n .= $bins['bin_number'] . ", ";
+            }
+            $bor_name = "Bin/s: " . $bor_n;
+          }
 
 
-          $output[] = $farm_name['name'] . " " . $groups[$i]->type;
+          $output[] = $farm_name['name'] . " - " . $bor_name;
         }
 
         return $output;
