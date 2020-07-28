@@ -2506,8 +2506,12 @@ class AnimalMovementController extends Controller
 
           }
 
+          if(isset($bor_n)){
 
-          $output[] = $groups[$i]->group_name . " " . $farm_name['name'] . " - " . substr($bor_name, 0, -2);
+            $output[] = $groups[$i]->group_name . " " . $farm_name['name'] . " - " . substr($bor_name, 0, -2);
+
+          }
+
         }
 
         return $output;
