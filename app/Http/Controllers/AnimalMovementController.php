@@ -2484,9 +2484,9 @@ class AnimalMovementController extends Controller
 
             for($j=0; $j<count($bin_or_rooms); $j++){
 
-              $rooms = DB::table("feeds_farrowing_rooms")->where("id",$bin_or_rooms[$j]->room_id)->get();
+              $rooms = DB::table("feeds_farrowing_rooms")->where("id",$bin_or_rooms[$j]->room_id)->first();
 
-              $bor_n .= $rooms[0]->room_number . ", ";
+              $bor_n .= $rooms->room_number . ", ";
 
             }
 
