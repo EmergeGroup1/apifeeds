@@ -2465,9 +2465,15 @@ class AnimalMovementController extends Controller
       * Update Group Name
       */
       public function updateGroupName(){
-
-        // select all groups
-
+        return "testing betlog";
+        // $group_name = "";
+        //
+        // // select all groups
+        // $groups = DB::table("feeds_movement_groups")->get();
+        //
+        // for($i=0; $i<count($groups); $i++){
+        //   $bin_or_rooms = DB::table("feeds_movement_groups_bins")->where("unique_id",$groups[$i]->uniuqe_id)->get();
+        // }
         // select all rooms or bins
 
         // loop on groups
