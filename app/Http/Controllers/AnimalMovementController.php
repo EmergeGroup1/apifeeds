@@ -2506,7 +2506,7 @@ class AnimalMovementController extends Controller
 
           }
 
-          if($bor_n != "Room/s: "){
+          if($bor_name != "Room/s: "){
 
             $output[] = $groups[$i]->group_name . " " . $farm_name['name'] . " - " . substr($bor_name, 0, -2);
 
