@@ -2476,9 +2476,11 @@ class AnimalMovementController extends Controller
 
           $bin_or_rooms = DB::table("feeds_movement_groups_bins")->where("unique_id",$groups[$i]->unique_id)->get();
 
-          $farm_name = Farms::where("id",$groups[$i]->farm_id)->select("name")->first("name");
+          $farm_name = Farms::where("id",$groups[$i]->farm_id)->first("name");
 
-          $output[] = $farm_name['name'];
+
+
+          $output[] = $farm_name['name'] . " " . $groups[$i]->type;
         }
 
         return $output;
