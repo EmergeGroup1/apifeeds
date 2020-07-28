@@ -2812,7 +2812,7 @@ class APIController extends Controller
                                  $dt['bin_id'],
                                  $dt['room_id'],
                                  $num_of_pigs);
-                                 
+
           if($dt['bin_id'] != 0){
               $home_crtl->clearBinsCache($dt['bin_id']);
           }
@@ -3523,6 +3523,7 @@ class APIController extends Controller
 
       $data[$bins[$i]->bin_id] = array(
         'binName'                       =>  'Bin #' . $bins[$i]->bin_number . ' - ' . $bins[$i]->alias,
+        'binNumber'                     =>  $bins[$i]->bin_number,
         'amountTons'                    =>  $bins[$i]->current_bin_amount_tons,
         'dateToBeEmpty'                 =>  date("Y-m-d", strtotime($bins[$i]->empty_date)) == "1969-12-31" ? "--" : date("Y-m-d", strtotime($bins[$i]->empty_date)),
         'inComingDelivery'              =>  $bins[$i]->delivery_amount,
