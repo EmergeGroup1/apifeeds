@@ -2470,7 +2470,7 @@ class AnimalMovementController extends Controller
         $output = array();
 
         // select all groups
-        $groups = DB::table("feeds_movement_groups")->whereNotIn("status",["deleted"])->get();
+        $groups = DB::table("feeds_movement_groups")->whereNotIn("status",["remove"])->get();
 
         for($i=0; $i<count($groups); $i++){
 
