@@ -2459,4 +2459,22 @@ class AnimalMovementController extends Controller
         }
 
       }
+
+
+      /*
+      * Update Group Name
+      */
+      public function updateGroupName(){
+
+        // select all groups
+
+        // select all rooms or bins
+
+        // loop on groups
+
+        // update group names format: farm name - Bins: / Rooms:
+
+
+
+      }
 }
