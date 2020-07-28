@@ -2482,9 +2482,9 @@ class AnimalMovementController extends Controller
           $bor_n = "";
           if($groups[$i]->type == "farrowing"){
             for($j=0; $j<count($bin_or_rooms); $j++){
-              $rooms = DB::table("feeds_farrowing_rooms")->where("id",$bin_or_rooms[$j]->room_id)->first("room_number")->room_number;
+              $rooms = DB::table("feeds_farrowing_rooms")->where("id",$bin_or_rooms[$j]->room_id)->first("room_number");
 
-              $bor_n .= $rooms . ", ";
+              $bor_n .= $rooms["room_number"] . ", ";
             }
             $bor_name = "Room/s: " . $bor_n;
           } else {
