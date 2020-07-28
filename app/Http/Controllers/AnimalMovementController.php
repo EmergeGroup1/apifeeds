@@ -2507,7 +2507,7 @@ class AnimalMovementController extends Controller
           }
 
 
-          $output[] = $farm_name['name'] . " - " . substr($bor_name, 0, -3);
+          $output[] = $farm_name['name'] . " - " . substr($bor_name, 0, -2);
         }
 
         return $output;
