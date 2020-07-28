@@ -2486,7 +2486,7 @@ class AnimalMovementController extends Controller
 
               $rooms = DB::table("feeds_farrowing_rooms")->where("id",$bin_or_rooms[$j]->room_id)->select("room_number")->first();
 
-              $bor_n .= $rooms->room_number . ", ";
+              $bor_n .= isset($rooms) ? $rooms->room_number : "" . ", ";
 
             }
 
