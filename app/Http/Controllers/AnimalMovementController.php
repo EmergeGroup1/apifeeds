@@ -2474,7 +2474,7 @@ class AnimalMovementController extends Controller
 
         for($i=0; $i<count($groups); $i++){
 
-          $bin_or_rooms = DB::table("feeds_movement_groups_bins")->where("unique_id",$groups[$i]->uniuqe_id)->get();
+          $bin_or_rooms = DB::table("feeds_movement_groups_bins")->where("unique_id",$groups[$i]->unique_id)->get();
 
           $farm_name = Farms::where("id",$groups[$i]->farm_id)->select("name")->first()->name;
 
