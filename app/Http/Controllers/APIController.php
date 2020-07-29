@@ -3524,6 +3524,7 @@ class APIController extends Controller
       $data[$bins[$i]->bin_id] = array(
         'binName'                       =>  'Bin #' . $bins[$i]->bin_number . ' - ' . $bins[$i]->alias,
         'binNumber'                     =>  $bins[$i]->bin_number,
+        'binAlias'                      =>  $bins[$i]->alias,
         'amountTons'                    =>  $bins[$i]->current_bin_amount_tons,
         'dateToBeEmpty'                 =>  date("Y-m-d", strtotime($bins[$i]->empty_date)) == "1969-12-31" ? "--" : date("Y-m-d", strtotime($bins[$i]->empty_date)),
         'inComingDelivery'              =>  $bins[$i]->delivery_amount,
