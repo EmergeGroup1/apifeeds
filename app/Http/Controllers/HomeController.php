@@ -2688,7 +2688,7 @@ class HomeController extends Controller
 			//$binsData[] = $bins_items;
 
 		}
-		
+		/*
 		$sorted_bins = $binsData;
 		usort($sorted_bins, function($a,$b){
 			if($a['days_to_empty'] == $b['days_to_empty']) return 0;
@@ -2708,7 +2708,7 @@ class HomeController extends Controller
 		}
 
 		Storage::put('bins_data'.$farm_id.'.txt',json_encode($binsDataFinal));
-
+		*/
 
 		$this->forecastingDataCache();
 		return true;
