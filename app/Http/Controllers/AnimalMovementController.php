@@ -2510,7 +2510,7 @@ class AnimalMovementController extends Controller
 
             $n_group_name = $farm_name['name'] . " - " . substr($bor_name, 0, -2);
 
-            $output[] = "before: " . $groups[$i]->group_name . " || now: " . $farm_name['name'] . " - " . substr($bor_name, 0, -2);
+            $output[] = "before: " . $groups[$i]->group_name . " date: " . $groups[$i]->date_created .  " || now: " . $farm_name['name'] . " - " . substr($bor_name, 0, -2);
 
             DB::table("feeds_movement_groups")
               ->where("group_id",$groups[$i]->group_id)
