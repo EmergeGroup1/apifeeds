@@ -2496,7 +2496,7 @@ class AnimalMovementController extends Controller
 
             for($j=0; $j<count($bin_or_rooms); $j++){
 
-              $bins = Bins::where("bin_id",$bin_or_rooms[$j]->bin_id)->first("bin_alias");
+              $bins = Bins::where("bin_id",$bin_or_rooms[$j]->bin_id)->first("alias");
 
               $bor_n .= $bins['alias'] . ", ";
 
