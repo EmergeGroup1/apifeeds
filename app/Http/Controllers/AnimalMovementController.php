@@ -2508,7 +2508,13 @@ class AnimalMovementController extends Controller
 
           if($bor_n != ", "){
 
+            $n_group_name = $farm_name['name'] . " - " . substr($bor_name, 0, -2);
+
             $output[] = "before: " . $groups[$i]->group_name . " || now: " . $farm_name['name'] . " - " . substr($bor_name, 0, -2);
+
+            DB::table("feeds_movement_groups")
+              ->where("group_id",$groups[$i]->group_id)
+              ->update(["group_name"=>$n_group_name]);
 
           }
 
