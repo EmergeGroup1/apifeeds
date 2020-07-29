@@ -2508,7 +2508,7 @@ class AnimalMovementController extends Controller
 
           if($bor_n != ", "){
 
-            $output[] = "before: " $groups[$i]->group_name . " || now: " . $farm_name['name'] . " - " . substr($bor_name, 0, -2);
+            $output[] = "before: " . $groups[$i]->group_name . " || now: " . $farm_name['name'] . " - " . substr($bor_name, 0, -2);
 
           }
 
