@@ -3323,21 +3323,27 @@ class APIController extends Controller
   */
   private function returnDup($array)
   {
+      $duplicate_array = array();
 
-      $results = array();
-      $duplicates = array();
+      for($i=0;$i<count($array);$i++){
 
-      foreach ($array as $item) {
+        for($j=0;$j<count($array);$j++){
 
-          if (in_array($item, $results)) {
-              $duplicates[] = $item;
+          if($i != $j && $array[$i] == $array[$j]){
+
+            if(!in_array($array[$j], $duplicate_array)){
+
+              $duplicate_array[] = $array[$j];
+
+            }
+
           }
 
-          $results[] = $item;
+        }
 
       }
 
-      return $duplicates;
+      return $duplicate_array;
 
   }
 
