@@ -2768,84 +2768,91 @@ class APIController extends Controller
 
 
 
-          // loop on the cause of death
-          for($i=0; $i<count($data['reason']); $i++){
-
-            if($data['notes'][$i] == "" || $data['notes'][$i] == NULL){
-
-              $data['notes'][$i] = "--";
-
-            }
-
-            if($data['deathNumber'][$i] != 0){
-
-              $dt[] = array(
-                'death_date'    =>  $data['dateOfDeath'],
-                'farm_id'       =>  $data['farmID'],
-                'group_id'      =>  $data['groupID'],
-                'bin_id'        =>  $data['binID'][$i],
-                'room_id'       =>  $data['roomID'][$i],
-                'cause'         =>  $data['reason'][$i],
-                'amount'        =>  $data['deathNumber'][$i],
-                'notes'         =>  $data['notes'][$i],
-                'unique_id'     =>  $u_id
-              );
-
-            }
-
-          }
-          return $dt;
-
-          $dt = array(
-            'death_date'    =>  $data['dateOfDeath'],
-            'farm_id'       =>  $data['farmID'],
-            'group_id'      =>  $data['groupID'],
-            'bin_id'        =>  $data['binID'],
-            'room_id'       =>  $data['roomID'],
-            'cause'         =>  $data['reason'],
-            'amount'        =>  $data['deathNumber'],
-            'notes'         =>  $data['notes'],
-            'unique_id'     =>  $u_id
-          );
-
-          // $group_uid = $this->animalGroupsData($dt['group_id']);
-
           $group_data = DB::table("feeds_movement_groups")
                           ->select('unique_id')
-                          ->where("group_id",$dt['group_id'])
+                          ->where("group_id",$data['groupID'])
                           ->get();
 
 
-          $pigs = $this->groupRoomsBinsPigs($group_data[0]->unique_id,
-                                            $dt['bin_id'],
-                                            $dt['room_id']);
 
-          $dtl = array(
-                    'death_unique_id' => $u_id,
-                    'date_time_logs'  =>  date("Y-m-d H:i:s"),
-                    'group_id'  =>  $dt['group_id'],
-                    'user_id' =>  $data['userID'],
-                    'bin_id'  =>  $dt['bin_id'],
-                    'room_id' =>  $dt['room_id'],
-                    'original_pigs' => $pigs->number_of_pigs,
-                    'pigs'  => $data['deathNumber'],
-                    'action'  =>  "add death record"
-                  );
+          // loop on the cause of death
+          for($i=0; $i<count($data['reason']); $i++){
 
-          // deduct the death on rooms or bins, after deduction, update the cache
-          $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'];
-          $this->updateBinsRooms($group_data[0]->unique_id,
-                                 $dt['bin_id'],
-                                 $dt['room_id'],
-                                 $num_of_pigs);
+              if($data['notes'][$i] == "" || $data['notes'][$i] == NULL){
 
-          if($dt['bin_id'] != 0){
-              $home_crtl->clearBinsCache($dt['bin_id']);
+                $data['notes'][$i] = "--";
+
+              }
+
+
+              if($data['deathNumber'][$i] != 0){
+
+                $dt = array(
+                  'death_date'    =>  $data['dateOfDeath'],
+                  'farm_id'       =>  $data['farmID'],
+                  'group_id'      =>  $data['groupID'],
+                  'bin_id'        =>  $data['binID'][$i],
+                  'room_id'       =>  $data['roomID'][$i],
+                  'cause'         =>  $data['reason'][$i],
+                  'amount'        =>  $data['deathNumber'][$i],
+                  'notes'         =>  $data['notes'][$i],
+                  'unique_id'     =>  $u_id
+                );
+
+              }
+
+
+
+              $pigs = $this->groupRoomsBinsPigs($group_data[0]->unique_id,
+                                                $dt['bin_id'],
+                                                $dt['room_id']);
+
+              $dtl = array(
+                        'death_unique_id' => $u_id,
+                        'date_time_logs'  =>  date("Y-m-d H:i:s"),
+                        'group_id'  =>  $dt['group_id'],
+                        'user_id' =>  $data['userID'],
+                        'bin_id'  =>  $dt['bin_id'],
+                        'room_id' =>  $dt['room_id'],
+                        'original_pigs' => $pigs->number_of_pigs,
+                        'pigs'  => $data['deathNumber'],
+                        'action'  =>  "add death record"
+                      );
+
+              // deduct the death on rooms or bins, after deduction, update the cache
+              $num_of_pigs = $pigs->number_of_pigs - $data['deathNumber'][$i];
+              $this->updateBinsRooms($group_data[0]->unique_id,
+                                     $dt['bin_id'],
+                                     $dt['room_id'],
+                                     $num_of_pigs);
+
+              if($dt['bin_id'] != 0){
+                  $home_crtl->clearBinsCache($dt['bin_id']);
+              }
+
+
+              DB::table("feeds_groups_dead_pigs_logs")->insert($dtl);
+              DB::table("feeds_groups_dead_pigs")->insert($dt);
+
+
           }
 
 
-          DB::table("feeds_groups_dead_pigs_logs")->insert($dtl);
-          DB::table("feeds_groups_dead_pigs")->insert($dt);
+          // $dt = array(
+          //   'death_date'    =>  $data['dateOfDeath'],
+          //   'farm_id'       =>  $data['farmID'],
+          //   'group_id'      =>  $data['groupID'],
+          //   'bin_id'        =>  $data['binID'],
+          //   'room_id'       =>  $data['roomID'],
+          //   'cause'         =>  $data['reason'],
+          //   'amount'        =>  $data['deathNumber'],
+          //   'notes'         =>  $data['notes'],
+          //   'unique_id'     =>  $u_id
+          // );
+
+          // $group_uid = $this->animalGroupsData($dt['group_id']);
+
+
 
           unset($home_crtl);
 
