@@ -2767,6 +2767,8 @@ class APIController extends Controller
           $dt = array();
           $dtl = array();
 
+          return $this->returnDup($data);
+
 
 
           $group_data = DB::table("feeds_movement_groups")
@@ -2777,6 +2779,8 @@ class APIController extends Controller
 
 
           // loop on the cause of death
+
+          // get duplicate first then
           for($i=0; $i<count($data['reason']); $i++){
 
               if($data['notes'][$i] == "" || $data['notes'][$i] == NULL){
@@ -3313,6 +3317,29 @@ class APIController extends Controller
 
   }
 
+
+  /**
+  * Get duplicate values from the array.
+  */
+  private function returnDup($array)
+  {
+
+      $results = array();
+      $duplicates = array();
+
+      foreach ($array as $item) {
+
+          if (in_array($item, $results)) {
+              $duplicates[] = $item;
+          }
+
+          $results[] = $item;
+
+      }
+
+      return $duplicates;
+
+  }
 
   /**
   * Get the number of pigs for rooms or bins in animal groups
