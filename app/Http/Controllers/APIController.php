@@ -2762,6 +2762,8 @@ class APIController extends Controller
 
           $data = $request->all();
 
+          return $data;
+
           $home_crtl = new HomeController;
           $u_id = $home_crtl->generator();
           $dtl = array();
@@ -2769,6 +2771,8 @@ class APIController extends Controller
           if($data['notes'] == "" || $data['notes'] == NULL){
             $data['notes'] = "--";
           }
+
+          // loop on the cause of death
 
           $dt = array(
             'death_date'    =>  $data['dateOfDeath'],
