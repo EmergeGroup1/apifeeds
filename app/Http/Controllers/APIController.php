@@ -3324,7 +3324,11 @@ class APIController extends Controller
   private function returnDup($arr)
   {
 
-      return array_diff_key($arr, array_unique($arr));
+    $dups = array();
+    foreach(array_count_values($arr) as $val => $c)
+      if($c > 1) $dups[] = $val;
+
+    return $dups;
 
   }
 
