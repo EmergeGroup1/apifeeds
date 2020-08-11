@@ -2779,7 +2779,7 @@ class APIController extends Controller
 
             if($data['deathNumber'][$i] != 0){
 
-              $dt = array(
+              $dt[] = array(
                 'death_date'    =>  $data['dateOfDeath'],
                 'farm_id'       =>  $data['farmID'],
                 'group_id'      =>  $data['groupID'],
