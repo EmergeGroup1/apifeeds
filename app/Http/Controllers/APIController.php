@@ -3321,29 +3321,10 @@ class APIController extends Controller
   /**
   * Get duplicate values from the array.
   */
-  private function returnDup($array)
+  private function returnDup($arr)
   {
-      $duplicate_array = array();
 
-      for($i=0;$i<count($array);$i++){
-
-        for($j=0;$j<count($array);$j++){
-
-          if($i != $j && $array[$i] == $array[$j]){
-
-            if(!in_array($array[$j], $duplicate_array)){
-
-              $duplicate_array[] = $array[$j];
-
-            }
-
-          }
-
-        }
-
-      }
-
-      return $duplicate_array;
+      return array_diff_key($arr, array_unique($arr));
 
   }
 
