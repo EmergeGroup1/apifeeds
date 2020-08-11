@@ -2764,6 +2764,7 @@ class APIController extends Controller
 
           $home_crtl = new HomeController;
           $u_id = $home_crtl->generator();
+          $dt = array();
           $dtl = array();
 
 
@@ -2810,7 +2811,7 @@ class APIController extends Controller
               $dtl = array(
                         'death_unique_id' => $u_id,
                         'date_time_logs'  =>  date("Y-m-d H:i:s"),
-                        'group_id'  =>  $dt['group_id'],
+                        'group_id'  =>  $data['groupID'],
                         'user_id' =>  $data['userID'],
                         'bin_id'  =>  $dt['bin_id'],
                         'room_id' =>  $dt['room_id'],
