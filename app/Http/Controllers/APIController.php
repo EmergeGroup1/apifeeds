@@ -2762,17 +2762,39 @@ class APIController extends Controller
 
           $data = $request->all();
 
-          return $data;
-
           $home_crtl = new HomeController;
           $u_id = $home_crtl->generator();
           $dtl = array();
 
-          if($data['notes'] == "" || $data['notes'] == NULL){
-            $data['notes'] = "--";
-          }
+
 
           // loop on the cause of death
+          for($i=0; $i<count($data['reason']); $i++){
+
+            if($data['notes'][$i] == "" || $data['notes'][$i] == NULL){
+
+              $data['notes'][$i] = "--";
+
+            }
+
+            if($data['deathNumber'][$i] != 0){
+
+              $dt = array(
+                'death_date'    =>  $data['dateOfDeath'],
+                'farm_id'       =>  $data['farmID'],
+                'group_id'      =>  $data['groupID'],
+                'bin_id'        =>  $data['binID'][$i],
+                'room_id'       =>  $data['roomID'][$i],
+                'cause'         =>  $data['reason'][$i],
+                'amount'        =>  $data['deathNumber'][$i],
+                'notes'         =>  $data['notes'][$i],
+                'unique_id'     =>  $u_id
+              );
+
+            }
+
+          }
+          return $dt;
 
           $dt = array(
             'death_date'    =>  $data['dateOfDeath'],
