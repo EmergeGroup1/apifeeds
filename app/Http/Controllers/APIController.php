@@ -2767,7 +2767,7 @@ class APIController extends Controller
           $dt = array();
           $dtl = array();
 
-          return $this->returnDup($data);
+          return $this->returnDup($data['roomID']);
 
 
 
