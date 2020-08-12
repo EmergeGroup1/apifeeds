@@ -2773,28 +2773,25 @@ class APIController extends Controller
           $test = array();
 
 
-          for($i=0; $i<count($duplicate_cause); $i++){
+          for($j=0; $j<count($data['deathNumber']); $j++){
 
-            for($j=0; $j<count($data['deathNumber']); $j++){
+            if($data['deathNumber'][$j] != 0) {
 
-              if($data['deathNumber'][$j] != 0) {
-
-
-                $test[] = array(
-                  'bin_id'        =>  $data['binID'][$j],
-                  'room_id'       =>  $data['roomID'][$j],
-                  'cause'         =>  $data['reason'][$j],
-                  'amount'        =>  $data['deathNumber'][$j],
-                  'notes'         =>  $data['notes'][$j],
-                );
-
-              }
+              $test[] = array(
+                'combine-bor-cause' =>  $data['roomID'][$j] . "-" . $data['reason'][$j],
+                'bin_id'        =>  $data['binID'][$j],
+                'room_id'       =>  $data['roomID'][$j],
+                'cause'         =>  $data['reason'][$j],
+                'amount'        =>  $data['deathNumber'][$j],
+                'notes'         =>  $data['notes'][$j],
+              );
 
             }
 
           }
 
-          return $this->returnDup($test);
+
+          return $test;
 
 
           $group_data = DB::table("feeds_movement_groups")
