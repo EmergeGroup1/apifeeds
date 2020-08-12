@@ -2793,6 +2793,7 @@ class APIController extends Controller
 
           $u_comb_bor_keys = $this->returnDup($keys);
           $amount_counter = array();
+          $final_strip = array();
 
           for($i=0; $i<count($u_comb_bor_keys); $i++){
 
@@ -2803,6 +2804,14 @@ class APIController extends Controller
 
                 $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $test[$j]['amount'];
 
+                $final_strip[$u_comb_bor_keys[$i]] = array(
+                  'bin_id'        =>  $test[$j]['bin_id'],
+                  'room_id'       =>  $test[$j]['room_id'],
+                  'cause'         =>  $test[$j]['cause'],
+                  'amount'        =>  $amount_counter[$u_comb_bor_keys[$i]],
+                  'notes'         =>  $test[$j]['notes'],
+                );
+
               }
 
             }
@@ -2811,7 +2820,7 @@ class APIController extends Controller
 
           }
 
-          return $amount_counter;
+          return $final_strip;
 
 
           $group_data = DB::table("feeds_movement_groups")
