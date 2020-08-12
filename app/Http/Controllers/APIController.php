@@ -2792,20 +2792,22 @@ class APIController extends Controller
 
 
           $u_comb_bor_keys = $this->returnDup($keys);
-          $amount_counter = 0;
+          $amount_counter = array();
 
           for($i=0; $i<count($u_comb_bor_keys); $i++){
 
-
+            $amount_counter[$u_comb_bor_keys][$i] = 0;
             for($j=0; $j<count($test); $j++){
 
               if($u_comb_bor_keys[$i] == $test[$j]['combine-bor-cause']){
 
-                $amount_counter = $amount_counter + $test[$j]['amount'];
+                $amount_counter[$u_comb_bor_keys][$i] = $amount_counter[$u_comb_bor_keys][$i] + $test[$j]['amount'];
 
               }
 
             }
+
+
 
           }
 
