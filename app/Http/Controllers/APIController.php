@@ -2779,7 +2779,7 @@ class APIController extends Controller
 
               if($data['deathNumber'][$j] != 0 && $data['reason'][$j] == $duplicate_cause[$i]) {
 
-                $test[] = array(
+                $test[$duplicate_cause[$i]] = array(
                   'bin_id'        =>  $data['binID'][$j],
                   'room_id'       =>  $data['roomID'][$j],
                   'cause'         =>  $data['reason'][$j],
