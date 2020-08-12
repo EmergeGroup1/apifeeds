@@ -2767,9 +2767,6 @@ class APIController extends Controller
           $dt = array();
           $dtl = array();
 
-          $duplicate_bins = $this->returnDup($data['roomID']);
-          $duplicate_cause = $this->returnDup($data['reason']);
-
           $test = array();
           $keys = array();
 
@@ -2794,7 +2791,25 @@ class APIController extends Controller
           }
 
 
-          return $this->returnDup($keys);
+          $u_comb_bor_keys = $this->returnDup($keys);
+          $amount_counter = 0;
+
+          for($i=0; $i<count($u_comb_bor_keys); $i++){
+
+
+            for($j=0; $j<count($test); $j++){
+
+              if($u_comb_bor_keys[$i] == $test[$j]['combine-bor-cause']){
+
+                $amount_counter = $amount_counter + $test[$j]['amount'];
+
+              }
+
+            }
+
+          }
+
+          return $amount_counter;
 
 
           $group_data = DB::table("feeds_movement_groups")
