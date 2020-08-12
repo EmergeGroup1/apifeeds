@@ -2807,21 +2807,29 @@ class APIController extends Controller
                 $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $test[$j]['amount'];
 
                 $final_strip[$u_comb_bor_keys[$i]] = array(
+                  'death_date'    =>  $data['dateOfDeath'],
+                  'farm_id'       =>  $data['farmID'],
+                  'group_id'      =>  $data['groupID'],
                   'bin_id'        =>  $test[$j]['bin_id'],
                   'room_id'       =>  $test[$j]['room_id'],
                   'cause'         =>  $test[$j]['cause'],
                   'amount'        =>  $amount_counter[$u_comb_bor_keys[$i]],
                   'notes'         =>  $test[$j]['notes'],
+                  'unique_id'     =>  $u_id
                 );
 
               } else {
 
                 $final_strip[$test[$j]['combine-bor-cause']] = array(
+                  'death_date'    =>  $data['dateOfDeath'],
+                  'farm_id'       =>  $data['farmID'],
+                  'group_id'      =>  $data['groupID'],
                   'bin_id'        =>  $test[$j]['bin_id'],
                   'room_id'       =>  $test[$j]['room_id'],
                   'cause'         =>  $test[$j]['cause'],
                   'amount'        =>  $test[$j]['amount'],
                   'notes'         =>  $test[$j]['notes'],
+                  'unique_id'     =>  $u_id
                 );
 
               }
