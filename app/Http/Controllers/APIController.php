@@ -2812,6 +2812,16 @@ class APIController extends Controller
                   'notes'         =>  $test[$j]['notes'],
                 );
 
+              } else {
+
+                $final_strip[$u_comb_bor_keys[$i]] = array(
+                  'bin_id'        =>  $test[$j]['bin_id'],
+                  'room_id'       =>  $test[$j]['room_id'],
+                  'cause'         =>  $test[$j]['cause'],
+                  'amount'        =>  $test[$j]['amount'],
+                  'notes'         =>  $test[$j]['notes'],
+                );
+
               }
 
             }
