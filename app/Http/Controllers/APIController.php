@@ -2777,9 +2777,10 @@ class APIController extends Controller
 
             for($j=0; $j<count($data['deathNumber']); $j++){
 
-              if($data['deathNumber'][$j] != 0 && $data['reason'][$j] == $duplicate_cause[$i]) {
+              if($data['deathNumber'][$j] != 0) {
 
-                $test[$duplicate_cause[$i]][] = array(
+
+                $test[] = array(
                   'bin_id'        =>  $data['binID'][$j],
                   'room_id'       =>  $data['roomID'][$j],
                   'cause'         =>  $data['reason'][$j],
@@ -2793,7 +2794,7 @@ class APIController extends Controller
 
           }
 
-          return $test;
+          return $this->returnDup($test);
 
 
           $group_data = DB::table("feeds_movement_groups")
