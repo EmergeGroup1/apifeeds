@@ -2789,6 +2789,7 @@ class APIController extends Controller
             }
 
           }
+          return $test;
 
 
           $u_comb_bor_keys = $this->returnDup($keys);
