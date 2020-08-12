@@ -2771,11 +2771,14 @@ class APIController extends Controller
           $duplicate_cause = $this->returnDup($data['reason']);
 
           $test = array();
+          $keys = array();
 
 
           for($j=0; $j<count($data['deathNumber']); $j++){
 
             if($data['deathNumber'][$j] != 0) {
+
+              $keys[] = $data['binID'][$j] . "-" . $data['roomID'][$j] . "-" . $data['reason'][$j];
 
               $test[] = array(
                 'combine-bor-cause' => $data['binID'][$j] . "-" . $data['roomID'][$j] . "-" . $data['reason'][$j],
@@ -2791,7 +2794,7 @@ class APIController extends Controller
           }
 
 
-          return $this->returnDup($test);
+          return $this->returnDup($keys);
 
 
           $group_data = DB::table("feeds_movement_groups")
