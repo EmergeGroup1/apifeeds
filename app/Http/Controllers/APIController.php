@@ -2789,7 +2789,7 @@ class APIController extends Controller
             }
 
           }
-          
+
 
 
           $u_comb_bor_keys = $this->returnDup($keys);
@@ -2830,7 +2830,7 @@ class APIController extends Controller
 
           }
 
-          return $final_strip;
+          return $amount_counter;
 
 
           $group_data = DB::table("feeds_movement_groups")
