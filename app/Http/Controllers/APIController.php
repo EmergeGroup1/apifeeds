@@ -2798,6 +2798,7 @@ class APIController extends Controller
           for($i=0; $i<count($u_comb_bor_keys); $i++){
 
             $amount_counter[$u_comb_bor_keys[$i]] = 0;
+
             for($j=0; $j<count($test); $j++){
 
               if($u_comb_bor_keys[$i] == $test[$j]['combine-bor-cause']){
@@ -2825,8 +2826,6 @@ class APIController extends Controller
               }
 
             }
-
-
 
           }
 
