@@ -2791,7 +2791,7 @@ class APIController extends Controller
           }
 
 
-          return $test;
+          return $this->returnDup($test);
 
 
           $group_data = DB::table("feeds_movement_groups")
