@@ -2767,10 +2767,34 @@ class APIController extends Controller
           $dt = array();
           $dtl = array();
 
-          $distinct_bins = $this->returnDup($data['roomID']);
-          $distinct_cause = $this->returnDup($data['reason']);
+          $duplicate_bins = $this->returnDup($data['roomID']);
+          $duplicate_cause = $this->returnDup($data['reason']);
 
-          return $distinct_cause;
+          $test = array();
+
+          for($i=0; $i<count($data['deathNumber']); $i++){
+
+            if($data['deathNumber'][$i] != 0) {
+
+              $test[] = array(
+                'bin_id'        =>  $data['binID'][$i],
+                'room_id'       =>  $data['roomID'][$i],
+                'cause'         =>  $data['reason'][$i],
+                'amount'        =>  $data['deathNumber'][$i],
+                'notes'         =>  $data['notes'][$i],
+              );
+
+            }
+
+          }
+
+          return $test;
+
+          // for($i=0; $i<count($duplicate_cause); $i++){
+          //
+          // }
+
+          return $duplicate_cause;
 
 
 
