@@ -2830,7 +2830,13 @@ class APIController extends Controller
 
           }
 
-          return $amount_counter;
+
+
+          for($i=0; $i<count($amount_counter); $i++){
+            $final_strip[$i]['amount'] = $amount_counter[$i];
+          }
+
+          return $final_strip;
 
 
           $group_data = DB::table("feeds_movement_groups")
