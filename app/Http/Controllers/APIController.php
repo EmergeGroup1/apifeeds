@@ -2767,7 +2767,10 @@ class APIController extends Controller
           $dt = array();
           $dtl = array();
 
-          return $this->returnDup($data['roomID']);
+          $distinct_bins = $this->returnDup($data['roomID']);
+          $distinct_cause = $this->returnDup($data['reason']);
+
+          return $distinct_cause;
 
 
 
