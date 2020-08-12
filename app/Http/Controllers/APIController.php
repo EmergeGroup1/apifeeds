@@ -2832,8 +2832,8 @@ class APIController extends Controller
 
 
 
-          for($i=0; $i<count($amount_counter); $i++){
-            $final_strip[$i]['amount'] = $amount_counter[$i];
+          foreach($amount_counter, $k => $v){
+            $final_strip[$k]['amount'] = $v;
           }
 
           return $final_strip;
