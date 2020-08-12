@@ -2832,7 +2832,7 @@ class APIController extends Controller
 
 
 
-          foreach($amount_counter, $k => $v){
+          foreach($amount_counter as $k => $v){
             $final_strip[$k]['amount'] = $v;
           }
 
