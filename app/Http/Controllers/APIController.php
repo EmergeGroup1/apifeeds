@@ -2814,7 +2814,7 @@ class APIController extends Controller
 
               } else {
 
-                $final_strip[$u_comb_bor_keys[$i]] = array(
+                $final_strip[$test[$j]['combine-bor-cause']] = array(
                   'bin_id'        =>  $test[$j]['bin_id'],
                   'room_id'       =>  $test[$j]['room_id'],
                   'cause'         =>  $test[$j]['cause'],
