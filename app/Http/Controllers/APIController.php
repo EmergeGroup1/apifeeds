@@ -2801,7 +2801,7 @@ class APIController extends Controller
 
               if($u_comb_bor_keys[$i] == $test[$j]['combine-bor-cause']){
 
-                $amount_counter[$u_comb_bor_keys][$i] = $amount_counter[$u_comb_bor_keys][$i] + $test[$j]['amount'];
+                $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $test[$j]['amount'];
 
               }
 
