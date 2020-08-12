@@ -2778,7 +2778,7 @@ class APIController extends Controller
             if($data['deathNumber'][$j] != 0) {
 
               $test[] = array(
-                'combine-bor-cause' =>  $data['roomID'][$j] . "-" . $data['reason'][$j],
+                'combine-bor-cause' => $data['binID'][$j] . "-" . $data['roomID'][$j] . "-" . $data['reason'][$j],
                 'bin_id'        =>  $data['binID'][$j],
                 'room_id'       =>  $data['roomID'][$j],
                 'cause'         =>  $data['reason'][$j],
