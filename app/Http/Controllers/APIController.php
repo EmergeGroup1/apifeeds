@@ -3229,7 +3229,7 @@ class APIController extends Controller
           $amount_counter = array();
           $final_strip = array();
 
-          if(isset($u_comb_bor_keys)){
+          if($u_comb_bor_keys != NULL){
             return "may laman";
           } else {
             return "ala laman";
