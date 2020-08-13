@@ -3241,7 +3241,7 @@ class APIController extends Controller
 
                           $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $t_data[$j]['amount'];
 
-                          $treated_data[$u_comb_bor_keys[$i]][] = array(
+                          $treated_data[$u_comb_bor_keys[$i]] = array(
                             'group_id'        =>   $data['group_id'],
                             'bin_id'          =>   $t_data[$j]['bin_id'],
                             'room_id'         =>   $t_data[$j]['room_id'],
