@@ -3198,6 +3198,8 @@ class APIController extends Controller
           $data = $request->all();
           unset($data['action']);
 
+          return $data;
+
 
           $keys = array();
           $t_data = array();
