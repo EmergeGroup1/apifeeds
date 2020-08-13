@@ -3282,11 +3282,11 @@ class APIController extends Controller
                     $treated_data[] = array(
                       'group_id'        =>   $data['group_id'],
                       'bin_id'          =>   $t_data[$j]['bin_id'],
-                      'room_id'         =>   $t_data[$i]['room_id'],
+                      'room_id'         =>   $t_data[$j]['room_id'],
                       'date'            =>   $data['group_id'],
-                      'amount'          =>   $t_data[$i]['amount'],
-                      'treatment'       =>   $t_data[$i]['treatment'],
-                      'notes'           =>   $t_data[$i]['notes']
+                      'amount'          =>   $t_data[$j]['amount'],
+                      'treatment'       =>   $t_data[$j]['treatment'],
+                      'notes'           =>   $t_data[$j]['notes']
                     );
 
                 }
