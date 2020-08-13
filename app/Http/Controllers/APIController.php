@@ -3227,67 +3227,81 @@ class APIController extends Controller
 
           $u_comb_bor_keys = $this->returnDup($keys);
           $amount_counter = array();
-          $final_strip = array();
+          $treated_data = array();
 
           if($u_comb_bor_keys != NULL){
-            return "may laman";
+
+                for($i=0; $i<count($u_comb_bor_keys); $i++){
+
+                  $amount_counter[$u_comb_bor_keys[$i]] = 0;
+
+                  for($j=0; $j<count($t_data); $j++){
+
+                    if($u_comb_bor_keys[$i] == $test[$j]['combine-bor-cause']){
+
+                      $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $t_data[$j]['amount'];
+
+                      $treated_data[$u_comb_bor_keys[$i]] = array(
+                        'group_id'        =>   $data['group_id'],
+                        'bin_id'          =>   $t_data[$i]['bin_id'],
+                        'room_id'         =>   $t_data[$i]['room_id'],
+                        'date'            =>   $data['group_id'],
+                        'amount'          =>   $t_data[$i]['amount'],
+                        'treatment'       =>   $t_data[$i]['treatment'],
+                        'notes'           =>   $t_data[$i]['notes']
+                      );
+
+                    } else {
+
+                      $treated_data[$u_comb_bor_keys[$i]] = array(
+                        'group_id'        =>   $data['group_id'],
+                        'bin_id'          =>   $t_data[$i]['bin_id'],
+                        'room_id'         =>   $t_data[$i]['room_id'],
+                        'date'            =>   $data['group_id'],
+                        'amount'          =>   $t_data[$i]['amount'],
+                        'treatment'       =>   $t_data[$i]['treatment'],
+                        'notes'           =>   $t_data[$i]['notes']
+                      );
+
+                    }
+
+                  }
+
+                }
+
+
+                foreach($amount_counter as $k => $v){
+                  $treated_data[$k]['amount'] = $v;
+                }
+
           } else {
-            return "ala laman";
-          }
-
-          return $u_comb_bor_keys;
 
 
-          for($i=0; $i<count($u_comb_bor_keys); $i++){
+                for($j=0; $j<count($t_data); $j++){
 
-            $amount_counter[$u_comb_bor_keys[$i]] = 0;
+                    $treated_data[] = array(
+                      'group_id'        =>   $data['group_id'],
+                      'bin_id'          =>   $t_data[$i]['bin_id'],
+                      'room_id'         =>   $t_data[$i]['room_id'],
+                      'date'            =>   $data['group_id'],
+                      'amount'          =>   $t_data[$i]['amount'],
+                      'treatment'       =>   $t_data[$i]['treatment'],
+                      'notes'           =>   $t_data[$i]['notes']
+                    );
 
-            for($j=0; $j<count($t_data); $j++){
+                  }
 
-              if($u_comb_bor_keys[$i] == $test[$j]['combine-bor-cause']){
+                }
 
-                $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $t_data[$j]['amount'];
-
-                $final_strip[$u_comb_bor_keys[$i]] = array(
-                  'group_id'        =>   $data['group_id'],
-                  'bin_id'          =>   $t_data[$i]['bin_id'],
-                  'room_id'         =>   $t_data[$i]['room_id'],
-                  'date'            =>   $data['group_id'],
-                  'amount'          =>   $t_data[$i]['amount'],
-                  'treatment'       =>   $t_data[$i]['treatment'],
-                  'notes'           =>   $t_data[$i]['notes']
-                );
-
-              } else {
-
-                $final_strip[$u_comb_bor_keys[$i]] = array(
-                  'group_id'        =>   $data['group_id'],
-                  'bin_id'          =>   $t_data[$i]['bin_id'],
-                  'room_id'         =>   $t_data[$i]['room_id'],
-                  'date'            =>   $data['group_id'],
-                  'amount'          =>   $t_data[$i]['amount'],
-                  'treatment'       =>   $t_data[$i]['treatment'],
-                  'notes'           =>   $t_data[$i]['notes']
-                );
-
-              }
-
-            }
 
           }
 
-
-
-          foreach($amount_counter as $k => $v){
-            $final_strip[$k]['amount'] = $v;
-          }
-
-          return $final_strip;
+          return $treated_data;
 
 
 
           DB::table("feeds_groups_treated_pigs")
-                ->insert($data);
+                ->insert($treated_data);
 
           $aml_ctrl = new AnimalMovementController;
           $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
