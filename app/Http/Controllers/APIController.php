@@ -3198,9 +3198,6 @@ class APIController extends Controller
           $data = $request->all();
           unset($data['action']);
 
-          return $data;
-
-
           $keys = array();
           $t_data = array();
 
@@ -3226,6 +3223,8 @@ class APIController extends Controller
               }
 
           }
+
+          return $t_data;
 
           $u_comb_bor_keys = $this->returnDup($keys);
           $amount_counter = array();
