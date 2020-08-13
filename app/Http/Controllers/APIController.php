@@ -3253,7 +3253,7 @@ class APIController extends Controller
 
                         } else {
 
-                          $treated_data[$u_comb_bor_keys[$i]][] = array(
+                          $treated_data[] = array(
                             'group_id'        =>   $data['group_id'],
                             'bin_id'          =>   $t_data[$j]['bin_id'],
                             'room_id'         =>   $t_data[$j]['room_id'],
