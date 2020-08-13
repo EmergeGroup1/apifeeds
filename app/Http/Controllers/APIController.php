@@ -3294,9 +3294,6 @@ class APIController extends Controller
 
           }
 
-          return $treated_data;
-
-
 
           DB::table("feeds_groups_treated_pigs")
                 ->insert($treated_data);
