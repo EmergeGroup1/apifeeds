@@ -3241,25 +3241,25 @@ class APIController extends Controller
                 $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $t_data[$j]['amount'];
 
                 $final_strip[$u_comb_bor_keys[$i]] = array(
-                  'group_id'        :   $data['group_id'],
-                  'bin_id'          :   $t_data[$i]['bin_id'],
-                  'room_id'         :   $t_data[$i]['room_id'],
-                  'date'            :   $data['group_id'],
-                  'amount'          :   $t_data[$i]['amount'],
-                  'treatment'       :   $t_data[$i]['treatment'],
-                  'notes'           :   $t_data[$i]['notes']
+                  'group_id'        =>   $data['group_id'],
+                  'bin_id'          =>   $t_data[$i]['bin_id'],
+                  'room_id'         =>   $t_data[$i]['room_id'],
+                  'date'            =>   $data['group_id'],
+                  'amount'          =>   $t_data[$i]['amount'],
+                  'treatment'       =>   $t_data[$i]['treatment'],
+                  'notes'           =>   $t_data[$i]['notes']
                 );
 
               } else {
 
                 $final_strip[$u_comb_bor_keys[$i]] = array(
-                  'group_id'        :   $data['group_id'],
-                  'bin_id'          :   $t_data[$i]['bin_id'],
-                  'room_id'         :   $t_data[$i]['room_id'],
-                  'date'            :   $data['group_id'],
-                  'amount'          :   $t_data[$i]['amount'],
-                  'treatment'       :   $t_data[$i]['treatment'],
-                  'notes'           :   $t_data[$i]['notes']
+                  'group_id'        =>   $data['group_id'],
+                  'bin_id'          =>   $t_data[$i]['bin_id'],
+                  'room_id'         =>   $t_data[$i]['room_id'],
+                  'date'            =>   $data['group_id'],
+                  'amount'          =>   $t_data[$i]['amount'],
+                  'treatment'       =>   $t_data[$i]['treatment'],
+                  'notes'           =>   $t_data[$i]['notes']
                 );
 
               }
