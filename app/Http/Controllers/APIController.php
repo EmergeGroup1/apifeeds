@@ -3289,8 +3289,6 @@ class APIController extends Controller
                       'notes'           =>   $t_data[$i]['notes']
                     );
 
-                  }
-
                 }
 
 
