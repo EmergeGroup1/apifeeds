@@ -3256,8 +3256,8 @@ class APIController extends Controller
                           $treated_data[$u_comb_bor_keys[$i]] = array(
                             'group_id'        =>   $data['group_id'],
                             'bin_id'          =>   $t_data[$i]['bin_id'],
-                            'room_id'         =>   $data['date'],
-                            'date'            =>   $data['group_id'],
+                            'room_id'         =>   $t_data[$i]['room_id'],
+                            'date'            =>   $data['date'],
                             'amount'          =>   $t_data[$i]['amount'],
                             'treatment'       =>   $t_data[$i]['treatment'],
                             'notes'           =>   $t_data[$i]['notes']
