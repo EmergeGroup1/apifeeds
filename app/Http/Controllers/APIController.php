@@ -3233,39 +3233,39 @@ class APIController extends Controller
 
                 for($i=0; $i<count($u_comb_bor_keys); $i++){
 
-                  $amount_counter[$u_comb_bor_keys[$i]] = 0;
+                    $amount_counter[$u_comb_bor_keys[$i]] = 0;
 
-                  for($j=0; $j<count($t_data); $j++){
+                    for($j=0; $j<count($t_data); $j++){
 
-                    if($u_comb_bor_keys[$i] == $test[$j]['combine-bor-cause']){
+                        if($u_comb_bor_keys[$i] == $test[$j]['combine-bor-cause']){
 
-                      $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $t_data[$j]['amount'];
+                          $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $t_data[$j]['amount'];
 
-                      $treated_data[$u_comb_bor_keys[$i]] = array(
-                        'group_id'        =>   $data['group_id'],
-                        'bin_id'          =>   $t_data[$i]['bin_id'],
-                        'room_id'         =>   $t_data[$i]['room_id'],
-                        'date'            =>   $data['group_id'],
-                        'amount'          =>   $t_data[$i]['amount'],
-                        'treatment'       =>   $t_data[$i]['treatment'],
-                        'notes'           =>   $t_data[$i]['notes']
-                      );
+                          $treated_data[$u_comb_bor_keys[$i]] = array(
+                            'group_id'        =>   $data['group_id'],
+                            'bin_id'          =>   $t_data[$i]['bin_id'],
+                            'room_id'         =>   $t_data[$i]['room_id'],
+                            'date'            =>   $data['group_id'],
+                            'amount'          =>   $t_data[$i]['amount'],
+                            'treatment'       =>   $t_data[$i]['treatment'],
+                            'notes'           =>   $t_data[$i]['notes']
+                          );
 
-                    } else {
+                        } else {
 
-                      $treated_data[$u_comb_bor_keys[$i]] = array(
-                        'group_id'        =>   $data['group_id'],
-                        'bin_id'          =>   $t_data[$i]['bin_id'],
-                        'room_id'         =>   $t_data[$i]['room_id'],
-                        'date'            =>   $data['group_id'],
-                        'amount'          =>   $t_data[$i]['amount'],
-                        'treatment'       =>   $t_data[$i]['treatment'],
-                        'notes'           =>   $t_data[$i]['notes']
-                      );
+                          $treated_data[$u_comb_bor_keys[$i]] = array(
+                            'group_id'        =>   $data['group_id'],
+                            'bin_id'          =>   $t_data[$i]['bin_id'],
+                            'room_id'         =>   $t_data[$i]['room_id'],
+                            'date'            =>   $data['group_id'],
+                            'amount'          =>   $t_data[$i]['amount'],
+                            'treatment'       =>   $t_data[$i]['treatment'],
+                            'notes'           =>   $t_data[$i]['notes']
+                          );
+
+                        }
 
                     }
-
-                  }
 
                 }
 
@@ -3281,7 +3281,7 @@ class APIController extends Controller
 
                     $treated_data[] = array(
                       'group_id'        =>   $data['group_id'],
-                      'bin_id'          =>   $t_data[$i]['bin_id'],
+                      'bin_id'          =>   $t_data[$j]['bin_id'],
                       'room_id'         =>   $t_data[$i]['room_id'],
                       'date'            =>   $data['group_id'],
                       'amount'          =>   $t_data[$i]['amount'],
