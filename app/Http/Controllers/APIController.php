@@ -3197,9 +3197,86 @@ class APIController extends Controller
 
           $data = $request->all();
           unset($data['action']);
-          if($data['notes'] == "" || $data['notes'] == NULL){
-            $data['notes'] = "--";
+
+
+          $keys = array();
+          $t_data = array();
+
+          for($i=0; $i<count($data['amount']); $i++){
+
+              if($data['amount'][$i] != 0){
+
+                $keys[] = $data['binID'][$j] . "-" . $data['roomID'][$j] . "-" . $data['reason'][$j];
+
+                if($data['notes'][$i] == "" || $data['notes'][$i] == NULL){
+                  $data['notes'][$i] = "--";
+                }
+
+                $t_data[] = array(
+                  'combine-bor-treatment' => $data['bin_id'][$j] . "-" . $data['room_id'][$j] . "-" . $data['treatment'][$j],
+                  'bin_id'        =>  $data['bin_id'][$j],
+                  'room_id'       =>  $data['room_id'][$j],
+                  'cause'         =>  $data['treatment'][$j],
+                  'amount'        =>  $data['amount'][$j],
+                  'notes'         =>  $data['notes'][$j],
+                );
+
+              }
+
           }
+
+          $u_comb_bor_keys = $this->returnDup($keys);
+          $amount_counter = array();
+          $final_strip = array();
+
+
+          for($i=0; $i<count($u_comb_bor_keys); $i++){
+
+            $amount_counter[$u_comb_bor_keys[$i]] = 0;
+
+            for($j=0; $j<count($test); $j++){
+
+              if($u_comb_bor_keys[$i] == $test[$j]['combine-bor-cause']){
+
+                $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $t_data[$j]['amount'];
+
+                $final_strip[$u_comb_bor_keys[$i]] = array(
+                  'group_id'        :   $data['group_id'],
+                  'bin_id'          :   $t_data[$i]['bin_id'],
+                  'room_id'         :   $t_data[$i]['room_id'],
+                  'date'            :   $data['group_id'],
+                  'amount'          :   $t_data[$i]['amount'],
+                  'treatment'       :   $t_data[$i]['treatment'],
+                  'notes'           :   $t_data[$i]['notes']
+                );
+
+              } else {
+
+                $final_strip[$u_comb_bor_keys[$i]] = array(
+                  'group_id'        :   $data['group_id'],
+                  'bin_id'          :   $t_data[$i]['bin_id'],
+                  'room_id'         :   $t_data[$i]['room_id'],
+                  'date'            :   $data['group_id'],
+                  'amount'          :   $t_data[$i]['amount'],
+                  'treatment'       :   $t_data[$i]['treatment'],
+                  'notes'           :   $t_data[$i]['notes']
+                );
+
+              }
+
+            }
+
+          }
+
+
+
+          foreach($amount_counter as $k => $v){
+            $final_strip[$k]['amount'] = $v;
+          }
+
+          return $final_strip;
+
+
 
           DB::table("feeds_groups_treated_pigs")
                 ->insert($data);
