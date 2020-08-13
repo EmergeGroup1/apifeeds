@@ -3206,19 +3206,19 @@ class APIController extends Controller
 
               if($data['amount'][$i] != 0){
 
-                $keys[] = $data['bin_id'][$j] . "-" . $data['room_id'][$j] . "-" . $data['treatment'][$j];
+                $keys[] = $data['bin_id'][$i] . "-" . $data['room_id'][$i] . "-" . $data['treatment'][$i];
 
                 if($data['notes'][$i] == "" || $data['notes'][$i] == NULL){
                   $data['notes'][$i] = "--";
                 }
 
                 $t_data[] = array(
-                  'combine-bor-treatment' => $data['bin_id'][$j] . "-" . $data['room_id'][$j] . "-" . $data['treatment'][$j],
-                  'bin_id'        =>  $data['bin_id'][$j],
-                  'room_id'       =>  $data['room_id'][$j],
-                  'treatment'         =>  $data['treatment'][$j],
-                  'amount'        =>  $data['amount'][$j],
-                  'notes'         =>  $data['notes'][$j],
+                  'combine-bor-treatment' => $data['bin_id'][$i] . "-" . $data['room_id'][$i] . "-" . $data['treatment'][$i],
+                  'bin_id'        =>  $data['bin_id'][$i],
+                  'room_id'       =>  $data['room_id'][$i],
+                  'treatment'         =>  $data['treatment'][$i],
+                  'amount'        =>  $data['amount'][$i],
+                  'notes'         =>  $data['notes'][$i],
                 );
 
               }
