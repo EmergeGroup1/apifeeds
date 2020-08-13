@@ -3206,7 +3206,7 @@ class APIController extends Controller
 
               if($data['amount'][$i] != 0){
 
-                $keys[] = $data['binID'][$j] . "-" . $data['roomID'][$j] . "-" . $data['reason'][$j];
+                $keys[] = $data['bin_id'][$j] . "-" . $data['room_id'][$j] . "-" . $data['treatment'][$j];
 
                 if($data['notes'][$i] == "" || $data['notes'][$i] == NULL){
                   $data['notes'][$i] = "--";
@@ -3216,7 +3216,7 @@ class APIController extends Controller
                   'combine-bor-treatment' => $data['bin_id'][$j] . "-" . $data['room_id'][$j] . "-" . $data['treatment'][$j],
                   'bin_id'        =>  $data['bin_id'][$j],
                   'room_id'       =>  $data['room_id'][$j],
-                  'cause'         =>  $data['treatment'][$j],
+                  'treatment'         =>  $data['treatment'][$j],
                   'amount'        =>  $data['amount'][$j],
                   'notes'         =>  $data['notes'][$j],
                 );
