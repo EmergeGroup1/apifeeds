@@ -3229,6 +3229,12 @@ class APIController extends Controller
           $amount_counter = array();
           $final_strip = array();
 
+          if(isset($u_comb_bor_keys)){
+            return "may laman";
+          } else {
+            return "ala laman";
+          }
+
           return $u_comb_bor_keys;
 
 
@@ -3236,7 +3242,7 @@ class APIController extends Controller
 
             $amount_counter[$u_comb_bor_keys[$i]] = 0;
 
-            for($j=0; $j<count($test); $j++){
+            for($j=0; $j<count($t_data); $j++){
 
               if($u_comb_bor_keys[$i] == $test[$j]['combine-bor-cause']){
 
