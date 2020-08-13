@@ -3224,11 +3224,12 @@ class APIController extends Controller
 
           }
 
-          return $t_data;
 
           $u_comb_bor_keys = $this->returnDup($keys);
           $amount_counter = array();
           $final_strip = array();
+
+          return $u_comb_bor_keys;
 
 
           for($i=0; $i<count($u_comb_bor_keys); $i++){
