@@ -130,7 +130,7 @@ class AnimalMovementController extends Controller
 
                 Storage::put("pig_tracker_data.txt",json_encode($return));
 
-                return $r;
+                return json_encode($return);
               } else {
                 return $r;
               }
