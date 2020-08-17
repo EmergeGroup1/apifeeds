@@ -109,7 +109,7 @@ class AnimalMovementController extends Controller
 
               // for testing purposes
               //
-              // Storage::put("pig_tracker_data.txt",NULL);
+              Storage::put("pig_tracker_data.txt",NULL);
 
               $r = Storage::get("pig_tracker_data.txt");
               if($r == NULL){
@@ -129,6 +129,8 @@ class AnimalMovementController extends Controller
                 );
 
                 Storage::put("pig_tracker_data.txt",json_encode($return));
+
+                return $r;
               } else {
                 return $r;
               }
