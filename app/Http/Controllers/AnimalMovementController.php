@@ -1024,6 +1024,7 @@ class AnimalMovementController extends Controller
       {
           $output = NULL;
           if($type == 'farrowing') {
+
             if($date > 2) {
               $output = $date - 2 . "-" . $date;
             } else if ($date < 0) {
@@ -1031,13 +1032,17 @@ class AnimalMovementController extends Controller
             } else {
               $output = $date;
             }
+
           } else if($type == 'nursery') {
+
             if ($date < 0) {
               $output = 0;
             } else {
               $output = $date;
             }
+
           } else if($type == 'finisher') {
+
             if($date > 10) {
               $output = $date - 10 . "-" . $date;
             } else if ($date < 0) {
@@ -1046,8 +1051,11 @@ class AnimalMovementController extends Controller
               $output = $date;
 
             }
+
           } else {
+
             $output = $output;
+            
           }
 
           return round($output);
