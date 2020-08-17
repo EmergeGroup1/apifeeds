@@ -111,7 +111,7 @@ class AnimalMovementController extends Controller
               //
               // Storage::put("pig_tracker_data.txt",NULL);
 
-              $r = json_decode(Storage::get("pig_tracker_data.txt"));
+              $r = Storage::get("pig_tracker_data.txt");
               return $r;
               if($r == NULL){
 
