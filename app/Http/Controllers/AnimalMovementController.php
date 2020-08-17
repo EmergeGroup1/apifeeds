@@ -109,30 +109,46 @@ class AnimalMovementController extends Controller
 
               // for testing purposes
 
-              $r = Cache::get('pig_tracker_data');
+              // $r = Cache::get('pig_tracker_data');
+              //
+              // if($r == NULL){
+              //
+              //   $output = $this->filterAll($data,NULL);
+              //   Storage::delete('animal_movement_data.txt');
+              //   Storage::put('animal_movement_data.txt',json_encode($output));
+              //   $output = Storage::get('animal_movement_data.txt');
+              //
+              //   $return = array(
+              //       "output"          =>  json_decode($output),
+              //       "nursery_groups"  =>  json_decode($nursery_groups),
+              //       "finisher_groups" =>  json_decode($finisher_groups),
+              //       "farm_groups"     =>  $this->farmAMGroups(),
+              //       "death_reasons"   =>  $this->deathReasons(),
+              //       "treatments"      =>  $this->treatments()
+              //   );
+              //
+              //   Cache::forever("pig_tracker_data",$return);
+              //
+              //   return $return;
+              // } else {
+              //   return $r;
+              // }
 
-              if($r == NULL){
+              $output = $this->filterAll($data,NULL);
+              Storage::delete('animal_movement_data.txt');
+              Storage::put('animal_movement_data.txt',json_encode($output));
+              $output = Storage::get('animal_movement_data.txt');
 
-                $output = $this->filterAll($data,NULL);
-                Storage::delete('animal_movement_data.txt');
-                Storage::put('animal_movement_data.txt',json_encode($output));
-                $output = Storage::get('animal_movement_data.txt');
+              $return = array(
+                  "output"          =>  json_decode($output),
+                  "nursery_groups"  =>  json_decode($nursery_groups),
+                  "finisher_groups" =>  json_decode($finisher_groups),
+                  "farm_groups"     =>  $this->farmAMGroups(),
+                  "death_reasons"   =>  $this->deathReasons(),
+                  "treatments"      =>  $this->treatments()
+              );
 
-                $return = array(
-                    "output"          =>  json_decode($output),
-                    "nursery_groups"  =>  json_decode($nursery_groups),
-                    "finisher_groups" =>  json_decode($finisher_groups),
-                    "farm_groups"     =>  $this->farmAMGroups(),
-                    "death_reasons"   =>  $this->deathReasons(),
-                    "treatments"      =>  $this->treatments()
-                );
-
-                Cache::forever("pig_tracker_data",$return);
-
-                return $return;
-              } else {
-                return $r;
-              }
+              return $return;
 
             case 'farrowing_to_nursery':
 
