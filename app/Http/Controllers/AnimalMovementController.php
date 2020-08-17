@@ -108,12 +108,10 @@ class AnimalMovementController extends Controller
               // );
 
               // for testing purposes
-              //
-              // Storage::put("pig_tracker_data.txt",NULL);
 
-              $r = Storage::get("pig_tracker_data.txt");
-              return $r;
-              if($r == NULL){
+              $r = Cache::get('pig_tracker_data');
+
+              if(Cache::has('pig_tracker_data')){
 
                 $output = $this->filterAll($data,NULL);
                 Storage::delete('animal_movement_data.txt');
@@ -129,7 +127,7 @@ class AnimalMovementController extends Controller
                     "treatments"      =>  $this->treatments()
                 );
 
-                Storage::put("pig_tracker_data.txt",json_encode($return));
+                Cache::forever("pig_tracker_data",$return);
 
                 return $return;
               } else {
