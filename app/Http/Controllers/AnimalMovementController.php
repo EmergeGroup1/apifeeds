@@ -111,7 +111,7 @@ class AnimalMovementController extends Controller
 
               $r = Cache::get('pig_tracker_data');
 
-              if(Cache::has('pig_tracker_data')){
+              if($r == NULL){
 
                 $output = $this->filterAll($data,NULL);
                 Storage::delete('animal_movement_data.txt');
