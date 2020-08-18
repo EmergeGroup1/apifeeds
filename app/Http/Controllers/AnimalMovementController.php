@@ -682,13 +682,24 @@ class AnimalMovementController extends Controller
 
             $date_to_transfer = (strtotime(date('Y-m-d',strtotime($v['date_to_transfer']))) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
 
+            $days_remaining = $this->daysRemaining($date_to_transfer,$v['type']);
+
+            $transfer_data = $this->transferData($v['group_id']);
+
+            if($transfer_data != NULL){
+
+              $date_to_transfer = (strtotime(date('Y-m-d',strtotime($transfer_data[0]['date_ymd']))) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
+              $days_remaining = $this->daysRemaining($date_to_transfer,$v['type']);
+
+            }
+
             $data[] = array(
               'group_id'					=>	$v['group_id'],
               'group_name'				=>	$v['group_name'],
               'unique_id'					=>	$v['unique_id'],
               'date_created'			=>	$v['date_created'],
               'date_transfered'		=>	$v['date_transfered'],
-              'date_to_transfer'	=>	$this->daysRemaining($date_to_transfer,$v['type']),
+              'date_to_transfer'	=>	$days_remaining,
               'status'						=>	$v['status'],
               'start_weight'			=>	$v['start_weight'],
               'end_weight'				=>	$v['end_weight'],
@@ -989,7 +1000,7 @@ class AnimalMovementController extends Controller
           $transfer = DB::table('feeds_movement_transfer_v2')
                         ->where('group_from',$group_id)
                         ->whereIn('status',['created','edited'])
-                        ->orderBy('date','asc')
+                        ->orderBy('date','desc')
                         ->get();
           if($transfer == NULL){
             return NULL;
@@ -1055,7 +1066,7 @@ class AnimalMovementController extends Controller
           } else {
 
             $output = $output;
-            
+
           }
 
           return round($output);
