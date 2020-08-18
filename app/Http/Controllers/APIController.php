@@ -1819,16 +1819,16 @@ class APIController extends Controller
 
       case "amCreateTransfer":
 
-        $year = substr($request->input('date'), -4);
-        $month_day = substr($request->input('date'), 0, 5);
-        $date = $year . "-" . $month_day;
+        // $year = substr($request->input('date'), -4);
+        // $month_day = substr($request->input('date'), 0, 5);
+        // $date = $year . "-" . $month_day;
 
         $data = array(
           'transfer_type'    =>  $request->input('transfer_type'),
           'group_from'      =>  $request->input('group_from'),
           'group_to'        =>  $request->input('group_to'),
           'driver_id'        =>  $request->input('driver_id'),
-          'date'            =>   $date,
+          'date'            =>   $request->input('date'),
           'number_of_pigs'  =>  $request->input('number_of_pigs')
         );
 
