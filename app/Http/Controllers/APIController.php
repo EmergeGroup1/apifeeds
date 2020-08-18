@@ -3031,122 +3031,28 @@ class APIController extends Controller
         */
         case "gtrAdd":
 
-          $data = $request->all();
-          unset($data['action']);
+            $data = $request->all();
+            unset($data['action']);
+            if($data['notes'] == "" || $data['notes'] == NULL){
+              $data['notes'] = "--";
+            }
 
-          $keys = array();
-          $t_data = array();
+            DB::table("feeds_groups_treated_pigs")
+                  ->insert($data);
 
-          for($i=0; $i<count($data['amount']); $i++){
+            $aml_ctrl = new AnimalMovementController;
+            $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
+            $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
+            unset($aml_ctrl);
 
-              if($data['amount'][$i] != 0){
+            $result = array(
+              "err"     =>  0,
+              "msg"     =>  "with result",
+              "treated_perc"  =>  $treated_perc,
+              "data"    =>  $tr_lists
+            );
 
-                $keys[] = $data['bin_id'][$i] . "-" . $data['room_id'][$i] . "-" . $data['treatment'][$i];
-
-                if($data['notes'][$i] == "" || $data['notes'][$i] == NULL){
-                  $data['notes'][$i] = "--";
-                }
-
-                $t_data[] = array(
-                  'combine-bor-treatment' => $data['bin_id'][$i] . "-" . $data['room_id'][$i] . "-" . $data['treatment'][$i],
-                  'bin_id'        =>  $data['bin_id'][$i],
-                  'room_id'       =>  $data['room_id'][$i],
-                  'treatment'         =>  $data['treatment'][$i],
-                  'amount'        =>  $data['amount'][$i],
-                  'notes'         =>  $data['notes'][$i],
-                );
-
-              }
-
-          }
-
-
-          $u_comb_bor_keys = $this->returnDup($keys);
-          $amount_counter = array();
-          $treated_data = array();
-
-          if($u_comb_bor_keys != NULL){
-
-                for($i=0; $i<count($u_comb_bor_keys); $i++){
-
-                    $amount_counter[$u_comb_bor_keys[$i]] = 0;
-
-                    for($j=0; $j<count($t_data); $j++){
-
-                        if($u_comb_bor_keys[$i] == $t_data[$j]['combine-bor-treatment']){
-
-                          $amount_counter[$u_comb_bor_keys[$i]] = $amount_counter[$u_comb_bor_keys[$i]] + $t_data[$j]['amount'];
-
-                          $treated_data[$u_comb_bor_keys[$i]] = array(
-                            'group_id'        =>   $data['group_id'],
-                            'bin_id'          =>   $t_data[$j]['bin_id'],
-                            'room_id'         =>   $t_data[$j]['room_id'],
-                            'date'            =>   $data['date'],
-                            'amount'          =>   $t_data[$j]['amount'],
-                            'treatment'       =>   $t_data[$j]['treatment'],
-                            'notes'           =>   $t_data[$j]['notes']
-                          );
-
-                        } else {
-
-                          $treated_data[] = array(
-                            'group_id'        =>   $data['group_id'],
-                            'bin_id'          =>   $t_data[$j]['bin_id'],
-                            'room_id'         =>   $t_data[$j]['room_id'],
-                            'date'            =>   $data['date'],
-                            'amount'          =>   $t_data[$j]['amount'],
-                            'treatment'       =>   $t_data[$j]['treatment'],
-                            'notes'           =>   $t_data[$j]['notes']
-                          );
-
-                        }
-
-                    }
-
-                }
-
-
-                foreach($amount_counter as $k => $v){
-                  $treated_data[$k]['amount'] = $v;
-                }
-
-          } else {
-
-
-                for($j=0; $j<count($t_data); $j++){
-
-                    $treated_data[] = array(
-                      'group_id'        =>   $data['group_id'],
-                      'bin_id'          =>   $t_data[$j]['bin_id'],
-                      'room_id'         =>   $t_data[$j]['room_id'],
-                      'date'            =>   $data['group_id'],
-                      'amount'          =>   $t_data[$j]['amount'],
-                      'treatment'       =>   $t_data[$j]['treatment'],
-                      'notes'           =>   $t_data[$j]['notes']
-                    );
-
-                }
-
-
-          }
-
-
-          DB::table("feeds_groups_treated_pigs")
-                ->insert($treated_data);
-
-          $aml_ctrl = new AnimalMovementController;
-          $tr_lists = $aml_ctrl->amTreatedPigs($data['group_id']);
-          $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
-          unset($aml_ctrl);
-
-          $result = array(
-            "err"     =>  0,
-            "msg"     =>  "with result",
-            "treated_perc"  =>  $treated_perc,
-            "data"    =>  $tr_lists
-          );
-
-          return $result;
+            return $result;
 
         break;
 
