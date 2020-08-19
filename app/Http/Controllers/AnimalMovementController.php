@@ -1826,6 +1826,9 @@ class AnimalMovementController extends Controller
           //if($counter == 0){
             DB::table('feeds_movement_transfer_v2')->where('transfer_id',$transfer_id)->update($data);
             DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'created']);
+
+            $this->updateReturnedTransferedGroup($data['group_from']);
+
             return 'success';
           //} else {
             //return 'transfer already created';
@@ -2534,6 +2537,10 @@ class AnimalMovementController extends Controller
 
         if($total_pigs > 0 && $transfer == 0){
           $this->updateGroupStatus($group_id,["status"=>"entered"],"feeds_movement_groups");
+        } else if($total_pigs > 0 && $transfer > 0){
+          $this->updateGroupStatus($group_id,["status"=>"created"],"feeds_movement_groups");
+        } else {
+          // none
         }
 
       }
