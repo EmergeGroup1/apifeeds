@@ -2503,6 +2503,8 @@ class AnimalMovementController extends Controller
         DB::table('feeds_movement_transfer_v2')->where('transfer_id',$transfer_id)->delete();
         DB::table('feeds_movement_transfer_bins_v2')->where('transfer_id',$transfer_id)->delete();
 
+        $this->updateReturnedTransferedGroup($group_id);
+
         return $bins;
 
       }
