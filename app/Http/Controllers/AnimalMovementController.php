@@ -2528,9 +2528,9 @@ class AnimalMovementController extends Controller
         $transfer = DB::table("feeds_movement_transfer_v2")
                       ->where("group_from",$group_id)
                       ->where("status","!=","finalized")
-                      ->get();
+                      ->count();
 
-        if($total_pigs > 0 && $transfer == NULL){
+        if($total_pigs > 0 && $transfer == 0){
           $this->updateGroupStatus($group_id,"entered","feeds_movement_groups");
         }
 
