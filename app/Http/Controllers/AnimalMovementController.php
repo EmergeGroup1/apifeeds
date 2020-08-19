@@ -694,34 +694,40 @@ class AnimalMovementController extends Controller
 
             }
 
-            $data[] = array(
-              'group_id'					=>	$v['group_id'],
-              'group_name'				=>	$v['group_name'],
-              'unique_id'					=>	$v['unique_id'],
-              'date_created'			=>	$v['date_created'],
-              'date_transfered'		=>	$v['date_transfered'],
-              'date_to_transfer'	=>	$days_remaining,
-              'status'						=>	$v['status'],
-              'start_weight'			=>	$v['start_weight'],
-              'end_weight'				=>	$v['end_weight'],
-              'type'							=>	$v['type'],//$this->groupType($group_bins_table),
-              'crates'						=>	$this->cratesTotal($v['unique_id']),//$v['crates'],
-              'group_type_int'		=> 	$this->groupTypeInt($v['type']),
-              'user_id'						=>	$v['user_id'],
-              'farm_id'						=>	$v['farm_id'],
-              'deceased'					=>	$this->deceasedPigs($v['group_id']),
-              'treated'						=>	$this->treatedPigs($v['group_id']),
-              'total_pigs'				=>	$this->totalPigsFilter($v['unique_id'],$group_bins_table),
-              'farm_name'					=>	$this->farmData($v['farm_id']),
-              'bin_data'					=>	$this->binsDataFilter($v['unique_id'],$group_bins_table,$v['farm_id']),
-              'transfer_data'			=> 	$this->transferData($v['group_id']),
-              'sched_pigs'				=>	$this->scheduledTransaferPigs($v['group_id']),
-              'death'             =>  $this->amDeadPigs($v['group_id']),
-              'treated'           =>  $this->amTreatedPigs($v['group_id']),
-              'death_perc'        =>  $this->deathPercentage($v['group_id']),
-              'treated_perc'      =>  $this->treatedPercentage($v['group_id']),
-              'pigs_per_crate'    =>  $this->avePigsPerCrate($v['group_id'])
-            );
+            $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table);
+
+            if($total_pigs != 0){
+
+                $data[] = array(
+                  'group_id'					=>	$v['group_id'],
+                  'group_name'				=>	$v['group_name'],
+                  'unique_id'					=>	$v['unique_id'],
+                  'date_created'			=>	$v['date_created'],
+                  'date_transfered'		=>	$v['date_transfered'],
+                  'date_to_transfer'	=>	$days_remaining,
+                  'status'						=>	$v['status'],
+                  'start_weight'			=>	$v['start_weight'],
+                  'end_weight'				=>	$v['end_weight'],
+                  'type'							=>	$v['type'],//$this->groupType($group_bins_table),
+                  'crates'						=>	$this->cratesTotal($v['unique_id']),//$v['crates'],
+                  'group_type_int'		=> 	$this->groupTypeInt($v['type']),
+                  'user_id'						=>	$v['user_id'],
+                  'farm_id'						=>	$v['farm_id'],
+                  'deceased'					=>	$this->deceasedPigs($v['group_id']),
+                  'treated'						=>	$this->treatedPigs($v['group_id']),
+                  'total_pigs'				=>	$total_pigs,
+                  'farm_name'					=>	$this->farmData($v['farm_id']),
+                  'bin_data'					=>	$this->binsDataFilter($v['unique_id'],$group_bins_table,$v['farm_id']),
+                  'transfer_data'			=> 	$this->transferData($v['group_id']),
+                  'sched_pigs'				=>	$this->scheduledTransaferPigs($v['group_id']),
+                  'death'             =>  $this->amDeadPigs($v['group_id']),
+                  'treated'           =>  $this->amTreatedPigs($v['group_id']),
+                  'death_perc'        =>  $this->deathPercentage($v['group_id']),
+                  'treated_perc'      =>  $this->treatedPercentage($v['group_id']),
+                  'pigs_per_crate'    =>  $this->avePigsPerCrate($v['group_id'])
+                );
+
+            }
 
           }
 
