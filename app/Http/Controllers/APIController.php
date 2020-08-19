@@ -1996,7 +1996,7 @@ class APIController extends Controller
         $am_transfer = $am_controller->removeTransfer($transfer_id, $user_id, $group_id);
         unset($am_controller);
 
-        if (empty($am_transfer)) {
+        if (!empty($am_transfer)) {
           return array(
             "err"     =>  0,
             "msg"     =>  "Successfully Deleted"
