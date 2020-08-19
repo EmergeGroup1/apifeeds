@@ -2480,7 +2480,7 @@ class AnimalMovementController extends Controller
       */
       private function updateGroupStatus($group_id,$status,$table)
       {
-        DB::table($table)->where('group_id',$group_id)->update('status',$status);
+        DB::table($table)->where('group_id',$group_id)->update($status);
       }
 
       /*
@@ -2533,7 +2533,7 @@ class AnimalMovementController extends Controller
                       ->count();
 
         if($total_pigs > 0 && $transfer == 0){
-          $this->updateGroupStatus($group_id,["entered"],"feeds_movement_groups");
+          $this->updateGroupStatus($group_id,["status"=>"entered"],"feeds_movement_groups");
         }
 
       }
