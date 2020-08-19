@@ -1991,8 +1991,9 @@ class APIController extends Controller
 
         $transfer_id = $request->input('transfer_id');
         $user_id = $request->input('user_id');
+        $group_id = $request->input('groupID');
         $am_controller = new AnimalMovementController;
-        $am_transfer = $am_controller->removeTransfer($transfer_id, $user_id);
+        $am_transfer = $am_controller->removeTransfer($transfer_id, $user_id, $group_id);
         unset($am_controller);
 
         if (empty($am_transfer)) {

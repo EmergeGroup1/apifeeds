@@ -2488,7 +2488,7 @@ class AnimalMovementController extends Controller
       *
       * update the status of group
       */
-      public function removeTransfer($transfer_id,$user_id)
+      public function removeTransfer($transfer_id,$user_id,$group_id)
       {
 
         $bins = DB::table('feeds_movement_transfer_bins_v2')->where('transfer_id',$transfer_id)->get();
@@ -2504,6 +2504,35 @@ class AnimalMovementController extends Controller
         DB::table('feeds_movement_transfer_bins_v2')->where('transfer_id',$transfer_id)->delete();
 
         return $bins;
+
+      }
+
+      /*
+      *	updateReturnedTransferedGroup()
+      *
+      * update the status of group's created transfered then undo
+      */
+      private function updateReturnedTransferedGroup($group_id)
+      {
+        // if the group has no transfer and the total number of pigs is not 0
+        // update the status of group into entered
+        $groups = DB::table("feeds_movement_groups")
+          ->where('group_id',$group_id)
+          ->select("unique_id")
+          ->get();
+
+        $total_pigs = DB::table("feeds_movement_groups_bins")
+                        ->where("unique_id",$groups[0]->unique_id)
+                        ->sum("number_of_pigs");
+
+        $transfer = DB::table("feeds_movement_transfer_v2")
+                      ->where("group_from",$group_id)
+                      ->where("status","!=","finalized")
+                      ->get();
+
+        if($total_pigs > 0 && $transfer == NULL){
+          $this->updateGroupStatus($group_id,"entered","feeds_movement_groups");
+        }
 
       }
 
