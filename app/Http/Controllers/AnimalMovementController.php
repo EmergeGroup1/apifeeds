@@ -2533,7 +2533,7 @@ class AnimalMovementController extends Controller
                       ->count();
 
         if($total_pigs > 0 && $transfer == 0){
-          $this->updateGroupStatus($group_id,"entered","feeds_movement_groups");
+          $this->updateGroupStatus($group_id,["entered"],"feeds_movement_groups");
         }
 
       }
