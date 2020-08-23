@@ -695,6 +695,7 @@ class AnimalMovementController extends Controller
             }
 
             $days_remaining_date_md = "";
+            $days_remaining_date_ymd = "";
 
             if($days_remaining > 1) {
               $days_remaining = $days_remaining - 1;
