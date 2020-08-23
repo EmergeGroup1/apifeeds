@@ -696,7 +696,7 @@ class AnimalMovementController extends Controller
 
             $days_remaining_date_md = "";
 
-            if($days_remaining > 0) {
+            if($days_remaining > 1) {
               $days_remaining = $days_remaining - 1;
               $days_remaining_date_md = date('M d',strtotime($v['date_to_transfer'] . ' + ' . $days_remaining . ' days'));
               $days_remaining_date_ymd = date('Y-m-d',strtotime($v['date_to_transfer'] . ' + ' . $days_remaining . ' days'));
