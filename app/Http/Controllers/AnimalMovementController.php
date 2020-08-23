@@ -694,13 +694,15 @@ class AnimalMovementController extends Controller
 
             }
 
-            $days_remaining_date = "";
+            $days_remaining_date_md = "";
 
             if($days_remaining > 0) {
               $days_remaining = $days_remaining - 1;
-              $days_remaining_date = date('M d',strtotime($v['date_to_transfer'] . ' + ' . $days_remaining . ' days'));
+              $days_remaining_date_md = date('M d',strtotime($v['date_to_transfer'] . ' + ' . $days_remaining . ' days'));
+              $days_remaining_date_ymd = date('Y-m-d',strtotime($v['date_to_transfer'] . ' + ' . $days_remaining . ' days'));
             } else {
-              $days_remaining_date = date('M d',strtotime($v['date_to_transfer'] . ' + ' . $days_remaining . ' days'));
+              $days_remaining_date_md = date('M d',strtotime($v['date_to_transfer'] . ' + ' . $days_remaining . ' days'));
+              $days_remaining_date_ymd = date('Y-m-d',strtotime($v['date_to_transfer'] . ' + ' . $days_remaining . ' days'));
             }
 
 
@@ -716,7 +718,8 @@ class AnimalMovementController extends Controller
                   'date_created'			=>	$v['date_created'],
                   'date_transfered'		=>	$v['date_transfered'],
                   'date_to_transfer'	=>	$days_remaining,
-                  'days_remaining_date' =>  $days_remaining_date,
+                  'days_remaining_date' =>  $days_remaining_date_md,
+                  'days_remaining_date_ymd' =>  $days_remaining_date_ymd,
                   'status'						=>	$v['status'],
                   'start_weight'			=>	$v['start_weight'],
                   'end_weight'				=>	$v['end_weight'],
