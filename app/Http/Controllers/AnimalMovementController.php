@@ -705,7 +705,7 @@ class AnimalMovementController extends Controller
                   'date_created'			=>	$v['date_created'],
                   'date_transfered'		=>	$v['date_transfered'],
                   'date_to_transfer'	=>	$days_remaining,
-                  'days_remaining_date' =>  date("M d" . strtotime(date("Y-m-d") . ' + ' . $days_remaining)),
+                  'days_remaining_date' =>  date("M d" . strtotime(date("Y-m-d") . ' + ' . $days_remaining . ' days')),
                   'status'						=>	$v['status'],
                   'start_weight'			=>	$v['start_weight'],
                   'end_weight'				=>	$v['end_weight'],
