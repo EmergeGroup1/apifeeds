@@ -720,7 +720,7 @@ class AnimalMovementController extends Controller
                   'date_transfered'		=>	$v['date_transfered'],
                   'date_to_transfer'	=>	$days_remaining,
                   'days_remaining_date' =>  $days_remaining_date_md,
-                  'days_remaining_date_ymd' =>  $days_remaining_date_ymd,
+                  'days_remaining_date_ymd' =>  date('Y-m-d'),
                   'status'						=>	$v['status'],
                   'start_weight'			=>	$v['start_weight'],
                   'end_weight'				=>	$v['end_weight'],
