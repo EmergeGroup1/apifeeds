@@ -1998,6 +1998,7 @@ class APIController extends Controller
 
         if (!empty($am_transfer)) {
           return array(
+            "data"    =>  $am_transfer,
             "err"     =>  0,
             "msg"     =>  "Successfully Deleted"
           );
