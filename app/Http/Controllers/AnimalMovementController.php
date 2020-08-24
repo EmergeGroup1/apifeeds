@@ -2530,7 +2530,6 @@ class AnimalMovementController extends Controller
         $this->updateReturnedTransferedGroup($group_id);
 
         $groups = DB::table('feeds_movement_groups')
-              ->where('status','created')
               ->where('group_id',$group_id)
               ->get();
         $groups = $this->toArray($groups);
