@@ -695,17 +695,24 @@ class AnimalMovementController extends Controller
               $date_to_transfer = (strtotime(date('Y-m-d',strtotime($transfer_data[0]['date_ymd'] . ' + 18 days'))) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
               $days_remaining = $date_to_transfer;
 
-            }
+              if($days_remaining > 0) {
+                $days_remaining = $days_remaining - 1;
+                $days_remaining_date_md = date('M d',strtotime($transfer_data[0]['date_ymd'] . ' + ' . $days_remaining . ' days'));
+                $days_remaining_date_ymd = date('Y-m-d',strtotime($transfer_data[0]['date_ymd'] . ' + ' . $days_remaining . ' days'));
+              } else {
+                $days_remaining_date_md = date('M d');
+                $days_remaining_date_ymd = date('Y-m-d');
+              }
 
-
-            if($days_remaining > 0) {
-              $days_remaining = $days_remaining - 1;
-              $days_remaining_date_md = date('M d',strtotime($transfer_data[0]['date_ymd'] . ' + ' . $days_remaining . ' days'));
-              $days_remaining_date_ymd = date('Y-m-d',strtotime($transfer_data[0]['date_ymd'] . ' + ' . $days_remaining . ' days'));
             } else {
+
               $days_remaining_date_md = date('M d');
               $days_remaining_date_ymd = date('Y-m-d');
+
             }
+
+
+
 
 
             $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table);
