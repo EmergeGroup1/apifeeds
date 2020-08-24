@@ -686,6 +686,9 @@ class AnimalMovementController extends Controller
 
             $transfer_data = $this->transferData($v['group_id']);
 
+            $days_remaining_date_md = "";
+            $days_remaining_date_ymd = "";
+
             if($transfer_data != NULL){
 
               // $date_to_transfer = date('Y-m-d',strtotime($transfer_data[0]['date_ymd']. ' + 15 days'));
@@ -694,18 +697,15 @@ class AnimalMovementController extends Controller
 
             }
 
-            $days_remaining_date_md = "";
-            $days_remaining_date_ymd = "";
 
             if($days_remaining > 0) {
               $days_remaining = $days_remaining - 1;
-              $days_remaining_date_md = date('M d',strtotime(date('Y-m-d') . ' + ' . $days_remaining . ' days'));
-              $days_remaining_date_ymd = date('Y-m-d',strtotime(date('Y-m-d') . ' + ' . $days_remaining . ' days'));
+              $days_remaining_date_md = date('M d',strtotime($transfer_data[0]['date_ymd'] . ' + ' . $days_remaining . ' days'));
+              $days_remaining_date_ymd = date('Y-m-d',strtotime($transfer_data[0]['date_ymd'] . ' + ' . $days_remaining . ' days'));
             } else {
               $days_remaining_date_md = date('M d');
               $days_remaining_date_ymd = date('Y-m-d');
             }
-
 
 
             $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table);
