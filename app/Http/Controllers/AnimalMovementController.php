@@ -33,7 +33,7 @@ class AnimalMovementController extends Controller
 
           $output = $this->filterAll($data,NULL);
           Storage::put('animal_movement_data.txt',json_encode($output));
-          $all = Storage::get('animal_movement_data.txt');
+          $all = json_decode(Storage::get('animal_movement_data.txt'));
 
           $drivers = $this->filterAllDrivers();
 
