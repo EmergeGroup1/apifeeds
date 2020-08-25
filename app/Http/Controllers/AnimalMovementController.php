@@ -1215,7 +1215,8 @@ class AnimalMovementController extends Controller
               'farm_count'	=> $v['farm_count'],
               'final_count'	=> $v['final_count'],
               'notes'			=>	$v['notes'],
-              'driver_id'		=>	$v['driver_id']
+              'driver_id'		=>	$v['driver_id'],
+              'trailer_number'  => $v['trailer_number']
             );
           }
 
