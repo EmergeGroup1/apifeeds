@@ -24,9 +24,11 @@ class AnimalMovementController extends Controller
       public function listAPI()
       {
           $data = array(
-            'date_from'	=> 	'2009-01-01',
-            'date_to'		=>	date('Y-m-d'),
-            'sort'			=>	"not_scheduled"
+            'type'      =>  "all", // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
+            'date_from' =>  date("Y-m-d", strtotime('-1280 days')), // (date)
+            'date_to'   =>  date("Y-m-d"), // (date)
+            'sort'      =>  "not_scheduled", // (string) not_scheduled, day_remaining
+            's_farm'    =>  "all" // selected farm
           );
 
           $output = $this->filterAll($data);
