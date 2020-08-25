@@ -1869,6 +1869,7 @@ class APIController extends Controller
           'poor'              =>  $request->input('poor'),
           'farm_count'        =>  $request->input('farm_count'),
           'final_count'        =>  $request->input('final_count'),
+          'trailer_number'     =>   $request->input('trailer'),
           'notes'              =>  $request->input('notes')
         );
 

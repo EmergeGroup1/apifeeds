@@ -1845,6 +1845,7 @@ class AnimalMovementController extends Controller
             'poor'							=>	$data['poor'],
             'farm_count'				=>	$data['farm_count'],
             'final_count'				=>	$data['final_count'],
+            'trailer_number'    =>  $data['trailer_number'],
             'notes'							=>	$data['notes']
           );
 
