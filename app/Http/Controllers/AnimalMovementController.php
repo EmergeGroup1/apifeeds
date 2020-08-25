@@ -31,7 +31,7 @@ class AnimalMovementController extends Controller
             's_farm'    =>  "all" // selected farm
           );
 
-          $output = $this->filterAll($data);
+          $output = $this->filterAll($data,NULL);
           Storage::put('animal_movement_data.txt',json_encode($output));
           $all = Storage::get('animal_movement_data.txt');
 
