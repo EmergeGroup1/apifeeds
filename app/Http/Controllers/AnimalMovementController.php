@@ -695,7 +695,7 @@ class AnimalMovementController extends Controller
             if($transfer_data != NULL){
 
               $date_to_transfer = (strtotime(date('Y-m-d',strtotime($transfer_data[0]['date_ymd'] . ' - '. $days_remaining .' days'))) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
-              $days_remaining = $date_to_transfer < 0 ? 0 : $date_to_transfer;
+              $days_remaining = $date_to_transfer < 0 ? 0 : $date_to_transfer - $days_remaining;
 
               $t_ymd = $transfer_data[0]['date_ymd'];
 
@@ -715,13 +715,13 @@ class AnimalMovementController extends Controller
             if($total_pigs != 0){
 
                 $data[] = array(
-                  'group_id'					=>	$v['group_id'],
-                  'group_name'				=>	$v['group_name'],
-                  'unique_id'					=>	$v['unique_id'],
-                  'date_created'			=>	$v['date_created'],
-                  'date_transfered'		=>	$v['date_transfered'],
-                  'date_to_transfer'	=>	(int)$days_remaining,
-                  'days_remaining_date' =>  $days_remaining_date_md,
+                  'group_id'					      =>	$v['group_id'],
+                  'group_name'				      =>	$v['group_name'],
+                  'unique_id'					      =>	$v['unique_id'],
+                  'date_created'			      =>	$v['date_created'],
+                  'date_transfered'		      =>	$v['date_transfered'],
+                  'date_to_transfer'	      =>	(int)$days_remaining,
+                  'days_remaining_date'     =>  $days_remaining_date_md,
                   'days_remaining_date_ymd' =>  $days_remaining_date_ymd,
                   'status'						=>	$v['status'],
                   'start_weight'			=>	$v['start_weight'],
