@@ -2536,6 +2536,18 @@ class AnimalMovementController extends Controller
 
       }
 
+      public function updatedBinData($group_id){
+
+        $groups = DB::table('feeds_movement_groups')
+              ->where('group_id',$group_id)
+              ->get();
+        $groups = $this->toArray($groups);
+        $groups = $this->filterTransferBins($groups,'feeds_movement_groups','feeds_movement_groups_bins');
+
+        return $groups;
+
+      }
+
       /*
       *	updateReturnedTransferedGroup()
       *

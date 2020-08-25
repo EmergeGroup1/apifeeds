@@ -3146,6 +3146,12 @@ class APIController extends Controller
         * End of Death Tracker
         */
 
+        case "binData":
+
+            return $request->all();
+
+        break;
+
       default:
         return array("err" => "Something went wrong");
     }
