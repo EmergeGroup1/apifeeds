@@ -32,7 +32,11 @@ class AnimalMovementController extends Controller
           );
 
 
-          return $this->animalMovementFilterAPI($data);
+          $pig_tracker = $this->animalMovementFilterAPI($data);
+
+          Storage::put('am_pig_tracker_data.txt',json_encode($pig_tracker));
+
+          return json_decode(Storage::get('am_pig_tracker_data.txt'));
       }
 
       /**
