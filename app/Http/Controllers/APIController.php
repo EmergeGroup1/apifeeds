@@ -3148,7 +3148,15 @@ class APIController extends Controller
 
         case "binData":
 
-            return $request->all();
+          $data = $request->all();
+
+          $group_id = $data['group_id'];
+
+          $aml_ctrl = new AnimalMovementController;
+          $bins_lists = $aml_ctrl->updatedBinData($group_id);
+          unset($aml_ctrl);
+
+          return $bins_lists;
 
         break;
 
