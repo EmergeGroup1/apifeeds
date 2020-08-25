@@ -1830,7 +1830,8 @@ class APIController extends Controller
           'group_to'        =>  $request->input('group_to'),
           'driver_id'        =>  $request->input('driver_id'),
           'date'            =>   $request->input('date'),
-          'number_of_pigs'  =>  $request->input('number_of_pigs')
+          'number_of_pigs'  =>  $request->input('number_of_pigs'),
+          'trailer'         =>  $request->input('trailer')
         );
 
         $am_controller = new AnimalMovementController;

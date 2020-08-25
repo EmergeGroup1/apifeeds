@@ -1764,7 +1764,8 @@ class AnimalMovementController extends Controller
             'driver_id'				=>	$data['driver_id'],
             'date'						=> 	date("Y-m-d", strtotime($data['date'])),
             'shipped'					=>	$data['number_of_pigs'],
-            'initial_count'		=>	$data['number_of_pigs']
+            'initial_count'		=>	$data['number_of_pigs'],
+            'trailer_number'  =>  $data['trailer']
           );
 
           DB::table('feeds_movement_transfer_v2')->insert($data_transfer);
