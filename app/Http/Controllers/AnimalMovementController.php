@@ -720,7 +720,7 @@ class AnimalMovementController extends Controller
                   'unique_id'					      =>	$v['unique_id'],
                   'date_created'			      =>	$v['date_created'],
                   'date_transfered'		      =>	$v['date_transfered'],
-                  'date_to_transfer'	      =>	str_replace("-","",(string)$days_remaining),
+                  'date_to_transfer'	      =>	str_replace("-","",(string)(int)$days_remaining),
                   'days_remaining_date'     =>  $days_remaining_date_md,
                   'days_remaining_date_ymd' =>  $days_remaining_date_ymd,
                   'status'						=>	$v['status'],
