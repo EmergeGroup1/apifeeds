@@ -1694,8 +1694,7 @@ class APIController extends Controller
           );
 
           $am_controller = new AnimalMovementController;
-          // $am_lists = $am_controller->animalMovementFilterAPI($data);
-          $am_lists = $am_controller->listAPI();
+          $am_lists = $am_controller->animalMovementFilterAPI($data);
           unset($am_controller);
 
           return $am_lists;
