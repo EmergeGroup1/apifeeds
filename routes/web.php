@@ -25,3 +25,4 @@ Route::get('binscachebuilder','HomeController@binsDataCacheBuilder');
 Route::get('binclearcache/{id}','HomeController@clearBinsCache');
 Route::get('historylatest','HomeController@cacheBinHistoryLatest');
 Route::get('ugn','AnimalMovementController@updateGroupName');
+Route::get('pigtrackerdata','AnimalMovementController@listAPI')

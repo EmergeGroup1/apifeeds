@@ -31,13 +31,8 @@ class AnimalMovementController extends Controller
             's_farm'    =>  "all" // selected farm
           );
 
-          $output = $this->filterAll($data,NULL);
-          Storage::put('animal_movement_data.txt',json_encode($output));
-          $all = json_decode(Storage::get('animal_movement_data.txt'));
 
-          $drivers = $this->filterAllDrivers();
-
-          return array("all"=>$all,"drivers"=>$drivers);
+          return $this->animalMovementFilterAPI($data);
       }
 
       /**
