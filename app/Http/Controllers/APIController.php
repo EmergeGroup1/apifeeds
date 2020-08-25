@@ -1697,8 +1697,6 @@ class APIController extends Controller
           $am_lists = $am_controller->animalMovementFilterAPI($data);
           unset($am_controller);
 
-          return $am_lists;
-
           if (!empty($am_lists['output'])) {
             return array(
               "err"     =>  0,
