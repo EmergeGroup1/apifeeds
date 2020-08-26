@@ -702,7 +702,15 @@ class AnimalMovementController extends Controller
             if($transfer_data != NULL){
 
               $date_to_transfer = (strtotime(date('Y-m-d',strtotime($transfer_data[0]['date_ymd']))) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
-              $days_remaining = $date_to_transfer < 0 ? 0 : $days_remaining - $date_to_transfer;
+              // $days_remaining = $date_to_transfer < 0 ? 0 : $days_remaining - $date_to_transfer;
+
+              if($date_to_transfer < 0){
+                $days_remaining = 0;
+              } else if($days_remaining > $date_to_transfer){
+                $days_remaining = $days_remaining - $date_to_transfer;
+              } else {
+                $days_remaining = $date_to_transfer - $days_remaining;
+              }
 
               $t_ymd = $transfer_data[0]['date_ymd'];
 
