@@ -709,7 +709,7 @@ class AnimalMovementController extends Controller
               } else if($days_remaining > $date_to_transfer){
                 $days_remaining = $days_remaining - $date_to_transfer;
               } else {
-                $days_remaining = $date_to_transfer - $days_remaining;
+                $days_remaining = 0;
               }
 
               $t_ymd = $transfer_data[0]['date_ymd'];
