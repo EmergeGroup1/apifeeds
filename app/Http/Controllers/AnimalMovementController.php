@@ -727,7 +727,7 @@ class AnimalMovementController extends Controller
 
             $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table);
 
-            //if($total_pigs != 0 && $v['status'] != "removed"){
+            if($total_pigs != 0 && $v['status'] != "removed"){
 
                 $data[] = array(
                   'group_id'					      =>	$v['group_id'],
@@ -760,7 +760,7 @@ class AnimalMovementController extends Controller
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id'])
                 );
 
-            //}
+            }
 
           }
 
