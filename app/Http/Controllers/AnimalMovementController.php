@@ -1851,7 +1851,7 @@ class AnimalMovementController extends Controller
             'driver_id'					=>	$data['driver_id'],
             'full_weight'				=>	$data['full_weight'],
             'received'					=>	$data['received'],
-            'dead'							=>	$data['dead'],
+            // 'dead'							=>	$data['dead'],
             'raptured'          =>  $data['raptured'],
             'joint'             =>  $data['joint'],
             'poor'							=>	$data['poor'],
