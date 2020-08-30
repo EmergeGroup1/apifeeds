@@ -1924,7 +1924,9 @@ class APIController extends Controller
           'ave_weight'      =>  'required',
           'shipped'         =>  'required',
           'received'        =>  'required',
-          'dead'            =>  'required',
+          // 'dead'            =>  'required',
+          'raptured'        =>  'required',
+          'joint'            =>  'required',
           'poor'            =>  'required',
           'farm_count'      =>  'required',
           'final_count'     =>  'required',
@@ -1940,7 +1942,9 @@ class APIController extends Controller
           'bins_from_pigs' => $request->input('bins_from_pigs'),
           'bins_to' => $request->input('bins_to'),
           'bins_to_pigs' => $request->input('bins_to_pigs'),
-          'num_of_pigs_dead' => $request->input('num_of_pigs_dead'),
+          // 'num_of_pigs_dead' => $request->input('num_of_pigs_dead'),
+          'num_of_pigs_raptured' => $request->input('num_of_pigs_dead'),
+          'num_of_pigs_joint' => $request->input('num_of_pigs_dead'),
           'num_of_pigs_poor' => $request->input('num_of_pigs_poor')
         );
 
