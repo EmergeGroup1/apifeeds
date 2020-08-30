@@ -1988,7 +1988,9 @@ class AnimalMovementController extends Controller
         $bins_to = $data['bins_to'];
         $bins_to_pigs = $data['bins_to_pigs'];
 
-        $num_of_pigs_dead = $data['num_of_pigs_dead'];
+        // $num_of_pigs_dead = $data['num_of_pigs_dead'];
+        $num_of_pigs_raptured = $data['num_of_pigs_raptured'];
+        $num_of_pigs_joint = $data['num_of_pigs_joint'];
         $num_of_pigs_poor = $data['num_of_pigs_poor'];
 
         $transfer = array(
@@ -2002,7 +2004,9 @@ class AnimalMovementController extends Controller
           'ave_weight'			=>	$transfer_data['ave_weight'],
           'shipped'					=>	$transfer_data['shipped'],
           'received'				=>	$transfer_data['received'],
-          'dead'						=>	$transfer_data['dead'],
+          // 'dead'						=>	$transfer_data['dead'],
+          'raptured'				=>	$transfer_data['raptured'],
+          'joint'						=>	$transfer_data['joint'],
           'poor'						=>	$transfer_data['poor'],
           'initial_count'		=>	$transfer_data['shipped'],
           'farm_count'			=>	$transfer_data['farm_count'],
@@ -2032,7 +2036,9 @@ class AnimalMovementController extends Controller
                 'room_id_from'  =>  $room_from_id,
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
-                'dead'					=>	$num_of_pigs_dead[$k],
+                // 'dead'					=>	$num_of_pigs_dead[$k],
+                'raptured'			=>	$num_of_pigs_raptured[$k],
+                'joint'					=>	$num_of_pigs_joint[$k],
                 'poor'					=>	$num_of_pigs_poor[$k],
               );
 
@@ -2042,7 +2048,9 @@ class AnimalMovementController extends Controller
                 'room_id_from'  =>  $room_from_id,
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
-                'dead'					=>	$num_of_pigs_dead[$k],
+                // 'dead'					=>	$num_of_pigs_dead[$k],
+                'raptured'			=>	$num_of_pigs_raptured[$k],
+                'joint'					=>	$num_of_pigs_joint[$k],
                 'poor'					=>	$num_of_pigs_poor[$k],
               );
 
@@ -2381,7 +2389,8 @@ class AnimalMovementController extends Controller
           $number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('room_id',$transfer_bins['room_id_from'])->where('unique_id',$group_from_unique_id)->first();
           //$number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->first();
           //$decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead'] + $poor); // + $transfer_bins['poor'];
-          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
+          // $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
+          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['raptured'] + $transfer_bins['joint']);
           $decreased_pigs = $decreased_pigs < 0 ? 0 : $decreased_pigs;
 
           //update the feeds_movement_groups_bins for decreased transferred pigs
@@ -2424,7 +2433,8 @@ class AnimalMovementController extends Controller
                                     ->where('bin_id',$transfer_bins['bin_id_from'])
                                     ->where('unique_id',$group_from_unique_id)->first();
           //$decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead'] + $poor); // + $transfer_bins['poor'];
-          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
+          // $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
+          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['raptured'] + $transfer_bins['joint']);
           $decreased_pigs = $decreased_pigs < 0 ? 0 : $decreased_pigs;
 
           //update the feeds_movement_groups_bins for decreased transferred pigs
@@ -2463,7 +2473,8 @@ class AnimalMovementController extends Controller
 
           // get the number_of_pigs for the bins in group from
           $number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->first();
-          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']); // + $transfer_bins['poor'];
+          // $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']); // + $transfer_bins['poor'];
+          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['raptured'] + $transfer_bins['joint']);
           //update the feeds_movement_groups_bins for decreased transferred pigs
           DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->update(['number_of_pigs'=>$decreased_pigs]);
 

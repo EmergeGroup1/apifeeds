@@ -1904,7 +1904,9 @@ class APIController extends Controller
           'ave_weight' =>  $request->input('ave_weight'),
           'shipped' =>  $request->input('shipped'),
           'received' =>  $request->input('received'),
-          'dead' =>  $request->input('dead'),
+          // 'dead' =>  $request->input('dead'),
+          'raptured' =>  $request->input('raptured'),
+          'joint' =>  $request->input('joint'),
           'poor' =>  $request->input('poor'),
           'farm_count' =>  $request->input('farm_count'),
           'final_count' =>  $request->input('final_count'),
@@ -1960,20 +1962,33 @@ class APIController extends Controller
 
           $u_id = $home_crtl->generator();
 
-          $dt = array(
+          $dt_raptured = array(
             'death_date'    =>  date("Y-m-d"),
             'farm_id'       =>  $farm_id->farm_id,
             'group_id'      =>  $transfer_data['group_to'],
             'bin_id'        =>  $data['bins_to'][$i],
             'room_id'       =>  0,
             'cause'         =>  13,
-            'amount'        =>  $data['num_of_pigs_dead'][$i],
+            'amount'        =>  $data['num_of_pigs_raptured'][$i],
+            'notes'         =>  "--",
+            'unique_id'     =>  $u_id
+          );
+
+          $dt_joint = array(
+            'death_date'    =>  date("Y-m-d"),
+            'farm_id'       =>  $farm_id->farm_id,
+            'group_id'      =>  $transfer_data['group_to'],
+            'bin_id'        =>  $data['bins_to'][$i],
+            'room_id'       =>  0,
+            'cause'         =>  13,
+            'amount'        =>  $data['num_of_pigs_joint'][$i],
             'notes'         =>  "--",
             'unique_id'     =>  $u_id
           );
 
           if($data['num_of_pigs_dead'][$i] != 0){
-            DB::table("feeds_groups_dead_pigs")->insert($dt);
+            DB::table("feeds_groups_dead_pigs")->insert($dt_raptured);
+            DB::table("feeds_groups_dead_pigs")->insert($dt_joint);
           }
 
         }
