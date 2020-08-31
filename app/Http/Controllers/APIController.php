@@ -1685,18 +1685,18 @@ class APIController extends Controller
 
         case "amListRefresh":
 
-          // $data = array(
-          //   'type'      =>  "all", // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
-          //   'date_from' =>  date("Y-m-d", strtotime('-1280 days')), // (date)
-          //   'date_to'   =>  date("Y-m-d"), // (date)
-          //   'sort'      =>  "not_scheduled", // (string) not_scheduled, day_remaining
-          //   's_farm'    =>  "all" // selected farm
-          // );
-          //
-          // $am_controller = new AnimalMovementController;
-          // $am_lists = $am_controller->animalMovementFilterAPI($data);
-          // unset($am_controller);
-          $am_lists = Cache::get('am_pig_tracker_data');
+          $data = array(
+            'type'      =>  "all", // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
+            'date_from' =>  date("Y-m-d", strtotime('-1280 days')), // (date)
+            'date_to'   =>  date("Y-m-d"), // (date)
+            'sort'      =>  "not_scheduled", // (string) not_scheduled, day_remaining
+            's_farm'    =>  "all" // selected farm
+          );
+
+          $am_controller = new AnimalMovementController;
+          $am_lists = $am_controller->animalMovementFilterAPI($data);
+          unset($am_controller);
+          // $am_lists = Cache::get('am_pig_tracker_data');
 
           if (!empty($am_lists['output'])) {
             return array(
