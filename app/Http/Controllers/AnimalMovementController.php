@@ -24,18 +24,27 @@ class AnimalMovementController extends Controller
       public function listAPI()
       {
           $data = array(
-            'date_from'	=> 	'2009-01-01',
-            'date_to'		=>	date('Y-m-d'),
-            'sort'			=>	"not_scheduled"
+            'type'      =>  "all", // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
+            'date_from' =>  "2009-01-01", // (date)
+            'date_to'   =>  date("Y-m-d"), // (date)
+            'sort'      =>  "not_scheduled", // (string) not_scheduled, day_remaining
+            's_farm'    =>  "all" // selected farm
           );
 
-          $output = $this->filterAll($data);
-          Storage::put('animal_movement_data.txt',json_encode($output));
-          $all = Storage::get('animal_movement_data.txt');
 
-          $drivers = $this->filterAllDrivers();
+          $pig_tracker = $this->animalMovementFilterAPI($data);
 
-          return array("all"=>$all,"drivers"=>$drivers);
+          Cache::forget('am_pig_tracker_data');
+
+					if(!Cache::has('am_pig_tracker_data')){
+
+            Cache::forever('am_pig_tracker_data',$pig_tracker);
+
+          }
+
+          $output = Cache::get('am_pig_tracker_data');
+
+          return $output;
       }
 
       /**
@@ -59,6 +68,13 @@ class AnimalMovementController extends Controller
                               ->where('type','=','nursery')
                               ->orderBy('group_name','asc')->get();
           $nursery_groups = $this->toArray($nursery_groups);
+
+          for($i=0; $i<count($nursery_groups); $i++){
+            $nursery_groups[$i]['farm_name'] = DB::table("feeds_farms")
+            ->select("name")->where("id",$nursery_groups[$i]['farm_id'])
+            ->first()->name;
+          }
+
           Storage::put('nursery_groups_list.txt',json_encode($nursery_groups));
           $nursery_groups = Storage::get('nursery_groups_list.txt');
 
@@ -67,6 +83,19 @@ class AnimalMovementController extends Controller
                               ->where('type','=','finisher')
                               ->orderBy('group_name','asc')->get();
           $finisher_groups = $this->toArray($finisher_groups);
+
+          for($i=0; $i<count($finisher_groups); $i++){
+
+            $finisher_groups[$i]['farm_name'] = "Not Found/Deleted";
+
+            $query = DB::table("feeds_farms")->select("name")
+                      ->where("id",$finisher_groups[$i]['farm_id']);
+            if($query->first() != NULL){
+              $finisher_groups[$i]['farm_name'] = $query->first()->name;
+            }
+
+          }
+
           Storage::put('finisher_groups_list.txt',json_encode($finisher_groups));
           $finisher_groups = Storage::get('finisher_groups_list.txt');
 
@@ -76,12 +105,50 @@ class AnimalMovementController extends Controller
 
             case 'all':
 
+
+              //return array("output"=>json_decode($output));
+              // return array(
+              //     "output"          =>  json_decode($output),
+              //     "nursery_groups"  =>  json_decode($nursery_groups),
+              //     "finisher_groups" =>  json_decode($finisher_groups),
+              //     "farm_groups"     =>  $this->farmAMGroups(),
+              //     "death_reasons"   =>  $this->deathReasons(),
+              //     "treatments"      =>  $this->treatments()
+              // );
+
+              // for testing purposes
+
+              // $r = Cache::get('pig_tracker_data');
+              //
+              // if($r == NULL){
+              //
+              //   $output = $this->filterAll($data,NULL);
+              //   Storage::delete('animal_movement_data.txt');
+              //   Storage::put('animal_movement_data.txt',json_encode($output));
+              //   $output = Storage::get('animal_movement_data.txt');
+              //
+              //   $return = array(
+              //       "output"          =>  json_decode($output),
+              //       "nursery_groups"  =>  json_decode($nursery_groups),
+              //       "finisher_groups" =>  json_decode($finisher_groups),
+              //       "farm_groups"     =>  $this->farmAMGroups(),
+              //       "death_reasons"   =>  $this->deathReasons(),
+              //       "treatments"      =>  $this->treatments()
+              //   );
+              //
+              //   Cache::forever("pig_tracker_data",$return);
+              //
+              //   return $return;
+              // } else {
+              //   return $r;
+              // }
+
               $output = $this->filterAll($data,NULL);
               Storage::delete('animal_movement_data.txt');
               Storage::put('animal_movement_data.txt',json_encode($output));
               $output = Storage::get('animal_movement_data.txt');
-              //return array("output"=>json_decode($output));
-              return array(
+
+              $return = array(
                   "output"          =>  json_decode($output),
                   "nursery_groups"  =>  json_decode($nursery_groups),
                   "finisher_groups" =>  json_decode($finisher_groups),
@@ -89,6 +156,8 @@ class AnimalMovementController extends Controller
                   "death_reasons"   =>  $this->deathReasons(),
                   "treatments"      =>  $this->treatments()
               );
+
+              return $return;
 
             case 'farrowing_to_nursery':
 
@@ -203,7 +272,7 @@ class AnimalMovementController extends Controller
       **/
       private function animalGroupSorter($data,$type,$file_name)
       {
-          $output_one = $this->filterTransferGroupTypes($data,$type);
+
 
           $checker = Storage::exists($file_name);
 
@@ -212,6 +281,9 @@ class AnimalMovementController extends Controller
           }
 
           if($data['sort'] == 'day_remaining'){
+
+            $group_status = ['finalized','removed'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
 
             usort($output_one, function($a,$b){
               if($a['date_to_transfer'] == $b['date_to_transfer'])
@@ -224,16 +296,87 @@ class AnimalMovementController extends Controller
 
             return $output;
 
+          } else if($data['sort'] == "num_of_pigs"){
+
+            $group_status = ['finalized','removed'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
+
+            usort($output_one, function($a,$b){
+              // if($a['total_pigs'] == $b['total_pigs'])
+              return ($a['total_pigs'] <=> $b['total_pigs']);
+              // return ($a['total_pigs'] < $b['total_pigs'])?1:-1;
+            });
+
+            Storage::put($file_name,json_encode($output_one));
+            $output = Storage::get($file_name);
+
+            return $output;
+
+          } else if($data['sort'] == "pigs_per_crate"){
+
+            $group_status = ['finalized','removed'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
+
+            usort($output_one, function($a,$b){
+              if($a['pigs_per_crate'] == $b['pigs_per_crate'])
+              return ($a['pigs_per_crate'] < $b['pigs_per_crate']);
+              return ($a['pigs_per_crate'] > $b['pigs_per_crate'])?1:-1;
+            });
+
+            Storage::put($file_name,json_encode($output_one));
+            $output = Storage::get($file_name);
+
+            return $output;
+
+          } else if($data['sort'] == "death_loss"){
+
+            $group_status = ['finalized','removed'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
+
+            usort($output_one, function($a,$b){
+              if($a['death_perc'] == $b['death_perc'])
+              return ($a['death_perc'] < $b['death_perc']);
+              return ($a['death_perc'] > $b['death_perc'])?1:-1;
+            });
+
+            Storage::put($file_name,json_encode($output_one));
+            $output = Storage::get($file_name);
+
+            return $output;
+
+          } else if($data['sort'] == "treated") { //treated
+
+            $group_status = ['finalized','removed'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
+
+            usort($output_one, function($a,$b){
+              if($a['treated_perc'] == $b['treated_perc'])
+              return ($a['treated_perc'] < $b['treated_perc']);
+              return ($a['treated_perc'] > $b['treated_perc'])?1:-1;
+            });
+
+            Storage::put($file_name,json_encode($output_one));
+            $output = Storage::get($file_name);
+
+            return $output;
+
+          } else { // not_scheduled
+
+            $group_status = ['finalized','removed','created'];
+            $output_one = $this->filterTransferGroupTypes($data,$type,$group_status);
+
+            $output_two = $this->filterTransferCreated($data,$type,'feeds_movement_groups','feeds_movement_groups_bins');
+
+            $output = array_merge($output_one,$output_two);
+
+            Storage::put($file_name,json_encode($output));
+            $output = Storage::get($file_name);
+
+            return $output;
+
           }
 
-          $output_two = $this->filterTransferCreated($data,$type,'feeds_movement_groups','feeds_movement_groups_bins');
 
-          $output = array_merge($output_one,$output_two);
-
-          Storage::put($file_name,json_encode($output));
-          $output = Storage::get($file_name);
-
-          return $output;
       }
 
       /**
@@ -242,17 +385,18 @@ class AnimalMovementController extends Controller
       ** @param $type string
       ** @return Response
       **/
-      private function filterTransferGroupTypes($data,$type)
+      private function filterTransferGroupTypes($data,$type,$group_status)
       {
           if($type == "hah"){
             return $this->filterTransferOwnerGroupTypes($data);
           }
+
           $groups = DB::table("feeds_movement_groups");
           $groups = $groups->where('type',$type);
           if($data['s_farm'] != "all"){
             $groups = $groups->where('farm_id',$data['s_farm']);
           }
-          $groups = $groups->whereNotIn('status',['finalized','removed']);
+          $groups = $groups->whereNotIn('status',$group_status);
           $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
           $groups = $groups->get();
           $groups = $this->toArray($groups);
@@ -327,26 +471,83 @@ class AnimalMovementController extends Controller
                     ?: ($a['group_type_int'] - $b['group_type_int'])
                     ?: ($b['group_type_int'] - $a['group_type_int']);
 
-            });
+              });
 
-            return $groups;
+              return $groups;
+
+          } else if($data['sort'] == "num_of_pigs"){
+
+              $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              usort($groups, function($a,$b){
+
+              return ($b['total_pigs'] == $a['total_pigs'])
+                    ?: ($b['total_pigs'] > $a['total_pigs'])
+                    ?: ($a['total_pigs'] < $b['total_pigs']);
+
+              });
+
+              return $groups;
+
+          } else if($data['sort'] == "pigs_per_crate"){
+
+              $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              usort($groups, function($a,$b){
+
+              return ($b['pigs_per_crate'] == $a['pigs_per_crate'])
+                    ?: ($b['pigs_per_crate'] > $a['pigs_per_crate'])
+                    ?: ($a['pigs_per_crate'] < $b['pigs_per_crate']);
+
+              });
+
+              return $groups;
+
+          } else if($data['sort'] == "death_loss"){
+
+              $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              usort($groups, function($a,$b){
+
+              return ($b['death_perc'] == $a['death_perc'])
+                    ?: ($b['death_perc'] > $a['death_perc'])
+                    ?: ($a['death_perc'] < $b['death_perc']);
+
+              });
+
+              return $groups;
+
+          } else  if($data['sort'] == "treated"){ //treated
+
+              $groups = $this->filterTransferDayRemaining($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              usort($groups, function($a,$b){
+
+              return ($b['treated_perc'] == $a['treated_perc'])
+                    ?: ($b['treated_perc'] > $a['treated_perc'])
+                    ?: ($a['treated_perc'] < $b['treated_perc']);
+
+              });
+
+              return $groups;
+
+          } else {
+
+              if($type == "hah"){
+                $farm_ids = $this->farmOwners();
+                $groups = $this->filterTransferOwner($data,$farm_ids,'feeds_movement_groups','feeds_movement_groups_bins');
+              }else{
+                $groups = $this->filterTransfer($data,'feeds_movement_groups','feeds_movement_groups_bins');
+              }
+              $output_one = $groups;
+
+
+              $type = ['farrowing','nursery','finisher'];
+              $output_two = $this->filterAdditional($data,$type);
+
+              $output = array_merge($output_one,$output_two);
+
+              return $output;
+
           }
 
-          if($type == "hah"){
-            $farm_ids = $this->farmOwners();
-            $groups = $this->filterTransferOwner($data,$farm_ids,'feeds_movement_groups','feeds_movement_groups_bins');
-          }else{
-            $groups = $this->filterTransfer($data,'feeds_movement_groups','feeds_movement_groups_bins');
-          }
-          $output_one = $groups;
 
-
-          $type = ['farrowing','nursery','finisher'];
-          $output_two = $this->filterAdditional($data,$type);
-
-          $output = array_merge($output_one,$output_two);
-
-          return $output;
       }
 
       /**
@@ -490,34 +691,76 @@ class AnimalMovementController extends Controller
 
             $date_to_transfer = (strtotime(date('Y-m-d',strtotime($v['date_to_transfer']))) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
 
-            $data[] = array(
-              'group_id'					=>	$v['group_id'],
-              'group_name'				=>	$v['group_name'],
-              'unique_id'					=>	$v['unique_id'],
-              'date_created'			=>	$v['date_created'],
-              'date_transfered'		=>	$v['date_transfered'],
-              'date_to_transfer'	=>	$this->daysRemaining($date_to_transfer,$v['type']),
-              'status'						=>	$v['status'],
-              'start_weight'			=>	$v['start_weight'],
-              'end_weight'				=>	$v['end_weight'],
-              'type'							=>	$v['type'],//$this->groupType($group_bins_table),
-              'crates'						=>	$this->cratesTotal($v['unique_id']),//$v['crates'],
-              'group_type_int'		=> 	$this->groupTypeInt($v['type']),
-              'user_id'						=>	$v['user_id'],
-              'farm_id'						=>	$v['farm_id'],
-              'deceased'					=>	$this->deceasedPigs($v['group_id']),
-              'treated'						=>	$this->treatedPigs($v['group_id']),
-              'total_pigs'				=>	$this->totalPigsFilter($v['unique_id'],$group_bins_table),
-              'farm_name'					=>	$this->farmData($v['farm_id']),
-              'bin_data'					=>	$this->binsDataFilter($v['unique_id'],$group_bins_table,$v['farm_id']),
-              'transfer_data'			=> 	$this->transferData($v['group_id']),
-              'sched_pigs'				=>	$this->scheduledTransaferPigs($v['group_id']),
-              'death'             =>  $this->amDeadPigs($v['group_id']),
-              'treated'           =>  $this->amTreatedPigs($v['group_id']),
-              'death_perc'        =>  $this->deathPercentage($v['group_id']),
-              'treated_perc'      =>  $this->treatedPercentage($v['group_id']),
-              'pigs_per_crate'    =>  $this->avePigsPerCrate($v['group_id'])
-            );
+            $days_remaining = $this->daysRemaining($date_to_transfer,$v['type']);
+
+            $transfer_data = $this->transferData($v['group_id']);
+
+            $days_remaining_date_md = date('M d');
+            $days_remaining_date_ymd = date('Y-m-d');
+            $t_ymd = date('Y-m-d');
+
+            if($transfer_data != NULL){
+
+              $date_to_transfer = (strtotime(date('Y-m-d',strtotime($transfer_data[0]['date_ymd']))) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
+              // $days_remaining = $date_to_transfer < 0 ? 0 : $days_remaining - $date_to_transfer;
+
+              if($date_to_transfer < 0){
+                $days_remaining = 0;
+              } else if($days_remaining > $date_to_transfer){
+                $days_remaining = $days_remaining - $date_to_transfer;
+              } else {
+                $days_remaining = 0;
+              }
+
+              $t_ymd = $transfer_data[0]['date_ymd'];
+
+            }
+
+            if($days_remaining > 0) {
+
+              $days_r = $days_remaining - 1;
+
+              $days_remaining_date_md = date('M d',strtotime($t_ymd . ' + ' . $days_r . ' days'));
+              $days_remaining_date_ymd = date('Y-m-d',strtotime($t_ymd . ' + ' . $days_r . ' days'));
+
+            }
+
+            $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table);
+
+            if($v['status'] != "removed"){
+
+                $data[] = array(
+                  'group_id'					      =>	$v['group_id'],
+                  'group_name'				      =>	$v['group_name'],
+                  'unique_id'					      =>	$v['unique_id'],
+                  'date_created'			      =>	$v['date_created'],
+                  'date_transfered'		      =>	$v['date_transfered'],
+                  'date_to_transfer'	      =>	str_replace("-","",(string)(int)$days_remaining),
+                  'days_remaining_date'     =>  $days_remaining_date_md,
+                  'days_remaining_date_ymd' =>  $days_remaining_date_ymd,
+                  'status'						      =>	$v['status'],
+                  'start_weight'			      =>	$v['start_weight'],
+                  'end_weight'				      =>	$v['end_weight'],
+                  'type'							      =>	$v['type'],//$this->groupType($group_bins_table),
+                  'crates'						      =>	$this->cratesTotal($v['unique_id']),//$v['crates'],
+                  'group_type_int'		      => 	$this->groupTypeInt($v['type']),
+                  'user_id'						      =>	$v['user_id'],
+                  'farm_id'						      =>	$v['farm_id'],
+                  'deceased'					      =>	$this->deceasedPigs($v['group_id']),
+                  'treated'						      =>	$this->treatedPigs($v['group_id']),
+                  'total_pigs'				      =>	$total_pigs,
+                  'farm_name'					      =>	$this->farmData($v['farm_id']),
+                  'bin_data'					      =>	$this->binsDataFilter($v['unique_id'],$group_bins_table,$v['farm_id']),
+                  'transfer_data'			      => 	$this->transferData($v['group_id']),
+                  'sched_pigs'				      =>	$this->scheduledTransaferPigs($v['group_id']),
+                  'death'                   =>  $this->amDeadPigs($v['group_id']),
+                  'treated'                 =>  $this->amTreatedPigs($v['group_id']),
+                  'death_perc'              =>  $this->deathPercentage($v['group_id']),
+                  'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
+                  'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id'])
+                );
+
+            }
 
           }
 
@@ -797,7 +1040,7 @@ class AnimalMovementController extends Controller
           $transfer = DB::table('feeds_movement_transfer_v2')
                         ->where('group_from',$group_id)
                         ->whereIn('status',['created','edited'])
-                        ->orderBy('date','asc')
+                        ->orderBy('date','desc')
                         ->get();
           if($transfer == NULL){
             return NULL;
@@ -832,6 +1075,7 @@ class AnimalMovementController extends Controller
       {
           $output = NULL;
           if($type == 'farrowing') {
+
             if($date > 2) {
               $output = $date - 2 . "-" . $date;
             } else if ($date < 0) {
@@ -839,13 +1083,17 @@ class AnimalMovementController extends Controller
             } else {
               $output = $date;
             }
+
           } else if($type == 'nursery') {
+
             if ($date < 0) {
               $output = 0;
             } else {
               $output = $date;
             }
+
           } else if($type == 'finisher') {
+
             if($date > 10) {
               $output = $date - 10 . "-" . $date;
             } else if ($date < 0) {
@@ -854,8 +1102,11 @@ class AnimalMovementController extends Controller
               $output = $date;
 
             }
+
           } else {
+
             $output = $output;
+
           }
 
           return round($output);
@@ -967,12 +1218,15 @@ class AnimalMovementController extends Controller
               'shipped'	=>	$v['shipped'],
               'received'	=>	$v['received'],
               'dead'	=>	$v['dead'],
+              'raptured'  =>  $v['raptured'],
+              'joint' =>  $v['joint'],
               'poor'	=>	$v['poor'],
               'initial_count'	=> $v['initial_count'],
               'farm_count'	=> $v['farm_count'],
               'final_count'	=> $v['final_count'],
               'notes'			=>	$v['notes'],
-              'driver_id'		=>	$v['driver_id']
+              'driver_id'		=>	$v['driver_id'],
+              'trailer_number'  => $v['trailer_number']
             );
           }
 
@@ -1521,7 +1775,8 @@ class AnimalMovementController extends Controller
             'driver_id'				=>	$data['driver_id'],
             'date'						=> 	date("Y-m-d", strtotime($data['date'])),
             'shipped'					=>	$data['number_of_pigs'],
-            'initial_count'		=>	$data['number_of_pigs']
+            'initial_count'		=>	$data['number_of_pigs'],
+            'trailer_number'  =>  $data['trailer']
           );
 
           DB::table('feeds_movement_transfer_v2')->insert($data_transfer);
@@ -1596,10 +1851,13 @@ class AnimalMovementController extends Controller
             'driver_id'					=>	$data['driver_id'],
             'full_weight'				=>	$data['full_weight'],
             'received'					=>	$data['received'],
-            'dead'							=>	$data['dead'],
+            // 'dead'							=>	$data['dead'],
+            'raptured'          =>  $data['raptured'],
+            'joint'             =>  $data['joint'],
             'poor'							=>	$data['poor'],
             'farm_count'				=>	$data['farm_count'],
             'final_count'				=>	$data['final_count'],
+            'trailer_number'    =>  $data['trailer_number'],
             'notes'							=>	$data['notes']
           );
 
@@ -1608,6 +1866,9 @@ class AnimalMovementController extends Controller
           //if($counter == 0){
             DB::table('feeds_movement_transfer_v2')->where('transfer_id',$transfer_id)->update($data);
             DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'created']);
+
+            $this->updateReturnedTransferedGroup($data['group_from']);
+
             return 'success';
           //} else {
             //return 'transfer already created';
@@ -1727,7 +1988,9 @@ class AnimalMovementController extends Controller
         $bins_to = $data['bins_to'];
         $bins_to_pigs = $data['bins_to_pigs'];
 
-        $num_of_pigs_dead = $data['num_of_pigs_dead'];
+        // $num_of_pigs_dead = $data['num_of_pigs_dead'];
+        $num_of_pigs_raptured = $data['num_of_pigs_raptured'];
+        $num_of_pigs_joint = $data['num_of_pigs_joint'];
         $num_of_pigs_poor = $data['num_of_pigs_poor'];
 
         $transfer = array(
@@ -1741,7 +2004,9 @@ class AnimalMovementController extends Controller
           'ave_weight'			=>	$transfer_data['ave_weight'],
           'shipped'					=>	$transfer_data['shipped'],
           'received'				=>	$transfer_data['received'],
-          'dead'						=>	$transfer_data['dead'],
+          // 'dead'						=>	$transfer_data['dead'],
+          'raptured'				=>	$transfer_data['raptured'],
+          'joint'						=>	$transfer_data['joint'],
           'poor'						=>	$transfer_data['poor'],
           'initial_count'		=>	$transfer_data['shipped'],
           'farm_count'			=>	$transfer_data['farm_count'],
@@ -1757,9 +2022,9 @@ class AnimalMovementController extends Controller
 
           if($transfer['transfer_type'] == "farrowing_to_nursery"){
             $room_from_id = $v;
-            $bin_id_from = NULL;
+            $bin_id_from = 0;
           } else {
-            $room_from_id = NULL;
+            $room_from_id = 0;
             $bin_id_from = $v;
           }
 
@@ -1771,7 +2036,9 @@ class AnimalMovementController extends Controller
                 'room_id_from'  =>  $room_from_id,
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
-                'dead'					=>	$num_of_pigs_dead[$k],
+                // 'dead'					=>	$num_of_pigs_dead[$k],
+                'raptured'			=>	$num_of_pigs_raptured[$k],
+                'joint'					=>	$num_of_pigs_joint[$k],
                 'poor'					=>	$num_of_pigs_poor[$k],
               );
 
@@ -1781,7 +2048,9 @@ class AnimalMovementController extends Controller
                 'room_id_from'  =>  $room_from_id,
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
-                'dead'					=>	$num_of_pigs_dead[$k],
+                // 'dead'					=>	$num_of_pigs_dead[$k],
+                'raptured'			=>	$num_of_pigs_raptured[$k],
+                'joint'					=>	$num_of_pigs_joint[$k],
                 'poor'					=>	$num_of_pigs_poor[$k],
               );
 
@@ -2120,7 +2389,8 @@ class AnimalMovementController extends Controller
           $number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('room_id',$transfer_bins['room_id_from'])->where('unique_id',$group_from_unique_id)->first();
           //$number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->first();
           //$decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead'] + $poor); // + $transfer_bins['poor'];
-          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
+          // $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
+          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['raptured'] + $transfer_bins['joint']);
           $decreased_pigs = $decreased_pigs < 0 ? 0 : $decreased_pigs;
 
           //update the feeds_movement_groups_bins for decreased transferred pigs
@@ -2163,7 +2433,8 @@ class AnimalMovementController extends Controller
                                     ->where('bin_id',$transfer_bins['bin_id_from'])
                                     ->where('unique_id',$group_from_unique_id)->first();
           //$decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead'] + $poor); // + $transfer_bins['poor'];
-          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
+          // $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
+          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['raptured'] + $transfer_bins['joint']);
           $decreased_pigs = $decreased_pigs < 0 ? 0 : $decreased_pigs;
 
           //update the feeds_movement_groups_bins for decreased transferred pigs
@@ -2202,7 +2473,8 @@ class AnimalMovementController extends Controller
 
           // get the number_of_pigs for the bins in group from
           $number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->first();
-          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']); // + $transfer_bins['poor'];
+          // $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']); // + $transfer_bins['poor'];
+          $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['raptured'] + $transfer_bins['joint']);
           //update the feeds_movement_groups_bins for decreased transferred pigs
           DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->update(['number_of_pigs'=>$decreased_pigs]);
 
@@ -2262,7 +2534,7 @@ class AnimalMovementController extends Controller
       */
       private function updateGroupStatus($group_id,$status,$table)
       {
-        DB::table($table)->where('group_id',$group_id)->update('status',$status);
+        DB::table($table)->where('group_id',$group_id)->update($status);
       }
 
       /*
@@ -2270,7 +2542,7 @@ class AnimalMovementController extends Controller
       *
       * update the status of group
       */
-      public function removeTransfer($transfer_id,$user_id)
+      public function removeTransfer($transfer_id,$user_id,$group_id)
       {
 
         $bins = DB::table('feeds_movement_transfer_bins_v2')->where('transfer_id',$transfer_id)->get();
@@ -2285,7 +2557,60 @@ class AnimalMovementController extends Controller
         DB::table('feeds_movement_transfer_v2')->where('transfer_id',$transfer_id)->delete();
         DB::table('feeds_movement_transfer_bins_v2')->where('transfer_id',$transfer_id)->delete();
 
-        return $bins;
+        $this->updateReturnedTransferedGroup($group_id);
+
+        $groups = DB::table('feeds_movement_groups')
+              ->where('group_id',$group_id)
+              ->get();
+        $groups = $this->toArray($groups);
+        $groups = $this->filterTransferBins($groups,'feeds_movement_groups','feeds_movement_groups_bins');
+
+        return $groups;
+
+      }
+
+      public function updatedBinData($group_id){
+
+        $groups = DB::table('feeds_movement_groups')
+              ->where('group_id',$group_id)
+              ->get();
+        $groups = $this->toArray($groups);
+        $groups = $this->filterTransferBins($groups,'feeds_movement_groups','feeds_movement_groups_bins');
+
+        return $groups;
+
+      }
+
+      /*
+      *	updateReturnedTransferedGroup()
+      *
+      * update the status of group's created transfered then undo
+      */
+      private function updateReturnedTransferedGroup($group_id)
+      {
+        // if the group has no transfer and the total number of pigs is not 0
+        // update the status of group into entered
+        $groups = DB::table("feeds_movement_groups")
+          ->where('group_id',$group_id)
+          ->select("unique_id")
+          ->get();
+
+        $total_pigs = DB::table("feeds_movement_groups_bins")
+                        ->where("unique_id",$groups[0]->unique_id)
+                        ->sum("number_of_pigs");
+
+        $transfer = DB::table("feeds_movement_transfer_v2")
+                      ->where("group_from",$group_id)
+                      ->where("status","!=","finalized")
+                      ->count();
+
+        if($total_pigs > 0 && $transfer == 0){
+          $this->updateGroupStatus($group_id,["status"=>"entered"],"feeds_movement_groups");
+        } else if($total_pigs > 0 && $transfer > 0){
+          $this->updateGroupStatus($group_id,["status"=>"created"],"feeds_movement_groups");
+        } else {
+          // none
+        }
 
       }
 
@@ -2305,6 +2630,77 @@ class AnimalMovementController extends Controller
         } else {
           return 0;
         }
+
+      }
+
+
+      /*
+      * Update Group Name
+      */
+      public function updateGroupName(){
+
+        $group_name = "";
+        $output = array();
+
+        // select all groups
+        $groups = DB::table("feeds_movement_groups")->whereNotIn("status",["remove"])->get();
+
+        for($i=0; $i<count($groups); $i++){
+
+          $bin_or_rooms = DB::table("feeds_movement_groups_bins")->where("unique_id",$groups[$i]->unique_id)->get();
+
+          $farm_name = Farms::where("id",$groups[$i]->farm_id)->first("name");
+
+          $bor_name = "";
+          $bor_n = "";
+          if($groups[$i]->type == "farrowing"){
+
+            for($j=0; $j<count($bin_or_rooms); $j++){
+
+              $rooms = DB::table("feeds_farrowing_rooms")->where("id",$bin_or_rooms[$j]->room_id)->select("room_number")->first();
+
+              $bor_n .= isset($rooms) ? $rooms->room_number . ", " : "" . ", ";
+
+            }
+
+            $bor_name = "Room/s: " . $bor_n;
+
+          } else {
+
+            for($j=0; $j<count($bin_or_rooms); $j++){
+
+              $bins = Bins::where("bin_id",$bin_or_rooms[$j]->bin_id)->first("alias");
+
+              $bor_n .= $bins['alias'] . ", ";
+
+            }
+
+            $bor_name = "Bin/s: " . $bor_n;
+
+          }
+
+          if($bor_n != ", "){
+
+            $n_group_name = $farm_name['name'] . " - " . substr($bor_name, 0, -2);
+
+            $output[] = "before: " . $groups[$i]->group_name . " date: " . $groups[$i]->date_created .  " || now: " . $farm_name['name'] . " - " . substr($bor_name, 0, -2);
+
+            DB::table("feeds_movement_groups")
+              ->where("group_id",$groups[$i]->group_id)
+              ->update(["group_name"=>$n_group_name]);
+
+          }
+
+        }
+
+        return $output;
+        // select all rooms or bins
+
+        // loop on groups
+
+        // update group names format: farm name - Bins: / Rooms:
+
+
 
       }
 }
