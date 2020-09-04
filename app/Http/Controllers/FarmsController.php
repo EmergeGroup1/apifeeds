@@ -1685,7 +1685,7 @@ class FarmsController extends Controller
               } else if($i > 9 && $i <= 19){
                 $output_division["div_2"][] = $output[$r[$i]->id];
               } else {
-                $output_division["div_2"][] = $output[$r[$i]->id];
+                $output_division["div_3"][] = $output[$r[$i]->id];
               }
 
             }
