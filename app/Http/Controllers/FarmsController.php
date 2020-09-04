@@ -1664,11 +1664,12 @@ class FarmsController extends Controller
       {
           $r = array();
           $output = array();
+          $output_division = array();
           $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->orderBy("room_number");
 
           if($rooms->exists()){
             $r = $rooms->get();
-
+            // $counter = [9,19,29];
             for($i=0; $i<count($r); $i++){
               $output[$r[$i]->id] = array(
                 'id'  => $r[$i]->id,
@@ -1678,11 +1679,21 @@ class FarmsController extends Controller
                 'pigs'  => $this->totalNumberOfPigsAnimalGroupAPI($r[$i]->id,$r[$i]->farm_id),
                 'groups' => $this->animalGroupBinsAPI($r[$i]->id)
               );
+
+              if($i <= 9){
+                $output_division["div_1"] = $output[$r[$i]->id];
+              } else if($i > 9 && $i <= 19){
+                $output_division["div_2"] = $output[$r[$i]->id];
+              } else {
+                $output_division["div_2"] = $output[$r[$i]->id];
+              }
+
             }
           }
 
           $r = array(
             'data'  =>  $output,
+            'data_div' => $output_division,
             'total_rooms' =>  DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->count("room_number"),
             'total_crates'  =>  DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->sum("crates_number")
           );
