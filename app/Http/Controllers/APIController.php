@@ -3641,11 +3641,11 @@ class APIController extends Controller
 
 
       if($i <= 9){
-        $output_division["div_1"][] = $bins[$bins[$i]];
+        $output_division["div_1"][] = $bins;
       } else if($i > 9 && $i <= 19){
-        $output_division["div_2"][] = $bins[$bins[$i]];
+        $output_division["div_2"][] = $bins;
       } else {
-        $output_division["div_3"][] = $bins[$bins[$i]];
+        $output_division["div_3"][] = $bins;
       }
 
     }
