@@ -3611,41 +3611,21 @@ class APIController extends Controller
    */
   private function binsDivision($bins)
   {
+
     $output_division = array();
-    for ($i = 0; $i < count($bins); $i++) {
 
-      // $data[$bins[$i]->bin_id] = array(
-      //   'binName'                       =>  'Bin #' . $bins[$i]->bin_number . ' - ' . $bins[$i]->alias,
-      //   'binNumber'                     =>  $bins[$i]->bin_number,
-      //   'binAlias'                      =>  $bins[$i]->alias,
-      //   'amountTons'                    =>  $bins[$i]->current_bin_amount_tons,
-      //   'dateToBeEmpty'                 =>  date("Y-m-d", strtotime($bins[$i]->empty_date)) == "1969-12-31" ? "--" : date("Y-m-d", strtotime($bins[$i]->empty_date)),
-      //   'inComingDelivery'              =>  $bins[$i]->delivery_amount,
-      //   'lastDelivery'                  =>  date("Y-m-d", strtotime($bins[$i]->next_deliverydd)),
-      //   'lastUpdate'                    =>  date("Y-m-d h:i a", strtotime($bins[$i]->last_update)),
-      //   //'lastUpdate'                    =>  date("Y-m-d H:i a",strtotime($bins[$i]->last_manual_update)),
-      //   'sow'                           =>  $bins[$i]->num_of_sow_pigs,
-      //   'user'                          =>  $bins[$i]->username,
-      //   'daysRemaining'                 =>  $bins[$i]->days_to_empty,
-      //   'currentMedication'             =>  $bins[$i]->medication_name,
-      //   'currentMedicationDescription'  =>  $bins[$i]->medication,
-      //   'currentMedicationID'           =>  $bins[$i]->medication_id,
-      //   'currentFeed'                   =>  $bins[$i]->feed_type_name_orig,
-      //   'currentFeedDescription'        =>  $bins[$i]->feed_type_name,
-      //   'currentFeedID'                 =>  $bins[$i]->feed_type_id,
-      //   'numberOfPigs'                  =>  $bins[$i]->total_number_of_pigs,
-      //   'binSize'                       =>  $bins[$i]->bin_s,
-      //   'groups'                        =>  $bins[$i]->default_val,
-      //   'ringAmount'                    =>  $this->currentRingAmount($bins[$i]->bin_s, $bins[$i]->current_bin_amount_tons)
-      // );
+    if(count($bins) > 10) {
 
+      for ($i = 0; $i < count($bins); $i++) {
 
-      if($i <= 9){
-        $output_division["div_1"][] = $bins;
-      } else if($i > 9 && $i <= 19){
-        $output_division["div_2"][] = $bins;
-      } else {
-        $output_division["div_3"][] = $bins;
+        if($i <= 9){
+          $output_division["div_1"][] = $bins;
+        } else if($i > 9 && $i <= 19){
+          $output_division["div_2"][] = $bins;
+        } else {
+          $output_division["div_3"][] = $bins;
+        }
+
       }
 
     }
