@@ -1717,8 +1717,8 @@ class FarmsController extends Controller
 
         return array(
           'counter_one' => $counter_one,
-          'counter_two' => $counter_one + $counter_one,
-          'counter_three' => $counter_one + $counter_one + $counter_one
+          'counter_two' => ($counter_one + $counter_one) + 1,
+          'counter_three' => ($counter_one + $counter_one + $counter_one) - 1;
         );
 
       }
