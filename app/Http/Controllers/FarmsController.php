@@ -1669,7 +1669,7 @@ class FarmsController extends Controller
 
           if($rooms->exists()){
             $r = $rooms->get();
-            // $counter = [9,19,29];
+            $counter = $this->roomsCounterDevider($r);
             for($i=0; $i<count($r); $i++){
               $output[$r[$i]->id] = array(
                 'id'  => $r[$i]->id,
@@ -1680,9 +1680,9 @@ class FarmsController extends Controller
                 'groups' => $this->animalGroupBinsAPI($r[$i]->id)
               );
 
-              if($i <= 9){
+              if($i <= $counter['counter_one']){
                 $output_division["div_1"][] = $output[$r[$i]->id];
-              } else if($i > 9 && $i <= 19){
+              } else if($i > $counter['counter_one'] && $i <= $counter['counter_two']){
                 $output_division["div_2"][] = $output[$r[$i]->id];
               } else {
                 $output_division["div_3"][] = $output[$r[$i]->id];
@@ -1699,6 +1699,24 @@ class FarmsController extends Controller
           );
 
           return $r;
+      }
+
+
+
+      /*
+      * Brings the dynamic counter for rooms devider
+      */
+      private function roomsCounterDevider($rooms)
+      {
+
+        $total = count($rooms);
+
+        return array(
+          'counter_one' => $otal/3,
+          'counter_two' => $counter_one + $counter_one,
+          'counter_three' => $counter_one + $counter_one + $counter_one
+        );
+
       }
 
       /*
