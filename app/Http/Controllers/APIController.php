@@ -3661,7 +3661,7 @@ class APIController extends Controller
 
       for ($i = 0; $i < count($bins); $i++) {
 
-      
+
           if($i <= $counter['counter_one']){
             $output_division["div_1"][] = $bins[$i];
           } else if($i > $counter['counter_one'] && $i <= $counter['counter_two']){
@@ -3686,10 +3686,10 @@ class APIController extends Controller
 
     $total = count($bins);
     $counter_one = $total/3;
-    $counter_one = (int)$counter_one;
+    $counter_one = floor($counter_one);
 
     return array(
-      'counter_one' => $counter_one - 1,
+      'counter_one' => $counter_one,
       'counter_two' => ($counter_one + $counter_one) - 1,
       'counter_three' => ($counter_one + $counter_one + $counter_one) - 1
     );
