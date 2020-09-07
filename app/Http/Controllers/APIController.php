@@ -3614,8 +3614,6 @@ class APIController extends Controller
 
     $output_division = array();
 
-    if(count($bins) > 10) {
-
       for ($i = 0; $i < count($bins); $i++) {
 
         if($i <= 9){
@@ -3627,8 +3625,6 @@ class APIController extends Controller
         }
 
       }
-
-    }
 
     return $output_division;
   }
