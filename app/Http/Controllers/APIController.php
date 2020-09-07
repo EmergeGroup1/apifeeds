@@ -3661,7 +3661,7 @@ class APIController extends Controller
 
       for ($i = 0; $i < count($bins); $i++) {
 
-        if($total_bins % 2){
+        if($total_bins % 2 == 0){
 
           $devider = (int)($total_bins/2);
 
