@@ -3683,8 +3683,8 @@ class APIController extends Controller
     $counter_one = (int)$counter_one;
 
     return array(
-      'counter_one' => $counter_one,
-      'counter_two' => ($counter_one + $counter_one),
+      'counter_one' => $counter_one - 1,
+      'counter_two' => ($counter_one + $counter_one) - 1,
       'counter_three' => ($counter_one + $counter_one + $counter_one) - 1
     );
 
