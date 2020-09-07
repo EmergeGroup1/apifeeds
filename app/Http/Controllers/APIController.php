@@ -3656,9 +3656,9 @@ class APIController extends Controller
 
       for ($i = 0; $i < count($bins); $i++) {
 
-        if($i <= 9){
+        if($i <= 7){
           $output_division["div_1"][] = $bins[$i];
-        } else if($i > 9 && $i <= 19){
+        } else if($i > 7 && $i <= 15){
           $output_division["div_2"][] = $bins[$i];
         } else {
           $output_division["div_3"][] = $bins[$i];
