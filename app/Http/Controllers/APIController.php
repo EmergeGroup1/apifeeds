@@ -3661,6 +3661,7 @@ class APIController extends Controller
 
       for ($i = 0; $i < count($bins); $i++) {
 
+        if($total_bins >= 16){
 
           if($i <= $counter['counter_one']){
             $output_division["div_1"][] = $bins[$i];
@@ -3670,7 +3671,17 @@ class APIController extends Controller
             $output_division["div_3"][] = $bins[$i];
           }
 
+        } else {
 
+          $devider = floor($total_bins/2);
+
+          if($i <= $devider){
+            $output_division["div_1"][] = $bins[$i];
+          } else {
+            $output_division["div_2"][] = $bins[$i];
+          }
+
+        }
 
 
       }
