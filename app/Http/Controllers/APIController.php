@@ -154,6 +154,7 @@ class APIController extends Controller
           'numberofLowbins' =>  $this->farmsBuilderNumberOfLowBins($forecasting, $farm_id),
           'notes'     =>  $farm['notes'],
           'bins'      =>  $bins,
+          'total_bins'  =>  count($bins),
           'bins_div'  =>  $this->binsDivision($bins_v2),
           'rooms'     =>  $rooms
         );
