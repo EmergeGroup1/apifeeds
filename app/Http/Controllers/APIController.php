@@ -3663,7 +3663,7 @@ class APIController extends Controller
 
         if($total_bins % 2){
 
-          $devider = (int)($total_bins/2)-1;
+          $devider = (int)($total_bins/2);
 
           if($i <= $devider){
             $output_division["div_1"][] = $bins[$i];
