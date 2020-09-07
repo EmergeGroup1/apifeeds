@@ -3657,15 +3657,32 @@ class APIController extends Controller
 
     $counter = $this->binsCounterDevider($bins);
 
+    $total_bins = count($bins);
+
       for ($i = 0; $i < count($bins); $i++) {
 
-        if($i <= $counter['counter_one']){
-          $output_division["div_1"][] = $bins[$i];
-        } else if($i > $counter['counter_one'] && $i <= $counter['counter_two']){
-          $output_division["div_2"][] = $bins[$i];
+        if($total_bins > 15){
+
+          if($i <= $counter['counter_one']){
+            $output_division["div_1"][] = $bins[$i];
+          } else if($i > $counter['counter_one'] && $i <= $counter['counter_two']){
+            $output_division["div_2"][] = $bins[$i];
+          } else {
+            $output_division["div_3"][] = $bins[$i];
+          }
+
         } else {
-          $output_division["div_3"][] = $bins[$i];
+
+          if($i <= 5){
+            $output_division["div_1"][] = $bins[$i];
+          } else if($i > 5 && $i <= 10){
+            $output_division["div_2"][] = $bins[$i];
+          } else {
+            $output_division["div_3"][] = $bins[$i];
+          }
+
         }
+
 
       }
 
