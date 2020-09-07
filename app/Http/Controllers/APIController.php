@@ -143,7 +143,7 @@ class APIController extends Controller
         unset($home_controller);
 
         $bins = json_decode($bins);
-
+        $bins_v2 = $this->binsBuilderV2($bins);
         $bins = $this->binsBuilder($bins);
         $farm = Farms::where('id', $farm_id)->select('name', 'notes')->first()->toArray();
 
@@ -154,7 +154,7 @@ class APIController extends Controller
           'numberofLowbins' =>  $this->farmsBuilderNumberOfLowBins($forecasting, $farm_id),
           'notes'     =>  $farm['notes'],
           'bins'      =>  $bins,
-          'bins_div'  =>  $this->binsDivision($bins),
+          'bins_div'  =>  $this->binsDivision($bins_v2),
           'rooms'     =>  $rooms
         );
 
@@ -3605,6 +3605,46 @@ class APIController extends Controller
 
 
   /**
+   * Build the data of bins V2
+   *
+   * @return array
+   */
+  private function binsBuilderV2($bins)
+  {
+    $data = array();
+    for ($i = 0; $i < count($bins); $i++) {
+
+      $data[] = array(
+        'binID'                         =>  $bins[$i]->bin_id,
+        'binName'                       =>  'Bin #' . $bins[$i]->bin_number . ' - ' . $bins[$i]->alias,
+        'binNumber'                     =>  $bins[$i]->bin_number,
+        'binAlias'                      =>  $bins[$i]->alias,
+        'amountTons'                    =>  $bins[$i]->current_bin_amount_tons,
+        'dateToBeEmpty'                 =>  date("Y-m-d", strtotime($bins[$i]->empty_date)) == "1969-12-31" ? "--" : date("Y-m-d", strtotime($bins[$i]->empty_date)),
+        'inComingDelivery'              =>  $bins[$i]->delivery_amount,
+        'lastDelivery'                  =>  date("Y-m-d", strtotime($bins[$i]->next_deliverydd)),
+        'lastUpdate'                    =>  date("Y-m-d h:i a", strtotime($bins[$i]->last_update)),
+        'sow'                           =>  $bins[$i]->num_of_sow_pigs,
+        'user'                          =>  $bins[$i]->username,
+        'daysRemaining'                 =>  $bins[$i]->days_to_empty,
+        'currentMedication'             =>  $bins[$i]->medication_name,
+        'currentMedicationDescription'  =>  $bins[$i]->medication,
+        'currentMedicationID'           =>  $bins[$i]->medication_id,
+        'currentFeed'                   =>  $bins[$i]->feed_type_name_orig,
+        'currentFeedDescription'        =>  $bins[$i]->feed_type_name,
+        'currentFeedID'                 =>  $bins[$i]->feed_type_id,
+        'numberOfPigs'                  =>  $bins[$i]->total_number_of_pigs,
+        'binSize'                       =>  $bins[$i]->bin_s,
+        'groups'                        =>  $bins[$i]->default_val,
+        'ringAmount'                    =>  $this->currentRingAmount($bins[$i]->bin_s, $bins[$i]->current_bin_amount_tons)
+      );
+    }
+
+    return $data;
+  }
+
+
+  /**
    * Build the data of bins
    *
    * @return array
@@ -3617,11 +3657,11 @@ class APIController extends Controller
       for ($i = 0; $i < count($bins); $i++) {
 
         if($i <= 9){
-          $output_division["div_1"][] = $bins[$i];
+          $output_division["div_1"][] = $bins;
         } else if($i > 9 && $i <= 19){
-          $output_division["div_2"][] = $bins[$i];
+          $output_division["div_2"][] = $bins;
         } else {
-          $output_division["div_3"][] = $bins[$i];
+          $output_division["div_3"][] = $bins;
         }
 
       }
