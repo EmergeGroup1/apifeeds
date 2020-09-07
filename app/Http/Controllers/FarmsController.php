@@ -1668,8 +1668,10 @@ class FarmsController extends Controller
           $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->orderBy("room_number");
 
           if($rooms->exists()){
+
             $r = $rooms->get();
             $counter = $this->roomsCounterDevider($r);
+
             for($i=0; $i<count($r); $i++){
               $output[$r[$i]->id] = array(
                 'id'  => $r[$i]->id,
