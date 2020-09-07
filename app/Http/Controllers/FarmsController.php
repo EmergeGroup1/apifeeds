@@ -1712,7 +1712,7 @@ class FarmsController extends Controller
         $total = count($rooms);
 
         return array(
-          'counter_one' => $otal/3,
+          'counter_one' => $total/3,
           'counter_two' => $counter_one + $counter_one,
           'counter_three' => $counter_one + $counter_one + $counter_one
         );
