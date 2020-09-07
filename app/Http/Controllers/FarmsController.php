@@ -1680,9 +1680,9 @@ class FarmsController extends Controller
                 'groups' => $this->animalGroupBinsAPI($r[$i]->id)
               );
 
-              if($i <= 7){
+              if($i <= 9){
                 $output_division["div_1"][] = $output[$r[$i]->id];
-              } else if($i > 7 && $i <= 15){
+              } else if($i > 9 && $i <= 19){
                 $output_division["div_2"][] = $output[$r[$i]->id];
               } else {
                 $output_division["div_3"][] = $output[$r[$i]->id];
