@@ -3680,7 +3680,7 @@ class APIController extends Controller
 
     $total = count($bins);
     $counter_one = $total/3;
-    $counter_one = int($counter_one);
+    $counter_one = (int)$counter_one;
 
     return array(
       'counter_one' => $counter_one - 1,
