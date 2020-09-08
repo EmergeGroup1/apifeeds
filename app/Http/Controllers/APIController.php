@@ -3673,6 +3673,10 @@ class APIController extends Controller
             $devider = 6;
           }
 
+          if($total_bins == 11){
+            $devider = 5;
+          }
+
           if($i <= $devider){
             $output_division["div_1"][] = $bins[$i];
           } else {
