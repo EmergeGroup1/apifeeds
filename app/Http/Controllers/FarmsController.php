@@ -1667,7 +1667,7 @@ class FarmsController extends Controller
           $output_division = array();
           $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->orderBy("room_number");
 
-          $total_rooms = count($rooms);
+          $total_rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->count("room_number");
 
           if($rooms->exists()){
 
@@ -1684,51 +1684,48 @@ class FarmsController extends Controller
                 'groups' => $this->animalGroupBinsAPI($r[$i]->id)
               );
 
-
               if($total_rooms <= 20){
 
-                $devider = (int)($total_rooms/2) - 1;
+                  $devider = (int)($total_rooms/2) - 1;
 
-                if($total_rooms == 3){
-                  $devider = 1;
-                }
+                  if($total_rooms == 3){
+                    $devider = 1;
+                  }
 
-                if($total_rooms == 7){
-                  $devider = 3;
-                }
+                  if($total_rooms == 7){
+                    $devider = 3;
+                  }
 
-                if($total_rooms == 11){
-                  $devider = 5;
-                }
+                  if($total_rooms == 11){
+                    $devider = 5;
+                  }
 
-                if($total_rooms == 13){
-                  $devider = 6;
-                }
+                  if($total_rooms == 13){
+                    $devider = 6;
+                  }
 
 
 
-                if($i <= $devider){
-                  $output_division["div_1"][] = $output[$r[$i]->id];
-                } else {
-                  $output_division["div_2"][] = $output[$r[$i]->id];
-                }
+                  if($i <= $devider){
+                    $output_division["div_1"][] = $output[$r[$i]->id];
+                  } else {
+                    $output_division["div_2"][] = $output[$r[$i]->id];
+                  }
 
               } else {
 
-                if($i <= $counter['counter_one']){
-                  $output_division["div_1"][] = $output[$r[$i]->id];
-                } else if($i > $counter['counter_one'] && $i <= $counter['counter_two']){
-                  $output_division["div_2"][] = $output[$r[$i]->id];
-                } else {
-                  $output_division["div_3"][] = $output[$r[$i]->id];
-                }
+                  if($i <= $counter['counter_one']){
+                    $output_division["div_1"][] = $output[$r[$i]->id];
+                  } else if($i > $counter['counter_one'] && $i <= $counter['counter_two']){
+                    $output_division["div_2"][] = $output[$r[$i]->id];
+                  } else {
+                    $output_division["div_3"][] = $output[$r[$i]->id];
+                  }
 
               }
 
-
-
-
             }
+
           }
 
           $r = array(
