@@ -36,11 +36,11 @@ class AnimalMovementController extends Controller
           //
           // Cache::forget('am_pig_tracker_data');
 
-					if(!Cache::has('am_pig_tracker_data')){
-
-            Cache::forever('am_pig_tracker_data',$pig_tracker);
-
-          }
+					// if(!Cache::has('am_pig_tracker_data')){
+          //
+          //   Cache::forever('am_pig_tracker_data',$pig_tracker);
+          //
+          // }
 
           $output = Cache::get('am_pig_tracker_data');
 
