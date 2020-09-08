@@ -3661,9 +3661,9 @@ class APIController extends Controller
 
       for ($i = 0; $i < count($bins); $i++) {
 
-        if($total_bins % 2 == 0){
+        if($total_bins <= 20){
 
-          $devider = (int)($total_bins/2)-1;
+          $devider = (int)($total_bins/2);
 
           if($i <= $devider){
             $output_division["div_1"][] = $bins[$i];
