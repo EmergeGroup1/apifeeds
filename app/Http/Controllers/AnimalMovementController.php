@@ -32,9 +32,9 @@ class AnimalMovementController extends Controller
           );
 
 
-          $pig_tracker = $this->animalMovementFilterAPI($data);
-
-          Cache::forget('am_pig_tracker_data');
+          // $pig_tracker = $this->animalMovementFilterAPI($data);
+          //
+          // Cache::forget('am_pig_tracker_data');
 
 					if(!Cache::has('am_pig_tracker_data')){
 
