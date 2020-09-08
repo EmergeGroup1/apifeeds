@@ -1667,6 +1667,8 @@ class FarmsController extends Controller
           $output_division = array();
           $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->orderBy("room_number");
 
+          $total_rooms = count($rooms);
+
           if($rooms->exists()){
 
             $r = $rooms->get();
@@ -1682,13 +1684,49 @@ class FarmsController extends Controller
                 'groups' => $this->animalGroupBinsAPI($r[$i]->id)
               );
 
-              if($i <= $counter['counter_one']){
-                $output_division["div_1"][] = $output[$r[$i]->id];
-              } else if($i > $counter['counter_one'] && $i <= $counter['counter_two']){
-                $output_division["div_2"][] = $output[$r[$i]->id];
+
+              if($total_rooms <= 20){
+
+                $devider = (int)($total_rooms/2) - 1;
+
+                if($total_rooms == 3){
+                  $devider = 1;
+                }
+
+                if($total_rooms == 7){
+                  $devider = 3;
+                }
+
+                if($total_rooms == 11){
+                  $devider = 5;
+                }
+
+                if($total_rooms == 13){
+                  $devider = 6;
+                }
+
+
+
+                if($i <= $devider){
+                  $output_division["div_1"][] = $output[$r[$i]->id];
+                } else {
+                  $output_division["div_2"][] = $output[$r[$i]->id];
+                }
+
               } else {
-                $output_division["div_3"][] = $output[$r[$i]->id];
+
+                if($i <= $counter['counter_one']){
+                  $output_division["div_1"][] = $output[$r[$i]->id];
+                } else if($i > $counter['counter_one'] && $i <= $counter['counter_two']){
+                  $output_division["div_2"][] = $output[$r[$i]->id];
+                } else {
+                  $output_division["div_3"][] = $output[$r[$i]->id];
+                }
+
               }
+
+
+
 
             }
           }
@@ -1696,7 +1734,7 @@ class FarmsController extends Controller
           $r = array(
             'data'  =>  $output,
             'data_div' => $output_division,
-            'total_rooms' =>  DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->count("room_number"),
+            'total_rooms' =>  $total_rooms,
             'total_crates'  =>  DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->sum("crates_number")
           );
 
