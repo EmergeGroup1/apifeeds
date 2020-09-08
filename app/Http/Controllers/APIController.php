@@ -3664,8 +3664,13 @@ class APIController extends Controller
         if($total_bins <= 20){
 
           $devider = (int)($total_bins/2) - 1;
+
           if($total_bins == 7){
             $devider = 3;
+          }
+
+          if($total_bins == 13){
+            $devider = 6;
           }
 
           if($i <= $devider){
