@@ -39,13 +39,13 @@ class AnimalMovementController extends Controller
 					if(!Storage::has('am_pig_tracker_data.txt')){
 
             // Cache::forever('am_pig_tracker_data',$pig_tracker);
-            Storage::put('am_pig_tracker_data.txt',json_encode($pig_tracker));
+            Storage::put('am_pig_tracker_data.txt',$pig_tracker);
 
           }
 
-          $output = json_decode(Storage::get('am_pig_tracker_data.txt')); //Cache::get('am_pig_tracker_data');
+          $output = Storage::get('am_pig_tracker_data.txt'); //Cache::get('am_pig_tracker_data');
 
-          return json_encode($output);
+          return $output;
       }
 
       /**
