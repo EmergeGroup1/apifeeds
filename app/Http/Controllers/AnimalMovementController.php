@@ -41,7 +41,7 @@ class AnimalMovementController extends Controller
 
           $output = Storage::get('am_pig_tracker_data.txt');
 
-          return $output;
+          return json_decode($output);
       }
 
       /**
