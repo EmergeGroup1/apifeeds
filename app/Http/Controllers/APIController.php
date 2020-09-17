@@ -1695,10 +1695,10 @@ class APIController extends Controller
             's_farm'    =>  "all" // selected farm
           );
 
-          // $am_controller = new AnimalMovementController;
-          // $am_lists = $am_controller->animalMovementFilterAPI($data);
-          // unset($am_controller);
-          $am_lists = Cache::get('am_pig_tracker_data');
+          $am_controller = new AnimalMovementController;
+          $am_lists = $am_controller->animalMovementFilterAPI($data);
+          unset($am_controller);
+          // $am_lists = Cache::get('am_pig_tracker_data');
 
           if (!empty($am_lists['output'])) {
             return array(
