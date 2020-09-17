@@ -32,10 +32,10 @@ class AnimalMovementController extends Controller
           );
 
 
-					if(!Storage::has('am_pig_tracker_data.txt')){
+					if(Storage::has('am_pig_tracker_data.txt')){
 
             $pig_tracker = $this->animalMovementFilterAPI($data);
-            Storage::put('am_pig_tracker_data.txt',$pig_tracker);
+            Storage::put('am_pig_tracker_data.txt',json_encode($pig_tracker));
 
           }
 
