@@ -1876,7 +1876,6 @@ class APIController extends Controller
             'notes'             =>  $request->input('notes')
           );
 
-          return $data;
 
           $am_controller = new AnimalMovementController;
           $am_lists = $am_controller->createTransferAPI($data);
