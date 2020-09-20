@@ -2131,12 +2131,12 @@ class AnimalMovementController extends Controller
           $group_from_bin_room = DB::table("feeds_movement_groups_bins")
                                  ->where("unique_id",$g_from_unique_id->unique_id)
                                  ->orderBy("id","desc")
-                                 ->get()
+                                 ->get();
 
           $group_to_bin = DB::table("feeds_movement_groups_bins")
                           ->where("unique_id",$g_from_unique_id->unique_id)
                           ->orderBy("id","desc")
-                          ->get()
+                          ->get();
 
           return array(
             'group_from'  =>  $group_from_bin_room,
