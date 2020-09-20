@@ -2211,13 +2211,13 @@ class AnimalMovementController extends Controller
 
 
 
-          if($transfer['transfer_type'] == "farrowing_to_nursery"){
-            $room_from_id = $v;
-            $bin_id_from = 0;
-          } else {
-            $room_from_id = 0;
-            $bin_id_from = $v;
-          }
+          // if($transfer['transfer_type'] == "farrowing_to_nursery"){
+          //   $room_from_id = $v;
+          //   $bin_id_from = 0;
+          // } else {
+          //   $room_from_id = 0;
+          //   $bin_id_from = $v;
+          // }
 
           $transfer_bins = array(
             'bin_id_from'		              =>	$transfer_data['bin_from'],
