@@ -1860,18 +1860,18 @@ class APIController extends Controller
             'group_to'          =>  $request->input('group_to'),
             'status'            =>  'created',
             'date'              =>  date("Y-m-d", strtotime($request->input('date'))),
-            'shipped'           =>  $request->input('shipped'),
-            'empty_weight'      =>  $request->input('empty_weight'),
-            'ave_weight'        =>  $request->input('ave_weight'),
+            'shipped'           =>  $request->input('shipped'), // sow/nursery/finisher
+            'empty_weight'      =>  0,
+            'ave_weight'        =>  0,
             'driver_id'         =>  $request->input('driver_id'),
-            'full_weight'       =>  $request->input('full_weight'),
-            'received'          =>  $request->input('received'),
-            'dead'              =>  $request->input('dead'),
+            'full_weight'       =>  0,
+            'received'          =>  0,
+            'dead'              =>  0,
             'raptured'          =>  $request->input('raptured'),
             'joint'             =>  $request->input('joint'),
             'poor'              =>  $request->input('poor'),
-            'farm_count'        =>  $request->input('farm_count'),
-            'final_count'       =>  $request->input('final_count'),
+            'farm_count'        =>  $request->input('farm_count'), // nusery count/ finisher count/ market count
+            'final_count'       =>  $request->input('final_count'), // start number
             'trailer_number'    =>  $request->input('trailer'),
             'notes'             =>  $request->input('notes')
           );
