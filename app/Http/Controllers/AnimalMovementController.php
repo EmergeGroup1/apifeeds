@@ -2091,11 +2091,34 @@ class AnimalMovementController extends Controller
       {
           $type = $this->transferType(Input::get('group_type'));
 
+
+          $g_from_unique_id = DB::table('feeds_movement_groups')->where('group_id',$data['group_to'])->first();
+          $g_to_unique_id = DB::table('feeds_movement_groups')->where('group_id',$data['group_to'])->first();
+
+          // fetch the bins from the groups
+          $group_from_bin_room = DB::table("feeds_movement_groups_bins")
+                                 ->where("unique_id",$g_from_unique_id->unique_id)
+                                 ->orderBy("id","asc")
+                                 ->first();
+
+          $group_to_bin = DB::table("feeds_movement_groups_bins")
+                          ->where("unique_id",$g_from_unique_id->unique_id)
+                          ->orderBy("id","asc")
+                          ->first();
+
+          if($data['transfer'] == "farrowing_to_finisher"){
+            $bin_from = $group_from_bin_room->room_id;
+          } else {
+            $bin_from = $group_to_bin->bin_id;
+          }
+
           $data_transfer = array(
             'transfer_number'	  =>	$this->transferIDGenerator(),
             'transfer_type'     =>  $data['transfer_type'],
             'group_from'        =>  $data['group_from'],
             'group_to'          =>  $data['group_to'],
+            'bin_from'          =>  $bin_from,
+            'bin_to'            =>  $group_to_bin->bin_id,
             'status'            =>  $data['status'],
             'date'              =>  $data['date'],
             'shipped'           =>  $data['shipped'], // sow/nursery/finisher
@@ -2126,26 +2149,6 @@ class AnimalMovementController extends Controller
                 ->where('group_id',$data['group_from'])
                 ->get();
 
-          $g_from_unique_id = DB::table('feeds_movement_groups')->where('group_id',$data['group_to'])->first();
-          $g_to_unique_id = DB::table('feeds_movement_groups')->where('group_id',$data['group_to'])->first();
-
-          // fetch the bins from the groups
-          // $group_from_bin_room = DB::table("feeds_movement_groups_bins")
-          //                        ->where("unique_id",$g_from_unique_id->unique_id)
-          //                        ->orderBy("id","asc")
-          //                        ->first();
-          //
-          // $group_to_bin = DB::table("feeds_movement_groups_bins")
-          //                 ->where("unique_id",$g_from_unique_id->unique_id)
-          //                 ->orderBy("id","asc")
-          //                 ->first();
-
-          // return array(
-          //   'group_from'  =>  $group_from_bin_room->number_of_pigs,
-          //   'group_to'    =>  $group_to_bin->number_of_pigs
-          // );
-
-
           // execute the finalize transfer right away
 
           $groups = $this->toArray($groups);
@@ -2169,7 +2172,7 @@ class AnimalMovementController extends Controller
 
 
         // automatically select the 1st bins
-        $bins_from = $data['bins_from'];
+        $bins_from = $transfer_data['bins_from'];
         $bins_from_pigs = $transfer_data['pigs_to'];
 
         // automatically select the 1st bins
