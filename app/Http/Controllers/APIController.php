@@ -1877,6 +1877,8 @@ class APIController extends Controller
             'notes'             =>  $request->input('notes') == NULL ? "--" : $request->input('notes')
           );
 
+          // execute the finalize transfer
+
 
           $am_controller = new AnimalMovementController;
           $am_lists = $am_controller->createTransferAPIV2($data);
@@ -1948,7 +1950,6 @@ class APIController extends Controller
           'ave_weight' =>  $request->input('ave_weight'),
           'shipped' =>  $request->input('shipped'),
           'received' =>  $request->input('received'),
-          // 'dead' =>  $request->input('dead'),
           'raptured' =>  $request->input('raptured'),
           'joint' =>  $request->input('joint'),
           'poor' =>  $request->input('poor'),
@@ -1970,7 +1971,6 @@ class APIController extends Controller
           'ave_weight'      =>  'required',
           'shipped'         =>  'required',
           'received'        =>  'required',
-          // 'dead'            =>  'required',
           'raptured'        =>  'required',
           'joint'            =>  'required',
           'poor'            =>  'required',
@@ -1995,48 +1995,48 @@ class APIController extends Controller
         );
 
 
-        $home_crtl = new HomeController;
+        // $home_crtl = new HomeController;
 
-        for($i=0; $i<count($data['bins_to']); $i++){
-
-          $farm_id = DB::table("feeds_movement_groups")
-                      ->where("group_id",$transfer_data['group_to'])
-                      ->select('farm_id')
-                      ->first();
-
-          $u_id = $home_crtl->generator();
-
-          $dt_raptured = array(
-            'death_date'    =>  date("Y-m-d"),
-            'farm_id'       =>  $farm_id->farm_id,
-            'group_id'      =>  $transfer_data['group_to'],
-            'bin_id'        =>  $data['bins_to'][$i],
-            'room_id'       =>  0,
-            'cause'         =>  13,
-            'amount'        =>  $data['num_of_pigs_raptured'][$i],
-            'notes'         =>  "--",
-            'unique_id'     =>  $u_id
-          );
-
-          $dt_joint = array(
-            'death_date'    =>  date("Y-m-d"),
-            'farm_id'       =>  $farm_id->farm_id,
-            'group_id'      =>  $transfer_data['group_to'],
-            'bin_id'        =>  $data['bins_to'][$i],
-            'room_id'       =>  0,
-            'cause'         =>  13,
-            'amount'        =>  $data['num_of_pigs_joint'][$i],
-            'notes'         =>  "--",
-            'unique_id'     =>  $u_id
-          );
-
-          if($data['num_of_pigs_dead'][$i] != 0){
-            DB::table("feeds_groups_dead_pigs")->insert($dt_raptured);
-            DB::table("feeds_groups_dead_pigs")->insert($dt_joint);
-          }
-
-        }
-        unset($home_crtl);
+        // for($i=0; $i<count($data['bins_to']); $i++){
+        //
+        //   $farm_id = DB::table("feeds_movement_groups")
+        //               ->where("group_id",$transfer_data['group_to'])
+        //               ->select('farm_id')
+        //               ->first();
+        //
+        //   $u_id = $home_crtl->generator();
+        //
+        //   $dt_raptured = array(
+        //     'death_date'    =>  date("Y-m-d"),
+        //     'farm_id'       =>  $farm_id->farm_id,
+        //     'group_id'      =>  $transfer_data['group_to'],
+        //     'bin_id'        =>  $data['bins_to'][$i],
+        //     'room_id'       =>  0,
+        //     'cause'         =>  13,
+        //     'amount'        =>  $data['num_of_pigs_raptured'][$i],
+        //     'notes'         =>  "--",
+        //     'unique_id'     =>  $u_id
+        //   );
+        //
+        //   $dt_joint = array(
+        //     'death_date'    =>  date("Y-m-d"),
+        //     'farm_id'       =>  $farm_id->farm_id,
+        //     'group_id'      =>  $transfer_data['group_to'],
+        //     'bin_id'        =>  $data['bins_to'][$i],
+        //     'room_id'       =>  0,
+        //     'cause'         =>  13,
+        //     'amount'        =>  $data['num_of_pigs_joint'][$i],
+        //     'notes'         =>  "--",
+        //     'unique_id'     =>  $u_id
+        //   );
+        //
+        //   if($data['num_of_pigs_dead'][$i] != 0){
+        //     DB::table("feeds_groups_dead_pigs")->insert($dt_raptured);
+        //     DB::table("feeds_groups_dead_pigs")->insert($dt_joint);
+        //   // }
+        //
+        // }
+        // unset($home_crtl);
 
 
 
