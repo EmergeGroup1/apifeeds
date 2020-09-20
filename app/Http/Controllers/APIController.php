@@ -1867,7 +1867,7 @@ class APIController extends Controller
             'full_weight'       =>  0,
             'received'          =>  0,
             'dead'              =>  0,
-            'pigs_to'           =>  $request->input('pigs_to'),
+            'pigs_to'           =>  $request->input('to_pigs'),
             'raptured'          =>  $request->input('raptured'),
             'joint'             =>  $request->input('joint'),
             'poor'              =>  $request->input('poor'),
