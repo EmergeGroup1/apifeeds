@@ -2106,19 +2106,19 @@ class AnimalMovementController extends Controller
                           ->orderBy("id","asc")
                           ->first();
 
-          if($data['transfer_type'] == "farrowing_to_finisher"){
-            $bin_from = $group_from_bin_room->room_id;
-          } else {
-            $bin_from = $group_to_bin->bin_id;
-          }
+          // if($data['transfer_type'] == "farrowing_to_finisher"){
+          //   $bin_from = $group_from_bin_room->room_id;
+          // } else {
+          //   $bin_from = $group_to_bin->bin_id;
+          // }
 
           $data_transfer = array(
             'transfer_number'	  =>	$this->transferIDGenerator(),
             'transfer_type'     =>  $data['transfer_type'],
             'group_from'        =>  $data['group_from'],
             'group_to'          =>  $data['group_to'],
-            'bin_from'          =>  $bin_from,
-            'room_from'         =>  $bin_from->room_id,
+            'bin_from'          =>  $group_from_bin_room->bin_id,
+            'room_from'         =>  $group_from_bin_room->room_id,
             'bin_to'            =>  $group_to_bin->bin_id,
             'status'            =>  $data['status'],
             'date'              =>  $data['date'],
