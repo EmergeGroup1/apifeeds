@@ -2162,7 +2162,6 @@ class AnimalMovementController extends Controller
       public function finalizeTransferV2($data)
       {
         $transfer_data = $data['transfer_data'];
-        $transfer_id = $transfer_data['transfer_id'];
 
         // select the first bin of group from and group to
 
@@ -2176,9 +2175,9 @@ class AnimalMovementController extends Controller
         $bins_to_pigs = $transfer_data['pigs_to'];
 
         // $num_of_pigs_dead = $data['num_of_pigs_dead'];
-        $num_of_pigs_raptured = $data['num_of_pigs_raptured'];
-        $num_of_pigs_joint = $data['num_of_pigs_joint'];
-        $num_of_pigs_poor = $data['num_of_pigs_poor'];
+        $num_of_pigs_raptured = $transfer_data['num_of_pigs_raptured'];
+        $num_of_pigs_joint = $transfer_data['num_of_pigs_joint'];
+        $num_of_pigs_poor = $transfer_data['num_of_pigs_poor'];
 
         $transfer = array(
           'transfer_type'		=>	$transfer_data['transfer_type'],
@@ -2224,9 +2223,9 @@ class AnimalMovementController extends Controller
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
                 // 'dead'					=>	$num_of_pigs_dead[$k],
-                'raptured'			=>	$num_of_pigs_raptured[$k],
-                'joint'					=>	$num_of_pigs_joint[$k],
-                'poor'					=>	$num_of_pigs_poor[$k],
+                'raptured'			=>	$transfer_data['raptured'],//$num_of_pigs_raptured[$k],
+                'joint'					=>	$transfer_data['joint'],//$num_of_pigs_joint[$k],
+                'poor'					=>	$transfer_data['poor']//$num_of_pigs_poor[$k],
               );
 
               $transfer_bins_update = array(
@@ -2236,16 +2235,22 @@ class AnimalMovementController extends Controller
                 'bin_id_to'			=>	$bins_to[$k],
                 'number_of_pigs_transferred'	=>	$bins_to_pigs[$k],
                 // 'dead'					=>	$num_of_pigs_dead[$k],
-                'raptured'			=>	$num_of_pigs_raptured[$k],
-                'joint'					=>	$num_of_pigs_joint[$k],
-                'poor'					=>	$num_of_pigs_poor[$k],
+                'raptured'			=>	$transfer_data['raptured'],//$num_of_pigs_raptured[$k],
+                'joint'					=>	$transfer_data['joint'],//$num_of_pigs_joint[$k],
+                'poor'					=>	$transfer_data['poor']//$num_of_pigs_poor[$k],
               );
+
+              // $this->updateGroupsBinsPigs($transfer_bins_update,$transfer_data['unique_id'],
+              //                             $transfer_data['transfer_type'],
+              //                             $transfer_data['group_from'],
+              //                             $transfer_data['group_to'],
+              //                             $num_of_pigs_poor[$k],$transfer_data['user_id']);
 
               $this->updateGroupsBinsPigs($transfer_bins_update,$transfer_data['unique_id'],
                                           $transfer_data['transfer_type'],
                                           $transfer_data['group_from'],
                                           $transfer_data['group_to'],
-                                          $num_of_pigs_poor[$k],$transfer_data['user_id']);
+                                          $transfer_data['poor'],$transfer_data['user_id']);
           //}
 
         }
@@ -2573,8 +2578,8 @@ class AnimalMovementController extends Controller
 
           // get the number_of_pigs for the bins in group from
           $number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('room_id',$transfer_bins['room_id_from'])->where('unique_id',$group_from_unique_id)->first();
-          //$number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->first();
-          //$decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead'] + $poor); // + $transfer_bins['poor'];
+          // $number_of_pigs_from = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_from'])->where('unique_id',$group_from_unique_id)->first();
+          // $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead'] + $poor); // + $transfer_bins['poor'];
           // $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['dead']);
           $decreased_pigs = $number_of_pigs_from->number_of_pigs - ($transfer_bins['number_of_pigs_transferred'] + $transfer_bins['raptured'] + $transfer_bins['joint']);
           $decreased_pigs = $decreased_pigs < 0 ? 0 : $decreased_pigs;
