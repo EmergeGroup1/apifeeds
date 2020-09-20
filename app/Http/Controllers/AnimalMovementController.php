@@ -2106,12 +2106,6 @@ class AnimalMovementController extends Controller
                           ->orderBy("id","asc")
                           ->first();
 
-          // if($data['transfer_type'] == "farrowing_to_finisher"){
-          //   $bin_from = $group_from_bin_room->room_id;
-          // } else {
-          //   $bin_from = $group_to_bin->bin_id;
-          // }
-
           $data_transfer = array(
             'transfer_number'	  =>	$this->transferIDGenerator(),
             'transfer_type'     =>  $data['transfer_type'],
@@ -2138,7 +2132,8 @@ class AnimalMovementController extends Controller
             'final_count'       =>  $data['final_count'], // start number
             'trailer_number'    =>  $data['trailer_number'],
             'notes'             =>  $data['notes'],
-            'g_from_unique_id'  =>  $g_from_unique_id
+            'g_from_unique_id'  =>  $g_from_unique_id,
+            'user_id'           =>  $data['user_id']
           );
 
           $this->finalizeTransferV2($data_transfer);
@@ -2236,7 +2231,7 @@ class AnimalMovementController extends Controller
                                       $transfer_data['transfer_type'],
                                       $transfer_data['group_from'],
                                       $transfer_data['group_to'],
-                                      $transfer_data['poor'],$transfer_data['user_id']);
+                                      $transfer_data['poor'],$data['user_id']);
 
 
           // insert data on the 'feeds_movement_transfer_bins_v2'
