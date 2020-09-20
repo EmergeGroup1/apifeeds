@@ -1802,6 +1802,54 @@ class AnimalMovementController extends Controller
 
       }
 
+      /**
+      ** Used to create the transfer for animal groups
+      **
+      ** @return Response
+      **/
+      public function createTransferAPIV2($data)
+      {
+          $type = $this->transferType(Input::get('group_type'));
+
+          $data_transfer = array(
+            'transfer_number'	  =>	$this->transferIDGenerator(),
+            'transfer_type'     =>  $data['transfer_type'],
+            'group_from'        =>  $data['group_from'],
+            'group_to'          =>  $data['group_to'],
+            'status'            =>  $data['status'],
+            'date'              =>  $data['date'],
+            'shipped'           =>  $data['shipped'], // sow/nursery/finisher
+            'empty_weight'      =>  $data['empty_weight'],
+            'ave_weight'        =>  $data['ave_weight'],
+            'driver_id'         =>  $data['driver_id'],
+            'full_weight'       =>  $data['full_weight'],
+            'received'          =>  $data['received'],
+            'dead'              =>  $data['dead'],
+            'initial_count'     =>  $data['initial_count'],
+            'pigs_to'           =>  $data['pigs_to'],
+            'raptured'          =>  $data['raptured'],
+            'joint'             =>  $data['joint'],
+            'poor'              =>  $data['poor'],
+            'farm_count'        =>  $data['farm_count'], // nusery count/ finisher count/ market count
+            'final_count'       =>  $data['final_count'], // start number
+            'trailer_number'    =>  $data['trailer_number'],
+            'notes'             =>  $data['notes']
+          );
+
+          DB::table('feeds_movement_transfer_v2')->insert($data_transfer);
+          DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'created']);
+
+          $groups = DB::table('feeds_movement_groups')
+                ->where('status','created')
+                ->where('group_id',$data['group_from'])
+                ->get();
+          $groups = $this->toArray($groups);
+          $groups = $this->filterTransferBins($groups,'feeds_movement_groups','feeds_movement_groups_bins');
+
+          return array('output'=>$groups);
+
+      }
+
 
 
       /**
