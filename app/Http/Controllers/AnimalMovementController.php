@@ -2254,7 +2254,7 @@ class AnimalMovementController extends Controller
           //}
 
         }
-        //dd($transfer_bins);
+        
         // insert data on the 'feeds_movement_transfer_bins_v2'
         if(DB::table('feeds_movement_transfer_bins_v2')->insert($transfer_bins)){
           return "success";
