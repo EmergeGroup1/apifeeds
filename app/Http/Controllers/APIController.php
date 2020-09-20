@@ -1852,6 +1852,48 @@ class APIController extends Controller
 
         break;
 
+      case "amCreateTransferV2":
+
+          $data = array(
+            'transfer_type'     =>  $request->input('transfer_type'),
+            'group_from'        =>  $request->input('group_from'),
+            'group_to'          =>  $request->input('group_to'),
+            'status'            =>  'created',
+            'date'              =>  date("Y-m-d", strtotime($request->input('date'))),
+            'shipped'           =>  $request->input('shipped'),
+            'empty_weight'      =>  $request->input('empty_weight'),
+            'ave_weight'        =>  $request->input('ave_weight'),
+            'driver_id'         =>  $request->input('driver_id'),
+            'full_weight'       =>  $request->input('full_weight'),
+            'received'          =>  $request->input('received'),
+            'dead'              =>  $request->input('dead'),
+            'raptured'          =>  $request->input('raptured'),
+            'joint'             =>  $request->input('joint'),
+            'poor'              =>  $request->input('poor'),
+            'farm_count'        =>  $request->input('farm_count'),
+            'final_count'       =>  $request->input('final_count'),
+            'trailer_number'    =>  $request->input('trailer'),
+            'notes'             =>  $request->input('notes')
+          );
+
+          return $data;
+
+          $am_controller = new AnimalMovementController;
+          $am_lists = $am_controller->createTransferAPI($data);
+          unset($am_controller);
+
+          if (!empty($am_lists)) {
+            return array(
+              "err"     =>  0,
+              "msg"     =>  "Successfully Created Transfer Animal Group",
+              "group" =>  $am_lists
+            );
+          } else {
+            return $this->errorMessage();
+          }
+
+          break;
+
       case "amUpdateTransfer":
 
         $data = array(
