@@ -1825,7 +1825,7 @@ class AnimalMovementController extends Controller
             'full_weight'       =>  $data['full_weight'],
             'received'          =>  $data['received'],
             'dead'              =>  $data['dead'],
-            'initial_count'     =>  $data['initial_count'],
+            'initial_count'     =>  0,
             'pigs_to'           =>  $data['pigs_to'],
             'raptured'          =>  $data['raptured'],
             'joint'             =>  $data['joint'],
