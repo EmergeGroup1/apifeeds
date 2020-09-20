@@ -2139,8 +2139,8 @@ class AnimalMovementController extends Controller
                           ->first();
 
           return array(
-            'group_from'  =>  $group_from_bin_room,
-            'group_to'    =>  $group_to_bin
+            'group_from'  =>  $group_from_bin_room->number_of_pigs,
+            'group_to'    =>  $group_to_bin->number_of_pigs
           );
 
 
