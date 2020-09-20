@@ -1878,7 +1878,7 @@ class APIController extends Controller
 
 
           $am_controller = new AnimalMovementController;
-          $am_lists = $am_controller->createTransferAPI($data);
+          $am_lists = $am_controller->createTransferAPIV2($data);
           unset($am_controller);
 
           if (!empty($am_lists)) {
