@@ -2132,7 +2132,7 @@ class AnimalMovementController extends Controller
             'final_count'       =>  $data['final_count'], // start number
             'trailer_number'    =>  $data['trailer_number'],
             'notes'             =>  $data['notes'],
-            'g_from_unique_id'  =>  $g_from_unique_id,
+            'g_from_unique_id'  =>  $g_from_unique_id->unique_id,
             'user_id'           =>  $data['user_id']
           );
 
