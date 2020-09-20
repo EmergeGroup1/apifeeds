@@ -2163,7 +2163,7 @@ class AnimalMovementController extends Controller
       */
       public function finalizeTransferV2($data)
       {
-        $transfer_data = $data['transfer_data'];
+        $transfer_data = $data;
 
         // select the first bin of group from and group to
 
