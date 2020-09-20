@@ -2137,7 +2137,8 @@ class AnimalMovementController extends Controller
             'farm_count'        =>  $data['farm_count'], // nusery count/ finisher count/ market count
             'final_count'       =>  $data['final_count'], // start number
             'trailer_number'    =>  $data['trailer_number'],
-            'notes'             =>  $data['notes']
+            'notes'             =>  $data['notes'],
+            'g_from_unique_id'  =>  $g_from_unique_id
           );
 
           $this->finalizeTransferV2($data_transfer);
@@ -2231,7 +2232,7 @@ class AnimalMovementController extends Controller
 
           $transfer_bins_update = $transfer_bins;
 
-          $this->updateGroupsBinsPigs($transfer_bins_update,$transfer_data['unique_id'],
+          $this->updateGroupsBinsPigs($transfer_bins_update,$data['g_from_unique_id'],
                                       $transfer_data['transfer_type'],
                                       $transfer_data['group_from'],
                                       $transfer_data['group_to'],
