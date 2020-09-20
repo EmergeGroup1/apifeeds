@@ -2106,7 +2106,7 @@ class AnimalMovementController extends Controller
                           ->orderBy("id","asc")
                           ->first();
 
-          if($data['transfer'] == "farrowing_to_finisher"){
+          if($data['transfer_type'] == "farrowing_to_finisher"){
             $bin_from = $group_from_bin_room->room_id;
           } else {
             $bin_from = $group_to_bin->bin_id;
