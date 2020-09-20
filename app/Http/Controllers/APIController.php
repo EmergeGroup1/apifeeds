@@ -1874,7 +1874,7 @@ class APIController extends Controller
             'farm_count'        =>  $request->input('farm_count'), // nusery count/ finisher count/ market count
             'final_count'       =>  $request->input('final_count'), // start number
             'trailer_number'    =>  $request->input('trailer'),
-            'notes'             =>  $request->input('notes')
+            'notes'             =>  $request->input('notes') == NULL ? "--" : $request->input('notes')
           );
 
 
