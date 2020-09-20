@@ -2116,11 +2116,13 @@ class AnimalMovementController extends Controller
             'notes'             =>  $data['notes']
           );
 
+          $this->finalizeTransferV2($data_transfer);
+
           // DB::table('feeds_movement_transfer_v2')->insert($data_transfer);
           // DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'created']);
 
           $groups = DB::table('feeds_movement_groups')
-                ->where('status','created')
+                ->where('status','finalized')
                 ->where('group_id',$data['group_from'])
                 ->get();
 
@@ -2128,20 +2130,20 @@ class AnimalMovementController extends Controller
           $g_to_unique_id = DB::table('feeds_movement_groups')->where('group_id',$data['group_to'])->first();
 
           // fetch the bins from the groups
-          $group_from_bin_room = DB::table("feeds_movement_groups_bins")
-                                 ->where("unique_id",$g_from_unique_id->unique_id)
-                                 ->orderBy("id","asc")
-                                 ->first();
+          // $group_from_bin_room = DB::table("feeds_movement_groups_bins")
+          //                        ->where("unique_id",$g_from_unique_id->unique_id)
+          //                        ->orderBy("id","asc")
+          //                        ->first();
+          //
+          // $group_to_bin = DB::table("feeds_movement_groups_bins")
+          //                 ->where("unique_id",$g_from_unique_id->unique_id)
+          //                 ->orderBy("id","asc")
+          //                 ->first();
 
-          $group_to_bin = DB::table("feeds_movement_groups_bins")
-                          ->where("unique_id",$g_from_unique_id->unique_id)
-                          ->orderBy("id","asc")
-                          ->first();
-
-          return array(
-            'group_from'  =>  $group_from_bin_room->number_of_pigs,
-            'group_to'    =>  $group_to_bin->number_of_pigs
-          );
+          // return array(
+          //   'group_from'  =>  $group_from_bin_room->number_of_pigs,
+          //   'group_to'    =>  $group_to_bin->number_of_pigs
+          // );
 
 
           // execute the finalize transfer right away
@@ -2254,7 +2256,7 @@ class AnimalMovementController extends Controller
           //}
 
         }
-        
+
         // insert data on the 'feeds_movement_transfer_bins_v2'
         if(DB::table('feeds_movement_transfer_bins_v2')->insert($transfer_bins)){
           return "success";
