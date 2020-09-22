@@ -2136,8 +2136,6 @@ class AnimalMovementController extends Controller
             'user_id'           =>  $data['user_id']
           );
 
-          return $data_transfer;
-
           $this->finalizeTransferV2($data_transfer);
 
           // DB::table('feeds_movement_transfer_v2')->insert($data_transfer);
