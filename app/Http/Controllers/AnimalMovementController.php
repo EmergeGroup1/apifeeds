@@ -2092,7 +2092,7 @@ class AnimalMovementController extends Controller
           $type = $this->transferType(Input::get('group_type'));
 
 
-          $g_from_unique_id = DB::table('feeds_movement_groups')->where('group_id',$data['group_to'])->first();
+          $g_from_unique_id = DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->first();
           $g_to_unique_id = DB::table('feeds_movement_groups')->where('group_id',$data['group_to'])->first();
 
           // fetch the bins from the groups
