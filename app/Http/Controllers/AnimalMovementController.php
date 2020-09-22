@@ -2102,7 +2102,7 @@ class AnimalMovementController extends Controller
                                  ->first();
 
           $group_to_bin = DB::table("feeds_movement_groups_bins")
-                          ->where("unique_id",$g_from_unique_id->unique_id)
+                          ->where("unique_id",$g_to_unique_id->unique_id)
                           ->orderBy("id","asc")
                           ->first();
 
