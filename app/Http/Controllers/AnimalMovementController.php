@@ -2144,7 +2144,7 @@ class AnimalMovementController extends Controller
 
 
           $groups = DB::table('feeds_movement_groups')
-                ->where('status','finalized')
+                ->where('status','created')
                 ->where('group_id',$data['group_from'])
                 ->get();
 
