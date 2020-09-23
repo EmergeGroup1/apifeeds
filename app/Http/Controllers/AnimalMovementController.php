@@ -777,6 +777,102 @@ class AnimalMovementController extends Controller
 
       }
 
+
+      /**
+      ** Filter for all animal groups
+      ** @param $groups array
+      ** @param $group_table string
+      ** @param $group_bins_table string
+      ** @return array
+      **/
+      private function filterTransferBinsV2($groups,$group_table,$group_bins_table)
+      {
+          $data = array();
+
+          foreach($groups as $k => $v){
+
+            $date_to_transfer = (strtotime(date('Y-m-d',strtotime($v['date_to_transfer']))) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
+
+            $days_remaining = $this->daysRemaining($date_to_transfer,$v['type']);
+
+            $transfer_data = $this->transferDataV2($v['group_id']);
+
+            $days_remaining_date_md = date('M d');
+            $days_remaining_date_ymd = date('Y-m-d');
+            $t_ymd = date('Y-m-d');
+
+            if($transfer_data != NULL){
+
+              $date_to_transfer = (strtotime(date('Y-m-d',strtotime($transfer_data[0]['date_ymd']))) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
+              // $days_remaining = $date_to_transfer < 0 ? 0 : $days_remaining - $date_to_transfer;
+
+              if($date_to_transfer < 0){
+                $days_remaining = 0;
+              } else if($days_remaining > $date_to_transfer){
+                $days_remaining = $days_remaining - $date_to_transfer;
+              } else {
+                $days_remaining = 0;
+              }
+
+              $t_ymd = $transfer_data[0]['date_ymd'];
+
+            }
+
+            if($days_remaining > 0) {
+
+              $days_r = $days_remaining - 1;
+
+              $days_remaining_date_md = date('M d',strtotime($t_ymd . ' + ' . $days_r . ' days'));
+              $days_remaining_date_ymd = date('Y-m-d',strtotime($t_ymd . ' + ' . $days_r . ' days'));
+
+            }
+
+            $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table);
+
+            if($v['status'] != "removed"){
+
+                $data[] = array(
+                  'group_id'					      =>	$v['group_id'],
+                  'group_name'				      =>	$v['group_name'],
+                  'unique_id'					      =>	$v['unique_id'],
+                  'date_created'			      =>	$v['date_created'],
+                  'date_transfered'		      =>	$v['date_transfered'],
+                  'date_to_transfer'	      =>	str_replace("-","",(string)(int)$days_remaining),
+                  'days_remaining_date'     =>  $days_remaining_date_md,
+                  'days_remaining_date_ymd' =>  $days_remaining_date_ymd,
+                  'status'						      =>	$v['status'],
+                  'start_weight'			      =>	$v['start_weight'],
+                  'end_weight'				      =>	$v['end_weight'],
+                  'type'							      =>	$v['type'],//$this->groupType($group_bins_table),
+                  'crates'						      =>	$this->cratesTotal($v['unique_id']),//$v['crates'],
+                  'group_type_int'		      => 	$this->groupTypeInt($v['type']),
+                  'user_id'						      =>	$v['user_id'],
+                  'farm_id'						      =>	$v['farm_id'],
+                  'deceased'					      =>	$this->deceasedPigs($v['group_id']),
+                  'treated'						      =>	$this->treatedPigs($v['group_id']),
+                  'total_pigs'				      =>	$total_pigs,
+                  'farm_name'					      =>	$this->farmData($v['farm_id']),
+                  'bin_data'					      =>	$this->binsDataFilter($v['unique_id'],$group_bins_table,$v['farm_id']),
+                  'transfer_data'			      => 	$this->transferData($v['group_id']),
+                  'sched_pigs'				      =>	$this->scheduledTransaferPigs($v['group_id']),
+                  'death'                   =>  $this->amDeadPigs($v['group_id']),
+                  'treated'                 =>  $this->amTreatedPigs($v['group_id']),
+                  'death_perc'              =>  $this->deathPercentage($v['group_id']),
+                  'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
+                  'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id'])
+                );
+
+            }
+
+          }
+
+          return $data;
+
+      }
+
+
+
+
       /**
        * get the average pigs per crates in farrowing groups
        */
@@ -1058,6 +1154,29 @@ class AnimalMovementController extends Controller
 
           return $this->buildTransferData($transfer,NULL);
       }
+
+
+      /**
+      ** transferData()
+      ** get the corresponding transfer data of a group
+      ** @param $group_id int
+      ** @return Response
+      **/
+      private function transferDataV2($group_id)
+      {
+          $transfer = DB::table('feeds_movement_transfer_v2')
+                        ->where('group_from',$group_id)
+                        ->whereIn('status','finalized')
+                        ->orderBy('date','desc')
+                        ->get();
+          if($transfer == NULL){
+            return NULL;
+          }
+          $transfer = $this->toArray($transfer);
+
+          return $this->buildTransferData($transfer,NULL);
+      }
+
 
       /**
       ** scheduledTransaferPigs()
@@ -2151,7 +2270,7 @@ class AnimalMovementController extends Controller
           // execute the finalize transfer right away
 
           $groups = $this->toArray($groups);
-          $groups = $this->filterTransferBins($groups,'feeds_movement_groups','feeds_movement_groups_bins');
+          $groups = $this->filterTransferBinsV2($groups,'feeds_movement_groups','feeds_movement_groups_bins');
 
           return array('output'=>$groups);
 
