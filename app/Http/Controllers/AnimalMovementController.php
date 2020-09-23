@@ -2139,7 +2139,9 @@ class AnimalMovementController extends Controller
           $this->finalizeTransferV2($data_transfer);
 
           // DB::table('feeds_movement_transfer_v2')->insert($data_transfer);
-          // DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'created']);
+          DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'created']);
+
+
 
           $groups = DB::table('feeds_movement_groups')
                 ->where('status','finalized')
@@ -2204,16 +2206,6 @@ class AnimalMovementController extends Controller
 
           // update the 'feeds_movement_transfer_v2'
           DB::table('feeds_movement_transfer_v2')->insert($transfer);
-
-
-
-          // if($transfer['transfer_type'] == "farrowing_to_nursery"){
-          //   $room_from_id = $v;
-          //   $bin_id_from = 0;
-          // } else {
-          //   $room_from_id = 0;
-          //   $bin_id_from = $v;
-          // }
 
           $transfer_bins = array(
             'bin_id_from'		              =>	$transfer_data['bin_from'],
