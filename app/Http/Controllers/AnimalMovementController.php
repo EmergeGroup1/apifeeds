@@ -2268,16 +2268,9 @@ class AnimalMovementController extends Controller
           $group_from = $this->toArray($group_from);
           $group_from = $this->filterTransferBinsV2($group_from,'feeds_movement_groups','feeds_movement_groups_bins');
 
-          $group_to = DB::table('feeds_movement_groups')
-                ->where('status','created')
-                ->where('group_id',$data['group_to'])
-                ->get();
-          $group_to = $this->toArray($group_to);
-          $group_to = $this->filterTransferBinsV2($group_to,'feeds_movement_groups','feeds_movement_groups_bins');
+          $total_pigs = $this->totalPigsFilter($g_to_unique_id->unique_id,'feeds_movement_groups_bins');
 
-
-
-          return array('g_from'=>$group_from,'g_to'=>$group_to);
+          return array('g_from'=>$group_from,'g_to_total_pigs'=>$total_pigs);
 
       }
 
