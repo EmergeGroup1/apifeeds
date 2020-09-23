@@ -1165,7 +1165,7 @@ class AnimalMovementController extends Controller
       {
           $transfer = DB::table('feeds_movement_transfer_v2')
                         ->where('group_from',$group_id)
-                        ->where('status','finalized')
+                        ->whereIn('status',['finalized'.'created'])
                         ->orderBy('date','desc')
                         ->get();
           if($transfer == NULL){
