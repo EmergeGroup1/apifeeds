@@ -2319,7 +2319,8 @@ class AnimalMovementController extends Controller
             'farm_count'			=>	$transfer_data['farm_count'], // Nursery Count/Finisher Count/Market Count
             'final_count'			=>	$transfer_data['final_count'], // Start Number
             'trailer_number'  =>  $transfer_data['trailer_number'],
-            'driver_id'				=>	$transfer_data['driver_id']
+            'driver_id'				=>	$transfer_data['driver_id'],
+            'notes'           =>  $transfer_data['notes']
           );
 
           // update the 'feeds_movement_transfer_v2'
