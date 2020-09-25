@@ -2259,7 +2259,7 @@ class AnimalMovementController extends Controller
           $total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins');
 
           if($total_pigs_from == 0){
-            DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'deleted']);
+            DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'removed']);
           } else {
             DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'created']);
           }
