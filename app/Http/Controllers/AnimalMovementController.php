@@ -1805,6 +1805,7 @@ class AnimalMovementController extends Controller
 
 
             } else {
+              $data_bin = $data['bins'];
               foreach($data_bin as $k => $v){
                 $this->updateBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$group_bin_id[$k],$data['user_id']);
               }
