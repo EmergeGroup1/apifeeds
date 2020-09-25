@@ -2269,8 +2269,13 @@ class AnimalMovementController extends Controller
           $group_from = $this->filterTransferBinsV2($group_from,'feeds_movement_groups','feeds_movement_groups_bins');
 
           $total_pigs = $this->totalPigsFilter($g_to_unique_id->unique_id,'feeds_movement_groups_bins');
+          $total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins');
 
-          return array('g_from'=>$group_from,'g_to_total_pigs'=>$total_pigs);
+          return array(
+            'g_from'            =>  $group_from,
+            'g_to_total_pigs'   =>  $total_pigs,
+            'g_from_total_pigs' =>  $total_pigs_from
+          );
 
       }
 
