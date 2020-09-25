@@ -2256,8 +2256,14 @@ class AnimalMovementController extends Controller
 
           $this->finalizeTransferV2($data_transfer);
 
-          // DB::table('feeds_movement_transfer_v2')->insert($data_transfer);
-          DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'created']);
+          $total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins');
+
+          if($total_pigs_from == 0){
+            DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'deleted']);
+          } else {
+            DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'created']);
+          }
+
 
 
 
@@ -2269,7 +2275,7 @@ class AnimalMovementController extends Controller
           $group_from = $this->filterTransferBinsV2($group_from,'feeds_movement_groups','feeds_movement_groups_bins');
 
           $total_pigs = $this->totalPigsFilter($g_to_unique_id->unique_id,'feeds_movement_groups_bins');
-          $total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins');
+
 
           return array(
             'g_from'            =>  $group_from,
