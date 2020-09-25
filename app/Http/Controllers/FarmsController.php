@@ -1893,7 +1893,7 @@ class FarmsController extends Controller
     	private function animalGroupsAPI($unique_id)
     	{
     		$farrowing = DB::table('feeds_movement_groups')
-                    // ->where('status','!=','removed')
+                    ->where('status','!=','removed')
                     ->where('unique_id',$unique_id)->get();
     		$farrowing = $this->toArray($farrowing);
 
