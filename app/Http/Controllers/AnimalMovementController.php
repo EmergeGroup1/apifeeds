@@ -1809,8 +1809,8 @@ class AnimalMovementController extends Controller
               // foreach($data_bin as $k => $v){
               //   $this->updateBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$group_bin_id[$k],$data['user_id']);
               // }
-              return $data;
-              $this->updateBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$group_bin_id[$k],$data['user_id']);
+
+              $this->updateBinFarrowing($data['group_id'],$data['unique_id'],$data['number_of_pigs'][0],$data['user_id']);
             }
 
           }
@@ -1870,7 +1870,7 @@ class AnimalMovementController extends Controller
       ** @param  int  $pigs
       ** @return Response
       **/
-      private function updateBinFarrowing($bin_id,$unique_id,$pigs,$f_bin_id,$user_id)
+      private function updateBinFarrowing($bin_id,$unique_id,$pigs,$user_id)
       {
 
           $data = array(
@@ -1879,7 +1879,7 @@ class AnimalMovementController extends Controller
           );
 
           DB::table('feeds_movement_groups_bins')
-          ->where('id',$f_bin_id)
+          // ->where('id',$f_bin_id)
           ->where('unique_id',$unique_id)
           ->update($data);
 
