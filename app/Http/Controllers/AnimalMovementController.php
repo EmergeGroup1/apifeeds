@@ -2341,7 +2341,7 @@ class AnimalMovementController extends Controller
             'bin_id_from'		              =>	$transfer_data['bin_from'],
             'room_id_from'                =>  $transfer_data['room_from'],
             'bin_id_to'			              =>	$transfer_data['bin_to'],
-            'number_of_pigs_transferred'	=>	$transfer_data['pigs_to'],
+            'number_of_pigs_transferred'	=>	$transfer_data['final_count'], //$transfer_data['pigs_to'],
             'raptured'			              =>	$transfer_data['raptured'],
             'joint'				               	=>	$transfer_data['joint'],
             'poor'					              =>	$transfer_data['poor']
