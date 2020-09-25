@@ -1806,6 +1806,7 @@ class AnimalMovementController extends Controller
 
             } else {
               $data_bin = $data['bins'];
+              return $data_bin;
               foreach($data_bin as $k => $v){
                 $this->updateBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$group_bin_id[$k],$data['user_id']);
               }
@@ -1816,7 +1817,6 @@ class AnimalMovementController extends Controller
           // update farrowing group
           DB::table('feeds_movement_groups')->where('unique_id',$data['unique_id'])->update($group_data);
 
-          return $group_data;
 
           return "success";
       }
