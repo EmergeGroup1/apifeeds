@@ -26,7 +26,7 @@ class AnimalMovementController extends Controller
           $data = array(
             'type'      =>  "all", // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
             'date_from' =>  "2009-01-01", // (date)
-            'date_to'   =>  date("Y-m-d",, strtotime("+10 day")), // (date)
+            'date_to'   =>  date("Y-m-d", strtotime("+10 day")), // (date)
             'sort'      =>  "not_scheduled", // (string) not_scheduled, day_remaining
             's_farm'    =>  "all" // selected farm
           );
