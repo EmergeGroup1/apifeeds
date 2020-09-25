@@ -1816,6 +1816,8 @@ class AnimalMovementController extends Controller
           // update farrowing group
           DB::table('feeds_movement_groups')->where('unique_id',$data['unique_id'])->update($group_data);
 
+          return $group_data;
+
           return "success";
       }
 
