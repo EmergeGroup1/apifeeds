@@ -143,7 +143,7 @@ class APIController extends Controller
         unset($home_controller);
 
         $bins = json_decode($bins);
-
+        $bins_v2 = $this->binsBuilderV2($bins);
         $bins = $this->binsBuilder($bins);
         $farm = Farms::where('id', $farm_id)->select('name', 'notes')->first()->toArray();
 
@@ -154,6 +154,8 @@ class APIController extends Controller
           'numberofLowbins' =>  $this->farmsBuilderNumberOfLowBins($forecasting, $farm_id),
           'notes'     =>  $farm['notes'],
           'bins'      =>  $bins,
+          'total_bins'  =>  count($bins),
+          'bins_div'  =>  $this->binsDivision($bins_v2),
           'rooms'     =>  $rooms
         );
 
@@ -1791,7 +1793,7 @@ class APIController extends Controller
           'user_id'            =>  $request->input('user_id'),
           'type'              =>  $request->input('type'),
           'group_bin_id'      =>  $request->input('group_bin_id'),
-          //'bins'              =>  $request->input('bins'),
+          // 'bins'              =>  $request->input('bins'),
           'number_of_pigs'    =>  $request->input('number_of_pigs'),
           'unique_id'         =>  $request->input('unique_id')
         );
@@ -1850,6 +1852,51 @@ class APIController extends Controller
 
         break;
 
+      case "amCreateTransferV2":
+
+          $data = array(
+            'transfer_type'     =>  $request->input('transfer_type'),
+            'group_from'        =>  $request->input('group_from'),
+            'group_to'          =>  $request->input('group_to'),
+            'status'            =>  'created',
+            'date'              =>  date("Y-m-d", strtotime($request->input('date'))),
+            'shipped'           =>  $request->input('shipped'), // sow/nursery/finisher
+            'empty_weight'      =>  0,
+            'ave_weight'        =>  0,
+            'driver_id'         =>  $request->input('driver_id'),
+            'full_weight'       =>  0,
+            'received'          =>  0,
+            'dead'              =>  0,
+            'pigs_to'           =>  $request->input('to_pigs'),
+            'raptured'          =>  $request->input('raptured'),
+            'joint'             =>  $request->input('joint'),
+            'poor'              =>  $request->input('poor'),
+            'farm_count'        =>  $request->input('farm_count'), // nusery count/ finisher count/ market count
+            'final_count'       =>  $request->input('final_count'), // start number
+            'trailer_number'    =>  $request->input('trailer'),
+            'notes'             =>  $request->input('notes') == NULL ? "--" : $request->input('notes'),
+            'user_id'           =>  $request->input('user_id'),
+          );
+
+          // execute the finalize transfer
+
+
+          $am_controller = new AnimalMovementController;
+          $am_lists = $am_controller->createTransferAPIV2($data);
+          unset($am_controller);
+
+          if (!empty($am_lists)) {
+            return array(
+              "err"     =>  0,
+              "msg"     =>  "Successfully Created Transfer Animal Group",
+              "group" =>  $am_lists
+            );
+          } else {
+            return $this->errorMessage();
+          }
+
+          break;
+
       case "amUpdateTransfer":
 
         $data = array(
@@ -1904,7 +1951,6 @@ class APIController extends Controller
           'ave_weight' =>  $request->input('ave_weight'),
           'shipped' =>  $request->input('shipped'),
           'received' =>  $request->input('received'),
-          // 'dead' =>  $request->input('dead'),
           'raptured' =>  $request->input('raptured'),
           'joint' =>  $request->input('joint'),
           'poor' =>  $request->input('poor'),
@@ -1926,7 +1972,6 @@ class APIController extends Controller
           'ave_weight'      =>  'required',
           'shipped'         =>  'required',
           'received'        =>  'required',
-          // 'dead'            =>  'required',
           'raptured'        =>  'required',
           'joint'            =>  'required',
           'poor'            =>  'required',
@@ -1951,48 +1996,48 @@ class APIController extends Controller
         );
 
 
-        $home_crtl = new HomeController;
+        // $home_crtl = new HomeController;
 
-        for($i=0; $i<count($data['bins_to']); $i++){
-
-          $farm_id = DB::table("feeds_movement_groups")
-                      ->where("group_id",$transfer_data['group_to'])
-                      ->select('farm_id')
-                      ->first();
-
-          $u_id = $home_crtl->generator();
-
-          $dt_raptured = array(
-            'death_date'    =>  date("Y-m-d"),
-            'farm_id'       =>  $farm_id->farm_id,
-            'group_id'      =>  $transfer_data['group_to'],
-            'bin_id'        =>  $data['bins_to'][$i],
-            'room_id'       =>  0,
-            'cause'         =>  13,
-            'amount'        =>  $data['num_of_pigs_raptured'][$i],
-            'notes'         =>  "--",
-            'unique_id'     =>  $u_id
-          );
-
-          $dt_joint = array(
-            'death_date'    =>  date("Y-m-d"),
-            'farm_id'       =>  $farm_id->farm_id,
-            'group_id'      =>  $transfer_data['group_to'],
-            'bin_id'        =>  $data['bins_to'][$i],
-            'room_id'       =>  0,
-            'cause'         =>  13,
-            'amount'        =>  $data['num_of_pigs_joint'][$i],
-            'notes'         =>  "--",
-            'unique_id'     =>  $u_id
-          );
-
-          if($data['num_of_pigs_dead'][$i] != 0){
-            DB::table("feeds_groups_dead_pigs")->insert($dt_raptured);
-            DB::table("feeds_groups_dead_pigs")->insert($dt_joint);
-          }
-
-        }
-        unset($home_crtl);
+        // for($i=0; $i<count($data['bins_to']); $i++){
+        //
+        //   $farm_id = DB::table("feeds_movement_groups")
+        //               ->where("group_id",$transfer_data['group_to'])
+        //               ->select('farm_id')
+        //               ->first();
+        //
+        //   $u_id = $home_crtl->generator();
+        //
+        //   $dt_raptured = array(
+        //     'death_date'    =>  date("Y-m-d"),
+        //     'farm_id'       =>  $farm_id->farm_id,
+        //     'group_id'      =>  $transfer_data['group_to'],
+        //     'bin_id'        =>  $data['bins_to'][$i],
+        //     'room_id'       =>  0,
+        //     'cause'         =>  13,
+        //     'amount'        =>  $data['num_of_pigs_raptured'][$i],
+        //     'notes'         =>  "--",
+        //     'unique_id'     =>  $u_id
+        //   );
+        //
+        //   $dt_joint = array(
+        //     'death_date'    =>  date("Y-m-d"),
+        //     'farm_id'       =>  $farm_id->farm_id,
+        //     'group_id'      =>  $transfer_data['group_to'],
+        //     'bin_id'        =>  $data['bins_to'][$i],
+        //     'room_id'       =>  0,
+        //     'cause'         =>  13,
+        //     'amount'        =>  $data['num_of_pigs_joint'][$i],
+        //     'notes'         =>  "--",
+        //     'unique_id'     =>  $u_id
+        //   );
+        //
+        //   if($data['num_of_pigs_dead'][$i] != 0){
+        //     DB::table("feeds_groups_dead_pigs")->insert($dt_raptured);
+        //     DB::table("feeds_groups_dead_pigs")->insert($dt_joint);
+        //   // }
+        //
+        // }
+        // unset($home_crtl);
 
 
 
@@ -3600,6 +3645,127 @@ class APIController extends Controller
     }
 
     return $data;
+  }
+
+
+  /**
+   * Build the data of bins V2
+   *
+   * @return array
+   */
+  private function binsBuilderV2($bins)
+  {
+    $data = array();
+    for ($i = 0; $i < count($bins); $i++) {
+
+      $data[] = array(
+        'binID'                         =>  $bins[$i]->bin_id,
+        'binName'                       =>  'Bin #' . $bins[$i]->bin_number . ' - ' . $bins[$i]->alias,
+        'binNumber'                     =>  $bins[$i]->bin_number,
+        'binAlias'                      =>  $bins[$i]->alias,
+        'amountTons'                    =>  $bins[$i]->current_bin_amount_tons,
+        'dateToBeEmpty'                 =>  date("Y-m-d", strtotime($bins[$i]->empty_date)) == "1969-12-31" ? "--" : date("Y-m-d", strtotime($bins[$i]->empty_date)),
+        'inComingDelivery'              =>  $bins[$i]->delivery_amount,
+        'lastDelivery'                  =>  date("Y-m-d", strtotime($bins[$i]->next_deliverydd)),
+        'lastUpdate'                    =>  date("Y-m-d h:i a", strtotime($bins[$i]->last_update)),
+        'sow'                           =>  $bins[$i]->num_of_sow_pigs,
+        'user'                          =>  $bins[$i]->username,
+        'daysRemaining'                 =>  $bins[$i]->days_to_empty,
+        'currentMedication'             =>  $bins[$i]->medication_name,
+        'currentMedicationDescription'  =>  $bins[$i]->medication,
+        'currentMedicationID'           =>  $bins[$i]->medication_id,
+        'currentFeed'                   =>  $bins[$i]->feed_type_name_orig,
+        'currentFeedDescription'        =>  $bins[$i]->feed_type_name,
+        'currentFeedID'                 =>  $bins[$i]->feed_type_id,
+        'numberOfPigs'                  =>  $bins[$i]->total_number_of_pigs,
+        'binSize'                       =>  $bins[$i]->bin_s,
+        'groups'                        =>  $bins[$i]->default_val,
+        'ringAmount'                    =>  $this->currentRingAmount($bins[$i]->bin_s, $bins[$i]->current_bin_amount_tons)
+      );
+    }
+
+    return $data;
+  }
+
+
+  /**
+   * Build the data of bins
+   *
+   * @return array
+   */
+  private function binsDivision($bins)
+  {
+
+    $output_division = array();
+
+    $counter = $this->binsCounterDevider($bins);
+
+    $total_bins = count($bins);
+
+      for ($i = 0; $i < count($bins); $i++) {
+
+        if($total_bins <= 20){
+
+          $devider = (int)($total_bins/2) - 1;
+
+          if($total_bins == 3){
+            $devider = 1;
+          }
+
+          if($total_bins == 7){
+            $devider = 3;
+          }
+
+          if($total_bins == 11){
+            $devider = 5;
+          }
+
+          if($total_bins == 13){
+            $devider = 6;
+          }
+
+
+
+          if($i <= $devider){
+            $output_division["div_1"][] = $bins[$i];
+          } else {
+            $output_division["div_2"][] = $bins[$i];
+          }
+
+        } else {
+
+          if($i <= $counter['counter_one']){
+            $output_division["div_1"][] = $bins[$i];
+          } else if($i > $counter['counter_one'] && $i <= $counter['counter_two']){
+            $output_division["div_2"][] = $bins[$i];
+          } else {
+            $output_division["div_3"][] = $bins[$i];
+          }
+
+        }
+
+
+      }
+
+    return $output_division;
+  }
+
+  /*
+  * Brings the dynamic counter for rooms devider
+  */
+  private function binsCounterDevider($bins)
+  {
+
+    $total = count($bins);
+    $counter_one = $total/3;
+    $counter_one = floor($counter_one);
+
+    return array(
+      'counter_one' => $counter_one,
+      'counter_two' => ($counter_one + $counter_one) + 1,
+      'counter_three' => ($counter_one + $counter_one + $counter_one) - 1
+    );
+
   }
 
   /**
