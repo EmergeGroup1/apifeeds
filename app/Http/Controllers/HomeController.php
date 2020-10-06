@@ -3422,8 +3422,16 @@ class HomeController extends Controller
 
 				}
 
+				$dte = "none";
+				for($i=0; $i<=count($binsData); $i++){
+					if($binsData[$i]['days_to_empty'] != NULL){
+						$dte = "has_dte";
+					}
+				}
+
+
 				$sorted_bins = $binsData;
-				if($sorted_bins != NULL){
+				if($dte != "none"){
 
 					usort($sorted_bins, function($a,$b){
 						if(isset($a['days_to_empty']) && $a['days_to_empty'] != NULL){
