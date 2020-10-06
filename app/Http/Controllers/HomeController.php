@@ -3422,9 +3422,10 @@ class HomeController extends Controller
 
 				}
 
+
 				$dte = "none";
 				for($i=0; $i<=count($binsData); $i++){
-					if($binsData[$i]['days_to_empty'] != NULL){
+					if($binsData[$i] != NULL){
 						$dte = "has_dte";
 					}
 				}
