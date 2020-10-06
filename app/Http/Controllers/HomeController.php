@@ -3441,78 +3441,78 @@ class HomeController extends Controller
 						}
 					});
 
-					$days_to_empty_first = array(
-						'first_list_days_to_empty'	=>	isset($sorted_bins[0]['days_to_empty']) ? $sorted_bins[0]['days_to_empty'] : 0
-					);
+				}
 
-					$sorted_bins = $binsData;
+
+				$days_to_empty_first = array(
+					'first_list_days_to_empty'	=>	isset($sorted_bins[0]['days_to_empty']) ? $sorted_bins[0]['days_to_empty'] : 0
+				);
+
+				$sorted_bins = $binsData;
+				if($dte != "none"){
 					usort($sorted_bins, function($a,$b){
 						if(isset($a['last_manual_update'])){
 							if($a['last_manual_update'] == $b['last_manual_update']) return 0;
 							return ($a['last_manual_update'] < $b['last_manual_update'])?-1:1;
 						}
 					});
+				}
 
-					$last_manual_update = array(
-						'last_manual_update'	=>	isset($sorted_bins[0]['last_manual_update']) ? $sorted_bins[0]['last_manual_update'] : 0
-					);
+				$last_manual_update = array(
+					'last_manual_update'	=>	isset($sorted_bins[0]['last_manual_update']) ? $sorted_bins[0]['last_manual_update'] : 0
+				);
 
-					$empty_bins = array(
-						'empty_bins'	=>	$this->countEmptyBins($binsData)
-					);
+				$empty_bins = array(
+					'empty_bins'	=>	$this->countEmptyBins($binsData)
+				);
 
-					$lowest_amount_bin = array(
-						'lowest_amount_bin'	=> $binAmounts != NULL ?	min($binAmounts) : 0
-					);
+				$lowest_amount_bin = array(
+					'lowest_amount_bin'	=> $binAmounts != NULL ?	min($binAmounts) : 0
+				);
 
-					$low_bins = array();
-					for($i=0; $i < count($binsData); $i++){
+				$low_bins = array();
+				for($i=0; $i < count($binsData); $i++){
 
-						if(isset($binsData[$i]['days_to_empty'])){
+					if(isset($binsData[$i]['days_to_empty'])){
 
-							if($binsData[$i]['days_to_empty'] <= 2){
-								$low_bins[] = array(
-									'lowBins'	=> $binsData[$i]['days_to_empty']
-								);
-							}
-							//$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
-
+						if($binsData[$i]['days_to_empty'] <= 2){
+							$low_bins[] = array(
+								'lowBins'	=> $binsData[$i]['days_to_empty']
+							);
 						}
+						//$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
 
 					}
-
-					$low_bins_counter = array('lowBins'	=> count($low_bins));
-
-					$update_types = array();
-					for($i=0; $i < count($binsData); $i++){
-						if(isset($binsData[$i]['update_type'])){
-							if($binsData[$i]['update_type'] == 1){
-								//$update_types[] = array(
-									//'update_type'	=> ""
-								//);
-							} else {
-								$update_types[] = array(
-									'update_type'	=> $binsData[$i]['update_type']
-								);
-							}
-						}
-
-						$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
-					}
-
-					// disabled update notifications
-					if($update_notification == "disable"){
-						$update_types = "";
-					}
-
-					$update_types_counter = array('update_type'	=> $update_types);
-
-					return $binsDataFinal+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
 
 				}
 
+				$low_bins_counter = array('lowBins'	=> count($low_bins));
 
+				$update_types = array();
+				for($i=0; $i < count($binsData); $i++){
+					if(isset($binsData[$i]['update_type'])){
+						if($binsData[$i]['update_type'] == 1){
+							//$update_types[] = array(
+								//'update_type'	=> ""
+							//);
+						} else {
+							$update_types[] = array(
+								'update_type'	=> $binsData[$i]['update_type']
+							);
+						}
+					}
 
+					$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
+				}
+
+				// disabled update notifications
+				if($update_notification == "disable"){
+					$update_types = "";
+				}
+
+				$update_types_counter = array('update_type'	=> $update_types);
+
+				return $binsDataFinal+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
 
 	}
 
