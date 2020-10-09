@@ -151,7 +151,7 @@ class HomeController extends Controller
 						 $forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
 
 					} else {
-						$b_data = $this->binsDataFirstLoadv2($farms[$i]['id'],$farms[$i]['update_notification']);
+						$b_data = $this->binsDataFirstLoadV2($farms[$i]['id'],$farms[$i]['update_notification']);
 						if($b_data != NULL){
 							$bins_data = $b_data + array('notes'=>$farms[$i]['notes']);
 						} else {
