@@ -147,7 +147,7 @@ class HomeController extends Controller
 
 					// Cache::forget('farm_holder-'.$farms[$i]['id']);
 					if(isset($farms[$i]['id'])) {
-						if(Cache::has('farm_holder-'.$farms[$i]['id'])){
+						if(Cache::get('farm_holder-'.$farms[$i]['id'])[$i]){
 							$forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
 						}
 					} else {
