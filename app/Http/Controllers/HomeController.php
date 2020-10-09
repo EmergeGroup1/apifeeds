@@ -144,6 +144,7 @@ class HomeController extends Controller
 				$bins_data = array();
 
 				for($i=0; $i<count($farms); $i++){
+					
 					Cache::forget('farm_holder-'.$farms[$i]['id']);
 					if(Cache::has('farm_holder-'.$farms[$i]['id'])) {
 
