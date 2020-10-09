@@ -145,7 +145,7 @@ class HomeController extends Controller
 
 				for($i=0; $i<count($farms); $i++){
 
-					Cache::forget('farm_holder-'.$farms[$i]['id']);
+					// Cache::forget('farm_holder-'.$farms[$i]['id']);
 					if(Cache::has('farm_holder-'.$farms[$i]['id'])) {
 
 						 $forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
@@ -3569,7 +3569,7 @@ class HomeController extends Controller
 				for($i=0;$i<=$binsCount;$i++){
 					Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
 					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id']) && $bins[$i]['bin_id'] != 0) {
-						 
+
 							$binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id']);
 
 					 } else {
