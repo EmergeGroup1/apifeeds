@@ -103,6 +103,8 @@ class APIController extends Controller
           $farms = json_decode(Storage::get('forecasting_data_low_bins.txt'));
         }
 
+        return $farms;
+
         $data = $this->farmsBuilder($sort_type, $farms, $farms_default);
 
         return array('farmID' => $data);
