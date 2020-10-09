@@ -3569,8 +3569,7 @@ class HomeController extends Controller
 				for($i=0;$i<=$binsCount;$i++){
 					Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
 					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id']) && $bins[$i]['bin_id'] != 0) {
-
-							// $binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id'])[$i];
+						 
 							$binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id']);
 
 					 } else {
@@ -3578,7 +3577,6 @@ class HomeController extends Controller
 							$yesterday_update[$i] = $this->getYesterdayUpdate($bins[$i]['bin_id']);
 							$up_hist[$i] = json_decode(json_encode($this->lastUpdate_numpigs($bins[$i]['bin_id'])), true);
 							$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i][0]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i][0]['budgeted_amount']);
-							//$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroup($bins[$i]['bin_id'],$bins[$i]['farm_id']);
 							$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
 							$update_type = $this->updateTypeCounter($up_hist[$i][0]['update_type'],$yesterday_update[$i],$up_hist[$i][0]['num_of_pigs'],$bins[$i]['bin_id']);
 							$current_bin_cap = $this->currentBinCapacity($bins[$i]['bin_id']);
