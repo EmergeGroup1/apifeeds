@@ -144,16 +144,14 @@ class HomeController extends Controller
 				$bins_data = array();
 
 				for($i=0; $i<count($farms); $i++){
-
 					Cache::forget('farm_holder-'.$farms[$i]['id']);
-					if(isset(Cache::get('farm_holder-'.$farms[$i]['id'])[$i])){
+					if(Cache::has('farm_holder-'.$farms[$i]['id'])) {
 
-							$forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
+						 $forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
 
 					} else {
-						$b_data = $this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']);
-						if($b_data != NULL){
-							$bins_data = $b_data + array('notes'=>$farms[$i]['notes']);
+						if($this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) != NULL){
+							$bins_data = $this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes']);
 						} else {
 							$bins_data = NULL;
 						}
