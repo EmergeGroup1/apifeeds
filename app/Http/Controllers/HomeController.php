@@ -151,7 +151,7 @@ class HomeController extends Controller
 							$forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
 
 					} else {
-						$b_data = $this->binsDataFirstLoadV2($farms[$i]['id'],$farms[$i]['update_notification']);
+						$b_data = $this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']);
 						if($b_data != NULL){
 							$bins_data = $b_data + array('notes'=>$farms[$i]['notes']);
 						} else {
@@ -3357,6 +3357,9 @@ class HomeController extends Controller
 	/*
 	*	Bins forecating Data first load
 	*/
+	/*
+	*	Bins forecating Data first load
+	*/
 	private function binsDataFirstLoad($farm_id,$update_notification) {
 
 				$bins = DB::table('feeds_bins')
@@ -3386,7 +3389,7 @@ class HomeController extends Controller
 				$binsCount = count($bins) - 1;
 				for($i=0;$i<=$binsCount;$i++){
 					//Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
-					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id']) && $bins[$i]['bin_id'] != 0) {
+					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id'])) {
 
 							// $binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id'])[$i];
 							$binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id']);
@@ -3424,53 +3427,25 @@ class HomeController extends Controller
 
 				}
 
-
-				$dte = "none";
-				for($i=0; $i<count($binsData); $i++){
-					if(isset($binsData[$i]['days_to_empty']) && $binsData[$i]['days_to_empty'] != NULL){
-						$dte = "has_dte";
-					} else {
-						$dte = "none";
-					}
-				}
-
-
 				$sorted_bins = $binsData;
-				if($dte != "none"){
-
-					usort($sorted_bins, function($a,$b){
-						if(isset($a['days_to_empty']) && $a['days_to_empty'] != NULL){
-							if($a['days_to_empty'] == $b['days_to_empty']) return 0;
-							return ($a['days_to_empty'] < $b['days_to_empty'])?-1:1;
-						}
-					});
-
-					$sorted_bins = $binsData;
-					usort($sorted_bins, function($a,$b){
-						if(isset($a['last_manual_update'])){
-							if($a['last_manual_update'] == $b['last_manual_update']) return 0;
-							return ($a['last_manual_update'] < $b['last_manual_update'])?-1:1;
-						}
-					});
-
-					$last_manual_update = array(
-						'last_manual_update'	=>	isset($sorted_bins[0]['last_manual_update']) ? $sorted_bins[0]['last_manual_update'] : 0
-					);
-
-				} else {
-
-					$last_manual_update = array(
-						'last_manual_update'	=>  0
-					);
-
-				}
-
+				usort($sorted_bins, function($a,$b){
+					if($a['days_to_empty'] == $b['days_to_empty']) return 0;
+					return ($a['days_to_empty'] < $b['days_to_empty'])?-1:1;
+				});
 
 				$days_to_empty_first = array(
-					'first_list_days_to_empty'	=>	isset($sorted_bins[0]['days_to_empty']) ? $sorted_bins[0]['days_to_empty'] : 0
+					'first_list_days_to_empty'	=>	!empty($sorted_bins[0]['days_to_empty']) ? $sorted_bins[0]['days_to_empty'] : 0
 				);
 
+				$sorted_bins = $binsData;
+				usort($sorted_bins, function($a,$b){
+					if($a['last_manual_update'] == $b['last_manual_update']) return 0;
+					return ($a['last_manual_update'] < $b['last_manual_update'])?-1:1;
+				});
 
+				$last_manual_update = array(
+					'last_manual_update'	=>	$sorted_bins[0]['last_manual_update']
+				);
 
 				$empty_bins = array(
 					'empty_bins'	=>	$this->countEmptyBins($binsData)
@@ -3483,35 +3458,27 @@ class HomeController extends Controller
 				$low_bins = array();
 				for($i=0; $i < count($binsData); $i++){
 
-					if(isset($binsData[$i]['days_to_empty'])){
-
-						if($binsData[$i]['days_to_empty'] <= 2){
-							$low_bins[] = array(
-								'lowBins'	=> $binsData[$i]['days_to_empty']
-							);
-						}
-						//$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
-
+					if($binsData[$i]['days_to_empty'] <= 2){
+						$low_bins[] = array(
+							'lowBins'	=> $binsData[$i]['days_to_empty']
+						);
 					}
-
+					//$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
 				}
 
 				$low_bins_counter = array('lowBins'	=> count($low_bins));
 
 				$update_types = array();
 				for($i=0; $i < count($binsData); $i++){
-					if(isset($binsData[$i]['update_type'])){
-						if($binsData[$i]['update_type'] == 1){
-							//$update_types[] = array(
-								//'update_type'	=> ""
-							//);
-						} else {
-							$update_types[] = array(
-								'update_type'	=> $binsData[$i]['update_type']
-							);
-						}
+					if($binsData[$i]['update_type'] == 1){
+						//$update_types[] = array(
+							//'update_type'	=> ""
+						//);
+					} else {
+						$update_types[] = array(
+							'update_type'	=> $binsData[$i]['update_type']
+						);
 					}
-
 					$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
 				}
 
