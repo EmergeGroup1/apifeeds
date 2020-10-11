@@ -3569,6 +3569,8 @@ class HomeController extends Controller
 
 				}
 
+				return $binsData;
+
 				$sorted_bins = $binsData;
 
 				usort($sorted_bins, function($a,$b){
@@ -3644,7 +3646,7 @@ class HomeController extends Controller
 
 				$update_types_counter = array('update_type'	=> $update_types);
 
-				return $binsDataFinal;
+				return $binsDataFinal+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
 
 	}
 
