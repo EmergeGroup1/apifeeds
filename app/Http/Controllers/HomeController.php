@@ -3647,7 +3647,7 @@ class HomeController extends Controller
 				// return $binsDataFinal+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
 				$update_types_counter = array('update_type'	=> NULL);
 
-				return $binsData+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
+				return $binsData+$empty_bins+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
 
 	}
 
