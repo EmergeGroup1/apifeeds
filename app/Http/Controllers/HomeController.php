@@ -3461,7 +3461,7 @@ class HomeController extends Controller
 							'lowBins'	=> $binsData[$i]['days_to_empty']
 						);
 					}
-					// $binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
+					//$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
 				}
 
 				$low_bins_counter = array('lowBins'	=> count($low_bins));
