@@ -143,35 +143,35 @@ class HomeController extends Controller
 				$forecastingData = array();
 				$bins_data = array();
 
-				// for($i=0; $i<count($farms); $i++){
-				//
-				// 	Cache::forget('farm_holder-'.$farms[$i]['id']);
-				// 	if(isset(Cache::get('farm_holder-'.$farms[$i]['id'])[$i])){
-				//
-				// 			$forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
-				//
-				// 	} else {
-				// 		$b_data = $this->binsDataFirstLoadV2($farms[$i]['id'],$farms[$i]['update_notification']);
-				// 		if($b_data != NULL){
-				// 			$bins_data = $b_data + array('notes'=>$farms[$i]['notes']);
-				// 		} else {
-				// 			$bins_data = NULL;
-				// 		}
-				//
-				// 		$forecastingData[] = array(
-				// 			'farm_id'					=>	$farms[$i]['id'],
-				// 			'name'						=>	$farms[$i]['name'],
-				// 			'farm_type'				=>	$farms[$i]['farm_type'],
-				// 			'delivery_status'	=>	$this->pendingDeliveryItems($farms[$i]['id']),
-				// 			'address'					=>	$farms[$i]['address'],
-				// 			'bins'						=> 	$bins_data
-				// 		);
-				//
-				// 		Cache::forever('farm_holder-'.$farms[$i]['id'],$forecastingData);
-				//
-				// 	}
-				//
-				// }
+				for($i=0; $i<count($farms); $i++){
+
+					Cache::forget('farm_holder-'.$farms[$i]['id']);
+					if(isset(Cache::get('farm_holder-'.$farms[$i]['id'])[$i])){
+
+							$forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
+
+					} else {
+						$b_data = $this->binsDataFirstLoadV2($farms[$i]['id'],$farms[$i]['update_notification']);
+						if($b_data != NULL){
+							$bins_data = $b_data + array('notes'=>$farms[$i]['notes']);
+						} else {
+							$bins_data = NULL;
+						}
+
+						$forecastingData[] = array(
+							'farm_id'					=>	$farms[$i]['id'],
+							'name'						=>	$farms[$i]['name'],
+							'farm_type'				=>	$farms[$i]['farm_type'],
+							'delivery_status'	=>	$this->pendingDeliveryItems($farms[$i]['id']),
+							'address'					=>	$farms[$i]['address'],
+							'bins'						=> 	$bins_data
+						);
+
+						Cache::forever('farm_holder-'.$farms[$i]['id'],$forecastingData);
+
+					}
+
+				}
 
 				return $forecastingData;
 		}
