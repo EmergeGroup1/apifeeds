@@ -3530,8 +3530,8 @@ class HomeController extends Controller
 				$binAmounts = array();
 				$update_type = 0;
 
-				$binsCount = count($bins) - 1;
-				for($i=0;$i<=$binsCount;$i++){
+				for($i=0; $i<count($bins); $i++){
+
 					// Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
 					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id']) && $bins[$i]['bin_id'] != 0) {
 
