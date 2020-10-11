@@ -3605,13 +3605,13 @@ class HomeController extends Controller
 				);
 
 				$low_bins = array();
-				for($i=0; $i < count($sorted_bins); $i++){
+				for($i=0; $i < count($binsData); $i++){
 
-					if(isset($sorted_bins[$i]['days_to_empty'])){
+					if(isset($binsData[$i]['days_to_empty'])){
 
-						if($sorted_bins[$i]['days_to_empty'] <= 2){
+						if($binsData[$i]['days_to_empty'] <= 2){
 							$low_bins[] = array(
-								'lowBins'	=> $sorted_bins[$i]['days_to_empty']
+								'lowBins'	=> $binsData[$i]['days_to_empty']
 							);
 						}
 
@@ -3644,7 +3644,7 @@ class HomeController extends Controller
 
 				$update_types_counter = array('update_type'	=> $update_types);
 
-				return $binsDataFinal+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
+				return $binsDataFinal;
 
 	}
 
