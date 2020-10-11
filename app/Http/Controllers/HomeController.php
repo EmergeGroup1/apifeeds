@@ -3580,8 +3580,6 @@ class HomeController extends Controller
 				});
 
 
-				return $sorted_bins;
-				
 				$days_to_empty_first = array(
 					'first_list_days_to_empty'	=>	isset($sorted_bins[0]['days_to_empty']) ? $sorted_bins[0]['days_to_empty'] : 0
 				);
@@ -3623,21 +3621,21 @@ class HomeController extends Controller
 
 				$low_bins_counter = array('lowBins'	=> count($low_bins));
 
-				$update_types = array();
-				for($i=0; $i < count($binsData); $i++){
-
-					if(isset($binsData[$i]['update_type'])){
-
-						if($binsData[$i]['update_type'] != 1){
-							$update_types[] = array(
-								'update_type'	=> $binsData[$i]['update_type']
-							);
-						}
-
-					}
-
-					$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
-				}
+				// $update_types = array();
+				// for($i=0; $i < count($binsData); $i++){
+				//
+				// 	if(isset($binsData[$i]['update_type'])){
+				//
+				// 		if($binsData[$i]['update_type'] != 1){
+				// 			$update_types[] = array(
+				// 				'update_type'	=> $binsData[$i]['update_type']
+				// 			);
+				// 		}
+				//
+				// 	}
+				//
+				// 	$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
+				// }
 
 				// disabled update notifications
 				if($update_notification == "disable"){
@@ -3646,7 +3644,7 @@ class HomeController extends Controller
 
 				$update_types_counter = array('update_type'	=> $update_types);
 
-				return $binsDataFinal+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
+				return $binsData+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
 
 	}
 
