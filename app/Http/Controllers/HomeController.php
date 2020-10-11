@@ -3634,7 +3634,7 @@ class HomeController extends Controller
 
 					}
 
-					$binsDataFinal[$i] = $empty_bins+$days_to_empty_first+$binsData;
+					$binsDataFinal[$i] = $empty_bins+$days_to_empty_first+$binsData[0];
 				}
 
 				// disabled update notifications
