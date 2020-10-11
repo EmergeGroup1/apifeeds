@@ -3622,6 +3622,7 @@ class HomeController extends Controller
 				$low_bins_counter = array('lowBins'	=> count($low_bins));
 
 				$update_types = array();
+				$b_data = array();
 				for($i=0; $i < count($binsData); $i++){
 
 					if(isset($binsData[$i]['update_type'])){
@@ -3634,7 +3635,11 @@ class HomeController extends Controller
 
 					}
 
-					$binsDataFinal[$i] = $empty_bins+$days_to_empty_first+$binsData[0];
+					for($j=0; $j < count($binsData); $j++){
+						$b_data[$j] = $binsData[$j];
+					}
+
+					$binsDataFinal[$i] = $empty_bins+$days_to_empty_first+$b_data;
 				}
 
 				// disabled update notifications
