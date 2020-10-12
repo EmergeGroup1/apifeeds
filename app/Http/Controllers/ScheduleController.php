@@ -79,6 +79,9 @@ class ScheduleController extends Controller
             );
 
             Cache::forget('bins-'.$v->bin_id);
+
+            // remove cache on forecasting 1st data load
+            Cache::forget('farm_holder_bins_data-'.$v->bin_id);
           }
 
           // update the feeds_batch (put the driver_id)
@@ -100,6 +103,8 @@ class ScheduleController extends Controller
           $deliveries = Deliveries::where('unique_id','=',$unique_id_for_delivery)->get()->toArray();
 
           //$this->loadTruckFarmerNotification($deliveries);
+
+
 
           return $data_to_delivery;
 

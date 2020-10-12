@@ -1664,10 +1664,15 @@ class FarmsController extends Controller
       {
           $r = array();
           $output = array();
+          $output_division = array();
           $rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->orderBy("room_number");
 
+          $total_rooms = DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->count("room_number");
+
           if($rooms->exists()){
+
             $r = $rooms->get();
+            $counter = $this->roomsCounterDevider($r);
 
             for($i=0; $i<count($r); $i++){
               $output[$r[$i]->id] = array(
@@ -1678,16 +1683,79 @@ class FarmsController extends Controller
                 'pigs'  => $this->totalNumberOfPigsAnimalGroupAPI($r[$i]->id,$r[$i]->farm_id),
                 'groups' => $this->animalGroupBinsAPI($r[$i]->id)
               );
+
+              if($total_rooms <= 20){
+
+                  $devider = (int)($total_rooms/2) - 1;
+
+                  if($total_rooms == 3){
+                    $devider = 1;
+                  }
+
+                  if($total_rooms == 7){
+                    $devider = 3;
+                  }
+
+                  if($total_rooms == 11){
+                    $devider = 5;
+                  }
+
+                  if($total_rooms == 13){
+                    $devider = 6;
+                  }
+
+
+
+                  if($i <= $devider){
+                    $output_division["div_1"][] = $output[$r[$i]->id];
+                  } else {
+                    $output_division["div_2"][] = $output[$r[$i]->id];
+                  }
+
+              } else {
+
+                  if($i <= $counter['counter_one']){
+                    $output_division["div_1"][] = $output[$r[$i]->id];
+                  } else if($i > $counter['counter_one'] && $i <= $counter['counter_two']){
+                    $output_division["div_2"][] = $output[$r[$i]->id];
+                  } else {
+                    $output_division["div_3"][] = $output[$r[$i]->id];
+                  }
+
+              }
+
             }
+
           }
 
           $r = array(
             'data'  =>  $output,
-            'total_rooms' =>  DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->count("room_number"),
+            'data_div' => $output_division,
+            'total_rooms' =>  $total_rooms,
             'total_crates'  =>  DB::table("feeds_farrowing_rooms")->where('farm_id',$farm_id)->sum("crates_number")
           );
 
           return $r;
+      }
+
+
+
+      /*
+      * Brings the dynamic counter for rooms devider
+      */
+      private function roomsCounterDevider($rooms)
+      {
+
+        $total = count($rooms);
+        $counter_one = $total/3;
+        $counter_one = floor($counter_one);
+
+        return array(
+          'counter_one' => $counter_one,
+          'counter_two' => ($counter_one + $counter_one) + 1,
+          'counter_three' => ($counter_one + $counter_one + $counter_one) - 1
+        );
+
       }
 
       /*
@@ -1824,7 +1892,9 @@ class FarmsController extends Controller
     	*/
     	private function animalGroupsAPI($unique_id)
     	{
-    		$farrowing = DB::table('feeds_movement_groups')->where('status','!=','removed')->where('unique_id',$unique_id)->get();
+    		$farrowing = DB::table('feeds_movement_groups')
+                    ->where('status','!=','removed')
+                    ->where('unique_id',$unique_id)->get();
     		$farrowing = $this->toArray($farrowing);
 
     		return $farrowing != NULL ? $farrowing[0] : NULL;
