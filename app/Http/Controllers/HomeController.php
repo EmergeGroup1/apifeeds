@@ -3537,7 +3537,7 @@ class HomeController extends Controller
 
 					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id']) && $bins[$i]['bin_id'] != 0) {
 
-							$binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id']);
+							$binsData[$i] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id']);
 
 					 } else {
 
@@ -3554,7 +3554,7 @@ class HomeController extends Controller
 								$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
 							}
 
-							$binsData[] = array(
+							$binsData[$i] = array(
 								'bin_id'									=>	$bins[$i]['bin_id'],
 								'current_bin_capacity'		=>	$current_bin_cap,
 								'days_to_empty'						=>	$this->daysOfBins($current_bin_cap,$budgeted_,$total_number_of_pigs),
@@ -3565,14 +3565,11 @@ class HomeController extends Controller
 
 							$binAmounts[] = $up_hist[$i][0]['amount'] == NULL ? 0 : $up_hist[$i][0]['amount'];
 
-							Cache::forever('farm_holder_bins_data-'.$bins[$i]['bin_id'],$binsData);
+							Cache::forever('farm_holder_bins_data-'.$bins[$i]['bin_id'],$binsData[$i]);
 
 					 }
 
 				}
-
-				// return $binsData;
-
 
 				$sorted_bins = $binsData;
 
