@@ -3569,6 +3569,8 @@ class HomeController extends Controller
 
 					 }
 
+					 sleep(60); // this should halt for 60 seconds for every loop
+
 				}
 
 				$sorted_bins = $binsData[0];
