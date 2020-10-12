@@ -81,7 +81,7 @@ class ScheduleController extends Controller
             Cache::forget('bins-'.$v->bin_id);
 
             // remove cache on forecasting 1st data load
-            Cache::forget('farm_holder_bins_data-'.$v->farm_id);
+            Cache::forget('farm_holder_bins_data-'.$v->bin_id);
           }
 
           // update the feeds_batch (put the driver_id)
