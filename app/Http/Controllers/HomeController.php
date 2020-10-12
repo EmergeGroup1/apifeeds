@@ -3531,7 +3531,7 @@ class HomeController extends Controller
 				$update_type = 0;
 
 				for($i=0; $i<count($bins); $i++){
-					if($farm_id == 22){
+					if($farm_id == 171){
 							Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
 					}
 
