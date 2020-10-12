@@ -150,8 +150,8 @@ class HomeController extends Controller
 						 $forecastingData[] = Cache::get('farm_holder-'.$farms[$i]['id'])[$i];
 
 					} else {
-						if($this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) != NULL){
-							$bins_data = $this->binsDataFirstLoad($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes']);
+						if($this->binsDataFirstLoadv2($farms[$i]['id'],$farms[$i]['update_notification']) != NULL){
+							$bins_data = $this->binsDataFirstLoadv2($farms[$i]['id'],$farms[$i]['update_notification']) + array('notes'=>$farms[$i]['notes']);
 						} else {
 							$bins_data = NULL;
 						}
@@ -1024,6 +1024,8 @@ class HomeController extends Controller
 		$daysto = $this->daysOfBins($this->currentBinCapacity($bin_id),$budgeted_,$numofpigs_);
 
 		Cache::forget('bins-'.$bin_id);
+		// remove cache on forecasting 1st data load
+		Cache::forget('farm_holder_bins_data-'.$v->bin_id);
 
 		return array(
 			'bin'					=>	$bin_id,
@@ -3355,6 +3357,9 @@ class HomeController extends Controller
 	/*
 	*	Bins forecating Data first load
 	*/
+	/*
+	*	Bins forecating Data first load
+	*/
 	private function binsDataFirstLoad($farm_id,$update_notification) {
 
 				$bins = DB::table('feeds_bins')
@@ -3383,8 +3388,8 @@ class HomeController extends Controller
 
 				$binsCount = count($bins) - 1;
 				for($i=0;$i<=$binsCount;$i++){
-					//Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
-					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id']) && $bins[$i]['bin_id'] != 0) {
+					Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
+					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id'])) {
 
 							// $binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id'])[$i];
 							$binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id']);
@@ -3423,18 +3428,166 @@ class HomeController extends Controller
 				}
 
 				$sorted_bins = $binsData;
+				usort($sorted_bins, function($a,$b){
+					if($a['days_to_empty'] == $b['days_to_empty']) return 0;
+					return ($a['days_to_empty'] < $b['days_to_empty'])?-1:1;
+				});
+
+				$days_to_empty_first = array(
+					'first_list_days_to_empty'	=>	!empty($sorted_bins[0]['days_to_empty']) ? $sorted_bins[0]['days_to_empty'] : 0
+				);
+
+				$sorted_bins = $binsData;
+				usort($sorted_bins, function($a,$b){
+					if($a['last_manual_update'] == $b['last_manual_update']) return 0;
+					return ($a['last_manual_update'] < $b['last_manual_update'])?-1:1;
+				});
+
+				$last_manual_update = array(
+					'last_manual_update'	=>	$sorted_bins[0]['last_manual_update']
+				);
+
+				$empty_bins = array(
+					'empty_bins'	=>	$this->countEmptyBins($binsData)
+				);
+
+				$lowest_amount_bin = array(
+					'lowest_amount_bin'	=> $binAmounts != NULL ?	min($binAmounts) : 0
+				);
+
+				$low_bins = array();
+				for($i=0; $i < count($binsData); $i++){
+
+					if($binsData[$i]['days_to_empty'] <= 2){
+						$low_bins[] = array(
+							'lowBins'	=> $binsData[$i]['days_to_empty']
+						);
+					}
+					//$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
+				}
+
+				$low_bins_counter = array('lowBins'	=> count($low_bins));
+
+				$update_types = array();
+				for($i=0; $i < count($binsData); $i++){
+					if($binsData[$i]['update_type'] == 1){
+						//$update_types[] = array(
+							//'update_type'	=> ""
+						//);
+					} else {
+						$update_types[] = array(
+							'update_type'	=> $binsData[$i]['update_type']
+						);
+					}
+					$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
+				}
+
+				// disabled update notifications
+				if($update_notification == "disable"){
+					$update_types = "";
+				}
+
+				$update_types_counter = array('update_type'	=> $update_types);
+
+				return $binsDataFinal+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
+
+	}
+
+	/*
+	*	lowestAmountBin()
+	*	Get the lowest amount
+	* $bins (array)
+	*/
+	private function lowestAmountBin($bins)
+	{
+
+	}
+
+
+	/*
+	*	Bins forecating Data first load
+	*/
+	private function binsDataFirstLoadV2($farm_id,$update_notification) {
+
+				$bins = DB::table('feeds_bins')
+												 ->select('feeds_bins.*',
+										'feeds_bin_sizes.name AS bin_size_name',
+										'feeds_feed_types.name AS feed_type_name',
+										'feeds_feed_types.budgeted_amount')
+							 ->leftJoin('feeds_bin_sizes','feeds_bin_sizes.size_id', '=', 'feeds_bins.bin_size')
+							 ->leftJoin('feeds_feed_types','feeds_feed_types.type_id', '=', 'feeds_bins.feed_type')
+							 ->where('farm_id', '=', $farm_id)
+							 ->orderBy('feeds_bins.bin_number','asc')
+							 ->get();
+
+
+				$b_data = Bins::where('farm_id', $farm_id)->first();
+				if($b_data == NULL){
+					return NULL;
+				}
+
+				$bins = json_decode(json_encode($bins),true);
+
+				$binsData = array();
+				$binAmounts = array();
+				$update_type = 0;
+
+				for($i=0; $i<count($bins); $i++){
+					// if($farm_id == 155){
+							Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
+					// }
+
+					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id']) && $bins[$i]['bin_id'] != 0) {
+
+							$binsData[$i] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id']);
+
+					 } else {
+
+							$yesterday_update[$i] = $this->getYesterdayUpdate($bins[$i]['bin_id']);
+							$up_hist[$i] = json_decode(json_encode($this->lastUpdate_numpigs($bins[$i]['bin_id'])), true);
+							$budgeted_ = $this->getmyBudgetedAmountTwo($up_hist[$i][0]['feed_type'], $bins[$i]['feed_type'], $up_hist[$i][0]['budgeted_amount']);
+							$total_number_of_pigs = $this->totalNumberOfPigsAnimalGroupAPI($bins[$i]['bin_id'],$bins[$i]['farm_id']);
+							$update_type = $this->updateTypeCounter($up_hist[$i][0]['update_type'],$yesterday_update[$i],$up_hist[$i][0]['num_of_pigs'],$bins[$i]['bin_id']);
+							$current_bin_cap = $this->currentBinCapacity($bins[$i]['bin_id']);
+
+							$farms_data = Farms::where('id', $farm_id)->first();
+
+							if($farms_data->farm_type == "farrowing"){
+								$total_number_of_pigs = $bins[$i]['num_of_sow_pigs'];
+							}
+
+							$binsData[$i] = array(
+								'bin_id'									=>	$bins[$i]['bin_id'],
+								'current_bin_capacity'		=>	$current_bin_cap,
+								'days_to_empty'						=>	$this->daysOfBins($current_bin_cap,$budgeted_,$total_number_of_pigs),
+								'empty_date'							=>	$this->emptyDate($this->daysOfBins($current_bin_cap,$budgeted_,$total_number_of_pigs)),
+								'update_type'							=>	$update_type,
+								'last_manual_update'			=>	$this->lastManualUpdate($bins[$i]['bin_id']),
+								'num_of_pigs'							=>	$total_number_of_pigs
+							);
+
+							$binAmounts[] = $up_hist[$i][0]['amount'] == NULL ? 0 : $up_hist[$i][0]['amount'];
+
+							Cache::forever('farm_holder_bins_data-'.$bins[$i]['bin_id'],$binsData[$i]);
+
+					 }
+
+					 // sleep(10); // this should halt for 60 seconds for every loop
+
+				}
+
+				$sorted_bins = $binsData;
 
 				usort($sorted_bins, function($a,$b){
-					if(isset($a['days_to_empty']) && !empty($a['days_to_empty'])){
+					if(isset($a['days_to_empty'])){
 						if($a['days_to_empty'] == $b['days_to_empty']) return 0;
 						return ($a['days_to_empty'] < $b['days_to_empty'])?-1:1;
 					}
 				});
 
 
-
 				$days_to_empty_first = array(
-					'first_list_days_to_empty'	=>	isset($sorted_bins[0]['days_to_empty']) ? $sorted_bins[0]['days_to_empty'] : 0
+					'first_list_days_to_empty'	=>	$sorted_bins[0]['days_to_empty']
 				);
 
 				$sorted_bins = $binsData;
@@ -3460,14 +3613,13 @@ class HomeController extends Controller
 				$low_bins = array();
 				for($i=0; $i < count($binsData); $i++){
 
-					if(isset($binsData[$i]['days_to_empty'])){
+					if(isset($binsData[$i]['days_to_empty']) && $binsData[$i]['num_of_pigs'] != 0){
 
 						if($binsData[$i]['days_to_empty'] <= 2){
 							$low_bins[] = array(
 								'lowBins'	=> $binsData[$i]['days_to_empty']
 							);
 						}
-						//$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
 
 					}
 
@@ -3476,20 +3628,20 @@ class HomeController extends Controller
 				$low_bins_counter = array('lowBins'	=> count($low_bins));
 
 				$update_types = array();
+
 				for($i=0; $i < count($binsData); $i++){
+
 					if(isset($binsData[$i]['update_type'])){
-						if($binsData[$i]['update_type'] == 1){
-							//$update_types[] = array(
-								//'update_type'	=> ""
-							//);
-						} else {
+
+						if($binsData[$i]['update_type'] != 1){
 							$update_types[] = array(
 								'update_type'	=> $binsData[$i]['update_type']
 							);
 						}
+
 					}
 
-					$binsDataFinal[] = $empty_bins+$days_to_empty_first+$binsData[$i];
+					$binsDataFinal[0] = $empty_bins+$days_to_empty_first+$binsData;
 				}
 
 				// disabled update notifications
@@ -3498,20 +3650,13 @@ class HomeController extends Controller
 				}
 
 				$update_types_counter = array('update_type'	=> $update_types);
+				$num_of_bins = array("bins_count" => count($binsDataFinal[count($binsDataFinal) -1]) - 2);
 
-				return $binsDataFinal+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
+				return $binsDataFinal+$num_of_bins+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
 
-	}
-
-	/*
-	*	lowestAmountBin()
-	*	Get the lowest amount
-	* $bins (array)
-	*/
-	private function lowestAmountBin($bins)
-	{
 
 	}
+
 
 	/*
 	*	lastManualUpdate()
