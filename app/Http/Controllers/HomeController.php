@@ -3533,9 +3533,9 @@ class HomeController extends Controller
 				$update_type = 0;
 
 				for($i=0; $i<count($bins); $i++){
-					// if($farm_id == 155){
-							// Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
-					// }
+					if($farm_id == 155){
+							Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
+					}
 
 					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id']) && $bins[$i]['bin_id'] != 0) {
 
@@ -3620,7 +3620,7 @@ class HomeController extends Controller
 							);
 						}
 
-					} 
+					}
 
 				}
 
