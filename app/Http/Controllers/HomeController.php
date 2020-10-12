@@ -1024,6 +1024,8 @@ class HomeController extends Controller
 		$daysto = $this->daysOfBins($this->currentBinCapacity($bin_id),$budgeted_,$numofpigs_);
 
 		Cache::forget('bins-'.$bin_id);
+		// remove cache on forecasting 1st data load
+		Cache::forget('farm_holder_bins_data-'.$v->bin_id);
 
 		return array(
 			'bin'					=>	$bin_id,
