@@ -3575,7 +3575,7 @@ class HomeController extends Controller
 
 				}
 
-				$sorted_bins = $binsData[0];
+				$sorted_bins = $binsData;
 
 				usort($sorted_bins, function($a,$b){
 					if(isset($a['days_to_empty'])){
