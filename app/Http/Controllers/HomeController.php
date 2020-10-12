@@ -3620,11 +3620,7 @@ class HomeController extends Controller
 							);
 						}
 
-					} else {
-						$low_bins[] = array(
-							'lowBins'	=> 0
-						);
-					}
+					} 
 
 				}
 
