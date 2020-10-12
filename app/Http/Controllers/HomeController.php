@@ -3584,13 +3584,13 @@ class HomeController extends Controller
 					'first_list_days_to_empty'	=>	isset($sorted_bins[0]['days_to_empty']) ? $sorted_bins[0]['days_to_empty'] : 0
 				);
 
-				$sorted_bins = $binsData;
-				usort($sorted_bins, function($a,$b){
-					if(isset($a['last_manual_update'])){
-						if($a['last_manual_update'] == $b['last_manual_update']) return 0;
-						return ($a['last_manual_update'] < $b['last_manual_update'])?-1:1;
-					}
-				});
+				// $sorted_bins = $binsData;
+				// usort($sorted_bins, function($a,$b){
+				// 	if(isset($a['last_manual_update'])){
+				// 		if($a['last_manual_update'] == $b['last_manual_update']) return 0;
+				// 		return ($a['last_manual_update'] < $b['last_manual_update'])?-1:1;
+				// 	}
+				// });
 
 				$last_manual_update = array(
 					'last_manual_update'	=>	isset($sorted_bins[0]['last_manual_update']) ? $sorted_bins[0]['last_manual_update'] : 0
