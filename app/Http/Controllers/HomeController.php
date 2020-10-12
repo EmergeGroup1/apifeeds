@@ -3613,7 +3613,7 @@ class HomeController extends Controller
 				$low_bins = array();
 				for($i=0; $i < count($binsData); $i++){
 
-					if(isset($binsData[$i]['days_to_empty']) && $binsData[$i]['days_to_empty'] != 0){
+					if(isset($binsData[$i]['days_to_empty']) && $binsData[$i]['num_of_pigs'] != 0){
 
 						if($binsData[$i]['days_to_empty'] <= 2){
 							$low_bins[] = array(
