@@ -3535,7 +3535,7 @@ class APIController extends Controller
             'farmName'            =>  $v->name,
             'farmAbbr'            =>  strtoupper(substr(str_replace(" ", "", $v->name), 0, 2)),
             'farmType'            =>  $v->farm_type,
-            'numberOfBins'        =>  (count((array) $v->bins) - 4) - 1,
+            'numberOfBins'        =>  $v->bins->bins_count,//(count((array) $v->bins) - 4) - 1,
             'numberOfLowBins'     =>  $sort != 5 ? $v->bins->lowBins : NULL,
             'hasPendingDelivery'  =>  $sort != 5 ? $v->delivery_status : NULL,
             'daysRemaining'       =>  $sort != 5 ? $this->binsDaysRemaining($v->bins) : NULL,
