@@ -3533,9 +3533,9 @@ class HomeController extends Controller
 				$update_type = 0;
 
 				for($i=0; $i<count($bins); $i++){
-					// if($farm_id == 155){
-					// 		Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
-					// }
+					if($farm_id == 155){
+							Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
+					}
 
 					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id']) && $bins[$i]['bin_id'] != 0) {
 
@@ -3563,6 +3563,7 @@ class HomeController extends Controller
 								'empty_date'							=>	$this->emptyDate($this->daysOfBins($current_bin_cap,$budgeted_,$total_number_of_pigs)),
 								'update_type'							=>	$update_type,
 								'last_manual_update'			=>	$this->lastManualUpdate($bins[$i]['bin_id']),
+								'num_of_pigs'							=>	$total_number_of_pigs
 							);
 
 							$binAmounts[] = $up_hist[$i][0]['amount'] == NULL ? 0 : $up_hist[$i][0]['amount'];
@@ -3612,7 +3613,7 @@ class HomeController extends Controller
 				$low_bins = array();
 				for($i=0; $i < count($binsData); $i++){
 
-					if(isset($binsData[$i]['days_to_empty'])){
+					if(isset($binsData[$i]['days_to_empty']) && $binsData[$i]['num_of_pigs'] != 0){
 
 						if($binsData[$i]['days_to_empty'] <= 2){
 							$low_bins[] = array(
