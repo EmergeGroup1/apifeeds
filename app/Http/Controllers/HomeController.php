@@ -3589,7 +3589,7 @@ class HomeController extends Controller
 					'first_list_days_to_empty'	=>	$sorted_bins[0]['days_to_empty']
 				);
 
-				$sorted_bins = $binsData[0];
+				$sorted_bins = $binsData;
 				usort($sorted_bins, function($a,$b){
 					if(isset($a['last_manual_update'])){
 						if($a['last_manual_update'] == $b['last_manual_update']) return 0;
