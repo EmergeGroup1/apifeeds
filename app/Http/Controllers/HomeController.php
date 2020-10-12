@@ -3572,12 +3572,12 @@ class HomeController extends Controller
 
 				$sorted_bins = $binsData;
 
-				usort($sorted_bins, function($a,$b){
-					if(isset($a['days_to_empty'])){
-						if($a['days_to_empty'] == $b['days_to_empty']) return 0;
-						return ($a['days_to_empty'] < $b['days_to_empty'])?-1:1;
-					}
-				});
+				// usort($sorted_bins, function($a,$b){
+				// 	if(isset($a['days_to_empty'])){
+				// 		if($a['days_to_empty'] == $b['days_to_empty']) return 0;
+				// 		return ($a['days_to_empty'] < $b['days_to_empty'])?-1:1;
+				// 	}
+				// });
 
 
 				$days_to_empty_first = array(
