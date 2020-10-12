@@ -3652,7 +3652,7 @@ class HomeController extends Controller
 				}
 
 				$update_types_counter = array('update_type'	=> $update_types);
-				$num_of_bins = array("bins_count" => count($binsDataFinal));
+				$num_of_bins = array("bins_count" => count($binsDataFinal[0]) - 2);
 
 				return $binsDataFinal+$num_of_bins+$low_bins_counter+$update_types_counter+$last_manual_update+$lowest_amount_bin;
 
