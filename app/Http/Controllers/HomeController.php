@@ -3586,7 +3586,7 @@ class HomeController extends Controller
 
 
 				$days_to_empty_first = array(
-					'first_list_days_to_empty'	=>	isset($sorted_bins[0]['days_to_empty']) ? $sorted_bins[0]['days_to_empty'] : 0
+					'first_list_days_to_empty'	=>	$sorted_bins[0]['days_to_empty']
 				);
 
 				$sorted_bins = $binsData[0];
