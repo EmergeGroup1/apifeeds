@@ -3532,7 +3532,7 @@ class HomeController extends Controller
 
 				for($i=0; $i<count($bins); $i++){
 
-					Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
+					// Cache::forget('farm_holder_bins_data-'.$bins[$i]['bin_id']);
 					 if(Cache::has('farm_holder_bins_data-'.$bins[$i]['bin_id']) && $bins[$i]['bin_id'] != 0) {
 
 							$binsData[] = Cache::store('file')->get('farm_holder_bins_data-'.$bins[$i]['bin_id']);
