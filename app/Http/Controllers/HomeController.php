@@ -83,11 +83,11 @@ class HomeController extends Controller
 				$forecastingData = $this->farmsDataBuilder($farms);
 
 				// cache data via sort type low bins
-				// usort($forecastingData, function($a,$b){
-				// 	if($a['bins'][0]['empty_bins'] == $b['bins'][0]['empty_bins'])
-				// 	return ($a['bins'][0]['first_list_days_to_empty'] > $b['bins'][0]['first_list_days_to_empty']);
-				// 	return ($a['bins'][0]['empty_bins'] < $b['bins'][0]['empty_bins'])?1:-1;
-				// });
+				usort($forecastingData, function($a,$b){
+					if($a['bins'][0]['empty_bins'] == $b['bins'][0]['empty_bins'])
+					return ($a['bins'][0]['first_list_days_to_empty'] > $b['bins'][0]['first_list_days_to_empty']);
+					return ($a['bins'][0]['empty_bins'] < $b['bins'][0]['empty_bins'])?1:-1;
+				});
 				Storage::put('forecasting_data_low_bins.txt',NULL);
 				Storage::put('forecasting_data_low_bins.txt',json_encode($forecastingData));
 
@@ -116,11 +116,11 @@ class HomeController extends Controller
 				$forecastingData = $this->farmsDataBuilder($farms);
 
 				// cache data via sort type low bins
-				// usort($forecastingData, function($a,$b){
-				// 	if($a['bins'][0]['empty_bins'] == $b['bins'][0]['empty_bins'])
-				// 	return ($a['bins'][0]['first_list_days_to_empty'] > $b['bins'][0]['first_list_days_to_empty']);
-				// 	return ($a['bins'][0]['empty_bins'] < $b['bins'][0]['empty_bins'])?1:-1;
-				// });
+				usort($forecastingData, function($a,$b){
+					if($a['bins'][0]['empty_bins'] == $b['bins'][0]['empty_bins'])
+					return ($a['bins'][0]['first_list_days_to_empty'] > $b['bins'][0]['first_list_days_to_empty']);
+					return ($a['bins'][0]['empty_bins'] < $b['bins'][0]['empty_bins'])?1:-1;
+				});
 				Storage::put('forecasting_farrowing_data_low_bins.txt',json_encode($forecastingData));
 
 				// cache data via sort type a-z farms
