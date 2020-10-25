@@ -153,9 +153,9 @@ class AnimalMovementController extends Controller
               // }
 
               $output = $this->filterAll($data,NULL);
-              Storage::delete('animal_movement_data.txt');
-              Storage::put('animal_movement_data.txt',json_encode($output));
-              $output = Storage::get('animal_movement_data.txt');
+              // Storage::delete('animal_movement_data.txt');
+              // Storage::put('animal_movement_data.txt',json_encode($output));
+              // $output = Storage::get('animal_movement_data.txt');
 
               $return = array(
                   "output"          =>  json_decode($output),
@@ -172,21 +172,21 @@ class AnimalMovementController extends Controller
 
               $file_name = 'farrowing_data.txt';
               $output = $this->animalGroupSorter($data,["farrowing"],$file_name);
-              //return array("output"=>json_decode($output));
+
               return array("output"=>json_decode($output),"nursery_groups"=>json_decode($nursery_groups),"finisher_groups"=>json_decode($finisher_groups));
 
             case 'nursery_to_finisher':
 
               $file_name = 'nursery_data.txt';
               $output = $this->animalGroupSorter($data,["nursery"],$file_name);
-              //return array("output"=>json_decode($output));
+
               return array("output"=>json_decode($output),"nursery_groups"=>json_decode($nursery_groups),"finisher_groups"=>json_decode($finisher_groups));
 
             case 'finisher_to_market':
 
               $file_name = 'finisher_data.txt';
               $output = $this->animalGroupSorter($data,["finisher"],$file_name);
-              //return array("output"=>json_decode($output));
+
               return array("output"=>json_decode($output),"nursery_groups"=>json_decode($nursery_groups),"finisher_groups"=>json_decode($finisher_groups));
 
             default:
@@ -195,7 +195,7 @@ class AnimalMovementController extends Controller
               Storage::delete('animal_movement_data.txt');
               Storage::put('animal_movement_data.txt',json_encode($output));
               $output = Storage::get('animal_movement_data.txt');
-              //return array("output"=>json_decode($output));
+
               return array("output"=>json_decode($output),"nursery_groups"=>json_decode($nursery_groups),"finisher_groups"=>json_decode($finisher_groups));
 
           }
