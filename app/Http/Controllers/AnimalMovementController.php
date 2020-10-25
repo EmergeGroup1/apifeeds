@@ -1610,6 +1610,7 @@ class AnimalMovementController extends Controller
             'start_weight'	    =>	$data['start_weight'],
             'end_weight'	      =>	$data['end_weight'],
             'crates'			      =>	0,
+            'created_at'        =>  date("Y-m-d H:i:s"),
             'date_created'			=>	$data['date_created'],
             'date_to_transfer'	=>  $date_to_transfer,
             'status'				    =>	'entered',

@@ -1,1 +1,1 @@
-ALTER TABLE `feeds_movement_groups` ADD `created_at` DATE NOT NULL DEFAULT '00-00-0000 00:00:00' AFTER `farm_id`;
+ALTER TABLE `feeds_movement_groups` ADD `created_at` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER `farm_id`;
