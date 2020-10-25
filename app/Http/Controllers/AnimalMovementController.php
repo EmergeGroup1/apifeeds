@@ -153,9 +153,9 @@ class AnimalMovementController extends Controller
               // }
 
               $output = $this->filterAll($data,NULL);
-              // Storage::delete('animal_movement_data.txt');
-              // Storage::put('animal_movement_data.txt',json_encode($output));
-              // $output = Storage::get('animal_movement_data.txt');
+              Storage::delete('animal_movement_data.txt');
+              Storage::put('animal_movement_data.txt',json_encode($output));
+              $output = Storage::get('animal_movement_data.txt');
 
               $return = array(
                   "output"          =>  json_decode($output),
