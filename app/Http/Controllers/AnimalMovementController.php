@@ -652,7 +652,8 @@ class AnimalMovementController extends Controller
           $groups = DB::table($group_table)
                 ->whereIn('farm_id',$farm_ids)
                 ->whereNotIn('status',['finalized','removed','created'])
-                ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
+                // ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
+                ->whereBetween('created_at',[$data['date_from'],$data['date_to']]);
                 ->orderBy('date_to_transfer','desc')
                 ->get();
           $groups = $this->toArray($groups);
