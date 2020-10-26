@@ -16,10 +16,10 @@ class MarcController extends Controller
     /*
   	* Test Method
   	*/
-  	public function testMethod()
+  	public function inputBasis(Request $id, $value)
   	{
 
-      return "Hello I'm Marc Ordan's Controller";
+      DB::update('update tbldownload set basis = ? where id = ?',[$value,$id]);
 
   	}
 
