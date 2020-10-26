@@ -429,7 +429,8 @@ class AnimalMovementController extends Controller
                 ->where('type',$type)
                 ->whereIn('farm_id',$owner)
                 ->whereNotIn('status',['finalized','removed','created'])
-                ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
+                // ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
+                ->whereBetween('created_at',[$data['date_from'],$data['date_to']])
                 ->get();
           $groups = $this->toArray($groups);
           $groups = $this->filterTransferBins($groups,"feeds_movement_groups","feeds_movement_groups_bins");
