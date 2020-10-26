@@ -654,7 +654,8 @@ class AnimalMovementController extends Controller
           $groups = DB::table($group_table)
                 ->whereIn('farm_id',$farm_ids)
                 ->whereNotIn('status',['finalized','removed','created'])
-                ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
+                // ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
+                ->whereBetween('created_at',[date("Y-m-d H:i:s",strtotime($data['date_from'])),date("Y-m-d H:i:s",strtotime($data['date_to']))])
                 ->orderBy('date_to_transfer','desc')
                 ->get();
           $groups = $this->toArray($groups);
@@ -678,7 +679,8 @@ class AnimalMovementController extends Controller
             $groups = $groups->where('farm_id',$data['s_farm']);
           }
           $groups = $groups->whereIn('type',$type);
-          $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
+          // $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
+          $groups = $groups->whereBetween('created_at',[date("Y-m-d H:i:s",strtotime($data['date_from'])),date("Y-m-d H:i:s",strtotime($data['date_to']))]);
           $groups = $groups->orderBy('date_to_transfer','asc');
           $groups = $groups->get();
           $groups = $this->toArray($groups);
