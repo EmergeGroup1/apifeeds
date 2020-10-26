@@ -606,7 +606,7 @@ class AnimalMovementController extends Controller
           }
           $groups = $groups->whereNotIn('status',['finalized','removed','created']);
           // $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
-          $groups = $groups->where('created_at',"2020-10-25 17:50:32")
+          $groups = $groups->where('created_at',"2020-10-25 17:50:32");
           $groups = $groups->orderBy('date_to_transfer','desc');
           $groups = $groups->get();
           $groups = $this->toArray($groups);
