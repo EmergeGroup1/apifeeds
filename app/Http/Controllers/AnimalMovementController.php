@@ -172,21 +172,21 @@ class AnimalMovementController extends Controller
 
               $file_name = 'farrowing_data.txt';
               $output = $this->animalGroupSorter($data,["farrowing"],$file_name);
-
+              //return array("output"=>json_decode($output));
               return array("output"=>json_decode($output),"nursery_groups"=>json_decode($nursery_groups),"finisher_groups"=>json_decode($finisher_groups));
 
             case 'nursery_to_finisher':
 
               $file_name = 'nursery_data.txt';
               $output = $this->animalGroupSorter($data,["nursery"],$file_name);
-
+              //return array("output"=>json_decode($output));
               return array("output"=>json_decode($output),"nursery_groups"=>json_decode($nursery_groups),"finisher_groups"=>json_decode($finisher_groups));
 
             case 'finisher_to_market':
 
               $file_name = 'finisher_data.txt';
               $output = $this->animalGroupSorter($data,["finisher"],$file_name);
-
+              //return array("output"=>json_decode($output));
               return array("output"=>json_decode($output),"nursery_groups"=>json_decode($nursery_groups),"finisher_groups"=>json_decode($finisher_groups));
 
             default:
@@ -195,7 +195,7 @@ class AnimalMovementController extends Controller
               Storage::delete('animal_movement_data.txt');
               Storage::put('animal_movement_data.txt',json_encode($output));
               $output = Storage::get('animal_movement_data.txt');
-
+              //return array("output"=>json_decode($output));
               return array("output"=>json_decode($output),"nursery_groups"=>json_decode($nursery_groups),"finisher_groups"=>json_decode($finisher_groups));
 
           }
@@ -406,8 +406,7 @@ class AnimalMovementController extends Controller
             $groups = $groups->where('farm_id',$data['s_farm']);
           }
           $groups = $groups->whereNotIn('status',$group_status);
-          // $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
-          $groups = $groups->where('created_at',"2020-10-25 17:50:32");
+          $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
           $groups = $groups->get();
           $groups = $this->toArray($groups);
           $groups = $this->filterTransferBins($groups,"feeds_movement_groups","feeds_movement_groups_bins");
@@ -429,8 +428,7 @@ class AnimalMovementController extends Controller
                 ->where('type',$type)
                 ->whereIn('farm_id',$owner)
                 ->whereNotIn('status',['finalized','removed','created'])
-                // ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
-                ->whereBetween('created_at',[$data['date_from'],$data['date_to']])
+                ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
                 ->get();
           $groups = $this->toArray($groups);
           $groups = $this->filterTransferBins($groups,"feeds_movement_groups","feeds_movement_groups_bins");
@@ -607,8 +605,7 @@ class AnimalMovementController extends Controller
               $groups = $groups->where('farm_id',$data['s_farm']);
           }
           $groups = $groups->whereNotIn('status',['finalized','removed','created']);
-          // $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
-          $groups = $groups->whereBetween('created_at',[$data['date_from'],$data['date_to']]);
+          $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
           $groups = $groups->orderBy('date_to_transfer','desc');
           $groups = $groups->get();
           $groups = $this->toArray($groups);
@@ -632,8 +629,7 @@ class AnimalMovementController extends Controller
               $groups = $groups->where('farm_id',$data['s_farm']);
           }
           $groups = $groups->whereNotIn('status',['finalized','removed']);
-          // $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
-          $groups = $groups->whereBetween('created_at',[$data['date_from'],$data['date_to']]);
+          $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
           $groups = $groups->orderBy('date_to_transfer','desc');
           $groups = $groups->get();
           $groups = $this->toArray($groups);
@@ -653,11 +649,11 @@ class AnimalMovementController extends Controller
       private function filterTransferOwner($data,$farm_ids,$group_table,$group_bins_table)
       {
           $groups = DB::table($group_table)
-                      ->whereIn('farm_id',$farm_ids)
-                      ->whereNotIn('status',['finalized','removed','created'])
-                      ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
-                      ->orderBy('date_to_transfer','desc')
-                      ->get();
+                ->whereIn('farm_id',$farm_ids)
+                ->whereNotIn('status',['finalized','removed','created'])
+                ->whereBetween('date_created',[$data['date_from'],$data['date_to']])
+                ->orderBy('date_to_transfer','desc')
+                ->get();
           $groups = $this->toArray($groups);
           $groups = $this->filterTransferBins($groups,$group_table,$group_bins_table);
 
