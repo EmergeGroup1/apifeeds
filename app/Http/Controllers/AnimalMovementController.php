@@ -406,7 +406,8 @@ class AnimalMovementController extends Controller
             $groups = $groups->where('farm_id',$data['s_farm']);
           }
           $groups = $groups->whereNotIn('status',$group_status);
-          $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
+          // $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
+          $groups = $groups->whereBetween('created_at',[$data['date_from'],$data['date_to']]);
           $groups = $groups->get();
           $groups = $this->toArray($groups);
           $groups = $this->filterTransferBins($groups,"feeds_movement_groups","feeds_movement_groups_bins");
