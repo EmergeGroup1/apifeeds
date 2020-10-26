@@ -604,6 +604,7 @@ class AnimalMovementController extends Controller
           if($data['s_farm'] != "all"){
               $groups = $groups->where('farm_id',$data['s_farm']);
           }
+          
           $groups = $groups->whereNotIn('status',['finalized','removed','created']);
           // $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
           $groups = $groups->whereBetween('created_at',[$data['date_from'],date("Y-m-d H:i:s",strtotime($data['date_to']))]);
