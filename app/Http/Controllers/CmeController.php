@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Cme;
+use App\Http\Requests;
+use App\Cme;
 use App\Http\Resources\Cme as CmeResource;
 
 class CmeController extends Controller
@@ -49,12 +49,12 @@ class CmeController extends Controller
   // Update Visibility
   public function visibility(Request $request)
   {
-      $cme = $request->isMethod('put') ? Cme::findOrFail($request->id) : new Cme;
+    $cme = $request->isMethod('put') ? Cme::findOrFail($request->id) : new Cme;
 
-      $cme->visibility_ui = $request->input('visibility_ui');
-      if ($cme->save()) {
-          return new CmeResource($cme);
-      }
+    $cme->visibility_ui = $request->input('visibility_ui');
+    if ($cme->save()) {
+      return new CmeResource($cme);
+    }
   }
 
   /**
