@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Cme;
-use App\Http\Resources\Cme as Cme2Resource;
+use App\Http\Resources\Cme as CmeResource;
 
 
 
