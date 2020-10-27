@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-// use App\Http\Requests;
 use App\Models\Cme;
 use App\Http\Resources\Cme as CmeResource;
-
 
 class CmeController extends Controller
 {
@@ -18,8 +17,7 @@ class CmeController extends Controller
   public function index()
   {
     //GET CME
-    $cmes = Cme::paginate(15);
-    // $cmes = Cme::all();
+    $cmes = Cme::all();
 
     // RETURN collection of CME as a resource
     return CmeResource::collection($cmes);
@@ -28,7 +26,7 @@ class CmeController extends Controller
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
+   * @param  \Illuminate\Http\Request
    * @return \Illuminate\Http\Response
    */
   public function store(Request $request)
@@ -41,10 +39,22 @@ class CmeController extends Controller
     $cme->converted_last = $request->input('converted_last');
     $cme->basis = $request->input('basis');
     $cme->bidvalue = $request->input('bidvalue');
+    $cme->visibility_ui = $request->input('visibility_ui');
 
     if ($cme->save()) {
       return new CmeResource($cme);
     }
+  }
+
+  // Update Visibility
+  public function visibility(Request $request)
+  {
+      $cme = $request->isMethod('put') ? Cme::findOrFail($request->id) : new Cme;
+
+      $cme->visibility_ui = $request->input('visibility_ui');
+      if ($cme->save()) {
+          return new CmeResource($cme);
+      }
   }
 
   /**
