@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Http\Requests;
-use App\Cme;
-use App\Http\Resources\Cme as CmeResource;
+use App\Cme2;
+use App\Http\Resources\Cme2 as Cme2Resource;
+
+
+
 
 class CmeController extends Controller
 {
