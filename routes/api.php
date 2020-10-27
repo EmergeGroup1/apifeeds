@@ -14,19 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // lIST ALL CME
-Route::get('cmes', 'App\Http\Controllers\CmeController@index');
-
+Route::get('cmes', 'CmeController@index');
 // LIST SINGLE CME RECORD
-Route::get('cme/{id}', 'App\Http\Controllers\CmeController@show');
-
+Route::get('cme/{id}', 'CmeController@show');
 // CREATE NEW CME RECORD
-Route::post('cme', 'App\Http\Controllers\CmeController@store');
-
+Route::post('cme', 'CmeController@store');
 // UPDATE CME RECORD
-Route::put('cme/{id}', 'App\Http\Controllers\CmeController@store');
-
+Route::put('cme/{id}', 'CmeController@store');
 //UPDATE VISIBILITY
-Route::put('cme/{id}', 'App\Http\Controllers\CmeController@visibility');
-
+Route::put('cme/{id}', 'CmeController@visibility');
 // DELETE CME RECORD
-Route::delete('cme/{id}', 'App\Http\Controllers\CmeController@destroy');
+Route::delete('cme/{id}', 'CmeController@destroy');
