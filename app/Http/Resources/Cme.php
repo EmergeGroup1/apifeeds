@@ -15,18 +15,18 @@ class Cme extends JsonResource
     public function toArray($request)
     {
         // this will return all the request in controller
-        // return parent::toArray($request);
+        return parent::toArray($request);
 
         // a customized return
-        return [
-            'id' => $this->id,
-            'month' => $this->month,
-            'last' => $this->last,
-            'converted_last' => $this->converted_last,
-            'basis' => $this->basis,
-            'bidvalue' => $this->bidvalue,
-            'visibility_ui' => $this->visibility_ui
+        // return [
+        //     'id' => $this->id,
+        //     'month' => $this->month,
+        //     'last' => $this->last,
+        //     'converted_last' => $this->converted_last,
+        //     'basis' => $this->basis,
+        //     'bidvalue' => $this->bidvalue,
+        //     'visibility_ui' => $this->visibility_ui
 
-        ];
+        // ];
     }
 }

@@ -7,9 +7,6 @@ use App\Http\Requests;
 use App\Cme;
 use App\Http\Resources\Cme as CmeResource;
 
-
-
-
 class CmeController extends Controller
 {
   /**
