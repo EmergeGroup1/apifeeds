@@ -3235,9 +3235,9 @@ class APIController extends Controller
         case "MO":
 
           $output = NULL;
-          
+
           $mo_ctrl = new MarcController;
-          $output = $mo_ctrl->testMethod();
+          $output = $mo_ctrl->hello();
           unset($mo_ctrl);
 
           return $output;
