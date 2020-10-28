@@ -51,15 +51,6 @@ class MarcController extends Controller
 		}
 	}
 
-	public function update(Request $req)
-	{
-		$cme = Cme::find($req->id);
-		$cme->month = $req->month;
-		if ($cme->save()) {
-			return $cme;
-		}
-	}
-
 	// Update Visibility
 	public function visibility(Request $request)
 	{

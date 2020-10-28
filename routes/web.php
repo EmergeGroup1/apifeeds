@@ -34,7 +34,7 @@ Route::get('cme/{id}', 'CmeController@show');
 // CREATE NEW CME RECORD
 Route::post('cme', 'CmeController@store');
 // UPDATE CME RECORD
-Route::put('cme/{id}', 'CmeController@store');
+Route::put('cme', 'MarcController@store');
 //UPDATE VISIBILITY
 Route::put('cme/{id}', 'MarcController@visibility');
 // DELETE CME RECORD
