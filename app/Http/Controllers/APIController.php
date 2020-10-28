@@ -3236,6 +3236,8 @@ class APIController extends Controller
 
           $output = NULL;
 
+          return "testing";
+
           $mo_ctrl = new MarcController;
           $output = $mo_ctrl->testMethod();
           unset($mo_ctrl);
