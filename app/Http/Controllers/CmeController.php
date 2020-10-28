@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests;
+
+// use App\Http\Requests;
+use Cache;
+use DB;
+use Storage;
+use Carbon\Carbon;
 use App\Cme;
 use App\Http\Resources\Cme as CmeResource;
 
@@ -26,7 +32,7 @@ class CmeController extends Controller
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request
+   * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
   public function store(Request $request)
