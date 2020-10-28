@@ -9,11 +9,20 @@ use Cache;
 use DB;
 use Storage;
 use Carbon\Carbon;
+use App\Cme;
+use App\Http\Resources\Cme as CmeResource;
 
 class MarcController extends Controller
 {
 	public function hello()
 	{
-		return 'hello this is firing';
+
+		//GET CME
+    $cmes = Cme::all();
+
+    // RETURN collection of CME as a resource
+    return CmeResource::collection($cmes);
+
+		// return 'hello this is firing';
 	}
 }
