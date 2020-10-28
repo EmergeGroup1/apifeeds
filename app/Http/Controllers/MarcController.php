@@ -30,7 +30,7 @@ class MarcController extends Controller
 	    $cmes = Cme::all();
 
 	    // RETURN collection of CME as a resource
-	    return CmeResource::collection($cmes);
+	    return $cmes;
 	  }
 
 	  /**
