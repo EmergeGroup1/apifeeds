@@ -28,7 +28,7 @@ Route::get('ugn', 'AnimalMovementController@updateGroupName');
 Route::get('pigtrackerdata', 'AnimalMovementController@listAPI');
 Route::get('hello', 'MarcController@hello');
 // lIST ALL CME
-Route::get('cmes', 'CmeController@index');
+Route::get('cmes', 'TESTTTTController@index');
 // LIST SINGLE CME RECORD
 Route::get('cme/{id}', 'CmeController@show');
 // CREATE NEW CME RECORD
