@@ -28,17 +28,13 @@ Route::get('ugn', 'AnimalMovementController@updateGroupName');
 Route::get('pigtrackerdata', 'AnimalMovementController@listAPI');
 Route::get('hello', 'MarcController@hello');
 // lIST ALL CME
-Route::get('cmes', 'MarcController@index');
+Route::get('cmes', 'CmeController@index');
 // LIST SINGLE CME RECORD
 Route::get('cme/{id}', 'CmeController@show');
 // CREATE NEW CME RECORD
-Route::post('cme', 'MarcController@update');
+Route::post('cme', 'MarcController@store');
 // UPDATE CME RECORD
 Route::put('cme/{id}', 'MarcController@store');
-
-// UPDATE CME RECORD - NEW
-Route::put('cme', 'MarcController@update');
-
 //UPDATE VISIBILITY
 Route::put('cme/{id}', 'MarcController@visibility');
 // DELETE CME RECORD
