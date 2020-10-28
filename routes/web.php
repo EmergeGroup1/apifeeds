@@ -26,16 +26,4 @@ Route::get('binclearcache/{id}', 'HomeController@clearBinsCache');
 Route::get('historylatest', 'HomeController@cacheBinHistoryLatest');
 Route::get('ugn', 'AnimalMovementController@updateGroupName');
 Route::get('pigtrackerdata', 'AnimalMovementController@listAPI');
-
-// lIST ALL CME
-Route::get('cmes', 'CmeController@index');
-// LIST SINGLE CME RECORD
-Route::get('cme/{id}', 'CmeController@show');
-// CREATE NEW CME RECORD
-Route::post('cme', 'CmeController@store');
-// UPDATE CME RECORD
-Route::put('cme/{id}', 'CmeController@store');
-//UPDATE VISIBILITY
-Route::put('cme/{id}', 'CmeController@visibility');
-// DELETE CME RECORD
-Route::delete('cme/{id}', 'CmeController@destroy');
+Route::get('hello', 'MarcController@hello');

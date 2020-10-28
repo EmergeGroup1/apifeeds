@@ -12,15 +12,8 @@ use Carbon\Carbon;
 
 class MarcController extends Controller
 {
-
-    /*
-  	* Test Method
-  	*/
-  	public function inputBasis(Request $id, $value)
-  	{
-
-      DB::update('update tbldownload set basis = ? where id = ?',[$value,$id]);
-
-  	}
-
+	public function hello()
+	{
+		return 'hello this is firing';
+	}
 }
