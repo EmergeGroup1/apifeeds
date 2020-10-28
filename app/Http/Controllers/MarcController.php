@@ -52,7 +52,7 @@ class MarcController extends Controller
 	    $cme->visibility_ui = $request->input('visibility_ui');
 
 	    if ($cme->save()) {
-	      return new CmeResource($cme);
+	      return $cme;
 	    }
 	  }
 
@@ -63,7 +63,7 @@ class MarcController extends Controller
 
 	    $cme->visibility_ui = $request->input('visibility_ui');
 	    if ($cme->save()) {
-	      return new CmeResource($cme);
+	      return $cme;
 	    }
 	  }
 
@@ -79,7 +79,7 @@ class MarcController extends Controller
 	    $cme = Cme::findOrFail($id);
 
 	    //return single cme record
-	    return new CmeResource($cme);
+	    return $cme;
 	  }
 
 
@@ -96,7 +96,7 @@ class MarcController extends Controller
 
 	    // Delete single cme record
 	    if ($cme->delete()) {
-	      return new CmeResource($cme);
+	      return $cme;
 	    }
 	  }
 }
