@@ -32,7 +32,7 @@ Route::get('cmes', 'MarcController@index');
 // LIST SINGLE CME RECORD
 Route::get('cme/{id}', 'CmeController@show');
 // CREATE NEW CME RECORD
-Route::post('cme', 'MarcController@store');
+Route::post('cme', 'MarcController@update');
 // UPDATE CME RECORD
 Route::put('cme/{id}', 'MarcController@store');
 
