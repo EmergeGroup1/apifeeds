@@ -32,9 +32,9 @@ Route::get('cmes', 'CmeController@index');
 // LIST SINGLE CME RECORD
 Route::get('cme/{id}', 'CmeController@show');
 // CREATE NEW CME RECORD
-Route::post('cme', 'MarcController@store');
+Route::post('cme', 'CmeController@store');
 // UPDATE CME RECORD
-Route::put('cme/{id}', 'MarcController@store');
+Route::put('cme/{id}', 'CmeController@store');
 //UPDATE VISIBILITY
 Route::put('cme/{id}', 'MarcController@visibility');
 // DELETE CME RECORD
