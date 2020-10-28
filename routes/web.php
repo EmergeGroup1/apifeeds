@@ -35,6 +35,10 @@ Route::get('cme/{id}', 'CmeController@show');
 Route::post('cme', 'MarcController@store');
 // UPDATE CME RECORD
 Route::put('cme/{id}', 'MarcController@store');
+
+// UPDATE CME RECORD - NEW
+Route::put('cme', 'MarcController@update');
+
 //UPDATE VISIBILITY
 Route::put('cme/{id}', 'MarcController@visibility');
 // DELETE CME RECORD
