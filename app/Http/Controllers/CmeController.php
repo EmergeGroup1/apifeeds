@@ -22,12 +22,11 @@ class CmeController extends Controller
    */
   public function index()
   {
-    // //GET CME
-    // $cmes = Cme::all();
+    //GET CME
+    $cmes = Cme::all();
 
-    // // RETURN collection of CME as a resource
-    // return CmeResource::collection($cmes);
-    return response()->json(CmeResource::get(), 200);
+    // RETURN collection of CME as a resource
+    return CmeResource::collection($cmes);
   }
 
   /**
