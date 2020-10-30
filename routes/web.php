@@ -28,15 +28,24 @@ Route::get('ugn', 'AnimalMovementController@updateGroupName');
 Route::get('pigtrackerdata', 'AnimalMovementController@listAPI');
 
 
-//lIST ALL CME
+//get ALL CME
 Route::get('cmes', 'MarcController@index');
-// LIST SINGLE CME RECORD
+// get SINGLE CME RECORD
 Route::get('cme/{id}', 'MarcController@cmeByID');
-// CREATE NEW CME RECORD
-Route::post('cme', 'CmeController@store');
-// UPDATE CME RECORD
-Route::post('cme/{id}', 'CmeController@store');
-//UPDATE VISIBILITY
-Route::post('cme/v/{id}', 'CmeController@visibility');
-// DELETE CME RECORD
-Route::delete('cme/{id}', 'MarcController@destroy');
+//update CME
+Route::put('cme/{id}', 'MarcController@cmeUpdate');
+
+
+
+
+
+
+
+// // CREATE NEW CME RECORD
+// Route::post('cme', 'CmeController@store');
+// // UPDATE CME RECORD
+// Route::post('cme/{id}', 'CmeController@store');
+// //UPDATE VISIBILITY
+// Route::post('cme/v/{id}', 'CmeController@visibility');
+// // DELETE CME RECORD
+// Route::delete('cme/{id}', 'MarcController@destroy');

@@ -26,9 +26,11 @@ class MarcController extends Controller
 		return response()->json(Cme::find($id), 200);
 	}
 
-
-
-
+	public function cmeUpdate(Request $request, Cme $cme)
+	{
+		$cme->update($request->all());
+		return response()->json($cme, 200);
+	}
 
 
 
