@@ -21,11 +21,7 @@ class MarcController extends Controller
 	 */
 	public function index()
 	{
-		//GET CME
-		$cmes = Cme::all();
-
-		// RETURN collection of CME as a resource
-		return $cmes;
+		return response()->json(Cme::get(), 200);
 	}
 
 	/**

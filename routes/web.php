@@ -26,8 +26,10 @@ Route::get('binclearcache/{id}', 'HomeController@clearBinsCache');
 Route::get('historylatest', 'HomeController@cacheBinHistoryLatest');
 Route::get('ugn', 'AnimalMovementController@updateGroupName');
 Route::get('pigtrackerdata', 'AnimalMovementController@listAPI');
+
+
 //lIST ALL CME
-Route::get('cmes', 'CmeController@index');
+Route::get('cmes', 'MarcController@index');
 // LIST SINGLE CME RECORD
 Route::get('cme/{id}', 'CmeController@show');
 // CREATE NEW CME RECORD
