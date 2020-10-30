@@ -33,7 +33,7 @@ Route::get('cmes', 'MarcController@index');
 // get SINGLE CME RECORD
 Route::get('cme/{id}', 'MarcController@cmeByID');
 //update CME
-Route::post('cme/{id}', 'MarcController@cmeUpdate');
+Route::put('cme/{id}', 'MarcController@cmeUpdate');
 
 
 
