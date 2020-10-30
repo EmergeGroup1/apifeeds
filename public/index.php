@@ -1,5 +1,5 @@
 <?php
-header('Access-Control-Allow-Methods: POST');
+
 /**
  * Laravel - A PHP Framework For Web Artisans
  *
