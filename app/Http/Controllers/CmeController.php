@@ -37,7 +37,7 @@ class CmeController extends Controller
    */
   public function store(Request $request)
   {
-    $cme = $request->isMethod('put') ? Cme::findOrFail($request->id) : new Cme;
+    $cme = $request->isMethod('post') ? Cme::findOrFail($request->id) : new Cme;
 
     $cme->id = $request->input('id');
     $cme->month = $request->input('month');
@@ -55,7 +55,7 @@ class CmeController extends Controller
   // Update Visibility
   public function visibility(Request $request)
   {
-    $cme = $request->isMethod('put') ? Cme::findOrFail($request->id) : new Cme;
+    $cme = $request->isMethod('post') ? Cme::findOrFail($request->id) : new Cme;
 
     $cme->visibility_ui = $request->input('visibility_ui');
     if ($cme->save()) {
