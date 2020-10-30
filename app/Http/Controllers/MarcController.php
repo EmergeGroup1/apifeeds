@@ -14,11 +14,8 @@ use App\Http\Resources\Cme as CmeResource;
 
 class MarcController extends Controller
 {
-	/**
-	 * RETURN ALL CME
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
+
+	//RETURN ALL CME
 	public function index()
 	{
 		return response()->json(Cme::get(), 200);

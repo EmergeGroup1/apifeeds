@@ -31,7 +31,7 @@ Route::get('pigtrackerdata', 'AnimalMovementController@listAPI');
 //lIST ALL CME
 Route::get('cmes', 'MarcController@index');
 // LIST SINGLE CME RECORD
-Route::get('cme/{id}', 'CmeController@show');
+Route::get('cme/{id}', 'MarcController@show');
 // CREATE NEW CME RECORD
 Route::post('cme', 'CmeController@store');
 // UPDATE CME RECORD
