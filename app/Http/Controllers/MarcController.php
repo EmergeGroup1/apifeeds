@@ -34,6 +34,14 @@ class MarcController extends Controller
 			->header('Content-Type', 'application/json');
 	}
 
+	public function visibility(Request $request, $id)
+	{
+		$cme = Cme::find($id);
+		$cme->update($request->all());
+		return response()->json($cme, 200)
+			->header('Content-Type', 'application/json');
+	}
+
 
 
 

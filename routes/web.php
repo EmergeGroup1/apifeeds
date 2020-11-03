@@ -34,7 +34,8 @@ Route::get('cmes', 'MarcController@index');
 Route::get('cmee/{id}', 'MarcController@cmeByID');
 //update CME
 Route::post('cme/{id}', 'MarcController@cmeUpdate');
-
+//update CME ui visibility
+Route::post('cme/v/{id}', 'MarcController@visibility');
 
 
 
