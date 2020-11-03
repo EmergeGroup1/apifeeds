@@ -30,7 +30,8 @@ class MarcController extends Controller
 	{
 		$cme = Cme::find($id);
 		$cme->update($request->all());
-		return response()->json($cme, 200);
+		return response()->json($cme, 200)
+			->header('Content-Type', 'application/json');
 	}
 
 
