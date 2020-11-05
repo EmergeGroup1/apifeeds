@@ -4339,7 +4339,8 @@ class HomeController extends Controller
 
 			$feeds =   DB::table('feeds_feed_types')
 										->where('name','!=','None')
-										->orderBy('name')
+										->where('status','show')
+										->orderBy('name','asc')
 										->select('description','type_id')
 										->get();
 

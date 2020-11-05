@@ -3229,6 +3229,21 @@ class APIController extends Controller
 
         break;
 
+        /*
+        * marc controller
+        */
+        case "MO":
+
+          $output = NULL;
+
+          $mo_ctrl = new MarcController;
+          $output = $mo_ctrl->testMethod();
+          unset($mo_ctrl);
+
+          return $output;
+
+        break;
+
       default:
         return array("err" => "Something went wrong");
     }
