@@ -3232,17 +3232,43 @@ class APIController extends Controller
         /*
         * marc controller
         */
-        case "MO":
+        case "mo-get-cme":
 
           $output = NULL;
 
           $mo_ctrl = new MarcController;
-          $output = $mo_ctrl->testMethod();
+          $output = $mo_ctrl->getCME();
           unset($mo_ctrl);
 
           return $output;
 
         break;
+
+        case "mo-get-cme":
+
+          $output = NULL;
+
+          $mo_ctrl = new MarcController;
+          $output = $mo_ctrl->index();
+          unset($mo_ctrl);
+
+          return $output;
+
+        break;
+
+        case "mo-save-cme":
+
+          $output = NULL;
+
+          $mo_ctrl = new MarcController;
+          $output = $mo_ctrl->store($request);
+          unset($mo_ctrl);
+
+          return $output;
+
+        break;
+
+
 
       default:
         return array("err" => "Something went wrong");

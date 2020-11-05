@@ -16,3 +16,16 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// lIST ALL CME
+Route::get('cmes', 'CmeController@index');
+// LIST SINGLE CME RECORD
+Route::get('cme/{id}', 'CmeController@show');
+// CREATE NEW CME RECORD
+Route::post('cme', 'CmeController@store');
+// UPDATE CME RECORD
+Route::put('cme/{id}', 'CmeController@store');
+//UPDATE VISIBILITY
+Route::get('cme/{id}', 'CmeController@visibility');
+// DELETE CME RECORD
+Route::delete('cme/{id}', 'CmeController@destroy');
