@@ -1825,12 +1825,14 @@ class HomeController extends Controller
 		// get the groups
 		$groups = DB::table("feeds_movement_groups_bins")
 							->where("bin_id",$bin_id)
+							->select("unique_id")
 							->get();
 
 		for($i=0; $i < count($groups); $i++){
 			$data[] = DB::table("feeds_movement_groups")
 							->where("unique_id",$groups[$i]->unique_id)
 							->get();
+
 		}
 
 		return $data;
