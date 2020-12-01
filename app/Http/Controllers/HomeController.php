@@ -1837,7 +1837,6 @@ class HomeController extends Controller
 							->where("unique_id",$groups[$i]->unique_id)
 							->where("status","entered")
 							->select("unique_id")
-							->distinct()
 							->get();
 
 			// for($j=0; $j < count($data); $j++){
