@@ -1856,14 +1856,14 @@ class HomeController extends Controller
 
 			$actual_consumption_per_group = $bin_history_budgeted_amount / $total_pigs;
 
-			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
+			$groups_cons_history[] = DB::table("feeds_movement_groups_consumption")
 																->where("group_id",$g_data->group_id)
 																->get();
 
 
 			$groups_consumption_data = array();
 
-			if($groups_cons_history != NULL) {
+			if($groups_cons_history[0] != NULL) {
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
 					'group_id'	=>	$g_data->group_id,
