@@ -1828,14 +1828,22 @@ class HomeController extends Controller
 							->select("unique_id")
 							->get();
 
+
+
+
 		for($i=0; $i < count($groups); $i++){
 			$data[] = DB::table("feeds_movement_groups")
 							->where("unique_id",$groups[$i]->unique_id)
 							->get();
 
+			// get the total number of pigs per group inside the group bin
+			$total_pigs[] = DB::table("feeds_movement_groups_bins")
+											->where("unique_id",$groups[$i]->unique_id)
+											->sum("number_of_pigs");
+
 		}
 
-		return $data;
+		return $total_pigs;
 
 		for($i=0; $i < count($groups); $i++){
 
