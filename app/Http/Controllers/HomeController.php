@@ -1829,7 +1829,6 @@ class HomeController extends Controller
 							->distinct()
 							->get();
 
-		return  $groups;
 
 		for($i=0; $i < count($groups); $i++){
 			$data[] = DB::table("feeds_movement_groups")
