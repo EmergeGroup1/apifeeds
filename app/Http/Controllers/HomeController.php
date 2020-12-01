@@ -1841,9 +1841,15 @@ class HomeController extends Controller
 											->where("unique_id",$groups[$i]->unique_id)
 											->sum("number_of_pigs");
 
+			// if the bin_history is empty fetch the default feed type on the feed type table else fetch
+			// the feed type on bin_history
+			$bin_history[] = BinsHistory::where("bin_id",$bin_id)
+																->orderBy("update_date","desc")
+																->first();
+
 		}
 
-		return $total_pigs;
+		return $bin_history;
 
 		for($i=0; $i < count($groups); $i++){
 
