@@ -3234,10 +3234,10 @@ class APIController extends Controller
 
           $data = $request->all();
 
-          $bin_id = $data['bin_id']
+          $bin_id = $data['bin_id'];
 
           $home_ctrl = new HomeController;
-          $cons = $home_ctrl->updatedBinData($group_id);
+          $cons = $home_ctrl->updateGroupsConsumption($bin_id);
           unset($home_ctrl);
 
           return $cons;
