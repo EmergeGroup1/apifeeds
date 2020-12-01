@@ -1856,14 +1856,18 @@ class HomeController extends Controller
 
 			$actual_consumption_per_group = $bin_history_budgeted_amount / $total_pigs;
 
-			$groups_cons_history = DB::table("")
+			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
+																->where("group_id",$g_data->group_id)
+																->get();
+			if($groups_cons_history == NULL) {
+				$groups_consumption_data[] = array(
+					'update_date'	=>	date("Y-m-d"),
+					'group_id'	=>	$g_data->group_id,
+					'feed_type'	=>	$bin_history->feed_type,
+					'consumption'	=>	$actual_consumption_per_group
+				);
+			}		
 
-			$groups_consumption_data[] = array(
-				'update_date'	=>	date("Y-m-d"),
-				'group_id'	=>	$g_data->group_id,
-				'feed_type'	=>	$bin_history->feed_type,
-				'consumption'	=>	$actual_consumption_per_group
-			);
 
 		}
 
