@@ -1844,7 +1844,7 @@ class HomeController extends Controller
 
 				// get the total number of pigs per group inside the group bin
 				$total_pigs = DB::table("feeds_movement_groups_bins")
-												->where("unique_id",$data[$j])
+												->where("unique_id",$data[$j]->unique_id)
 												->sum("number_of_pigs");
 
 				// if the bin_history is empty fetch the default feed type on the feed type table else fetch
