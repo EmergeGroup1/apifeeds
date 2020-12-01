@@ -1831,17 +1831,17 @@ class HomeController extends Controller
 
 
 		for($i=0; $i < count($groups); $i++){
-			$data[] = DB::table("feeds_movement_groups")
+			$g_data[] = DB::table("feeds_movement_groups")
 							->where("unique_id",$groups[$i]->unique_id)
 							->whereIn("status",["entered","created"])
 							->select("unique_id")
 							->get();
 
-			// for($j=0; $j < count($data); $j++){
+			// for($j=0; $j < count($g_data); $j++){
 			//
 			// 	// get the total number of pigs per group inside the group bin
 			// 	$total_pigs = DB::table("feeds_movement_groups_bins")
-			// 									->where("unique_id",$data[$j]->unique_id)
+			// 									->where("unique_id",$g_data[$j]->unique_id)
 			// 									->sum("number_of_pigs");
 			//
 			// 	// if the bin_history is empty fetch the default feed type on the feed type table else fetch
