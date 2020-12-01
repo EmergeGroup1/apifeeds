@@ -1845,7 +1845,8 @@ class HomeController extends Controller
 			// the feed type on bin_history
 			$bin_history[] = BinsHistory::where("bin_id",$bin_id)
 																->orderBy("update_date","desc")
-																->first();
+																->select("budgeted_amount")
+																->first()->budgeted_amount;
 
 		}
 
