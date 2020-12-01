@@ -1823,12 +1823,11 @@ class HomeController extends Controller
 	public function updateGroupsConsumption($bin_id) {
 
 		// get the groups
-		$groups = DB::table("feeds_movement_groups")
+		$groups = DB::table("feeds_movement_groups_bins")
 							->where("bin_id",$bin_id)
-							->where("status","!=","removed")
 							->get();
 
-		return $groups; 
+		return $groups;
 
 		for($i=0; $i < count($groups); $i++){
 
