@@ -1827,7 +1827,6 @@ class HomeController extends Controller
 							->where("bin_id",$bin_id)
 							->get();
 
-		$data = [];
 		for($i=0; $i < count($groups); $i++){
 			$data[] = DB::table("feeds_movement_groups")
 							->where("unique_id",$groups[$i]->unique_id)
