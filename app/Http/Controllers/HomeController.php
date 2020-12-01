@@ -1826,6 +1826,7 @@ class HomeController extends Controller
 		$groups = DB::table("feeds_movement_groups_bins")
 							->where("bin_id",$bin_id)
 							->select("unique_id")
+							->distinct()
 							->get();
 
 
