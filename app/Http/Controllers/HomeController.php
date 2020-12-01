@@ -1846,12 +1846,14 @@ class HomeController extends Controller
 
 			// if the bin_history is empty fetch the default feed type on the feed type table else fetch
 			// the feed type on bin_history
-			$bin_history = BinsHistory::where("bin_id",$bin_id)
+			$bin_history_budgeted_amount = BinsHistory::where("bin_id",$bin_id)
 																->orderBy("update_date","desc")
 																->select("budgeted_amount")
 																->first()->budgeted_amount;
 
-			$actual_consumption_per_pig[] = $bin_history / $total_pigs;
+			$bin_history_budgeted_amount = round($bin_history_budgeted_amount*2000,2);
+
+			$actual_consumption_per_pig[] = $bin_history_budgeted_amount / $total_pigs;
 
 
 		}
