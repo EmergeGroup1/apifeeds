@@ -1859,7 +1859,7 @@ class HomeController extends Controller
 
 		}
 
-		return $data;
+		return $g_data;
 
 		for($i=0; $i < count($groups); $i++){
 
