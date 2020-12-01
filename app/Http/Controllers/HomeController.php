@@ -1859,6 +1859,10 @@ class HomeController extends Controller
 			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
 																->where("group_id",$g_data->group_id)
 																->get();
+
+
+			$groups_consumption_data = array();
+
 			if($groups_cons_history == NULL) {
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
@@ -1866,7 +1870,7 @@ class HomeController extends Controller
 					'feed_type'	=>	$bin_history->feed_type,
 					'consumption'	=>	$actual_consumption_per_group
 				);
-			}		
+			}
 
 
 		}
