@@ -1849,11 +1849,11 @@ class HomeController extends Controller
 																->select("budgeted_amount")
 																->first()->budgeted_amount;
 
-			// $actual_consumption_per_pig[] = $bin_history / $total_pigs;
+			$actual_consumption_per_pig[] = $bin_history[0] / $total_pigs[0];
 
 		}
 
-		return $bin_history;
+		return $actual_consumption_per_pig;
 
 		for($i=0; $i < count($groups); $i++){
 
