@@ -1830,13 +1830,11 @@ class HomeController extends Controller
 							->get();
 
 
-
-		return $groups;
 		for($i=0; $i < count($groups); $i++){
 			$data[] = DB::table("feeds_movement_groups")
 							->where("unique_id",$groups[$i]->unique_id)
 							->where("status","entered")
-							->select("unique_id")
+							// ->select("unique_id")
 							->get();
 
 			// for($j=0; $j < count($data); $j++){
