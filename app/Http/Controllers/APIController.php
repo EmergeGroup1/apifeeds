@@ -3236,8 +3236,6 @@ class APIController extends Controller
 
           $bin_id = $data['bin_id'];
 
-          return "tesdting";
-
           $home_ctrl = new HomeController;
           $cons = $home_ctrl->updateGroupsConsumption($bin_id);
           unset($home_ctrl);
