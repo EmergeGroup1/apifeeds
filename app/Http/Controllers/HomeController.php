@@ -1837,29 +1837,29 @@ class HomeController extends Controller
 							->select("unique_id")
 							->get();
 
-			for($j=0; $j < count($data); $j++){
-
-				// get the total number of pigs per group inside the group bin
-				$total_pigs = DB::table("feeds_movement_groups_bins")
-												->where("unique_id",$data[$j]->unique_id)
-												->sum("number_of_pigs");
-
-				// if the bin_history is empty fetch the default feed type on the feed type table else fetch
-				// the feed type on bin_history
-				$bin_history = BinsHistory::where("bin_id",$bin_id)
-																	->orderBy("update_date","desc")
-																	->select("budgeted_amount")
-																	->first()->budgeted_amount;
-
-				$actual_consumption_per_pig[] = $bin_history / $total_pigs;
-
-			}
+			// for($j=0; $j < count($data); $j++){
+			//
+			// 	// get the total number of pigs per group inside the group bin
+			// 	$total_pigs = DB::table("feeds_movement_groups_bins")
+			// 									->where("unique_id",$data[$j]->unique_id)
+			// 									->sum("number_of_pigs");
+			//
+			// 	// if the bin_history is empty fetch the default feed type on the feed type table else fetch
+			// 	// the feed type on bin_history
+			// 	$bin_history = BinsHistory::where("bin_id",$bin_id)
+			// 														->orderBy("update_date","desc")
+			// 														->select("budgeted_amount")
+			// 														->first()->budgeted_amount;
+			//
+			// 	$actual_consumption_per_pig[] = $bin_history / $total_pigs;
+			//
+			// }
 
 
 
 		}
 
-		return $actual_consumption_per_pig;
+		return $data;
 
 		for($i=0; $i < count($groups); $i++){
 
