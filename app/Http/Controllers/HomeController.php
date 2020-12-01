@@ -1656,15 +1656,13 @@ class HomeController extends Controller
 
 		// update today
 		$lastupdate = $this->todayBinUpdate($_POST['bin']);
-		//$amount = $lastupdate != NULL ? $lastupdate[0]['amount'] : 0;
-		//$this->insertBinConsumptionHistory($_POST['bin'],$lastupdate[0]['farm_id'],$lastupdate[0]['feed_type'],$amount);
+
 		$amount = $lastupdate[0]['amount'] - $_POST['amount'];
 		if($lastupdate[0]['amount'] < $_POST['amount']){
 				$amount = str_replace("-","",$amount);
 		} else {
 				$amount = "-".$amount;
 		}
-		//$this->insertBinConsumptionHistory($_POST['bin'],$lastupdate[0]['farm_id'],$lastupdate[0]['feed_type'],$amount);
 
 		// update yesterdays
 		if(empty($lastupdate)){
@@ -1767,55 +1765,7 @@ class HomeController extends Controller
 			$daysto = 0;
 		}
 
-		// send mobile notification
-		// $mobile_data = array(
-		// 	'bin_id'					=>	!empty($bins[0]['bin_number']) ? $bins[0]['bin_number'] : 0,  //bin number
-		// 	'farm_id'					=>	$bin_history_data['farm_id'],
-		// 	'user_id'					=>	$_POST['user'],
-		// 	'current_amount'	=>	$bin_history_data['amount'],
-		// 	'created_at'			=>	date('Y-m-d H:i:s'),
-		// 	'budgeted_amount'	=>	$budgeted_amount,//$bin_history_data['budgeted_amount'],
-		// 	'actual_amount'		=>	$bin_history_data['amount'],
-		// 	'bin_size'				=>	$bin_size[0]['ring'],
-		// 	'variance'				=>	$variance,
-		// 	'consumption'			=>	$actual_consumption_per_pig,
-		// 	'feed_type'				=>	$bin_history_data['feed_type'],
-		// 	'medication'			=>	!empty($medication[0]['med_id']) ? $medication[0]['med_id'] : 0,
-		// 	'med_name'				=>	!empty($medication[0]['med_name']) ? $medication[0]['med_name'] : 'No Medicaiton',
-		// 	'feed_name'				=>	!empty($feeds[0]['name']) ? $feeds[0]['name'] : '-',
-		// 	'user_created_at'	=>	date('Y-m-d H:i:s'),
-		// 	'num_of_pigs'			=>	$bin_history_data['num_of_pigs'],
-		// 	'bin_no_id'				=>	$bin_history_data['bin_id'], // bin id
-		// 	'status'					=>	2,
-		// 	'unique_id'				=>	!empty($bin_history_data['unique_id']) ? $bin_history_data['unique_id'] : "none"
-		// );
-
-
 		$history_id = !empty($lastupdate[0]['history_id']) ? $lastupdate[0]['history_id'] : NULL;
-		// $this->mobileSaveAccepted($mobile_data);
-
-		// $notification = new CloudMessaging;
-		// $farmer_data = array(
-		// 	'update_date'				=>	date('Y-m-d H:i:s'),
-		// 	'bin_id'						=>	$mobile_data['bin_id'],
-		// 	'farm_id'						=>	$mobile_data['farm_id'],
-		// 	'num_of_pigs'				=>	$mobile_data['num_of_pigs'],
-		// 	'user_id'						=>	$mobile_data['user_id'],
-		// 	'amount'						=>	$mobile_data['current_amount'],
-		// 	'update_type'				=>	"Manual Update Bin Forecasting Admin",
-		// 	'created_at'				=>	$mobile_data['created_at'],
-		// 	'updated_at'				=>	date('Y-m-d H:i:s'),
-		// 	'budgeted_amount'		=>	$budgeted_amount,//$mobile_data['budgeted_amount'],
-		// 	'remaining_amount'	=>	$lastupdate[0]['remaining_amount'],
-		// 	'sub_amount'				=>	$lastupdate[0]['sub_amount'],
-		// 	'variance'					=>	round($mobile_data['variance'],2),
-		// 	'consumption'				=>	round($mobile_data['consumption'],2),
-		// 	'admin'							=>	$_POST['user'],
-		// 	'medication'				=>	$mobile_data['medication'],
-		// 	'feed_type'					=>	$mobile_data['feed_type']
-		// 	);
-		// $notification->autoUpdateMessaging($farmer_data,$history_id);
-		// unset($notification);
 
 		Cache::forget('bin-'.$_POST['bin']);
 		Cache::forget('bins-'.$_POST['bin']);
@@ -1856,8 +1806,6 @@ class HomeController extends Controller
 			'text' 				=> 	$text,
 			'tdy' 				=> 	date('M d'),
 			'ringAmount'	=>	$ring,
-			//'avg_variance'	=>	$avg_variance,
-			//'avg_actual'	=>	$avg_actual,
 			'lastUpdate'	=>	date("M d"),
 			'user'				=> $user->username,
 			'farm_id'			=> $bin_history_data['farm_id']
@@ -1866,6 +1814,74 @@ class HomeController extends Controller
 
 	}
 
+
+	/*
+	*	Update Groups Consumption
+	*	update the current groups number of pigs based on yesterday
+	* or today's update on forecasting
+	*/
+	public function updateGroupsConsumption($bin_id) {
+
+		// get the groups
+		$groups = DB::table("feeds_movement_groups")
+							->where("bin_id",$bin_id)
+							->where("status","!=","removed")
+							->get();
+
+		return $groups; 
+
+		for($i=0; $i < count($groups); $i++){
+
+			// get the total number of pigs per group inside the group bin
+			$total_pigs = DB::table("feeds_movement_groups_bins")
+											->where("group_id",$groups[$i]->group_id)
+											->sum("number_of_pigs");
+
+			// feed type
+			$feed_type = DB::table("feeds_bins")
+											->where("bin_id", $bin_id)
+											->select("type_id","budgeted_amount")
+											->first();
+
+			// get the actual amount of feed type and compute for the consumption
+			$ft_amount = DB::table("feeds_feed_types")
+										->where("type_id",$feed_type->type_id)
+										->first();
+
+			// if the bin_history is empty fetch the default feed type on the feed type table else fetch
+			// the feed type on bin_history
+
+			// $budgeted_amount_tons = $budgeted_amount_tons*2000 - ($lastupdate[0]['budgeted_amount'] * $total_pigs);
+			// $budgeted_amount_tons = $budgeted_amount_tons/2000;
+			// $consumption =
+
+
+			// all of the consumption computation will happen here.
+			$gs = DB::table("feeds_movement_groups_consumption");
+			$gs_query = $gs->where("group_id",$groups[$i]->group_id);
+			$gs_count = $gs_query->count();
+
+			$data = array(
+				'update_date'	=>	date("Y-m-d"),
+				'group_id'		=>	$groups[$i]->group_id,
+				'feed_type'		=>	$feed_type,
+				'consumption'	=>	$consumption
+			);
+
+			// if($gs_count > 0){
+			// 	$g_insert = $gs->insert();
+			// } else {
+			// 	$g_update = $gs->where("update_date");
+			// 	$g_update = $gs->delete();
+			// 	$g_insert = $gs->insert();
+			//
+			// }
+
+		}
+
+
+
+	}
 
 
 
