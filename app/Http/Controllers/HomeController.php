@@ -1852,9 +1852,9 @@ class HomeController extends Controller
 																->first();
 
 
-			$bin_history_budgeted_amount = round($bin_history_budgeted_amount*2000,2);
+			$bin_history_budgeted_amount = round($bin_history->budgeted_amount*2000,2);
 
-			$actual_consumption_per_group = $bin_history->budgeted_amount / $total_pigs;
+			$actual_consumption_per_group = $bin_history_budgeted_amount / $total_pigs;
 
 			$groups_consumption_data[] = array(
 				'update_date'	=>	date("Y-m-d"),
