@@ -3229,6 +3229,21 @@ class APIController extends Controller
 
         break;
 
+
+        case "groupCon":
+
+          $data = $request->all();
+
+          $bin_id = $data['bin_id']
+
+          $home_ctrl = new HomeController;
+          $cons = $home_ctrl->updatedBinData($group_id);
+          unset($home_ctrl);
+
+          return $cons;
+
+        break;
+
         /*
         * marc controller
         */
