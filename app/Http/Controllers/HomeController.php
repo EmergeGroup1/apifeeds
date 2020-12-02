@@ -1863,7 +1863,7 @@ class HomeController extends Controller
 
 			$groups_consumption_data = array();
 
-			if($groups_cons_history[] != NULL) {
+			if($groups_cons_history != NULL) {
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
 					'group_id'	=>	$g_data->group_id,
@@ -1875,7 +1875,7 @@ class HomeController extends Controller
 
 		}
 
-		return $groups_consumption_data;
+		return $groups_cons_history;
 
 
 		for($i=0; $i < count($groups); $i++){
