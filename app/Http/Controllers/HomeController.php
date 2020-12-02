@@ -1852,9 +1852,12 @@ class HomeController extends Controller
 																->first();
 
 
-			$bin_history_budgeted_amount = round($bin_history->budgeted_amount*2000,2);
+			$budgeted_amount_tons = $amount*2000 - ($bin_history->budgeted_amount * $total_pigs);
+			// $budgeted_amount_tons = $budgeted_amount_tons/2000;
 
-			$actual_consumption_per_group = $bin_history_budgeted_amount / $total_pigs;
+			// $bin_history_budgeted_amount = round($budgeted_amount_tons*2000,2);
+			//
+			// $actual_consumption_per_group = $bin_history_budgeted_amount / $total_pigs;
 
 			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
 																->where("group_id",$g_data->group_id)
@@ -1872,7 +1875,7 @@ class HomeController extends Controller
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$g_data->group_id,
 				'feed_type'	=>	$bin_history->feed_type,
-				'consumption'	=>	round($actual_consumption_per_group,2),
+				'consumption'	=>	round($budgeted_amount_tons,2),
 				'amount_tons'	=>	$amount
 			);
 
