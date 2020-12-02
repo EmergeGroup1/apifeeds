@@ -1864,13 +1864,15 @@ class HomeController extends Controller
 			$groups_consumption_data = array();
 
 			if(count($groups_cons_history) == 0) {
-				$groups_consumption_data[] = array(
-					'update_date'	=>	date("Y-m-d"),
-					'group_id'	=>	$g_data->group_id,
-					'feed_type'	=>	$bin_history->feed_type,
-					'consumption'	=>	$actual_consumption_per_group
-				);
+
 			}
+
+			$groups_consumption_data[] = array(
+				'update_date'	=>	date("Y-m-d"),
+				'group_id'	=>	$g_data->group_id,
+				'feed_type'	=>	$bin_history->feed_type,
+				'consumption'	=>	$actual_consumption_per_group
+			);
 
 
 		}
