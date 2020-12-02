@@ -1861,11 +1861,11 @@ class HomeController extends Controller
 																->get();
 
 
-			$groups_consumption_data = array();
-
-			if(count($groups_cons_history) == 0) {
-
-			}
+			// $groups_consumption_data = array();
+			//
+			// if(count($groups_cons_history) == 0) {
+			//
+			// }
 
 			$groups_consumption_data[] = array(
 				'update_date'	=>	date("Y-m-d"),
