@@ -1853,9 +1853,9 @@ class HomeController extends Controller
 
 
 			if($total_pigs == 0){
-				$budgeted_amount_tons = 0;
+				$budgeted_amount_lbs = 0;
 			}	else {
-				$budgeted_amount_tons = $amount*2000 - ($bin_history->budgeted_amount * $total_pigs);
+				$budgeted_amount_lbs = $amount*2000 - ($bin_history->budgeted_amount * $total_pigs);
 			}
 
 			// $budgeted_amount_tons = $budgeted_amount_tons/2000;
