@@ -1871,7 +1871,7 @@ class HomeController extends Controller
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$g_data->group_id,
 				'feed_type'	=>	$bin_history->feed_type,
-				'consumption'	=>	$actual_consumption_per_group
+				'consumption'	=>	round($actual_consumption_per_group,2)
 			);
 
 
