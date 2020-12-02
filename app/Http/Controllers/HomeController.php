@@ -1875,7 +1875,7 @@ class HomeController extends Controller
 
 		}
 
-		return $groups_cons_history;
+		return $groups_consumption_data;
 
 
 		for($i=0; $i < count($groups); $i++){
