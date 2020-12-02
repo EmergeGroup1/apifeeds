@@ -1888,7 +1888,7 @@ class HomeController extends Controller
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
 				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-				'consumption'	=>	round($groups_consumption_data[$i]['actual_consumption_per_group'],2)
+				'consumption'	=>	round($groups_consumption_data[$i]['consumption'],2)
 			);
 			$insert = DB::table("feeds_movement_groups_consumption");
 
