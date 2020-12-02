@@ -1858,6 +1858,7 @@ class HomeController extends Controller
 
 			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
 																->where("group_id",$g_data->group_id)
+																->where("update_date",date("Y-m-d"))
 																->get();
 
 
@@ -1877,33 +1878,37 @@ class HomeController extends Controller
 
 		}
 
+		for($i=0; $i < count($groups_consumption_data); $i++){
+			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
+																->where("group_id",$groups_consumption_data[$i]->group_id)
+																->where("update_date",date("Y-m-d"))
+																->get();
+
+			$d_insert = array(
+				'update_date'	=>	date("Y-m-d"),
+				'group_id'	=>	$groups_consumption_data[$i]->group_id,
+				'feed_type'	=>	$groups_consumption_data[$i]->feed_type,
+				'consumption'	=>	round($groups_consumption_data[$i]->actual_consumption_per_group,2)
+			);
+			$insert = DB::table("feeds_movement_groups_consumption");
+
+			// if groups consumption is existed {delete the group consumption today and insert}
+			// else {insert}
+			if(count($groups_cons_history) > 0){
+				// delete and insert
+				DB::table("feeds_movement_groups_consumption")
+					->where("group_id",$groups_consumption_data[$i]->group_id)
+					->where("update_date",date("Y-m-d"))
+					->delete();
+
+			}
+
+			$insert->insert($d_insert);											
+		}
+
 		return $groups_consumption_data;
 
 
-		for($i=0; $i < count($groups); $i++){
-
-			// get the total number of pigs per group inside the group bin
-			$total_pigs = DB::table("feeds_movement_groups_bins")
-											->where("group_id",$groups[$i]->group_id)
-											->sum("number_of_pigs");
-
-			// feed type
-			$feed_type = DB::table("feeds_bins")
-											->where("bin_id", $bin_id)
-											->select("type_id","budgeted_amount")
-											->first();
-
-			// get the actual amount of feed type and compute for the consumption
-			$ft_amount = DB::table("feeds_feed_types")
-										->where("type_id",$feed_type->type_id)
-										->first();
-
-			// if the bin_history is empty fetch the default feed type on the feed type table else fetch
-			// the feed type on bin_history
-
-			// $budgeted_amount_tons = $budgeted_amount_tons*2000 - ($lastupdate[0]['budgeted_amount'] * $total_pigs);
-			// $budgeted_amount_tons = $budgeted_amount_tons/2000;
-			// $consumption =
 
 
 			// all of the consumption computation will happen here.
@@ -1917,17 +1922,6 @@ class HomeController extends Controller
 				'feed_type'		=>	$feed_type,
 				'consumption'	=>	$consumption
 			);
-
-			// if($gs_count > 0){
-			// 	$g_insert = $gs->insert();
-			// } else {
-			// 	$g_update = $gs->where("update_date");
-			// 	$g_update = $gs->delete();
-			// 	$g_insert = $gs->insert();
-			//
-			// }
-
-		}
 
 
 
