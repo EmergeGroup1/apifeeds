@@ -1884,6 +1884,15 @@ class HomeController extends Controller
 				'amount_tons'	=>	$amount
 			);
 
+			$groups_consumption_datas[] = array(
+				'update_date'	=>	date("Y-m-d"),
+				'group_id'	=>	$g_data->group_id,
+				'feed_type'	=>	$bin_history->feed_type,
+				'consumption'	=>	round($budgeted_amount_lbs,2),
+				'amount_tons'	=>	$amount,
+				'total_pigs'	=>	$total_pigs
+			);
+
 
 		}
 
@@ -1915,7 +1924,7 @@ class HomeController extends Controller
 			$insert->insert($d_insert);
 		}
 
-		return $groups_consumption_data;
+		return $groups_consumption_datas;
 
 
 
