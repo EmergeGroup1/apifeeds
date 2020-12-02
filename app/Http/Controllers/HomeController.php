@@ -1852,7 +1852,12 @@ class HomeController extends Controller
 																->first();
 
 
-			$budgeted_amount_tons = $amount*2000 - ($bin_history->budgeted_amount * $total_pigs);
+			if($total_pigs == 0){
+				$budgeted_amount_tons = 0;
+			}	else {
+				$budgeted_amount_tons = $amount*2000 - ($bin_history->budgeted_amount * $total_pigs);
+			}
+
 			// $budgeted_amount_tons = $budgeted_amount_tons/2000;
 
 			// $bin_history_budgeted_amount = round($budgeted_amount_tons*2000,2);
