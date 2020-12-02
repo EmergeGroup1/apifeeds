@@ -1880,7 +1880,7 @@ class HomeController extends Controller
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$g_data->group_id,
 				'feed_type'	=>	$bin_history->feed_type,
-				'consumption'	=>	round($budgeted_amount_tons,2),
+				'consumption'	=>	round($budgeted_amount_lbs,2),
 				'amount_tons'	=>	$amount
 			);
 
