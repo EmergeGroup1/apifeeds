@@ -1880,19 +1880,19 @@ class HomeController extends Controller
 
 		}
 
-		
 
-		for($i=0; $i < count($groups_consumption_datas); $i++){
+
+		for($i=0; $i < count($groups_consumption_data); $i++){
 			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
-																->where("group_id",$groups_consumption_datas[$i]['group_id'])
+																->where("group_id",$groups_consumption_data[$i]['group_id'])
 																->where("update_date",date("Y-m-d"))
 																->get();
 
 			$d_insert = array(
 				'update_date'	=>	date("Y-m-d"),
-				'group_id'	=>	$groups_consumption_datas[$i]['group_id'],
-				'feed_type'	=>	$groups_consumption_datas[$i]['feed_type'],
-				'consumption'	=>	round($groups_consumption_datas[$i]['consumption'],2)
+				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
+				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
+				'consumption'	=>	round($groups_consumption_data[$i]['consumption'],2)
 			);
 			$insert = DB::table("feeds_movement_groups_consumption");
 
@@ -1901,7 +1901,7 @@ class HomeController extends Controller
 			if(count($groups_cons_history) > 0){
 				// delete and insert
 				DB::table("feeds_movement_groups_consumption")
-					->where("group_id",$groups_consumption_datas[$i]['group_id'])
+					->where("group_id",$groups_consumption_data[$i]['group_id'])
 					->where("update_date",date("Y-m-d"))
 					->delete();
 
