@@ -1910,7 +1910,7 @@ class HomeController extends Controller
 			$insert->insert($d_insert);
 		}
 
-		return $groups_consumption_datas;
+		return $groups_consumption_data;
 
 
 
