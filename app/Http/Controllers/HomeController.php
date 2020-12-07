@@ -6717,6 +6717,9 @@ class HomeController extends Controller
 				// 	$this->sendNotificationMarkAsDelivered($data_to_update['unique_id'],$undone_deliveries[$i]['driver_id']);
 				// }
 
+				// groups consumption
+				$this->updateGroupsConsumption($bin_id,$data[0]['amount'] + $undone_deliveries[$i]['amount']);
+
 			// insert
 			} else {
 
@@ -6750,6 +6753,9 @@ class HomeController extends Controller
 					// $this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$undone_deliveries[$i]['driver_id']);
 				}
 
+				// groups consumptions
+				$this->updateGroupsConsumption($bin_id,$data[0]['amount'] + $undone_deliveries[$i]['amount']);
+
 				// if($undone_deliveries[$i]['status'] == 2){
 				// 	$this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$undone_deliveries[$i]['driver_id']);
 				// }
@@ -6759,6 +6765,8 @@ class HomeController extends Controller
 			// for bins_data_first_load
 			Cache::forget('farm_holder_bins_data-'.$bin_id);
 			Cache::forget('farm_holder-'.$farm_id);
+
+
 
 		}
 
