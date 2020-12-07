@@ -1876,6 +1876,7 @@ class HomeController extends Controller
 					'update_date'	=>	date("Y-m-d"),
 					'group_id'	=>	$g_data->group_id,
 					'feed_type'	=>	$bin_history->feed_type,
+					'budgeted_amount'	=>	$bin_history->budgeted_amount,
 					'consumption'	=>	round($budgeted_amount_lbs,2),
 					'amount_tons'	=>	$amount,
 					'total_pigs'	=>	$total_pigs
