@@ -1884,7 +1884,7 @@ class HomeController extends Controller
 				'amount_tons'	=>	$amount
 			);
 
-			$groups_consumption_datas[] = array(
+			$groups_consumption_data[] = array(
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$g_data->group_id,
 				'feed_type'	=>	$bin_history->feed_type,
