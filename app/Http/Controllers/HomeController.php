@@ -1830,7 +1830,7 @@ class HomeController extends Controller
 							->get();
 
 		if(count($groups) == 0){
-			return "No consumption";
+			return "No Consumption";
 		}
 
 
