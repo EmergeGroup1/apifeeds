@@ -1867,15 +1867,17 @@ class HomeController extends Controller
 					}
 				}
 
+				$cons_lbs = $bin_history->budgeted_amount * $total_pigs;
 
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
 					'group_id'	=>	$g_data->group_id,
 					'feed_type'	=>	$bin_history->feed_type,
 					'budgeted_amount'	=>	$bin_history->budgeted_amount,
-					'consumption_lbs' => $bin_history->budgeted_amount * $total_pigs,
+					'consumption_lbs' => $cons_lbs,
 					'consumption_lbs_remaining'	=>	round($budgeted_amount_lbs,2),
-					'consumption_tons'	=>	round($budgeted_amount_lbs / 2000,2),
+					'consumption_tons'	=>	round($cons_lbs * 2000,2),
+					'consumption_tons_remaining'	=>	round($budgeted_amount_lbs / 2000,2),
 					'amount_tons'	=>	$amount,
 					'total_pigs'	=>	$total_pigs
 				);
