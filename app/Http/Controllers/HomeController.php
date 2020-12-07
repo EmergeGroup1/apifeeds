@@ -1857,6 +1857,7 @@ class HomeController extends Controller
 																	->first();
 
 
+
 				if($total_pigs == 0){
 					$budgeted_amount_lbs = 0;
 				}	else {
@@ -1866,6 +1867,7 @@ class HomeController extends Controller
 					}
 
 				}
+
 
 
 				$groups_cons_history = DB::table("feeds_movement_groups_consumption")
@@ -1884,6 +1886,7 @@ class HomeController extends Controller
 					'total_pigs'	=>	$total_pigs
 				);
 
+				$amount = $amount - $budgeted_amount_lbs / 2000;
 
 		}
 
@@ -1902,7 +1905,7 @@ class HomeController extends Controller
 				'consumption'	=>	round($groups_consumption_data[$i]['consumption_lbs'],2),
 				'amount_tons'	=>	$groups_consumption_data[$i]['amount_tons']
 			);
-			
+
 			$insert = DB::table("feeds_movement_groups_consumption");
 
 			// if groups consumption is existed {delete the group consumption today and insert}
