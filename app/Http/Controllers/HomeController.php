@@ -1832,69 +1832,71 @@ class HomeController extends Controller
 
 		for($i=0; $i < count($groups); $i++){
 
-			$g_data = DB::table("feeds_movement_groups")
-							->where("unique_id",$groups[$i]->unique_id)
-							->whereIn("status",["entered","created"])
-							->select("unique_id","group_id")
-							->first();
+				$g_data = DB::table("feeds_movement_groups")
+								->where("unique_id",$groups[$i]->unique_id)
+								->whereIn("status",["entered","created"])
+								->select("unique_id","group_id")
+								->first();
 
 
-			// get the total number of pigs per group inside the group bin
-			$total_pigs = DB::table("feeds_movement_groups_bins")
-											->where("unique_id",$g_data->unique_id)
-											->sum("number_of_pigs");
+				// get the total number of pigs per group inside the group bin
+				$total_pigs = DB::table("feeds_movement_groups_bins")
+												->where("unique_id",$g_data->unique_id)
+												->sum("number_of_pigs");
 
-			// if the bin_history is empty fetch the default feed type on the feed type table else fetch
-			// the feed type on bin_history
-			$bin_history = BinsHistory::where("bin_id",$bin_id)
-																->orderBy("update_date","desc")
-																->select("budgeted_amount","feed_type")
-																->first();
-
-
-			if($total_pigs == 0){
-				$budgeted_amount_lbs = 0;
-			}	else {
-				$budgeted_amount_lbs = $amount*2000 - ($bin_history->budgeted_amount * $total_pigs);
-			}
-
-			// $budgeted_amount_tons = $budgeted_amount_tons/2000;
-
-			// $bin_history_budgeted_amount = round($budgeted_amount_tons*2000,2);
-			//
-			// $actual_consumption_per_group = $bin_history_budgeted_amount / $total_pigs;
-
-			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
-																->where("group_id",$g_data->group_id)
-																->where("update_date",date("Y-m-d"))
-																->get();
+				// if the bin_history is empty fetch the default feed type on the feed type table else fetch
+				// the feed type on bin_history
+				$bin_history = BinsHistory::where("bin_id",$bin_id)
+																	->orderBy("update_date","desc")
+																	->select("budgeted_amount","feed_type")
+																	->first();
 
 
-			// $groups_consumption_data = array();
-			//
-			// if(count($groups_cons_history) == 0) {
-			//
-			// }
+				if($total_pigs == 0){
+					$budgeted_amount_lbs = 0;
+				}	else {
+					$budgeted_amount_lbs = $amount*2000 - ($bin_history->budgeted_amount * $total_pigs);
+				}
 
-			$groups_consumption_data[] = array(
-				'update_date'	=>	date("Y-m-d"),
-				'group_id'	=>	$g_data->group_id,
-				'feed_type'	=>	$bin_history->feed_type,
-				'consumption'	=>	round($budgeted_amount_lbs,2),
-				'amount_tons'	=>	$amount
-			);
+				// $budgeted_amount_tons = $budgeted_amount_tons/2000;
 
-			$groups_consumption_datas[] = array(
-				'update_date'	=>	date("Y-m-d"),
-				'group_id'	=>	$g_data->group_id,
-				'feed_type'	=>	$bin_history->feed_type,
-				'consumption'	=>	round($budgeted_amount_lbs,2),
-				'amount_tons'	=>	$amount,
-				'total_pigs'	=>	$total_pigs
-			);
+				// $bin_history_budgeted_amount = round($budgeted_amount_tons*2000,2);
+				//
+				// $actual_consumption_per_group = $bin_history_budgeted_amount / $total_pigs;
+
+				$groups_cons_history = DB::table("feeds_movement_groups_consumption")
+																	->where("group_id",$g_data->group_id)
+																	->where("update_date",date("Y-m-d"))
+																	->get();
+
+
+				// $groups_consumption_data = array();
+				//
+				// if(count($groups_cons_history) == 0) {
+				//
+				// }
+
+				$groups_consumption_data[] = array(
+					'update_date'	=>	date("Y-m-d"),
+					'group_id'	=>	$g_data->group_id,
+					'feed_type'	=>	$bin_history->feed_type,
+					'consumption'	=>	round($budgeted_amount_lbs,2),
+					'amount_tons'	=>	$amount
+				);
+
+				$groups_consumption_datas[] = array(
+					'update_date'	=>	date("Y-m-d"),
+					'group_id'	=>	$g_data->group_id,
+					'feed_type'	=>	$bin_history->feed_type,
+					'consumption'	=>	round($budgeted_amount_lbs,2),
+					'amount_tons'	=>	$amount,
+					'total_pigs'	=>	$total_pigs
+				);
 
 
 		}
+
+		return $groups_consumption_datas;
 
 		for($i=0; $i < count($groups_consumption_datas); $i++){
 			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
