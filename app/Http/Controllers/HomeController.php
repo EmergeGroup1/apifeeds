@@ -1865,8 +1865,8 @@ class HomeController extends Controller
 					if($budgeted_amount_lbs < 0) {
 						$budgeted_amount_lbs = 0;
 					}
-
 				}
+
 
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
@@ -1879,7 +1879,7 @@ class HomeController extends Controller
 					'total_pigs'	=>	$total_pigs
 				);
 
-				// $amount = $amount - $budgeted_amount_lbs;
+				$amount = $amount - $budgeted_amount_lbs;
 
 		}
 
