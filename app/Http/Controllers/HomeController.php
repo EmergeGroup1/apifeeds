@@ -1832,7 +1832,8 @@ class HomeController extends Controller
 			return "No Consumption";
 		}
 
-		return count($groups);
+		$amount = $amount * 2000;
+
 
 		for($i=0; $i < count($groups); $i++){
 
