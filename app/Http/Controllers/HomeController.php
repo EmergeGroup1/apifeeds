@@ -1879,7 +1879,7 @@ class HomeController extends Controller
 					'total_pigs'	=>	$total_pigs
 				);
 
-				$amount = $amount - $budgeted_amount_lbs;
+				// $amount = $amount - $budgeted_amount_lbs;
 
 		}
 
