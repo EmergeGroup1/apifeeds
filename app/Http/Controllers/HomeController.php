@@ -1875,6 +1875,8 @@ class HomeController extends Controller
 																	->where("update_date",date("Y-m-d"))
 																	->get();
 
+				$amount = $amount - ($budgeted_amount_lbs * $total_pigs);													
+
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
 					'group_id'	=>	$g_data->group_id,
@@ -1886,7 +1888,7 @@ class HomeController extends Controller
 					'total_pigs'	=>	$total_pigs
 				);
 
-				$amount = $amount - ($budgeted_amount_lbs * $total_pigs);
+
 
 		}
 
