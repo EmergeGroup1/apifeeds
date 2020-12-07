@@ -1829,7 +1829,9 @@ class HomeController extends Controller
 							->distinct()
 							->get();
 
-							return $groups;
+		if(count($groups) == 0){
+			return "No consumption";
+		}
 
 
 		for($i=0; $i < count($groups); $i++){
