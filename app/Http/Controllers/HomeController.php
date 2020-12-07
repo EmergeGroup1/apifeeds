@@ -1902,6 +1902,7 @@ class HomeController extends Controller
 				'consumption'	=>	round($groups_consumption_data[$i]['consumption_lbs'],2),
 				'amount_tons'	=>	$groups_consumption_data[$i]['amount_tons']
 			);
+			
 			$insert = DB::table("feeds_movement_groups_consumption");
 
 			// if groups consumption is existed {delete the group consumption today and insert}
