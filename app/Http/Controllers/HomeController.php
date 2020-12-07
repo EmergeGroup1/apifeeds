@@ -1868,16 +1868,7 @@ class HomeController extends Controller
 																	->where("update_date",date("Y-m-d"))
 																	->get();
 
-
 				$groups_consumption_data[] = array(
-					'update_date'	=>	date("Y-m-d"),
-					'group_id'	=>	$g_data->group_id,
-					'feed_type'	=>	$bin_history->feed_type,
-					'consumption'	=>	round($budgeted_amount_lbs,2),
-					'amount_tons'	=>	$amount
-				);
-
-				$groups_consumption_datas[] = array(
 					'update_date'	=>	date("Y-m-d"),
 					'group_id'	=>	$g_data->group_id,
 					'feed_type'	=>	$bin_history->feed_type,
@@ -1889,7 +1880,7 @@ class HomeController extends Controller
 
 		}
 
-		return $groups_consumption_datas;
+		return $groups_consumption_data;
 
 		for($i=0; $i < count($groups_consumption_datas); $i++){
 			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
