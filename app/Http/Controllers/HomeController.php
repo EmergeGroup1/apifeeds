@@ -1880,7 +1880,7 @@ class HomeController extends Controller
 
 		}
 
-		return $groups_consumption_data;
+		
 
 		for($i=0; $i < count($groups_consumption_datas); $i++){
 			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
