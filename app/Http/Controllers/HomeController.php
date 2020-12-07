@@ -1862,23 +1862,12 @@ class HomeController extends Controller
 					$budgeted_amount_lbs = $amount*2000 - ($bin_history->budgeted_amount * $total_pigs);
 				}
 
-				// $budgeted_amount_tons = $budgeted_amount_tons/2000;
-
-				// $bin_history_budgeted_amount = round($budgeted_amount_tons*2000,2);
-				//
-				// $actual_consumption_per_group = $bin_history_budgeted_amount / $total_pigs;
 
 				$groups_cons_history = DB::table("feeds_movement_groups_consumption")
 																	->where("group_id",$g_data->group_id)
 																	->where("update_date",date("Y-m-d"))
 																	->get();
 
-
-				// $groups_consumption_data = array();
-				//
-				// if(count($groups_cons_history) == 0) {
-				//
-				// }
 
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
