@@ -1834,6 +1834,8 @@ class HomeController extends Controller
 
 		$amount = $amount * 2000;
 
+		return $amount;
+
 
 		for($i=0; $i < count($groups); $i++){
 
