@@ -1884,7 +1884,7 @@ class HomeController extends Controller
 					'budgeted_amount'	=>	$bin_history->budgeted_amount,
 					'consumption_lbs'	=>	round($budgeted_amount_lbs,2),
 					'consumption_tons'	=>	round($budgeted_amount_lbs / 2000,2),
-					'amount_tons'	=>	$n_amount,
+					'amount_tons'	=>	$amount,
 					'total_pigs'	=>	$total_pigs
 				);
 
