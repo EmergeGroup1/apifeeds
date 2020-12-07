@@ -1797,7 +1797,6 @@ class HomeController extends Controller
 		$user = User::where('id',$_POST['user'])->first();
 
 		return json_encode(array(
-
 			'msg' 				=> 	$msg,
 			'empty' 			=> 	$this->emptyDate($daysto),
 			'daystoemp' 	=> 	$daysto,
@@ -1833,7 +1832,7 @@ class HomeController extends Controller
 			return "No Consumption";
 		}
 
-
+		return count($groups);
 
 		for($i=0; $i < count($groups); $i++){
 
