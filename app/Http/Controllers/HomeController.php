@@ -1834,6 +1834,7 @@ class HomeController extends Controller
 		}
 
 
+
 		for($i=0; $i < count($groups); $i++){
 
 				$g_data = DB::table("feeds_movement_groups")
@@ -1898,7 +1899,8 @@ class HomeController extends Controller
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
 				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-				'consumption'	=>	round($groups_consumption_data[$i]['consumption_lbs'],2)
+				'consumption'	=>	round($groups_consumption_data[$i]['consumption_lbs'],2),
+				'amount_tons'	=>	$groups_consumption_data[$i]['amount_tons']
 			);
 			$insert = DB::table("feeds_movement_groups_consumption");
 
