@@ -1875,7 +1875,7 @@ class HomeController extends Controller
 																	->where("update_date",date("Y-m-d"))
 																	->get();
 
-				$amount = $amount - ($budgeted_amount_lbs * $total_pigs);													
+				$amount = $amount - ($budgeted_amount_lbs * $total_pigs);
 
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
@@ -1883,7 +1883,7 @@ class HomeController extends Controller
 					'feed_type'	=>	$bin_history->feed_type,
 					'budgeted_amount'	=>	$bin_history->budgeted_amount,
 					'consumption_lbs'	=>	round($budgeted_amount_lbs,2),
-					'consumption_tons'	=>	round($budgeted_amount_lbs / 2000,2),
+					'consumption_tons'	=>	round($budgeted_amount_lbs / 2000,2)
 					'amount_tons'	=>	$amount,
 					'total_pigs'	=>	$total_pigs
 				);
