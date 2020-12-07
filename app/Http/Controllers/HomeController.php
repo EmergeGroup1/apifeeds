@@ -1899,7 +1899,7 @@ class HomeController extends Controller
 				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
 				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
 				'consumption'	=>	round($groups_consumption_data[$i]['consumption_lbs'],2),
-				'amount_tons'	=>	$groups_consumption_data[$i]['amount_tons']
+				'amount_tons'	=>	$groups_consumption_data[$i]['consumption_tons']
 			);
 
 			$insert = DB::table("feeds_movement_groups_consumption");
