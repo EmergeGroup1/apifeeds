@@ -3237,6 +3237,8 @@ class APIController extends Controller
           $bin_id = $data['bin_id'];
           $amount_tons = $data['amount_tons'];
 
+          return $data;
+
           $home_ctrl = new HomeController;
           $cons = $home_ctrl->updateGroupsConsumption($bin_id,$amount_tons);
           unset($home_ctrl);
