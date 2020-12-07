@@ -1868,15 +1868,6 @@ class HomeController extends Controller
 
 				}
 
-
-
-				// $groups_cons_history = DB::table("feeds_movement_groups_consumption")
-				// 													->where("group_id",$g_data->group_id)
-				// 													->where("update_date",date("Y-m-d"))
-				// 													->get();
-
-
-
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
 					'group_id'	=>	$g_data->group_id,
