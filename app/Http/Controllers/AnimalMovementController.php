@@ -3113,7 +3113,21 @@ class AnimalMovementController extends Controller
 
         // update group names format: farm name - Bins: / Rooms:
 
+      }
 
+
+      /*
+      *   Closeout Groups
+      */
+      public function closeOutGroups()
+      {
+
+        $groups = DB::table("feeds_movement_groups")
+                    ->where("status","removed")
+                    ->get();
+
+        return $groups;            
 
       }
+
 }

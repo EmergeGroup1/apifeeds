@@ -3245,6 +3245,16 @@ class APIController extends Controller
 
         break;
 
+        case "closeoutgroups":
+
+            $anml_ctrl = new AnimalMovementController;
+            $closeoutgroups = $anml_ctrl->closeOutGroups();
+            unset($anml_ctrl);
+
+            return $closeoutgroups;
+
+        break;
+
         /*
         * marc controller
         */
