@@ -3132,7 +3132,7 @@ class AnimalMovementController extends Controller
                             ->get();
         }
 
-        return $group_bins;
+        return $groups;
 
       }
 
