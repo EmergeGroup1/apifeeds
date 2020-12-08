@@ -1819,7 +1819,7 @@ class HomeController extends Controller
 	*	update the current groups number of pigs based on yesterday
 	* or today's update on forecasting
 	*/
-	public function updateGroupsConsumption($bin_id,$actual_amount,$budgeted_amount) {
+	public function updateGroupsConsumption($bin_id,$amount) {
 
 		// get the groups
 		$groups = DB::table("feeds_movement_groups_bins")
@@ -1878,7 +1878,7 @@ class HomeController extends Controller
 					'budgeted_amount_tons'	=>	round($cons_lbs / 2000,2),
 					// 'consumption_lbs_remaining'	=>	round($budgeted_amount_lbs,2),
 					// 'consumption_tons_remaining'	=>	round($budgeted_amount_lbs / 2000,2),
-					'actual_amount_lbs'	=>	0,
+					'actual_consumption_lbs'	=>	0,
 					'actual_amount_tons'	=>	0,
 					'total_pigs'	=>	$total_pigs
 				);
@@ -1901,7 +1901,7 @@ class HomeController extends Controller
 				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
 				'budgeted_consumption_lbs'	=>	round($groups_consumption_data[$i]['budgeted_consumption_lbs'],2),
 				'budgeted_amount_tons'	=>	$groups_consumption_data[$i]['budgeted_amount_tons'],
-				'actual_consumption_lbs'	=>	$groups_consumption_data[$i]['actual_amount_lbs'],
+				'actual_consumption_lbs'	=>	$groups_consumption_data[$i]['actual_consumption_lbs'],
 				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
 			);
 
