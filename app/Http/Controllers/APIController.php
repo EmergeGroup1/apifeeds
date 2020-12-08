@@ -3245,7 +3245,7 @@ class APIController extends Controller
 
         break;
 
-        case "closeoutgroups":
+        case "closeOutGroups":
 
             $anml_ctrl = new AnimalMovementController;
             $closeoutgroups = $anml_ctrl->closeOutGroups();
