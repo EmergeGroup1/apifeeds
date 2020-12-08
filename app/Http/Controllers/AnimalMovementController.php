@@ -3127,7 +3127,7 @@ class AnimalMovementController extends Controller
                     ->get();
 
         for($i=0; $i<count($groups); $i++){
-          $groups[$i]['bins_or_rooms'][] = DB::table("feeds_movement_groups_bins")
+          $groups[$i]->bins_or_rooms = DB::table("feeds_movement_groups_bins")
                             ->where("unique_id",$groups[$i]->unique_id)
                             ->get();
         }
