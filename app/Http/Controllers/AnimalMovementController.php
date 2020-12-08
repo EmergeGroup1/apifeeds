@@ -3126,7 +3126,13 @@ class AnimalMovementController extends Controller
                     ->where("status","removed")
                     ->get();
 
-        return $groups;            
+        for($i=0; $i<count($groups); $i++){
+          $group_bins[] = DB::table("feeds_movement_groups_bins")
+                            ->where("unique_id",$groups[$i]->unique_id)
+                            ->get();
+        }
+
+        return $group_bins;
 
       }
 
