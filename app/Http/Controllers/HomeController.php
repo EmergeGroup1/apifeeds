@@ -1819,7 +1819,7 @@ class HomeController extends Controller
 	*	update the current groups number of pigs based on yesterday
 	* or today's update on forecasting
 	*/
-	public function updateGroupsConsumption($bin_id,$amount) {
+	public function updateGroupsConsumption($bin_id,$actual_amount,$budgeted_amount) {
 
 		// get the groups
 		$groups = DB::table("feeds_movement_groups_bins")
@@ -1874,11 +1874,12 @@ class HomeController extends Controller
 					'group_id'	=>	$g_data->group_id,
 					'feed_type'	=>	$bin_history->feed_type,
 					'budgeted_amount'	=>	$bin_history->budgeted_amount,
-					'consumption_lbs' => $cons_lbs,
-					'consumption_lbs_remaining'	=>	round($budgeted_amount_lbs,2),
-					'consumption_tons'	=>	round($cons_lbs / 2000,2),
-					'consumption_tons_remaining'	=>	round($budgeted_amount_lbs / 2000,2),
-					'amount_tons'	=>	$amount,
+					'budgeted_consumption_lbs' => $cons_lbs,
+					'budgeted_amount_tons'	=>	round($cons_lbs / 2000,2),
+					// 'consumption_lbs_remaining'	=>	round($budgeted_amount_lbs,2),
+					// 'consumption_tons_remaining'	=>	round($budgeted_amount_lbs / 2000,2),
+					'actual_amount_lbs'	=>	0,
+					'actual_amount_tons'	=>	0,
 					'total_pigs'	=>	$total_pigs
 				);
 
@@ -1898,10 +1899,10 @@ class HomeController extends Controller
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
 				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-				'budgeted_consumption_lbs'	=>	round($groups_consumption_data[$i]['consumption_lbs'],2),
-				'budgeted_amount_tons'	=>	$groups_consumption_data[$i]['consumption_tons'],
-				'actual_consumption_lbs'	=>	'',
-				'actual_amount_tons'	=>	''
+				'budgeted_consumption_lbs'	=>	round($groups_consumption_data[$i]['budgeted_consumption_lbs'],2),
+				'budgeted_amount_tons'	=>	$groups_consumption_data[$i]['budgeted_amount_tons'],
+				'actual_consumption_lbs'	=>	$groups_consumption_data[$i]['actual_amount_lbs'],
+				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
 			);
 
 			$insert = DB::table("feeds_movement_groups_consumption");
