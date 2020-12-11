@@ -566,7 +566,7 @@ class AnimalMovementController extends Controller
 
               return $groups;
 
-          } else if($data['sort'] == "closeout"){
+          } else if($data['sort'] == "closeOut"){
 
             $groups = $this->filterTransferDayRemainingRemoved($data,'feeds_movement_groups','feeds_movement_groups_bins');
             usort($groups, function($a,$b){
