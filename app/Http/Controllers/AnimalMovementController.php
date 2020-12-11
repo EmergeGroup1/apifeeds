@@ -199,6 +199,8 @@ class AnimalMovementController extends Controller
 
             case 'closeOut':
 
+              $data['sort'] = "closeOut";
+
               $output = $this->filterAll($data,NULL);
               Storage::delete('animal_movement_data.txt');
               Storage::put('animal_movement_data.txt',json_encode($output));
@@ -564,6 +566,17 @@ class AnimalMovementController extends Controller
 
               return $groups;
 
+          } else if($data['sort'] == "closeout"){
+
+            $groups = $this->filterTransferDayRemainingRemoved($data,'feeds_movement_groups','feeds_movement_groups_bins');
+            usort($groups, function($a,$b){
+
+            return ($b['treated_perc'] == $a['treated_perc'])
+                  ?: ($b['treated_perc'] > $a['treated_perc'])
+                  ?: ($a['treated_perc'] < $b['treated_perc']);
+
+            });
+
           } else {
 
               if($type == "hah"){
@@ -659,6 +672,30 @@ class AnimalMovementController extends Controller
               $groups = $groups->where('farm_id',$data['s_farm']);
           }
           $groups = $groups->whereNotIn('status',['finalized','removed']);
+          // $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
+          $groups = $groups->whereBetween('created_at',[date("Y-m-d H:i:s",strtotime($data['date_from'])),date("Y-m-d H:i:s",strtotime($data['date_to']))]);
+          $groups = $groups->orderBy('date_to_transfer','desc');
+          $groups = $groups->get();
+          $groups = $this->toArray($groups);
+          $groups = $this->filterTransferBins($groups,$group_table,$group_bins_table);
+
+          return $groups;
+      }
+
+      /**
+      ** Filter for all farrowing to nursery groups
+      ** @param $data array
+      ** @param $group_table string
+      ** @param $group_bins_table string
+      ** @return array
+      **/
+      private function filterTransferDayRemainingRemoved($data,$group_table,$group_bins_table)
+      {
+          $groups = DB::table($group_table);
+          if($data['s_farm'] != "all"){
+              $groups = $groups->where('farm_id',$data['s_farm']);
+          }
+          $groups = $groups->whereIn('status',['finalized','removed']);
           // $groups = $groups->whereBetween('date_created',[$data['date_from'],$data['date_to']]);
           $groups = $groups->whereBetween('created_at',[date("Y-m-d H:i:s",strtotime($data['date_from'])),date("Y-m-d H:i:s",strtotime($data['date_to']))]);
           $groups = $groups->orderBy('date_to_transfer','desc');
