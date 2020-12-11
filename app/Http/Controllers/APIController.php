@@ -3259,7 +3259,7 @@ class APIController extends Controller
             $am_lists = $am_controller->animalMovementFilterAPI($data);
             unset($am_controller);
 
-            if (!empty($am_lists['output'])) {
+            if (count($am_lists['output']) > 0) {
               return array(
                 "err"     =>  0,
                 "msg"     =>  "Successfully Get Animal Groups",
