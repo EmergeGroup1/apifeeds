@@ -210,7 +210,7 @@ class AnimalMovementController extends Controller
                   "output"          =>  json_decode($output),
                   "nursery_groups"  =>  json_decode($nursery_groups),
                   "finisher_groups" =>  json_decode($finisher_groups),
-                  "farm_groups"     =>  $this->farmAMGroups(),
+                  "farm_groups"     =>  "",//$this->farmAMGroups(),
                   "death_reasons"   =>  $this->deathReasons(),
                   "treatments"      =>  $this->treatments()
               );
