@@ -3247,12 +3247,6 @@ class APIController extends Controller
 
         case "closeOutGroups":
 
-            $anml_ctrl = new AnimalMovementController;
-            $closeoutgroups = $anml_ctrl->closeOutGroups();
-            unset($anml_ctrl);
-
-            return $closeoutgroups;
-
             $data = array(
               'type'      =>  "closeOut", // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
               'date_from' =>  $request->input('date_from'), // (date)
