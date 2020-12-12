@@ -569,13 +569,15 @@ class AnimalMovementController extends Controller
           } else if($data['sort'] == "closeOut"){
 
             $groups = $this->filterTransferDayRemainingRemoved($data,'feeds_movement_groups','feeds_movement_groups_bins');
-            usort($groups, function($a,$b){
+            // usort($groups, function($a,$b){
+            //
+            // return ($b['treated_perc'] == $a['treated_perc'])
+            //       ?: ($b['treated_perc'] > $a['treated_perc'])
+            //       ?: ($a['treated_perc'] < $b['treated_perc']);
+            //
+            // });
 
-            return ($b['treated_perc'] == $a['treated_perc'])
-                  ?: ($b['treated_perc'] > $a['treated_perc'])
-                  ?: ($a['treated_perc'] < $b['treated_perc']);
-
-            });
+            return $groups;
 
           } else {
 
