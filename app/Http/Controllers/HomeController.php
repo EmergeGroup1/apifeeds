@@ -3230,6 +3230,7 @@ class HomeController extends Controller
 	{
 		$farrowing = DB::table('feeds_movement_groups')
 									->where('status','!=','removed')
+									->where('created_at','!=','0000-00-00 00:00:00')
 									->where('unique_id',$unique_id)->get();
 
 		$farrowing = $this->toArray($farrowing);
