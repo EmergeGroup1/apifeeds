@@ -1113,6 +1113,7 @@ class HomeController extends Controller
 		$active_groups = DB::table($group_table)
 											->select('unique_id')
 											->where('status','!=','removed')
+											->where('created_at','!=','0000-00-00 00:00:00')
 											->get();
 		$active_groups = $this->toArray($active_groups);
 
@@ -1131,7 +1132,6 @@ class HomeController extends Controller
 	{
 		$sum = DB::table('feeds_movement_groups_bins')
 						->where('bin_id',$bin_id)
-						->where('created_at','!=','0000-00-00 00:00:00')
 						->whereIn('unique_id',$unique_id)
 						->sum('number_of_pigs');
 
