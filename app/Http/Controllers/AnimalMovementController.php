@@ -837,7 +837,8 @@ class AnimalMovementController extends Controller
                   'treated'                 =>  $this->amTreatedPigs($v['group_id']),
                   'death_perc'              =>  $this->deathPercentage($v['group_id']),
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
-                  'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id'])
+                  'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
+                  'groups_consumption'      =>  $this->getGroupsConsumption($v['group_id'])
                 );
 
             }
@@ -845,6 +846,25 @@ class AnimalMovementController extends Controller
           }
 
           return $data;
+
+      }
+
+
+      /**
+      ** Filter for all animal groups
+      ** @param $groups array
+      ** @param $group_table string
+      ** @param $group_bins_table string
+      ** @return array
+      **/
+      private function getGroupsConsumption($group_id)
+      {
+
+        $group_consumption = DB::table("feeds_movement_groups_consumption")
+                                ->where("group_id",$group_id)
+                                ->get();
+
+        return $group_consumption;
 
       }
 
