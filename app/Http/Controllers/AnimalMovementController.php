@@ -839,7 +839,8 @@ class AnimalMovementController extends Controller
                   'death_perc'              =>  $this->deathPercentage($v['group_id']),
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
-                  'groups_consumption'      =>  $this->getGroupsConsumption($v['group_id'])
+                  'groups_consumption'      =>  $this->getGroupsConsumption($v['group_id']),
+                  'currentAge'              =>  $this->currentAge($v['date_created'])
                 );
 
             }
@@ -876,6 +877,17 @@ class AnimalMovementController extends Controller
         }
 
         return $start_date;
+
+      }
+
+      private function currentAge($start_date)
+      {
+
+        $current_date = date("Y-m-d");
+
+        $days = (strtotime($transfer_date) - strtotime($start_date)) / (60 * 60 * 24);
+
+        return round($days < 0 ? 0 : $days,0);
 
       }
 
