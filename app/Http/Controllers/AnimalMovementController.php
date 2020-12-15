@@ -859,6 +859,8 @@ class AnimalMovementController extends Controller
       private function startDateGroups($group_id,$group_type,$start_date)
       {
 
+        return date("M d, Y", strtotime($start_date));;
+
         if($group_type == "farrowing"){
 
           $start_date = date("M d, Y", strtotime($start_date));
