@@ -814,6 +814,7 @@ class AnimalMovementController extends Controller
                   'group_name'				      =>	$v['group_name'],
                   'unique_id'					      =>	$v['unique_id'],
                   'date_created'			      =>	$v['date_created'],
+                  'start_date'              =>  $this->startDateGroups($v['group_id'],$v['type'],$v['date_created']),// the start date of farrowing group
                   'date_transfered'		      =>	$v['date_transfered'],
                   'date_to_transfer'	      =>	str_replace("-","",(string)(int)$days_remaining),
                   'days_remaining_date'     =>  $days_remaining_date_md,
@@ -851,10 +852,34 @@ class AnimalMovementController extends Controller
 
 
       /**
+      ** Get the start date for all animal groups
+      ** it should be the created date of farrowing group
+      ** @return array
+      **/
+      private function startDateGroups($group_id,$group_type,$start_date)
+      {
+
+        if($group_type == "farrowing"){
+
+          $start_date = date("M d, Y", strtotime($start_date));
+
+        } else if($group_type == "nursery"){// get the group from id and the group to id
+
+          $start_date = "00 00 000";
+
+        } else {
+
+          $start_date = "00 00 000";
+
+        }
+
+        return $start_date;
+
+      }
+
+
+      /**
       ** Filter for all animal groups
-      ** @param $groups array
-      ** @param $group_table string
-      ** @param $group_bins_table string
       ** @return array
       **/
       private function getGroupsConsumption($group_id)
