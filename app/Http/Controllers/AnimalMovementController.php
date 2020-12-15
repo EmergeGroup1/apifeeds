@@ -978,7 +978,8 @@ class AnimalMovementController extends Controller
                   'treated'                 =>  $this->amTreatedPigs($v['group_id']),
                   'death_perc'              =>  $this->deathPercentage($v['group_id']),
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
-                  'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id'])
+                  'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
+                  'average_weight'          =>  $this->aveWeight($transfer_data)
                 );
 
             }
@@ -986,6 +987,25 @@ class AnimalMovementController extends Controller
           }
 
           return $data;
+
+      }
+
+
+      private function aveWeight($transfer_data)
+      {
+        $return = 0;
+
+        if(count($transfer_data) > 0){
+          $sum = 0;
+          for($i = 0; $i < count($transfer_data); $i++){
+              $sum = $sum + $transfer_data[$i]->average_weight;
+          }
+          if($sum != 0) {
+            $return = $sum / count($transfer_data);
+          }
+        }
+
+        return $return;
 
       }
 
