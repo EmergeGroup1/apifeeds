@@ -952,6 +952,7 @@ class AnimalMovementController extends Controller
                   'group_name'				      =>	$v['group_name'],
                   'unique_id'					      =>	$v['unique_id'],
                   'date_created'			      =>	$v['date_created'],
+                  'start_date'              =>  $this->startDateGroups($v['group_id'],$v['type'],$v['date_created']),// the start date of farrowing group
                   'date_transfered'		      =>	$v['date_transfered'],
                   'date_to_transfer'	      =>	str_replace("-","",(string)(int)$days_remaining),
                   'days_remaining_date'     =>  $days_remaining_date_md,
