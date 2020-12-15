@@ -979,7 +979,8 @@ class AnimalMovementController extends Controller
                   'death_perc'              =>  $this->deathPercentage($v['group_id']),
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
-                  'average_weight'          =>  $this->aveWeight($transfer_data)
+                  'average_weight'          =>  $this->aveWeight($transfer_data),
+                  'total_days'              =>  $this->totalDays($v['date_created'],$v['date_transfered'])
                 );
 
             }
@@ -990,6 +991,14 @@ class AnimalMovementController extends Controller
 
       }
 
+      private function totalDays($start_date,$transfer_date)
+      {
+
+        $days = (strtotime($transfer_date) - strtotime($start_date)) / (60 * 60 * 24);
+
+        return $days;
+
+      }
 
       private function aveWeight($transfer_data)
       {
