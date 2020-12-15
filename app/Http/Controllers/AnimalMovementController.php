@@ -885,7 +885,7 @@ class AnimalMovementController extends Controller
 
         $current_date = date("Y-m-d");
 
-        $days = (strtotime($transfer_date) - strtotime($start_date)) / (60 * 60 * 24);
+        $days = (strtotime($current_date) - strtotime($start_date)) / (60 * 60 * 24);
 
         return round($days < 0 ? 0 : $days,0);
 
