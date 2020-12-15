@@ -1862,7 +1862,7 @@ class APIController extends Controller
             'date'              =>  date("Y-m-d", strtotime($request->input('date'))),
             'shipped'           =>  $request->input('shipped'), // sow/nursery/finisher
             'empty_weight'      =>  0,
-            'ave_weight'        =>  0,
+            'ave_weight'        =>  $request->input('ave_weight'),
             'driver_id'         =>  $request->input('driver_id'),
             'full_weight'       =>  0,
             'received'          =>  0,
