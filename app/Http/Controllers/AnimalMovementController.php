@@ -998,7 +998,7 @@ class AnimalMovementController extends Controller
         if(count($transfer_data) > 0){
           $sum = 0;
           for($i = 0; $i < count($transfer_data); $i++){
-              $sum = $sum + $transfer_data[$i]['average_weight'];
+              $sum = $sum + $transfer_data[$i]->ave_weight;
           }
           if($sum != 0) {
             $return = $sum / count($transfer_data);
