@@ -980,7 +980,7 @@ class AnimalMovementController extends Controller
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
                   'average_weight'          =>  $this->aveWeight($transfer_data),
-                  'total_days'              =>  $this->totalDays($v['date_created'],$v['date_transfered'])
+                  'total_days'              =>  $this->totalDays($v['date_created'],$transfer_data[0]['date'])
                 );
 
             }
