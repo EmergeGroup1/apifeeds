@@ -57,7 +57,8 @@ class MarcController extends Controller
 		$cme->last = $request->last;
 		$cme->converted_last = $request->converted_last;
 		$cme->basis = $request->basis;
-
+		$cme->visibility_ui = $request->visibility_ui;
+		$cme->visibility_be = $request->visibility_be;
 		$cme->save();
 }
 
