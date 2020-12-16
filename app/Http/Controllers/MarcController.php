@@ -42,7 +42,14 @@ class MarcController extends Controller
 			->header('Content-Type', 'application/json');
 	}
 
-
+	public function excludeZeroValues()
+  {
+    $cme = Cme::where('converted_last', '!=', '0')
+                ->get();
+                // ->where('converted_last', '!=', '0')
+    return response()->json($cme, 200)
+    // return CmeResource::collection($cme);
+  }
 
 
 

@@ -37,6 +37,8 @@ Route::post('cme/{id}', 'MarcController@cmeUpdate');
 //update CME ui visibility
 Route::post('cme/v/{id}', 'MarcController@visibility');
 
+Route::get('cmezerolast', 'MarcController@excludeZeroValues');
+
 
 
 
