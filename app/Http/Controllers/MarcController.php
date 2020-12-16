@@ -59,6 +59,7 @@ class MarcController extends Controller
 		$cme->basis = $request->basis;
 		$cme->visibility_ui = $request->visibility_ui;
 		$cme->visibility_be = $request->visibility_be;
+		$cme->bidvalue = $request->bidvalue;
 		$cme->save();
 }
 
