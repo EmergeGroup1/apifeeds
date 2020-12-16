@@ -98,9 +98,10 @@ class CmeController extends Controller
   // exclude zero value convertedlast
   public function excludeZeroValues()
   {
-    $cme = Cme::table('cme')
-                ->where('converted_last', '!=', '0')
+    $cme = Cme::where('converted_last', '!=', '0')
                 ->get();
+                // ->where('converted_last', '!=', '0')
+                
     return CmeResource::collection($cme);
   }
 }
