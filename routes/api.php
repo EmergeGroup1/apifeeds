@@ -29,3 +29,5 @@ Route::put('cme/{id}', 'CmeController@store');
 Route::get('cme/{id}', 'CmeController@visibility');
 // DELETE CME RECORD
 Route::delete('cme/{id}', 'CmeController@destroy');
+// lIST ALL CME WITH 0 convLast
+Route::get('cmezerolast', 'CmeController@excludeZeroValues');
