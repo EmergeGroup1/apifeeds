@@ -46,10 +46,20 @@ class MarcController extends Controller
   {
     $cme = Cme::where('converted_last', '!=', '0')
                 ->get();
-                // ->where('converted_last', '!=', '0')
     return response()->json($cme, 200);
-    // return CmeResource::collection($cme);
   }
+
+	public function store(Request $request)
+{
+		$cme = new Cme;
+
+		$cme->month = $request->month;
+		$cme->last = $request->month;
+		$cme->converted_last = $request->converted_last;
+		$cme->basis = $request->basis;
+
+		$cme->save();
+}
 
 
 

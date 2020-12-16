@@ -38,6 +38,7 @@ Route::post('cme/{id}', 'MarcController@cmeUpdate');
 Route::post('cme/v/{id}', 'MarcController@visibility');
 
 Route::get('cmezerolast', 'MarcController@excludeZeroValues');
+Route::post('addmonth', 'MarcController@store');
 
 
 
