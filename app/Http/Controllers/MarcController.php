@@ -54,7 +54,7 @@ class MarcController extends Controller
 		$cme = new Cme;
 
 		$cme->month = $request->month;
-		$cme->last = $request->month;
+		$cme->last = $request->last;
 		$cme->converted_last = $request->converted_last;
 		$cme->basis = $request->basis;
 
