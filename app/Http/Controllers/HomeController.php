@@ -1930,6 +1930,16 @@ class HomeController extends Controller
 				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
 			);
 
+			$dtest_insert[] = array(
+				'update_date'	=>	date("Y-m-d"),
+				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
+				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
+				'budgeted_consumption_lbs'	=>	$budgeted_consumption_lbs,
+				'budgeted_amount_tons'	=>	$budgeted_amount_tons,
+				'actual_consumption_lbs'	=>	$groups_consumption_data[$i]['actual_consumption_lbs'],
+				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
+			);
+
 			$insert = DB::table("feeds_movement_groups_consumption");
 
 			// if groups consumption is existed {delete the group consumption today and insert}
@@ -1946,7 +1956,7 @@ class HomeController extends Controller
 			$insert->insert($d_insert);
 		}
 
-		return $groups_consumption_data;
+		return $dtest_insert;
 
 
 
