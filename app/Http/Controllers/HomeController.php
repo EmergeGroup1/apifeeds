@@ -931,7 +931,7 @@ class HomeController extends Controller
 		BinsHistory::insert($data);
 
 		// groups consumption
-		$this->updateGroupsConsumption($bin_id,$lastupdate[0]->amount);
+		$this->updateGroupsConsumption($bin_id,$lastupdate[0]->amount,"manual");
 
 		// $notification = new CloudMessaging;
 		// $farmer_data = array(
@@ -1014,7 +1014,7 @@ class HomeController extends Controller
 		BinsHistory::insert($data);
 
 		// groups consumption
-		$this->updateGroupsConsumption($bin_id,$lastupdate[0]->amount);
+		$this->updateGroupsConsumption($bin_id,$lastupdate[0]->amount,"manual");
 
 		// $notification = new CloudMessaging;
 		// $farmer_data = array(
@@ -1314,7 +1314,7 @@ class HomeController extends Controller
 		}
 
 		// groups consumption
-		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount']);
+		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
 
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
@@ -1530,7 +1530,7 @@ class HomeController extends Controller
 		}
 
 		// groups consumption
-		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount']);
+		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
 
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
@@ -1744,7 +1744,7 @@ class HomeController extends Controller
 		}
 
 		// groups consumption
-		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount']);
+		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
 			$avg_variance = 0;
@@ -1834,7 +1834,7 @@ class HomeController extends Controller
 	*	update the current groups number of pigs based on yesterday
 	* or today's update on forecasting
 	*/
-	public function updateGroupsConsumption($bin_id,$amount) {
+	public function updateGroupsConsumption($bin_id,$amount,$type) {
 
 		// get the groups
 		$groups = DB::table("feeds_movement_groups_bins")
@@ -1894,8 +1894,8 @@ class HomeController extends Controller
 					'budgeted_amount_tons'	=>	round($cons_lbs / 2000,2),
 					// 'consumption_lbs_remaining'	=>	round($budgeted_amount_lbs,2),
 					// 'consumption_tons_remaining'	=>	round($budgeted_amount_lbs / 2000,2),
-					'actual_consumption_lbs'	=>	0,
-					'actual_amount_tons'	=>	0,
+					'actual_consumption_lbs'	=>	$cons_lbs,
+					'actual_amount_tons'	=>	round($cons_lbs / 2000,2),
 					'total_pigs'	=>	$total_pigs
 				);
 
@@ -1911,12 +1911,21 @@ class HomeController extends Controller
 																->where("update_date",date("Y-m-d"))
 																->get();
 
+			// manual (insert) select the previous data and build the new data to insert
+			if($type == "manual"){
+				$budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
+				$budgeted_amount_tons = $groups_cons_history[0]->budgeted_amount_tons;
+			} else {
+				$budgeted_consumption_lbs = round($groups_consumption_data[$i]['budgeted_consumption_lbs'],2);
+				$budgeted_amount_tons = $groups_consumption_data[$i]['budgeted_amount_tons'];
+			}
+
 			$d_insert = array(
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
 				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-				'budgeted_consumption_lbs'	=>	round($groups_consumption_data[$i]['budgeted_consumption_lbs'],2),
-				'budgeted_amount_tons'	=>	$groups_consumption_data[$i]['budgeted_amount_tons'],
+				'budgeted_consumption_lbs'	=>	$budgeted_consumption_lbs,
+				'budgeted_amount_tons'	=>	$budgeted_amount_tons,
 				'actual_consumption_lbs'	=>	$groups_consumption_data[$i]['actual_consumption_lbs'],
 				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
 			);
@@ -6353,7 +6362,7 @@ class HomeController extends Controller
 			$feed_name = FeedTypes::where('type_id','=',$data[0]['feed_type'])->first();
 
 			// groups consumption
-			$this->updateGroupsConsumption($data[0]['bin_id'],$amount);
+			$this->updateGroupsConsumption($data[0]['bin_id'],$amount,"automatic");
 
 			// Mobile created date
 			/*$time = date('H:i:s',strtotime($data[0]['update_date'])+60*60);
@@ -6740,7 +6749,7 @@ class HomeController extends Controller
 				// }
 
 				// groups consumption
-				$this->updateGroupsConsumption($bin_id,$data[0]['amount'] + $undone_deliveries[$i]['amount']);
+				$this->updateGroupsConsumption($bin_id,$data[0]['amount'] + $undone_deliveries[$i]['amount'],"manual");
 
 			// insert
 			} else {
@@ -6776,7 +6785,7 @@ class HomeController extends Controller
 				}
 
 				// groups consumptions
-				$this->updateGroupsConsumption($bin_id,$data[0]['amount'] + $undone_deliveries[$i]['amount']);
+				$this->updateGroupsConsumption($bin_id,$data[0]['amount'] + $undone_deliveries[$i]['amount'],"manual");
 
 				// if($undone_deliveries[$i]['status'] == 2){
 				// 	$this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$undone_deliveries[$i]['driver_id']);
