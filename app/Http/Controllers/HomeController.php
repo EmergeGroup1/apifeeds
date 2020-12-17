@@ -1855,6 +1855,7 @@ class HomeController extends Controller
 				$g_data = DB::table("feeds_movement_groups")
 								->where("unique_id",$groups[$i]->unique_id)
 								->whereIn("status",["entered","created"])
+								->where("created_at","!=","0000-00-00 00:00:00")
 								->select("unique_id","group_id")
 								->first();
 
