@@ -930,6 +930,9 @@ class HomeController extends Controller
 
 		BinsHistory::insert($data);
 
+		// groups consumption
+		$this->updateGroupsConsumption($bin_id,$lastupdate[0]->amount);
+
 		// $notification = new CloudMessaging;
 		// $farmer_data = array(
 		// 	'farm_id'		=> 	$bininfo[0]->farm_id,
@@ -1009,6 +1012,9 @@ class HomeController extends Controller
 			->delete();
 
 		BinsHistory::insert($data);
+
+		// groups consumption
+		$this->updateGroupsConsumption($bin_id,$lastupdate[0]->amount);
 
 		// $notification = new CloudMessaging;
 		// $farmer_data = array(
@@ -1307,6 +1313,9 @@ class HomeController extends Controller
 			BinsHistory::insert($bin_history_data);
 		}
 
+		// groups consumption
+		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount']);
+
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
 			$avg_variance = 0;
@@ -1520,6 +1529,9 @@ class HomeController extends Controller
 			BinsHistory::insert($bin_history_data);
 		}
 
+		// groups consumption
+		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount']);
+
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
 			$avg_variance = 0;
@@ -1731,6 +1743,8 @@ class HomeController extends Controller
 			BinsHistory::insert($bin_history_data);
 		}
 
+		// groups consumption
+		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount']);
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
 			$avg_variance = 0;
@@ -6337,6 +6351,8 @@ class HomeController extends Controller
 			$med_name = Medication::where('med_id','=',$data[0]['medication'])->first();
 			$feed_name = FeedTypes::where('type_id','=',$data[0]['feed_type'])->first();
 
+			// groups consumption
+			$this->updateGroupsConsumption($data[0]['bin_id'],$amount);
 
 			// Mobile created date
 			/*$time = date('H:i:s',strtotime($data[0]['update_date'])+60*60);

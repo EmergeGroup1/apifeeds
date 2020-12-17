@@ -2677,6 +2677,11 @@ class AnimalMovementController extends Controller
 
             BinsHistory::insert($data);
 
+            // groups consumption
+            $home_controller = new HomeController;
+            $home_controller->updateGroupsConsumption($bin_id,$lastupdate[0]->amount);
+            unset($home_controller);
+
             // $notification = new CloudMessaging;
             // $farmer_data = array(
             //   'farm_id'		=> 	$bininfo[0]->farm_id,
