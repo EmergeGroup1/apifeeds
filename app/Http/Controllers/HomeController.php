@@ -1937,7 +1937,7 @@ class HomeController extends Controller
 				'budgeted_consumption_lbs'	=>	$budgeted_consumption_lbs,
 				'budgeted_amount_tons'	=>	$budgeted_amount_tons,
 				'actual_consumption_lbs'	=>	$groups_consumption_data[$i]['actual_consumption_lbs'],
-				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
+				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons']
 			);
 
 			$insert = DB::table("feeds_movement_groups_consumption");
