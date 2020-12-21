@@ -1859,6 +1859,9 @@ class HomeController extends Controller
 								->select("unique_id","group_id")
 								->first();
 
+				if(count($g_data) <= 0){
+					return "No Consumption";
+				}
 
 				// get the total number of pigs per group inside the group bin
 				$total_pigs = DB::table("feeds_movement_groups_bins")
