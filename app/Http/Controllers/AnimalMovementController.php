@@ -66,9 +66,11 @@ class AnimalMovementController extends Controller
 
           $group_bins = DB::table("feeds_movement_groups_bins")->get();
           for($i=0; $i<count($group_bins); $i++){
+
             DB::table("feeds_movement_group_bins")
               ->where("unique_id",$group_bins[$i]->unique_id)
               ->update(["orig_number_of_pigs"=>$group_bins[$i]->number_of_pigs]);
+
           }
 
           $type = $data['type'];
@@ -2049,7 +2051,7 @@ class AnimalMovementController extends Controller
 
                 $d = array(
                   'room_id'			=>	$v,
-                  'number_of_pigs'	=>	$number_of_pigs[$k]
+                  'number_of_pigs'	=>	$number_of_pigs[$k],
                   'orig_number_of_pigs'	=>	$number_of_pigs[$k]
                 );
 
