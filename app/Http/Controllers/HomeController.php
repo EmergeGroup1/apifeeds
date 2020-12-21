@@ -1859,7 +1859,7 @@ class HomeController extends Controller
 								->select("unique_id","group_id")
 								->first();
 
-				if(count($this->toArray($g_data)) <= 0){
+				if($g_data == NULL){
 					return "No Consumption";
 				}
 
