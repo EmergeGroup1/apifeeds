@@ -2895,8 +2895,8 @@ class APIController extends Controller
             // return the list of deaths with corresponding group id
             $aml_ctrl = new AnimalMovementController;
             $death_lists = $aml_ctrl->amDeadPigs($data['groupID']);
-            $death_perc = $aml_ctrl->deathPercentage($data['groupID']);
-            $treated_perc = $aml_ctrl->treatedPercentage($data['groupID']);
+            $death_perc = $aml_ctrl->deathPercentage($data['groupID'],"open");
+            $treated_perc = $aml_ctrl->treatedPercentage($data['groupID'],"open");
             $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['groupID']);
             unset($aml_ctrl);
 
@@ -2998,8 +2998,8 @@ class APIController extends Controller
               // return the list of deaths with corresponding group id
               $aml_ctrl = new AnimalMovementController;
               $death_lists = $aml_ctrl->amDeadPigs($dt['group_id']);
-              $death_perc = $aml_ctrl->deathPercentage($dt['group_id']);
-              $treated_perc = $aml_ctrl->treatedPercentage($dt['group_id']);
+              $death_perc = $aml_ctrl->deathPercentage($dt['group_id'],"open");
+              $treated_perc = $aml_ctrl->treatedPercentage($dt['group_id'],"open");
               $pigs_per_crate = $aml_ctrl->avePigsPerCrate($dt['group_id']);
               unset($aml_ctrl);
 
@@ -3073,8 +3073,8 @@ class APIController extends Controller
           // return the list of deaths with corresponding group id
           $aml_ctrl = new AnimalMovementController;
           $death_lists = $aml_ctrl->amDeadPigs($data['group_id']);
-          $death_perc = $aml_ctrl->deathPercentage($data['group_id']);
-          $treated_perc = $aml_ctrl->treatedPercentage($data['group_id']);
+          $death_perc = $aml_ctrl->deathPercentage($data['group_id'],"open");
+          $treated_perc = $aml_ctrl->treatedPercentage($data['group_id'],"open");
           $pigs_per_crate = $aml_ctrl->avePigsPerCrate($data['group_id']);
           unset($aml_ctrl);
 
