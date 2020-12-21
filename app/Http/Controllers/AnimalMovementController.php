@@ -63,6 +63,14 @@ class AnimalMovementController extends Controller
       **/
       public function animalMovementFilterAPI($data)
       {
+
+          $group_bins = DB::table("feeds_movement_groups_bins")->get();
+          for($i=0; $i<count($group_bins); $i++){
+            DB::table("feeds_movement_group_bins")
+              ->where("unique_id",$group_bins[$i]->unique_id)
+              ->update(["orig_number_of_pigs"=>$group_bins[$i]->number_of_pigs]);
+          }
+
           $type = $data['type'];
 
           $data = array(
@@ -1886,6 +1894,7 @@ class AnimalMovementController extends Controller
               $data_group_bins = array(
                 'room_id'			    =>	$rooms[$k],
                 'number_of_pigs'	=>	$number_of_pigs[$k],
+                'orig_number_of_pigs' =>  $number_of_pigs[$k],
                 'unique_id'			  =>	$unique_id
               );
               DB::table('feeds_movement_groups_bins')->insert($data_group_bins);
@@ -1901,6 +1910,7 @@ class AnimalMovementController extends Controller
               $data_group_bins = array(
                 'bin_id'			    =>	$bins[$k],
                 'number_of_pigs'	=>	$number_of_pigs[$k],
+                'orig_number_of_pigs' =>  $number_of_pigs[$k],
                 'unique_id'			  =>	$unique_id
               );
               $this->saveGroupBins($data_group_bins);
@@ -2000,6 +2010,7 @@ class AnimalMovementController extends Controller
                 $data = array(
                 'room_id'			=>	$v,
                 'number_of_pigs'	=>	$number_of_pigs[$k],
+                'orig_number_of_pigs'	=>	$number_of_pigs[$k],
                 'unique_id'			=>	$data['unique_id']
                 );
                 DB::table('feeds_movement_groups_bins')->insert($data);
@@ -2039,6 +2050,7 @@ class AnimalMovementController extends Controller
                 $d = array(
                   'room_id'			=>	$v,
                   'number_of_pigs'	=>	$number_of_pigs[$k]
+                  'orig_number_of_pigs'	=>	$number_of_pigs[$k]
                 );
 
                 if($group_bin_id[$k] == "none"){
@@ -2047,6 +2059,7 @@ class AnimalMovementController extends Controller
                   ->insert([
                     'room_id'			    =>	$v,
                     'number_of_pigs'	=>	$number_of_pigs[$k],
+                    'orig_number_of_pigs'	=>	$number_of_pigs[$k],
                     'unique_id'       =>  $data['unique_id']
                   ]);
 
@@ -2136,7 +2149,8 @@ class AnimalMovementController extends Controller
 
           $data = array(
           'bin_id'			=>	$bin_id,
-          'number_of_pigs'	=>	$pigs
+          'number_of_pigs'	=>	$pigs,
+          'orig_number_of_pigs' =>  $pigs
           );
 
           DB::table('feeds_movement_groups_bins')
