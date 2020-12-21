@@ -1155,7 +1155,7 @@ class AnimalMovementController extends Controller
         $pigs_per_crate = 0;
         for($i=0; $i<count($groups_bins_rooms); $i++){
 
-          $sum_pigs = $sum_pigs + $groups_bins_rooms[$i]->number_of_pigs;
+          $sum_pigs = $sum_pigs + $groups_bins_rooms[$i]->orig_number_of_pigs;
           $farrowing_rooms = DB::table("feeds_farrowing_rooms")
                                 ->where('id',$groups_bins_rooms[$i]->room_id)
                                 ->get();
