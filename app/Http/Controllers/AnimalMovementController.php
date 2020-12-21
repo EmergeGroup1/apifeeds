@@ -2709,6 +2709,8 @@ class AnimalMovementController extends Controller
 
             BinsHistory::insert($data);
 
+            sleep(1);
+
             // groups consumption
             $home_controller = new HomeController;
             $home_controller->updateGroupsConsumption($bin_id,$lastupdate[0]->amount,"automatic");

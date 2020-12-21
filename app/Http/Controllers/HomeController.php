@@ -1895,8 +1895,6 @@ class HomeController extends Controller
 					'budgeted_amount'	=>	$bin_history->budgeted_amount,
 					'budgeted_consumption_lbs' => $cons_lbs,
 					'budgeted_amount_tons'	=>	round($cons_lbs / 2000,2),
-					// 'consumption_lbs_remaining'	=>	round($budgeted_amount_lbs,2),
-					// 'consumption_tons_remaining'	=>	round($budgeted_amount_lbs / 2000,2),
 					'actual_consumption_lbs'	=>	$cons_lbs,
 					'actual_amount_tons'	=>	round($cons_lbs / 2000,2),
 					'total_pigs'	=>	$total_pigs
@@ -1959,24 +1957,9 @@ class HomeController extends Controller
 			$insert->insert($d_insert);
 		}
 
+
+
 		return $dtest_insert;
-
-
-
-
-			// all of the consumption computation will happen here.
-			$gs = DB::table("feeds_movement_groups_consumption");
-			$gs_query = $gs->where("group_id",$groups[$i]->group_id);
-			$gs_count = $gs_query->count();
-
-			$data = array(
-				'update_date'	=>	date("Y-m-d"),
-				'group_id'		=>	$groups[$i]->group_id,
-				'feed_type'		=>	$feed_type,
-				'consumption'	=>	$consumption
-			);
-
-
 
 	}
 
