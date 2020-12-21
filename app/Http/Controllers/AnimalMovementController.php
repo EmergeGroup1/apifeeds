@@ -699,7 +699,7 @@ class AnimalMovementController extends Controller
               $groups = $groups->where('farm_id',$data['s_farm']);
           }
           $groups = $groups->whereIn('status',['finalized','removed']);
-          $groups = $groups->whereBetween('created_at',[date("Y-m-d H:i:s",strtotime($data['date_from'])),$data['date_to'] . " 59:59:59"]);
+          $groups = $groups->whereBetween('created_at',[date("Y-m-d H:i:s",strtotime($data['date_from'])),date("Y-m-d H:i:s",strtotime($data['date_to']))]);
           $groups = $groups->orderBy('date_to_transfer','desc');
           $groups = $groups->get();
           $groups = $this->toArray($groups);
