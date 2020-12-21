@@ -837,8 +837,8 @@ class AnimalMovementController extends Controller
                   'sched_pigs'				      =>	$this->scheduledTransaferPigs($v['group_id']),
                   'death'                   =>  $this->amDeadPigs($v['group_id']),
                   'treated'                 =>  $this->amTreatedPigs($v['group_id']),
-                  'death_perc'              =>  $this->deathPercentage($v['group_id']),
-                  'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
+                  'death_perc'              =>  $this->deathPercentage($v['group_id'],"open"),
+                  'treated_perc'            =>  $this->treatedPercentage($v['group_id'],"open"),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
                   'groups_consumption'      =>  $this->getGroupsConsumption($v['group_id']),
                   'currentAge'              =>  $total_pigs == 0 ? 0 : $this->currentAge($v['date_created'])
@@ -994,8 +994,8 @@ class AnimalMovementController extends Controller
                   'sched_pigs'				      =>	$this->scheduledTransaferPigs($v['group_id']),
                   'death'                   =>  $this->amDeadPigs($v['group_id']),
                   'treated'                 =>  $this->amTreatedPigs($v['group_id']),
-                  'death_perc'              =>  $this->deathPercentage($v['group_id']),
-                  'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
+                  'death_perc'              =>  $this->deathPercentage($v['group_id'],"closeout"),
+                  'treated_perc'            =>  $this->treatedPercentage($v['group_id'],"closeout"),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
                   'average_weight'          =>  $this->aveWeight($transfer_data),
                   'total_days'              =>  $total_days
@@ -1117,8 +1117,8 @@ class AnimalMovementController extends Controller
                   'sched_pigs'				      =>	$this->scheduledTransaferPigs($v['group_id']),
                   'death'                   =>  $this->amDeadPigs($v['group_id']),
                   'treated'                 =>  $this->amTreatedPigs($v['group_id']),
-                  'death_perc'              =>  $this->deathPercentage($v['group_id']),
-                  'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
+                  'death_perc'              =>  $this->deathPercentage($v['group_id'],"open"),
+                  'treated_perc'            =>  $this->treatedPercentage($v['group_id'],"open"),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id'])
                 );
 
@@ -1187,7 +1187,7 @@ class AnimalMovementController extends Controller
       /**
        * get the percentage death loss of a group.
        */
-      public function deathPercentage($group_id)
+      public function deathPercentage($group_id,$type)
       {
           $dead = DB::table("feeds_groups_dead_pigs")
                 ->where('group_id',$group_id)
@@ -1197,9 +1197,17 @@ class AnimalMovementController extends Controller
                           ->where("group_id",$group_id)
                           ->get("unique_id");
 
+
+
           $total_pigs = DB::table("feeds_movement_groups_bins")
                             ->where("unique_id",$uid[0]->unique_id)
                             ->sum("number_of_pigs");
+
+          if($type == "closeout"){
+            $total_pigs = DB::table("feeds_movement_groups_bins")
+                              ->where("unique_id",$uid[0]->unique_id)
+                              ->sum("orig_number_of_pigs");
+          }
 
           $perc = 0;
 
@@ -1213,7 +1221,7 @@ class AnimalMovementController extends Controller
       /**
        * Get the treated percentage on the group.
        */
-      public function treatedPercentage($group_id)
+      public function treatedPercentage($group_id,$type)
       {
           $treated = DB::table("feeds_groups_treated_pigs")
                 ->where('group_id',$group_id)
@@ -1223,9 +1231,16 @@ class AnimalMovementController extends Controller
                           ->where("group_id",$group_id)
                           ->get("unique_id");
 
+
           $total_pigs = DB::table("feeds_movement_groups_bins")
                             ->where("unique_id",$uid[0]->unique_id)
                             ->sum("number_of_pigs");
+
+          if($type == "closeout"){
+            $total_pigs = DB::table("feeds_movement_groups_bins")
+                              ->where("unique_id",$uid[0]->unique_id)
+                              ->sum("orig_number_of_pigs");
+          }
 
           $perc = 0;
 
