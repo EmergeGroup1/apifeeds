@@ -67,7 +67,7 @@ class AnimalMovementController extends Controller
           $group_bins = DB::table("feeds_movement_groups_bins")->get();
           for($i=0; $i<count($group_bins); $i++){
 
-            DB::table("feeds_movement_group_bins")
+            DB::table("feeds_movement_groups_bins")
               ->where("unique_id",$group_bins[$i]->unique_id)
               ->update(["orig_number_of_pigs"=>$group_bins[$i]->number_of_pigs]);
 
