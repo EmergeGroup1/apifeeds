@@ -3256,7 +3256,7 @@ class APIController extends Controller
               's_farm'    =>  $request->input('s_farm') // selected farm
             );
 
-            return date("Y-m-d H:i:s",strtotime($data['date_to']));
+            return date("Y-m-d H:i:s",strtotime($data['date_to'] . " 59:00:00"));
 
             $am_controller = new AnimalMovementController;
             $am_lists = $am_controller->animalMovementFilterAPI($data);
