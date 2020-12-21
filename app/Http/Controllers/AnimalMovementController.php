@@ -931,6 +931,8 @@ class AnimalMovementController extends Controller
             $days_remaining_date_ymd = date('Y-m-d');
             $t_ymd = date('Y-m-d');
 
+            $total_days = 0;
+
             if($transfer_data != NULL){
 
               $date_to_transfer = (strtotime(date('Y-m-d',strtotime($transfer_data[0]['date_ymd']))) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
@@ -945,6 +947,8 @@ class AnimalMovementController extends Controller
               }
 
               $t_ymd = $transfer_data[0]['date_ymd'];
+
+              $total_days = $this->totalDays($v['date_created'],$transfer_data[0]['date']);
 
             }
 
@@ -993,7 +997,7 @@ class AnimalMovementController extends Controller
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id']),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
                   'average_weight'          =>  $this->aveWeight($transfer_data),
-                  'total_days'              =>  $this->totalDays($v['date_created'],$transfer_data[0]['date'])
+                  'total_days'              =>  $total_days
                 );
 
             }
@@ -1004,6 +1008,7 @@ class AnimalMovementController extends Controller
 
       }
 
+
       private function totalDays($start_date,$transfer_date)
       {
 
@@ -1012,6 +1017,7 @@ class AnimalMovementController extends Controller
         return round($days < 0 ? 0 : $days,0);
 
       }
+
 
       private function aveWeight($transfer_data)
       {
