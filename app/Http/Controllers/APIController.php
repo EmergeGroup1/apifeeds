@@ -3251,7 +3251,7 @@ class APIController extends Controller
             $data = array(
               'type'      =>  "closeOut", // (string) all, farrowing_to_nursery, nursery_to_finisher, finisher_to_market
               'date_from' =>  $request->input('date_from'), // (date)
-              'date_to'   =>  $request->input('date_to') . " 59:00", // (date)
+              'date_to'   =>  $request->input('date_to') . " 59:50", // (date)
               'sort'      =>  $request->input('sort'), // (string) not_scheduled, day_remaining
               's_farm'    =>  $request->input('s_farm') // selected farm
             );
