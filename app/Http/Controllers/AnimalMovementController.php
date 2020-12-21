@@ -806,7 +806,7 @@ class AnimalMovementController extends Controller
 
             }
 
-            $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table);
+            $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'open');
 
             if($v['status'] != "removed"){
 
@@ -963,7 +963,7 @@ class AnimalMovementController extends Controller
             }
 
 
-            $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table);
+            $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'closeout');
 
             if($v['status'] == "removed" || $v['status'] == "finalized"){
 
@@ -988,6 +988,7 @@ class AnimalMovementController extends Controller
                   'deceased'					      =>	$this->deceasedPigs($v['group_id']),
                   'treated'						      =>	$this->treatedPigs($v['group_id']),
                   'total_pigs'				      =>	$total_pigs,
+                  'orig_total_pigs'         =>  0,
                   'farm_name'					      =>	$this->farmData($v['farm_id']),
                   'bin_data'					      =>	$this->binsDataFilter($v['unique_id'],$group_bins_table,$v['farm_id']),
                   'transfer_data'			      => 	$this->transferData($v['group_id']),
@@ -1087,7 +1088,7 @@ class AnimalMovementController extends Controller
 
             }
 
-            $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table);
+            $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'open');
 
             if($v['status'] != "removed"){
 
@@ -1506,9 +1507,13 @@ class AnimalMovementController extends Controller
       ** @param $group_bins_table string
       ** @return int
       **/
-      private function totalPigsFilter($unique_id,$group_bins_table)
+      private function totalPigsFilter($unique_id,$group_bins_table,$type)
       {
           $total = DB::table($group_bins_table)->where('unique_id',$unique_id)->sum('number_of_pigs');
+
+          if($type == "closeout"){
+            $total = DB::table($group_bins_table)->where('unique_id',$unique_id)->sum('orig_number_of_pigs');
+          }
 
           return $total;
       }
@@ -2528,7 +2533,7 @@ class AnimalMovementController extends Controller
 
           $this->finalizeTransferV2($data_transfer);
 
-          $total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins');
+          $total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins','open');
 
           if($total_pigs_from == 0){
             DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'removed']);
@@ -2546,7 +2551,7 @@ class AnimalMovementController extends Controller
           $group_from = $this->toArray($group_from);
           $group_from = $this->filterTransferBinsV2($group_from,'feeds_movement_groups','feeds_movement_groups_bins');
 
-          $total_pigs = $this->totalPigsFilter($g_to_unique_id->unique_id,'feeds_movement_groups_bins');
+          $total_pigs = $this->totalPigsFilter($g_to_unique_id->unique_id,'feeds_movement_groups_bins','open');
 
 
           return array(
