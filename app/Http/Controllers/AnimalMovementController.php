@@ -2711,9 +2711,9 @@ class AnimalMovementController extends Controller
 
 
             // groups consumption
-            $home_controller = new HomeController;
-            $home_controller->updateGroupsConsumption($bin_id,$lastupdate[0]->amount,"automatic");
-            unset($home_controller);
+            // $home_controller = new HomeController;
+            // $home_controller->updateGroupsConsumption($bin_id,$lastupdate[0]->amount,"manual");
+            // unset($home_controller);
 
             // $notification = new CloudMessaging;
             // $farmer_data = array(
