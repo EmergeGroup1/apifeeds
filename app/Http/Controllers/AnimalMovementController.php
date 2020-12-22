@@ -998,7 +998,8 @@ class AnimalMovementController extends Controller
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id'],"closeout"),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
                   'average_weight'          =>  $this->aveWeight($transfer_data),
-                  'total_days'              =>  $total_days
+                  'total_days'              =>  $total_days,
+                  'group_consumption'       =>  $this->getGroupsConsumption($v['group_id'])
                 );
 
             }
