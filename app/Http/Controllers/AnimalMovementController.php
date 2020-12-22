@@ -840,7 +840,7 @@ class AnimalMovementController extends Controller
                   'death_perc'              =>  $this->deathPercentage($v['group_id'],"open"),
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id'],"open"),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
-                  'groups_consumption'      =>  $this->getGroupsConsumption($v['group_id']),
+                  'groups_consumption'      =>  $this->getGroupsConsumption($v['group_id'],$v['created_at']),
                   'currentAge'              =>  $total_pigs == 0 ? 0 : $this->currentAge($v['date_created'])
                 );
 
