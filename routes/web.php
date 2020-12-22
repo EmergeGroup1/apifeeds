@@ -36,9 +36,12 @@ Route::get('cmee/{id}', 'MarcController@cmeByID');
 Route::post('cme/{id}', 'MarcController@cmeUpdate');
 //update CME ui visibility
 Route::post('cme/v/{id}', 'MarcController@visibility');
-
+//select non-zero 'last' values
 Route::get('cmezerolast', 'MarcController@excludeZeroValues');
+//add month
 Route::post('addmonth', 'MarcController@store');
+// change isDeleted status
+Route::get('cmezerolast', 'CmeController@excludeZeroValues');
 
 
 

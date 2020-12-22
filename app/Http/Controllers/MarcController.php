@@ -18,7 +18,10 @@ class MarcController extends Controller
 	//RETURN ALL CME
 	public function index()
 	{
-		return response()->json(Cme::get(), 200);
+		// return response()->json(Cme::get(), 200);
+		$cme = Cme::where('isDeleted', '!=', '1')
+								->get();
+		return response()->json($cme, 200);
 	}
 
 	public function cmeByID($id)
@@ -49,6 +52,7 @@ class MarcController extends Controller
     return response()->json($cme, 200);
   }
 
+//save
 	public function store(Request $request)
 {
 		$cme = new Cme;
@@ -63,7 +67,14 @@ class MarcController extends Controller
 		$cme->save();
 }
 
-
+//delete
+public function deleteStatus(Request $request, $id)
+{
+	$cme = Cme::find($id);
+	$cme->update($request->all());
+	return response()->json($cme, 200)
+		->header('Content-Type', 'application/json');
+}
 
 
 
