@@ -1875,8 +1875,6 @@ class HomeController extends Controller
 																	->select("budgeted_amount","feed_type")
 																	->first();
 
-
-
 				if($total_pigs == 0){
 					$budgeted_amount_lbs = 0;
 				}	else {
