@@ -918,10 +918,19 @@ class AnimalMovementController extends Controller
             $budgeted = $budgeted + $group_consumption[$i]->budgeted_amount_tons;
         }
 
-        return array(
-          'actual'  => $actual / $counter,
-          'budgeted'  => $budgeted / $counter
-        );
+        $actual  = $actual / $counter;
+        $budgeted  = $budgeted / $counter;
+        $output = 0;
+
+        if($actual > $budgeted){
+          $output = "+" . $actual;
+        } else if($actual < $budgeted){
+          $output =  "-" . $actual;
+        } else {
+          $output = $output;
+        }
+
+        return $output;
 
       }
 
