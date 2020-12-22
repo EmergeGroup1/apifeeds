@@ -2666,6 +2666,10 @@ class AnimalMovementController extends Controller
             $bininfo = $this->getBinDefaultInfo($bin_id);
             $lastupdate  = $this->getLastHistory($bininfo);
 
+            if($lastupdate == NULL){
+              return false;
+            }
+
             // get the total number of pigs based on the animal group total number of pigs
             $total_number_of_pigs = $this->totalNumberOfPigsAnimalGroups($bin_id,$bininfo[0]->farm_id); //$number_of_pigs;
 
