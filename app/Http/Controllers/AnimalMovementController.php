@@ -897,7 +897,7 @@ class AnimalMovementController extends Controller
       ** Filter for all animal groups
       ** @return array
       **/
-      private function getGroupsConsumption($group_id)
+      private function getGroupsConsumption($group_id,$created_at)
       {
 
         $group_consumption = DB::table("feeds_movement_groups_consumption")
@@ -908,7 +908,20 @@ class AnimalMovementController extends Controller
           return 0;
         }
 
-        return $group_consumption;
+
+        // computation from created_at(start date of group creation) to date_today
+        $actual = 0;
+        $budgeted = 0;
+        $counter = count($group_consumption);
+        for($i=0; $i < $counter; $i++){
+            $actual = $actual + $group_consumption[$i]->actual_amount_tons;
+            $budgeted = $budgeted + $group_consumption[$i]->budgeted_amount_tons;
+        }
+
+        return array(
+          'actual'  => $actual / $counter,
+          'budgeted'  => $budgeted / $counter
+        );
 
       }
 
@@ -1003,7 +1016,7 @@ class AnimalMovementController extends Controller
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
                   'average_weight'          =>  $this->aveWeight($transfer_data),
                   'total_days'              =>  $total_days,
-                  'group_consumption'       =>  $this->getGroupsConsumption($v['group_id'])
+                  'group_consumption'       =>  $this->getGroupsConsumption($v['group_id'],$v['created_at'])
                 );
 
             }
