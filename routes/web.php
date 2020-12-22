@@ -41,8 +41,7 @@ Route::get('cmezerolast', 'MarcController@excludeZeroValues');
 //add month
 Route::post('addmonth', 'MarcController@store');
 // change isDeleted status
-Route::get('isdelete', 'MarcController@deleteStatus');
-
+Route::post('cme/del/{id}', 'MarcController@deleteStatus');
 
 
 
