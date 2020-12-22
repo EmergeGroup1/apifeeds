@@ -13,6 +13,7 @@ class Cme extends Model
         'converted_last',
         'visibility_ui',
         'basis',
-        'bidvalue'
+        'bidvalue',
+        'isDeleted'
     ];
 }
