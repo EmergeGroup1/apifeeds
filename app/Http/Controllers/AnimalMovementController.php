@@ -2666,7 +2666,7 @@ class AnimalMovementController extends Controller
             $bininfo = $this->getBinDefaultInfo($bin_id);
             $lastupdate  = $this->getLastHistory($bininfo);
 
-            if($lastupdate == NULL){
+            if(count($lastupdate) <= 0){
               return false;
             }
 
