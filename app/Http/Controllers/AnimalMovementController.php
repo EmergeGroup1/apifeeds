@@ -904,6 +904,10 @@ class AnimalMovementController extends Controller
                                 ->where("group_id",$group_id)
                                 ->get();
 
+        if(count($group_consumption) <= 0) {
+          return 0;
+        }
+
         return $group_consumption;
 
       }
