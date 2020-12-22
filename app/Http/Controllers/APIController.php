@@ -1737,6 +1737,39 @@ class APIController extends Controller
 
         break;
 
+
+      case "amCleanGroup":
+
+        $am_controller = new AnimalMovementController;
+
+        $groups = DB::table("feeds_movement_groups")
+                    ->where("created_at","0000-00-00 00:00:00")
+                    ->get();
+
+        for($i=0; $i<count($groups); $i++){
+
+          $group_id = $groups[$i]->group_id;
+          $type = $groups[$i]->type;
+          $user_id = $groups[$i]->user_id;
+
+          $am_lists[] = $am_controller->removeGroupAPI($group_id, $user_id, $type);
+
+        }                  
+
+        unset($am_controller);
+
+        if (!empty($am_lists)) {
+          return array(
+            "err"     =>  0,
+            "msg"     =>  "Successfully Clean no created_at Animal Groups"
+          );
+        } else {
+          return $this->errorMessage();
+        }
+
+        break;
+
+
       case "amCreateGroup":
 
         $date_created = date("Y-m-d H:i:s", strtotime($request->input('date_created')));
