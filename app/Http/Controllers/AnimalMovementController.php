@@ -923,9 +923,9 @@ class AnimalMovementController extends Controller
         $output = 0;
 
         if($actual > $budgeted){
-          $output = "+" . $actual;
+          $output = "+" . $actual / 100;
         } else if($actual < $budgeted){
-          $output =  "-" . $actual;
+          $output =  "-" . $actual / 100;
         } else {
           $output = $output;
         }
