@@ -26,7 +26,9 @@ class Cme extends JsonResource
             'basis' => $this->basis,
             'bidvalue' => $this->bidvalue,
             'visibility_ui' => $this->visibility_ui,
-            'isDeleted ' => $this->isDeleted
+            'isDeleted ' => $this->isDeleted,
+            'isManual' => $this->isManual
+
         ];
     }
 }

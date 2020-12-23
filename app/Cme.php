@@ -14,6 +14,7 @@ class Cme extends Model
         'visibility_ui',
         'basis',
         'bidvalue',
-        'isDeleted'
+        'isDeleted',
+        'isManual'
     ];
 }
