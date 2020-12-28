@@ -2688,7 +2688,7 @@ class AnimalMovementController extends Controller
             'g_from'            =>  $group_from,
             'g_to_total_pigs'   =>  $total_pigs,
             'g_from_total_pigs' =>  $total_pigs_from,
-            'currentAge'        =>  $this->currentAge(date("Y-m-d"),$type,$data['group_to'])
+            'currentAge'        =>  $this->currentAge(date("Y-m-d"),Input::get('group_type'),$data['group_to'])
           );
 
       }
