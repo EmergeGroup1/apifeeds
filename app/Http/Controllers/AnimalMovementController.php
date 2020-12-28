@@ -913,15 +913,18 @@ class AnimalMovementController extends Controller
                         ->get();
 
             $ds = array();
+            $total = 0;
             for($j=0; $j<count($groups); $j++){
               $ds[] = (strtotime($current_date) - strtotime($groups[$j]->date_created)) / (60 * 60 * 24);
+              $total = $total + $ds;
             }
+
+            $days = $total / count(groups);
 
           }
 
-          return $ds;
 
-          $days = (strtotime($current_date) - strtotime($start_date)) / (60 * 60 * 24);
+          // $days = (strtotime($current_date) - strtotime($start_date)) / (60 * 60 * 24);
 
         } else if($type == "finisher"){
 
