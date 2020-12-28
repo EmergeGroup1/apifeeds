@@ -907,7 +907,7 @@ class AnimalMovementController extends Controller
 
             }
 
-            return $gb_ids;
+            return $gids;
 
             $groups = DB::table("feeds_movement_groups")
                         ->whereIn('group_id',$transfered_groups)
