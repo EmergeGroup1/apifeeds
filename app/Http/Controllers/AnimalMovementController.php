@@ -919,7 +919,7 @@ class AnimalMovementController extends Controller
               $total = $total + $ds;
             }
 
-            $days = $total / count(groups);
+            $days = $total / count($groups);
 
           }
 
