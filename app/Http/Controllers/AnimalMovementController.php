@@ -896,7 +896,7 @@ class AnimalMovementController extends Controller
           if($transfered_groups->count() > 0){
 
             $transfered_groups = $transfered_groups->where('group_to',$group_id);
-            $transfered_groups = $transfered_groups->select('group_to');
+            $transfered_groups = $transfered_groups->select('group_from');
             $transfered_groups = $transfered_groups->distinct();
             $transfered_groups = $transfered_groups->get();
 
