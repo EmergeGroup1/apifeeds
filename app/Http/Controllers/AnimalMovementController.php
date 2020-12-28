@@ -891,9 +891,11 @@ class AnimalMovementController extends Controller
 
         $transfered_groups = DB::table("feeds_movement_transfer_v2");
 
+        $days = 0;
+
         if($type == "nursery"){
 
-          if($transfered_groups->count() > 0){
+          if(count($transfered_groups) > 0){
 
             $transfered_groups = $transfered_groups->where('group_to',$group_id);
             $transfered_groups = $transfered_groups->select('group_from');
@@ -902,9 +904,7 @@ class AnimalMovementController extends Controller
 
             $gids = array();
             for($i=0; $i<count($transfered_groups); $i++){
-
                 $gids[] = $transfered_groups[$i]->group_from;
-
             }
 
             $groups = DB::table("feeds_movement_groups")
@@ -922,9 +922,6 @@ class AnimalMovementController extends Controller
             $days = $total / count($groups);
 
           }
-
-
-          // $days = (strtotime($current_date) - strtotime($start_date)) / (60 * 60 * 24);
 
         } else if($type == "finisher"){
 
