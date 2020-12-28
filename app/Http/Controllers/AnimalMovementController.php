@@ -889,7 +889,7 @@ class AnimalMovementController extends Controller
 
         $current_date = date("Y-m-d");
 
-        $transfered_groups = DB::table("feeds_movement_groups_transfer_v2");
+        $transfered_groups = DB::table("feeds_movement_transfer_v2");
 
         if($type == "nursery"){
 
