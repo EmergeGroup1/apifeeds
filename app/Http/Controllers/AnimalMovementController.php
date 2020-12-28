@@ -900,6 +900,8 @@ class AnimalMovementController extends Controller
             $transfered_groups = $transfered_groups->distinct();
             $transfered_groups = $transfered_groups->get();
 
+            return $transfered_groups;
+
             $groups = DB::table("feeds_movement_groups")
                         ->whereIn('group_id',$transfered_groups)
                         ->select('date_created')
