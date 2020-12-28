@@ -900,7 +900,14 @@ class AnimalMovementController extends Controller
             $transfered_groups = $transfered_groups->distinct();
             $transfered_groups = $transfered_groups->get('groop_from');
 
-            return $transfered_groups;
+
+            for($i=0; $i<count($transfered_groups); $i++){
+
+                $gids[] = $transfered_groups->group_from;
+
+            }
+
+            return $gb_ids;
 
             $groups = DB::table("feeds_movement_groups")
                         ->whereIn('group_id',$transfered_groups)
