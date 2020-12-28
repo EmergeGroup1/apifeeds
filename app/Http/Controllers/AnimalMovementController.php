@@ -907,10 +907,8 @@ class AnimalMovementController extends Controller
 
             }
 
-            return $gids;
-
             $groups = DB::table("feeds_movement_groups")
-                        ->whereIn('group_id',$transfered_groups)
+                        ->whereIn('group_id',$gids)
                         ->select('date_created')
                         ->get();
 
