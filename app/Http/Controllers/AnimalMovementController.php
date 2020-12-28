@@ -914,7 +914,7 @@ class AnimalMovementController extends Controller
 
             $ds = array();
             for($j=0; $j<count($groups); $j++){
-              $ds[] = (strtotime($current_date) - strtotime($groups[$i]->date_created)) / (60 * 60 * 24);
+              $ds[] = (strtotime($current_date) - strtotime($groups[$j]->date_created)) / (60 * 60 * 24);
             }
 
           }
