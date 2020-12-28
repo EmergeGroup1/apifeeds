@@ -903,7 +903,7 @@ class AnimalMovementController extends Controller
             $gids = array();
             for($i=0; $i<count($transfered_groups); $i++){
 
-                $gids[] = $transfered_groups;
+                $gids[] = $transfered_groups[$i]->group_from;
 
             }
 
