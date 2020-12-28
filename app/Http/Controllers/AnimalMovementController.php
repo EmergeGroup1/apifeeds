@@ -926,7 +926,45 @@ class AnimalMovementController extends Controller
 
         } else if($type == "finisher"){
 
-          $days = (strtotime($current_date) - strtotime($start_date)) / (60 * 60 * 24);
+          if($transfered_groups->where('group_to',$group_id)->get()->isNotEmpty()){
+
+            $tg = $transfered_groups->where('group_to',$group_id);
+            $tg = $tg->where('transfer_type',"nursery_to_finisher");
+            $tg = $tg->select('group_from');
+            $tg = $tg->distinct();
+            $tg = $tg->get('group_from');
+
+            $ngids = array();
+            for($h=0; $h<count($tg); $h++){
+                $ngids[] = $tg[$h]->group_from;
+            }
+
+            $tgf = $transfered_groups->whereIn('group_to',$ngids);
+            $tgf = $tgf->where('transfer_type',"farrowing_to_nursery");
+            $tgf = $tgf->select('group_from');
+            $tgf = $tgf->distinct();
+            $tgf = $tgf->get('group_from');
+
+            $gids = array();
+            for($i=0; $i<count($tgf); $i++){
+                $gids[] = $tgf[$i]->group_from;
+            }
+
+            $groups = DB::table("feeds_movement_groups")
+                        ->whereIn('group_id',$gids)
+                        ->select('date_created')
+                        ->get();
+
+            $ds = array();
+            $total = 0;
+            for($j=0; $j<count($groups); $j++){
+              $ds[] = (strtotime($current_date) - strtotime($groups[$j]->date_created)) / (60 * 60 * 24);
+              $total = $total + ((strtotime($current_date) - strtotime($groups[$j]->date_created)) / (60 * 60 * 24));
+            }
+
+            $days = $total / count($groups);
+
+          }
 
         } else {
 
