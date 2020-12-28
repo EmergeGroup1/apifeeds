@@ -898,7 +898,7 @@ class AnimalMovementController extends Controller
             $transfered_groups = $transfered_groups->where('group_to',$group_id);
             $transfered_groups = $transfered_groups->select('group_from');
             $transfered_groups = $transfered_groups->distinct();
-            $transfered_groups = $transfered_groups->get('groop_from');
+            $transfered_groups = $transfered_groups->get('group_from');
 
             $gids = array();
             for($i=0; $i<count($transfered_groups); $i++){
