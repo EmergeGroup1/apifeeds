@@ -939,8 +939,6 @@ class AnimalMovementController extends Controller
                 $ngids[] = $tg[$h]->group_from;
             }
 
-            return $ngids;
-
             $tgf = $transfered_groups->whereIn('group_to',$ngids);
             $tgf = $tgf->where('transfer_type',"farrowing_to_nursery");
             $tgf = $tgf->select('group_from');
@@ -957,6 +955,9 @@ class AnimalMovementController extends Controller
                         ->select('date_created')
                         ->get();
 
+            if($groups->isEmpty()){
+              return $days;
+            }
 
             $ds = array();
             $total = 0;
