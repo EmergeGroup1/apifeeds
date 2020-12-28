@@ -841,7 +841,7 @@ class AnimalMovementController extends Controller
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id'],"open"),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
                   'groups_consumption'      =>  $this->getGroupsConsumption($v['group_id'],$v['created_at']),
-                  'currentAge'              =>  $total_pigs == 0 ? 0 : $this->currentAge($v['date_created'])
+                  'currentAge'              =>  $total_pigs == 0 ? 0 : $this->currentAge($v['date_created'],$v['type'],$v['group_id'])
                 );
 
             }
@@ -881,12 +881,47 @@ class AnimalMovementController extends Controller
 
       }
 
-      private function currentAge($start_date)
+
+      // This current age should be average based
+      // on the start date of farrowing groups
+      private function currentAge($start_date,$type,$group_id)
       {
 
         $current_date = date("Y-m-d");
 
-        $days = (strtotime($current_date) - strtotime($start_date)) / (60 * 60 * 24);
+        $transfered_groups = DB::table("feeds_movement_groups_transfer_v2");
+
+        if($type == "nursery"){
+
+          if($transfered_groups->isEmpty()){
+
+            $transfered_groups = $transfered_groups->where('group_to',$group_id);
+            $transfered_groups = $transfered_groups->select('group_to');
+            $transfered_groups = $transfered_groups->distinct();
+            $transfered_groups = $transfered_groups->get();
+
+            $groups = DB::table("feeds_movement_groups")
+                        ->whereIn('group_id',$transfered_groups)
+                        ->select('date_created')
+                        ->get();
+
+            return $groups;
+
+          }
+
+
+          $days = (strtotime($current_date) - strtotime($start_date)) / (60 * 60 * 24);
+
+        } else if($type == "finisher"){
+
+          $days = (strtotime($current_date) - strtotime($start_date)) / (60 * 60 * 24);
+
+        } else {
+
+          // farrowing
+          $days = (strtotime($current_date) - strtotime($start_date)) / (60 * 60 * 24);
+
+        }
 
         return round($days < 0 ? 0 : $days,0);
 
@@ -1036,7 +1071,7 @@ class AnimalMovementController extends Controller
 
       }
 
-
+      // This
       private function totalDays($start_date,$transfer_date)
       {
 
