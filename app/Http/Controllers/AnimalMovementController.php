@@ -955,6 +955,8 @@ class AnimalMovementController extends Controller
                         ->select('date_created')
                         ->get();
 
+            return $groups;            
+
             $ds = array();
             $total = 0;
             for($j=0; $j<count($groups); $j++){
