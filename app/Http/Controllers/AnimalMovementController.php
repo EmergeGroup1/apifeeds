@@ -917,7 +917,7 @@ class AnimalMovementController extends Controller
             $total = 0;
             for($j=0; $j<count($groups); $j++){
               $ds[] = (strtotime($current_date) - strtotime($groups[$j]->date_created)) / (60 * 60 * 24);
-              $total = $total + (int)$ds;
+              $total = $total + ((strtotime($current_date) - strtotime($groups[$j]->date_created)) / (60 * 60 * 24));
             }
 
             $days = $total / count($groups);
