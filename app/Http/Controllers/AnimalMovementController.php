@@ -895,8 +895,8 @@ class AnimalMovementController extends Controller
 
         if($type == "nursery"){
 
-          return $transfered_groups->where('group_to',$group_id)->get()->isEmpty();
-          if($transfered_groups->get()->isNotEmpty()){
+
+          if($transfered_groups->where('group_to',$group_id)->get()->isEmpty()){
 
             $transfered_groups = $transfered_groups->where('group_to',$group_id);
             $transfered_groups = $transfered_groups->select('group_from');
