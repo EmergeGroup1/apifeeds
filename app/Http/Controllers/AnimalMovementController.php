@@ -806,7 +806,8 @@ class AnimalMovementController extends Controller
 
             }
 
-            $total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'open');
+            $current_total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'open');
+            $original_total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'closeout');
 
             if($v['status'] != "removed"){
 
@@ -830,7 +831,8 @@ class AnimalMovementController extends Controller
                   'farm_id'						      =>	$v['farm_id'],
                   'deceased'					      =>	$this->deceasedPigs($v['group_id']),
                   'treated'						      =>	$this->treatedPigs($v['group_id']),
-                  'total_pigs'				      =>	$total_pigs,
+                  'current_total_pigs'			=>	$total_pigs,
+                  'original_total_pigs'     =>  $current_total_pigs,
                   'farm_name'					      =>	$this->farmData($v['farm_id']),
                   'bin_data'					      =>	$this->binsDataFilter($v['unique_id'],$group_bins_table,$v['farm_id']),
                   'transfer_data'			      => 	$this->transferData($v['group_id']),
