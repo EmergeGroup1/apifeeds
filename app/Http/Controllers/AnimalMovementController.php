@@ -924,8 +924,6 @@ class AnimalMovementController extends Controller
 
             $days = $total / count($groups);
 
-          } else {
-            return '--';
           }
 
         } else if($type == "finisher"){
@@ -996,8 +994,6 @@ class AnimalMovementController extends Controller
 
             $days = $total / count($groups);
 
-          } else {
-            return '--';
           }
 
         } else {
