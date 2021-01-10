@@ -3510,7 +3510,7 @@ class APIController extends Controller
     } else {
       $update = $update->where('room_id',$room_id);
     }
-    $update = $update->update(['number_of_pigs'=>$num_of_pigs,'orig_number_of_pigs'=>$num_of_pigs]);
+    $update = $update->update(['number_of_pigs'=>$num_of_pigs]);
 
     return $update;
   }
