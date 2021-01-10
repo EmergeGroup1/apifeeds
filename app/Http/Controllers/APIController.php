@@ -2659,12 +2659,14 @@ class APIController extends Controller
                 'action' => "update death record"
               );
 
+
+              $death_number = ($dt_data->death_number + $pigs->number_of_pigs) - $death_number;
+
               $type = "deduct-pig";
               if($dt_data->death_number > $death_number) {
                 $type = "bring-back-pig";
               }
 
-              $death_number = ($dt_data->death_number + $pigs->number_of_pigs) - $death_number;
               $this->updateBinsRooms($group_uid->unique_id,
                                      $data['binID'][$i],
                                      $data['roomID'][$i],
@@ -3526,11 +3528,11 @@ class APIController extends Controller
       $update = $update->where('room_id',$room_id);
     }
 
-    if($type == "deduct-pig"){
+    // if($type == "deduct-pig"){
       $update = $update->update(['number_of_pigs'=>$num_of_pigs]);
-    } else {
-      $update = $update->update(['number_of_pigs'=>$num_of_pigs,"orig_number_of_pigs"=>$num_of_pigs]);  
-    }
+    // } else {
+    //   $update = $update->update(['number_of_pigs'=>$num_of_pigs,"orig_number_of_pigs"=>$num_of_pigs]);
+    // }
 
 
     return $update;
