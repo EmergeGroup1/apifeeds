@@ -3529,7 +3529,7 @@ class APIController extends Controller
     if($type == "deduct-pig"){
       $update = $update->update(['number_of_pigs'=>$num_of_pigs]);
     } else {
-      $update = $update->update(['number_of_pigs'=>$num_of_pigs,"orig_number_of_pigs",$num_of_pigs]);  
+      $update = $update->update(['number_of_pigs'=>$num_of_pigs,"orig_number_of_pigs"=>$num_of_pigs]);  
     }
 
 
