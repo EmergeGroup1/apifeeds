@@ -2173,6 +2173,10 @@ class AnimalMovementController extends Controller
           $number_of_pigs = $data['number_of_pigs'];
           $group_bin_id = $data['group_bin_id'];
 
+          $sum_dead = DB::table("feeds_groups_dead_pigs")
+                        ->where('group_id',$data['group_id'])
+                        ->sum('amount');
+
           $group_data = array(
             'group_name'		   =>	$data['group_name'],
             'farm_id'			     =>	$data['farm_id'],
@@ -2208,7 +2212,7 @@ class AnimalMovementController extends Controller
                 $data = array(
                 'room_id'			=>	$v,
                 'number_of_pigs'	=>	$number_of_pigs[$k],
-                'orig_number_of_pigs'	=>	$number_of_pigs[$k],
+                'orig_number_of_pigs'	=>	$number_of_pigs[$k] + $sum_dead,
                 'unique_id'			=>	$data['unique_id']
                 );
                 DB::table('feeds_movement_groups_bins')->insert($data);
@@ -2218,7 +2222,7 @@ class AnimalMovementController extends Controller
             } else {
               $data_bin = $data['bins'];
               foreach($data_bin as $k => $v){
-                $this->insertBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$data['user_id']);
+                $this->insertBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$number_of_pigs[$k] + $sum_dead,$data['user_id']);
               }
             }
 
@@ -2248,7 +2252,7 @@ class AnimalMovementController extends Controller
                 $d = array(
                   'room_id'			=>	$v,
                   'number_of_pigs'	=>	$number_of_pigs[$k],
-                  'orig_number_of_pigs'	=>	$number_of_pigs[$k]
+                  'orig_number_of_pigs'	=>	$number_of_pigs[$k] + $sum_dead
                 );
 
                 if($group_bin_id[$k] == "none"){
@@ -2257,7 +2261,7 @@ class AnimalMovementController extends Controller
                   ->insert([
                     'room_id'			    =>	$v,
                     'number_of_pigs'	=>	$number_of_pigs[$k],
-                    'orig_number_of_pigs'	=>	$number_of_pigs[$k],
+                    'orig_number_of_pigs'	=>	$number_of_pigs[$k] + $sum_dead,
                     'unique_id'       =>  $data['unique_id']
                   ]);
 
@@ -2282,7 +2286,7 @@ class AnimalMovementController extends Controller
               //   $this->updateBinFarrowing($v,$data['unique_id'],$number_of_pigs[$k],$group_bin_id[$k],$data['user_id']);
               // }
 
-              $this->updateBinFarrowing($data['bins'][0],$data['unique_id'],$data['number_of_pigs'][0],$data['user_id']);
+              $this->updateBinFarrowing($data['bins'][0],$data['unique_id'],$data['number_of_pigs'][0],$data['number_of_pigs'][0] + $sum_dead,$data['user_id']);
             }
 
           }
@@ -2319,12 +2323,13 @@ class AnimalMovementController extends Controller
       ** @param  int  $pigs
       ** @return Response
       **/
-      private function insertBinFarrowing($bin_id,$unique_id,$pigs,$user_id)
+      private function insertBinFarrowing($bin_id,$unique_id,$pigs,$orig_pigs,$user_id)
       {
 
           $data = array(
           'bin_id'			=>	$bin_id,
           'number_of_pigs'	=>	$pigs,
+          'orig_number_of_pigs' =>  $orig_pigs,
           'unique_id'			=>	$unique_id
           );
 
@@ -2342,13 +2347,13 @@ class AnimalMovementController extends Controller
       ** @param  int  $pigs
       ** @return Response
       **/
-      private function updateBinFarrowing($bin_id,$unique_id,$pigs,$user_id)
+      private function updateBinFarrowing($bin_id,$unique_id,$pigs,$orig_pigs,$user_id)
       {
 
           $data = array(
           'bin_id'			=>	$bin_id,
           'number_of_pigs'	=>	$pigs,
-          'orig_number_of_pigs' =>  $pigs
+          'orig_number_of_pigs' =>  $orig_pigs
           );
 
           DB::table('feeds_movement_groups_bins')
