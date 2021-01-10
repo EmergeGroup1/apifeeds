@@ -1070,13 +1070,9 @@ class AnimalMovementController extends Controller
 
 
         // computation from created_at(start date of group creation) to date_today
-        $actual = 0;
-        $budgeted = 0;
-        $counter = count($group_consumption);
-        for($i=0; $i < $counter; $i++){
-            $actual = $actual + $group_consumption[$i]->actual_consumption_lbs;
-            $budgeted = $budgeted + $group_consumption[$i]->budgeted_consumption_lbs;
-        }
+        $actual = $group_consumption['actual_consumption_lbs'];
+        $budgeted = $group_consumption['budgeted_consumption_lbs'];
+
 
         $actual  = $actual / 2000;
         $budgeted  = $budgeted / 2000;
