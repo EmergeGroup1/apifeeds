@@ -1057,16 +1057,15 @@ class AnimalMovementController extends Controller
       private function getGroupsConLbs($group_id,$created_at)
       {
 
-        $group_consumption = DB::table("feeds_movement_groups_consumption")
-                                ->where("group_id",$group_id)
-                                ->orderBy('id','desc')
-                                ->first();
-
-        $group_consumption = $this->toArray($group_consumption);
-
-        if(count($group_consumption) <= 0) {
+        $group_consumption = DB::table("feeds_movement_groups_consumption");
+        $group_consumption = $group_consumption->where("group_id",$group_id);
+        $group_consumption = $group_consumption->orderBy('id','desc');
+        if($group_consumption->isEmpty()){
           return 0;
         }
+        $group_consumption = $group_consumption->first();
+
+        $group_consumption = $this->toArray($group_consumption);
 
 
         // computation from created_at(start date of group creation) to date_today
