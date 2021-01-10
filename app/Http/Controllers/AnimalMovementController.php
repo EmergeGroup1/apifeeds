@@ -806,7 +806,9 @@ class AnimalMovementController extends Controller
 
             }
 
+            // add and subtract
             $current_total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'open');
+            // always add
             $original_total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'closeout');
 
             if($v['status'] != "removed"){
