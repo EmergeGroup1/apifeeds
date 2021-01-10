@@ -2738,7 +2738,8 @@ class AnimalMovementController extends Controller
 
           $this->finalizeTransferV2($data_transfer);
 
-          $total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins','open');
+          $current_from_total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins','open');
+          $orig_from_total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins','close');
 
           if($total_pigs_from == 0){
             DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'removed']);
@@ -2756,14 +2757,17 @@ class AnimalMovementController extends Controller
           $group_from = $this->toArray($group_from);
           $group_from = $this->filterTransferBinsV2($group_from,'feeds_movement_groups','feeds_movement_groups_bins');
 
-          $total_pigs = $this->totalPigsFilter($g_to_unique_id->unique_id,'feeds_movement_groups_bins','open');
+          $current_to_total_pigs = $this->totalPigsFilter($g_to_unique_id->unique_id,'feeds_movement_groups_bins','open');
+          $orig_to_total_pigs = $this->totalPigsFilter($g_to_unique_id->unique_id,'feeds_movement_groups_bins','close');
 
 
           return array(
-            'g_from'            =>  $group_from,
-            'g_to_total_pigs'   =>  $total_pigs,
-            'g_from_total_pigs' =>  $total_pigs_from,
-            'currentAge'        =>  $this->currentAge(date("Y-m-d"),$g_to_unique_id->type,$data['group_to'])
+            'g_from'                    =>  $group_from,
+            'g_current_from_total_pigs' =>  $current_from_total_pigs_from,
+            'g_orig_from_total_pigs'    =>  $orig_from_total_pigs_from,
+            'g_current_to_total_pigs'   =>  $current_to_total_pigs,
+            'g_orig_to_total_pigs'      =>  $orig_to_total_pigs,
+            'currentAge'                =>  $this->currentAge(date("Y-m-d"),$g_to_unique_id->type,$data['group_to'])
           );
 
       }
