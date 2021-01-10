@@ -842,7 +842,7 @@ class AnimalMovementController extends Controller
                   'death_perc'              =>  $this->deathPercentage($v['group_id'],"closeout"),
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id'],"closeout"),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
-                  'groups_consumption'      =>  $this->getGroupsConsumption($v['group_id'],$v['created_at']),
+                  'groups_consumption'      =>  $this->getGroupsConLbs($v['group_id'],$v['created_at']),
                   'currentAge'              =>  $original_total_pigs == 0 ? 0 : $this->currentAge($v['date_created'],$v['type'],$v['group_id'])
                 );
 
@@ -1185,7 +1185,7 @@ class AnimalMovementController extends Controller
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
                   'average_weight'          =>  $this->aveWeight($transfer_data),
                   'total_days'              =>  $total_days,
-                  'groups_consumption'      =>  $this->getGroupsConsumption($v['group_id'],$v['created_at'])
+                  'groups_consumption'      =>  $this->getGroupsConLbs($v['group_id'],$v['created_at'])
                 );
 
             }
