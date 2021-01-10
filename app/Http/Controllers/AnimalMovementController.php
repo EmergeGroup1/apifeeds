@@ -1707,7 +1707,7 @@ class AnimalMovementController extends Controller
       ** @param $group_bins_table string
       ** @return int
       **/
-      private function totalPigsFilter($unique_id,$group_bins_table,$type)
+      public function totalPigsFilter($unique_id,$group_bins_table,$type)
       {
           $total = DB::table($group_bins_table)->where('unique_id',$unique_id)->sum('number_of_pigs');
 
