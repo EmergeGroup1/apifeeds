@@ -1059,7 +1059,7 @@ class AnimalMovementController extends Controller
 
         $group_consumption = DB::table("feeds_movement_groups_consumption")
                                 ->where("group_id",$group_id)
-                                ->orderBy();
+                                ->orderBy('id','desc')
                                 ->first();
 
         if(count($group_consumption) <= 0) {
