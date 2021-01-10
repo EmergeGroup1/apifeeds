@@ -2599,7 +2599,8 @@ class APIController extends Controller
             $this->updateBinsRooms($group_uid->unique_id,
                                    $dt[$i]['bin_id'],
                                    $dt[$i]['room_id'],
-                                   $num_of_pigs);
+                                   $num_of_pigs,
+                                   "deduct-pig");
 
             $home_crtl->clearBinsCache($dt[$i]['bin_id']);
 
@@ -2658,11 +2659,17 @@ class APIController extends Controller
                 'action' => "update death record"
               );
 
+              $type = "deduct-pig";
+              if($dt_data->death_number > $death_number) {
+                $type = "bring-back-pig";
+              }
+
               $death_number = ($dt_data->death_number + $pigs->number_of_pigs) - $death_number;
               $this->updateBinsRooms($group_uid->unique_id,
                                      $data['binID'][$i],
                                      $data['roomID'][$i],
-                                     $death_number);
+                                     $death_number,
+                                     $type);
 
               $home_crtl->clearBinsCache($data['binID'][$i]);
           }
@@ -2913,7 +2920,8 @@ class APIController extends Controller
             $this->updateBinsRooms($group_data[0]->unique_id,
                                    $dt['bin_id'],
                                    $dt['room_id'],
-                                   $num_of_pigs);
+                                   $num_of_pigs,
+                                   "deduct-pig");
 
             if($dt['bin_id'] != 0){
                 $home_crtl->clearBinsCache($dt['bin_id']);
@@ -3009,6 +3017,10 @@ class APIController extends Controller
                         'action'  =>  "update death record"
                       );
 
+              $type = "deduct-pig";
+              if($dp_data[0]->amount > $data['deathNumber']) {
+                $type = "bring-back-pig";
+              }
 
               $death_number = ($dp_data[0]->amount + $pigs->number_of_pigs) - $data['deathNumber'];
               // deduct the death on rooms or bins, after deduction, update the cache
@@ -3016,7 +3028,8 @@ class APIController extends Controller
               $this->updateBinsRooms($group_data[0]->unique_id,
                                      $dt['bin_id'],
                                      $dt['room_id'],
-                                     $death_number);
+                                     $death_number,
+                                     $type);
 
               $home_crtl->clearBinsCache($dt['bin_id']);
 
@@ -3080,7 +3093,8 @@ class APIController extends Controller
             $this->updateBinsRooms($ag_data->unique_id,
                                    $dp_data[$i]->bin_id,
                                    $dp_data[$i]->room_id,
-                                   $back_pigs);
+                                   $back_pigs,
+                                   "bring-back-pig");
 
             $home_crtl->clearBinsCache($dp_data[$i]->bin_id);
 
@@ -3420,7 +3434,8 @@ class APIController extends Controller
         $this->updateBinsRooms($ag_data->unique_id,
                                $dt[$i]->bin_id,
                                $dt[$i]->room_id,
-                               $back_pigs);
+                               $back_pigs,
+                               "bring-back-pig");
 
         $home_crtl->clearBinsCache($dt[$i]->bin_id);
 
@@ -3500,7 +3515,7 @@ class APIController extends Controller
   /*
   * Update the animal group number of pigs
   */
-  private function updateBinsRooms($unique_id,$bin_id,$room_id,$num_of_pigs)
+  private function updateBinsRooms($unique_id,$bin_id,$room_id,$num_of_pigs,$type)
   {
 
     $update = DB::table("feeds_movement_groups_bins");
@@ -3510,7 +3525,13 @@ class APIController extends Controller
     } else {
       $update = $update->where('room_id',$room_id);
     }
-    $update = $update->update(['number_of_pigs'=>$num_of_pigs]);
+
+    if($type == "deduct-pig"){
+      $update = $update->update(['number_of_pigs'=>$num_of_pigs]);
+    } else {
+      $update = $update->update(['number_of_pigs'=>$num_of_pigs,"orig_number_of_pigs",$num_of_pigs]);  
+    }
+
 
     return $update;
   }
