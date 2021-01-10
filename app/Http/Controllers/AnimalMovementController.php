@@ -1062,6 +1062,8 @@ class AnimalMovementController extends Controller
                                 ->orderBy('id','desc')
                                 ->first();
 
+        $group_consumption = $this->toArray($group_consumption);
+
         if(count($group_consumption) <= 0) {
           return 0;
         }
