@@ -1754,7 +1754,7 @@ class APIController extends Controller
 
           $am_lists[] = $am_controller->removeGroupAPI($group_id, $user_id, $type);
 
-        }                  
+        }
 
         unset($am_controller);
 
@@ -3341,7 +3341,8 @@ class APIController extends Controller
               ->get();
 
     $am_ctrl = new AnimalMovementController;
-    $total_pigs = $am_ctrl->totalPigs($uid[0]->unique_id);
+    // $total_pigs = $am_ctrl->totalPigs($uid[0]->unique_id);
+    $total_pigs = $am_ctrl->totalPigsFilter($uid[0]->unique_id,'feeds_movement_groups_bins','open');
     unset($am_ctrl);
 
     return $total_pigs;
