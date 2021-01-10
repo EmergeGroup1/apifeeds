@@ -1012,7 +1012,7 @@ class AnimalMovementController extends Controller
       ** Filter for all animal groups
       ** @return array
       **/
-      private function getGroupsConsumption($group_id,$created_at)
+      private function getGroupsConsumptionPercentage($group_id,$created_at)
       {
 
         $group_consumption = DB::table("feeds_movement_groups_consumption")
@@ -1041,6 +1041,49 @@ class AnimalMovementController extends Controller
           $output = "+" . $actual / 100;
         } else if($actual < $budgeted){
           $output =  "-" . $actual / 100;
+        } else {
+          $output = $output;
+        }
+
+        return $output;
+
+      }
+
+
+      /**
+      ** Filter for all animal groups
+      ** @return array
+      **/
+      private function getGroupsConLbs($group_id,$created_at)
+      {
+
+        $group_consumption = DB::table("feeds_movement_groups_consumption")
+                                ->where("group_id",$group_id)
+                                ->orderBy();
+                                ->first();
+
+        if(count($group_consumption) <= 0) {
+          return 0;
+        }
+
+
+        // computation from created_at(start date of group creation) to date_today
+        $actual = 0;
+        $budgeted = 0;
+        $counter = count($group_consumption);
+        for($i=0; $i < $counter; $i++){
+            $actual = $actual + $group_consumption[$i]->actual_consumption_lbs;
+            $budgeted = $budgeted + $group_consumption[$i]->budgeted_consumption_lbs;
+        }
+
+        $actual  = $actual / 2000;
+        $budgeted  = $budgeted / 2000;
+        $output = 0;
+
+        if($actual > $budgeted){
+          $output = "+" . $actual - $budgeted;
+        } else if($actual < $budgeted){
+          $output =  "-" . $budgeted - $actual;
         } else {
           $output = $output;
         }
