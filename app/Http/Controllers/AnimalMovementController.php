@@ -2741,7 +2741,7 @@ class AnimalMovementController extends Controller
           $current_from_total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins','open');
           $orig_from_total_pigs_from = $this->totalPigsFilter($g_from_unique_id->unique_id,'feeds_movement_groups_bins','close');
 
-          if($total_pigs_from == 0){
+          if($current_from_total_pigs_from == 0){
             DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'removed']);
           } else {
             DB::table('feeds_movement_groups')->where('group_id',$data['group_from'])->update(['status'=>'created']);
