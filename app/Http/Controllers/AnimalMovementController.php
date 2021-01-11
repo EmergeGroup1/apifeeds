@@ -1150,7 +1150,7 @@ class AnimalMovementController extends Controller
             $current_total_pigs = DB::table("feeds_movement_transfer_v2")
                                     ->where("group_from",$v['group_id'])
                                     ->orderBy('transfer_id','desc')
-                                    ->first();
+                                    ->first()->get();
 
             if($v['status'] == "removed" || $v['status'] == "finalized"){
 
