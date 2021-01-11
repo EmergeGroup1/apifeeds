@@ -1151,7 +1151,7 @@ class AnimalMovementController extends Controller
                                     ->where("group_from",$v['group_id'])
                                     ->select("final_count")
                                     ->orderBy('transfer_id','desc')
-                                    ->first()->final_count;
+                                    ->first();
 
             if($v['status'] == "removed" || $v['status'] == "finalized"){
 
