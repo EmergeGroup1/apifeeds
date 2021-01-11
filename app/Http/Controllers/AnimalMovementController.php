@@ -1149,8 +1149,9 @@ class AnimalMovementController extends Controller
             $previous_total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'closeout');
             $current_total_pigs = DB::table("feeds_movement_transfer_v2")
                                     ->where("group_from",$v['group_id'])
+                                    ->select("final_count")
                                     ->orderBy('transfer_id','desc')
-                                    ->first()->get();
+                                    ->first()->final_count;
 
             if($v['status'] == "removed" || $v['status'] == "finalized"){
 
@@ -1175,7 +1176,7 @@ class AnimalMovementController extends Controller
                   'deceased'					      =>	$this->deceasedPigs($v['group_id']),
                   'treated'						      =>	$this->treatedPigs($v['group_id']),
                   'previous_total_pigs'			=>	$previous_total_pigs,
-                  'current_total_pigs'      =>  $current_total_pigs->final_count,
+                  'current_total_pigs'      =>  $current_total_pigs,
                   'farm_name'					      =>	$this->farmData($v['farm_id']),
                   'bin_data'					      =>	$this->binsDataFilter($v['unique_id'],$group_bins_table,$v['farm_id']),
                   'transfer_data'			      => 	$this->transferData($v['group_id']),
