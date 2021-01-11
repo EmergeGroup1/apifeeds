@@ -3085,7 +3085,7 @@ class AnimalMovementController extends Controller
           DB::table('feeds_groups_dead_pigs')->where('group_id',$group_id)->delete();
           DB::table('feeds_groups_dead_pigs_logs')->where('group_id',$group_id)->delete();
           DB::table('feeds_groups_treated_pigs')->where('group_id',$group_id)->delete();
-
+          DB::table('feeds_movement_groups_consumption')->where('group_id',$group_id)->delete();
 
           $unique_id = DB::table('feeds_movement_groups')->where('group_id',$group_id)->first();
           $animal_bins = DB::table('feeds_movement_groups_bins')->where('unique_id',$unique_id->unique_id)->get();
