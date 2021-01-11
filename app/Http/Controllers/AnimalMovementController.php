@@ -1147,7 +1147,10 @@ class AnimalMovementController extends Controller
 
 
             $previous_total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'closeout');
-            $current_total_pigs = $this->totalPigsFilter($v['unique_id'],$group_bins_table,'open');
+            $current_total_pigs = DB::table("feeds_movement_groups")
+                                    ->where("group_from",$v['group_id'])
+                                    ->orderBy('transfer_id','desc')
+                                    ->first()->final_count;
 
             if($v['status'] == "removed" || $v['status'] == "finalized"){
 
