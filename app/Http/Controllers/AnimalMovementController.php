@@ -3360,7 +3360,7 @@ class AnimalMovementController extends Controller
           $group_to_unique_id = $group_to->unique_id;
 
           // get the number_of_pigs for the bins in group to
-          $number_of_pigs_to = DB::table('feeds_movement_groups_bins')->select('number_of_pigs')->where('bin_id',$transfer_bins['bin_id_to'])->where('unique_id',$group_to_unique_id)->orderBy('id','desc')->first();
+          $number_of_pigs_to = DB::table('feeds_movement_groups_bins')->where('bin_id',$transfer_bins['bin_id_to'])->where('unique_id',$group_to_unique_id)->orderBy('id','desc')->first();
           $added_pigs = $number_of_pigs_to->number_of_pigs + $transfer_bins['number_of_pigs_transferred'];
           $orig_pigs = $number_of_pigs_to->orig_number_of_pigs + $transfer_bins['number_of_pigs_transferred'];
 
