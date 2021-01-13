@@ -1075,8 +1075,8 @@ class AnimalMovementController extends Controller
         $budgeted = $group_consumption['budgeted_consumption_lbs'];
 
 
-        $actual  = $actual / 2000;
-        $budgeted  = $budgeted / 2000;
+        // $actual  = $actual / 2000;
+        // $budgeted  = $budgeted / 2000;
         $output = 0;
 
         if($actual > $budgeted){
