@@ -1851,27 +1851,29 @@ class HomeController extends Controller
 			return "No Consumption";
 		}
 
-		return $groups;
-
 		$amount = $amount * 2000;
 
-
+		$unique_ids = array();
 		for($i=0; $i < count($groups); $i++){
+			$unique_ids[] = $groups[$i]->unique_id;
+		}
 
-				$g_data = DB::table("feeds_movement_groups")
-								->where("unique_id",$groups[$i]->unique_id)
-								->whereIn("status",["entered","created"])
-								->where("created_at","!=","0000-00-00 00:00:00")
-								->select("unique_id","group_id")
-								->first();
+		$g_data = DB::table("feeds_movement_groups")
+						->whereIn("unique_id",$unique_ids)
+						->whereIn("status",["entered","created"])
+						->where("created_at","!=","0000-00-00 00:00:00")
+						->select("unique_id","group_id")
+						->first();
 
-				if($g_data == NULL){
-					return "No Consumption";
-				}
+		if($g_data == NULL){
+			return "No Consumption";
+		}
+
+		for($i=0; $i < count($g_data); $i++){
 
 				// get the total number of pigs per group inside the group bin
 				$total_pigs = DB::table("feeds_movement_groups_bins")
-												->where("unique_id",$g_data->unique_id)
+												->where("unique_id",$g_data[$i]->unique_id)
 												->sum("number_of_pigs");
 
 				// if the bin_history is empty fetch the default feed type on the feed type table else fetch
@@ -1894,7 +1896,7 @@ class HomeController extends Controller
 
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
-					'group_id'	=>	$g_data->group_id,
+					'group_id'	=>	$g_data[$i]->group_id,
 					'feed_type'	=>	$bin_history->feed_type,
 					'budgeted_amount'	=>	$bin_history->budgeted_amount,
 					'budgeted_consumption_lbs' => $cons_lbs,
