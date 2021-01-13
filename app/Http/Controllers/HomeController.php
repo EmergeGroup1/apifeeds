@@ -1846,11 +1846,12 @@ class HomeController extends Controller
 							->select("unique_id")
 							->distinct()
 							->get();
-		return 	$groups;				
 
 		if(count($groups) <= 0){
 			return "No Consumption";
 		}
+
+		return $groups;
 
 		$amount = $amount * 2000;
 
