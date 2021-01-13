@@ -1754,8 +1754,7 @@ class HomeController extends Controller
 			$avg_actual = round(($this->averageActuallast6days($_POST['bin'])/$this->getNumberOfUpdates($_POST['bin'])),2);
 		}
 
-		// groups consumption
-		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
+
 
 		//bins
 		$bins = Bins::where('bin_id','=',$_POST['bin'])->get()->toArray();
@@ -1812,6 +1811,9 @@ class HomeController extends Controller
 		}
 
 		$user = User::where('id',$_POST['user'])->first();
+
+		// groups consumption
+		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
 
 		return json_encode(array(
 			'msg' 				=> 	$msg,
