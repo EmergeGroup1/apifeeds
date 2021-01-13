@@ -1863,7 +1863,7 @@ class HomeController extends Controller
 						->whereIn("status",["entered","created"])
 						->where("created_at","!=","0000-00-00 00:00:00")
 						->select("unique_id","group_id")
-						->first();
+						->get();
 		$g_data = $this->toArray($g_data);
 
 		return $g_data;
