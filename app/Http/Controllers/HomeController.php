@@ -1743,8 +1743,7 @@ class HomeController extends Controller
 			BinsHistory::insert($bin_history_data);
 		}
 
-		// groups consumption
-		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
+
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
 			$avg_variance = 0;
@@ -1754,6 +1753,9 @@ class HomeController extends Controller
 			$avg_variance = round(($this->averageVariancelast6days($_POST['bin'])/$this->getNumberOfUpdates($_POST['bin'])),2);
 			$avg_actual = round(($this->averageActuallast6days($_POST['bin'])/$this->getNumberOfUpdates($_POST['bin'])),2);
 		}
+
+		// groups consumption
+		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
 
 		//bins
 		$bins = Bins::where('bin_id','=',$_POST['bin'])->get()->toArray();
