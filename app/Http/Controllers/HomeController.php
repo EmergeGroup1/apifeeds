@@ -1866,7 +1866,7 @@ class HomeController extends Controller
 						->first();
 		$g_data = $this->toArray($g_data);
 
-		if($g_data == NULL){
+		if(count($g_data) <= 0){
 			return "No Consumption";
 		}
 
