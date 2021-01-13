@@ -1893,7 +1893,7 @@ class HomeController extends Controller
 					}
 				}
 
-				$cons_lbs = $bin_history->budgeted_amount * $total_pigs;
+				$cons_lbs = ($bin_history->budgeted_amount * 2000) * $total_pigs;
 
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
