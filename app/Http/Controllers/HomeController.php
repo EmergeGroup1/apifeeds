@@ -1887,13 +1887,15 @@ class HomeController extends Controller
 				if($total_pigs == 0){
 					$budgeted_amount_lbs = 0;
 				}	else {
-					$budgeted_amount_lbs = $amount - (($bin_history->budgeted_amount * 2000) * $total_pigs);
+					// $budgeted_amount_lbs = $amount - (($bin_history->budgeted_amount * 2000) / $total_pigs);
+					$budgeted_amount_lbs = $bin_history->budgeted_amount * 2000;
 					if($budgeted_amount_lbs < 0) {
 						$budgeted_amount_lbs = 0;
 					}
 				}
 
-				$cons_lbs = ($bin_history->budgeted_amount * 2000) * $total_pigs;
+				// $cons_lbs = ($bin_history->budgeted_amount * 2000) * $total_pigs;
+				$cons_lbs = $bin_history->actual_amount_tons * 2000;
 
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
@@ -1922,8 +1924,8 @@ class HomeController extends Controller
 
 			// manual (insert) select the previous data and build the new data to insert
 			if($type == "manual"){
-				$budgeted_consumption_lbs = $groups_cons_history[$i]->budgeted_consumption_lbs;
-				$budgeted_amount_tons = $groups_cons_history[$i]->budgeted_amount_tons;
+				$budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
+				$budgeted_amount_tons = $groups_cons_history[0]->budgeted_amount_tons;
 			} else {
 				$budgeted_consumption_lbs = round($groups_consumption_data[$i]['budgeted_consumption_lbs'],2);
 				$budgeted_amount_tons = $groups_consumption_data[$i]['budgeted_amount_tons'];
