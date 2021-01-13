@@ -1918,8 +1918,7 @@ class HomeController extends Controller
 																->where("group_id",$groups_consumption_data[$i]['group_id'])
 																->where("update_date",date("Y-m-d"))
 																->get();
-
-														return $groups_cons_history;		
+																
 
 			// manual (insert) select the previous data and build the new data to insert
 			if($type == "manual"){
