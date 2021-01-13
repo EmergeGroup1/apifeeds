@@ -1864,6 +1864,7 @@ class HomeController extends Controller
 						->where("created_at","!=","0000-00-00 00:00:00")
 						->select("unique_id","group_id")
 						->first();
+		return $g_data;
 
 		if($g_data == NULL){
 			return "No Consumption";
