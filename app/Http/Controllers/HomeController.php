@@ -1881,7 +1881,7 @@ class HomeController extends Controller
 				// the feed type on bin_history
 				$bin_history = BinsHistory::where("bin_id",$bin_id)
 																	->orderBy("update_date","desc")
-																	->select("budgeted_amount","feed_type")
+																	->select("budgeted_amount","feed_type","actual_amount_tons")
 																	->first();
 
 				if($total_pigs == 0){
