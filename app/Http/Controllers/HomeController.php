@@ -1813,7 +1813,7 @@ class HomeController extends Controller
 		$user = User::where('id',$_POST['user'])->first();
 
 		// groups consumption
-	return 	$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
+	  $this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
 
 		return json_encode(array(
 			'msg' 				=> 	$msg,
@@ -1918,7 +1918,7 @@ class HomeController extends Controller
 																->where("group_id",$groups_consumption_data[$i]['group_id'])
 																->where("update_date",date("Y-m-d"))
 																->get();
-																
+
 
 			// manual (insert) select the previous data and build the new data to insert
 			if($type == "manual"){
