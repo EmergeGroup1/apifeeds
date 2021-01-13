@@ -1061,6 +1061,7 @@ class AnimalMovementController extends Controller
 
         $group_consumption = DB::table("feeds_movement_groups_consumption");
         $group_consumption = $group_consumption->where("group_id",$group_id);
+        $group_consumption = $group_consumption->where("update_date",date("Y-m-d"));
         $group_consumption = $group_consumption->orderBy('id','desc');
         if($group_consumption->get()->isEmpty()){
           return 0;
