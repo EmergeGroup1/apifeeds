@@ -1864,7 +1864,7 @@ class HomeController extends Controller
 						->where("created_at","!=","0000-00-00 00:00:00")
 						->select("unique_id","group_id")
 						->first();
-		return $this->toArray($g_data);
+		$g_data = $this->toArray($g_data);
 
 		if($g_data == NULL){
 			return "No Consumption";
@@ -1874,7 +1874,7 @@ class HomeController extends Controller
 
 				// get the total number of pigs per group inside the group bin
 				$total_pigs = DB::table("feeds_movement_groups_bins")
-												->where("unique_id",$g_data[$i]->unique_id)
+												->where("unique_id",$g_data[$i]['unique_id'])
 												->sum("number_of_pigs");
 
 				// if the bin_history is empty fetch the default feed type on the feed type table else fetch
@@ -1897,7 +1897,7 @@ class HomeController extends Controller
 
 				$groups_consumption_data[] = array(
 					'update_date'	=>	date("Y-m-d"),
-					'group_id'	=>	$g_data[$i]->group_id,
+					'group_id'	=>	$g_data[$i]['group_id'],
 					'feed_type'	=>	$bin_history->feed_type,
 					'budgeted_amount'	=>	$bin_history->budgeted_amount,
 					'budgeted_consumption_lbs' => $cons_lbs,
