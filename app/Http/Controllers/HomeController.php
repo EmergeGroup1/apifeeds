@@ -1813,7 +1813,7 @@ class HomeController extends Controller
 		$user = User::where('id',$_POST['user'])->first();
 
 		// groups consumption
-		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
+	return 	$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
 
 		return json_encode(array(
 			'msg' 				=> 	$msg,
