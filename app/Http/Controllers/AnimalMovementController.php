@@ -1189,7 +1189,8 @@ class AnimalMovementController extends Controller
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
                   'average_weight'          =>  $this->aveWeight($transfer_data),
                   'total_days'              =>  $total_days,
-                  'groups_consumption'      =>  $this->getGroupsConLbs($v['group_id'],$v['created_at'])
+                  'groups_consumption'      =>  $this->getGroupsConLbs($v['group_id'],$v['created_at']),
+                  'currentAge'              =>  $current_total_pigs == 0 ? 0 : $this->currentAge($v['date_created'],$v['type'],$v['group_id'])
                 );
 
             }
