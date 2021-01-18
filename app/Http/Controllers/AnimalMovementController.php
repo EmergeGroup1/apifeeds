@@ -1190,7 +1190,7 @@ class AnimalMovementController extends Controller
                   'average_weight'          =>  $this->aveWeight($transfer_data),
                   'total_days'              =>  $total_days,
                   'groups_consumption'      =>  $this->getGroupsConLbs($v['group_id'],$v['created_at']),
-                  'currentAge'              =>  $current_total_pigs != NULL ? $current_total_pigs->final_count : $this->currentAge($v['date_created'],$v['type'],$v['group_id'])
+                  'currentAge'              =>  $this->currentAge($v['date_created'],$v['type'],$v['group_id'])
                 );
 
             }
