@@ -836,7 +836,7 @@ class AnimalMovementController extends Controller
                   'current_total_pigs'			=>	$current_total_pigs,
                   'original_total_pigs'     =>  $original_total_pigs,
                   'farm_name'					      =>	$this->farmData($v['farm_id']),
-                  'bin_data'					      =>	$this->binsDataFilter($current_total_pigs,$v['unique_id'],$group_bins_table,$v['farm_id']),
+                  'bin_data'					      =>	$this->binsDataFilter($v['group_id'],$current_total_pigs,$v['unique_id'],$group_bins_table,$v['farm_id']),
                   'transfer_data'			      => 	$this->transferData($v['group_id']),
                   'sched_pigs'				      =>	$this->scheduledTransaferPigs($v['group_id']),
                   'death'                   =>  $this->amDeadPigs($v['group_id']),
@@ -1179,7 +1179,7 @@ class AnimalMovementController extends Controller
                   'previous_total_pigs'			=>	$previous_total_pigs,
                   'current_total_pigs'      =>  $current_total_pigs != NULL ? $current_total_pigs->final_count : 0,
                   'farm_name'					      =>	$this->farmData($v['farm_id']),
-                  'bin_data'					      =>	$this->binsDataFilter($current_total_pigs,$v['unique_id'],$group_bins_table,$v['farm_id']),
+                  'bin_data'					      =>	$this->binsDataFilter($v['group_id'],$current_total_pigs,$v['unique_id'],$group_bins_table,$v['farm_id']),
                   'transfer_data'			      => 	$this->transferData($v['group_id']),
                   'sched_pigs'				      =>	$this->scheduledTransaferPigs($v['group_id']),
                   'death'                   =>  $this->amDeadPigs($v['group_id']),
@@ -1304,7 +1304,7 @@ class AnimalMovementController extends Controller
                   'treated'						      =>	$this->treatedPigs($v['group_id']),
                   'total_pigs'				      =>	$total_pigs,
                   'farm_name'					      =>	$this->farmData($v['farm_id']),
-                  'bin_data'					      =>	$this->binsDataFilter($total_pigs,$v['unique_id'],$group_bins_table,$v['farm_id']),
+                  'bin_data'					      =>	$this->binsDataFilter($v['group_id'],$total_pigs,$v['unique_id'],$group_bins_table,$v['farm_id']),
                   'transfer_data'			      => 	$this->transferData($v['group_id']),
                   'sched_pigs'				      =>	$this->scheduledTransaferPigs($v['group_id']),
                   'death'                   =>  $this->amDeadPigs($v['group_id']),
@@ -1742,7 +1742,7 @@ class AnimalMovementController extends Controller
       ** @param $farm_id int
       ** @return array
       **/
-      private function binsDataFilter($cnp,$unique_id,$group_bins_table,$farm_id)
+      private function binsDataFilter($g_id,$cnp,$unique_id,$group_bins_table,$farm_id)
       {
 
           $bins = DB::table($group_bins_table)->where('unique_id',$unique_id)->get();
@@ -1758,7 +1758,8 @@ class AnimalMovementController extends Controller
                     'room_id'   =>  $v['room_id'],
                     'room_number' => $this->roomNumber($v['room_id']),
                     'number_of_pigs'	=> $v['number_of_pigs'],
-                    'current_num_pigs'  =>  $cnp
+                    'current_num_pigs'  =>  $cnp,
+                    'group_id'  =>  $g_id
                     );
           }
 
