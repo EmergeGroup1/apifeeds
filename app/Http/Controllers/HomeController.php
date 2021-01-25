@@ -1931,6 +1931,9 @@ class HomeController extends Controller
 				$budgeted_amount_tons = $groups_consumption_data[$i]['budgeted_amount_tons'];
 			}
 
+			$budgeted_consumption_lbs = $groups_consumption_data[$i]['total_pigs'] * $groups_consumption_data[$i]['budgeted_amount'];
+			$budgeted_amount_tons = $budgeted_consumption_lbs / 2000;
+
 			$d_insert = array(
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
