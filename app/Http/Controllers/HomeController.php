@@ -1938,9 +1938,9 @@ class HomeController extends Controller
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
 				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-				'budgeted_consumption_lbs'	=>	$budgeted_consumption_lbs,
+				'budgeted_consumption_lbs'	=>	$budgeted_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],
 				'budgeted_amount_tons'	=>	$budgeted_amount_tons,
-				'actual_consumption_lbs'	=>	$groups_consumption_data[$i]['actual_consumption_lbs'],
+				'actual_consumption_lbs'	=>	$groups_consumption_data[$i]['actual_consumption_lbs'] / $groups_consumption_data[$i]['total_pigs'],
 				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
 			);
 
