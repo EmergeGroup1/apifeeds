@@ -1928,8 +1928,14 @@ class HomeController extends Controller
 
 			// manual (insert) select the previous data and build the new data to insert
 			if($type == "manual"){
-				$budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
-				$budgeted_amount_tons = $groups_cons_history[0]->budgeted_amount_tons;
+				if(DB::table("feeds_movement_groups_consumption")->where("group_id",$groups_consumption_data[$i]['group_id'])->where("update_date",date("Y-m-d"))->isNotEmpty()){
+					$budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
+					$budgeted_amount_tons = $groups_cons_history[0]->budgeted_amount_tons;
+				} else {
+					$budgeted_consumption_lbs = 0;
+					$budgeted_amount_tons = 0;
+				}
+
 			} else {
 				$budgeted_consumption_lbs = round($groups_consumption_data[$i]['budgeted_consumption_lbs'],2);
 				$budgeted_amount_tons = $groups_consumption_data[$i]['budgeted_amount_tons'];
