@@ -1838,7 +1838,7 @@ class HomeController extends Controller
 	*	update the current groups number of pigs based on yesterday
 	* or today's update on forecasting
 	*/
-	public function updateGroupsConsumption($bin_id,$amount,$type)
+	public function updateGroupsConsumption($bin_id,$amount,$type) {
 
 		if($type == "create"){
 			return false;
@@ -1938,7 +1938,6 @@ class HomeController extends Controller
 			$budgeted_consumption_lbs = $groups_consumption_data[$i]['total_pigs'] * $groups_consumption_data[$i]['budgeted_amount'];
 			$budgeted_amount_tons = $budgeted_consumption_lbs / 2000;
 
-
 			$d_insert = array(
 				'update_date'	=>	date("Y-m-d"),
 				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
@@ -1948,7 +1947,6 @@ class HomeController extends Controller
 				'actual_consumption_lbs'	=>	round($groups_consumption_data[$i]['actual_consumption_lbs'] / $groups_consumption_data[$i]['total_pigs'],2),
 				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
 			);
-
 
 			$dtest_insert[] = array(
 				'update_date'	=>	date("Y-m-d"),
