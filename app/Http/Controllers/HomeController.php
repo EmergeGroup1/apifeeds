@@ -1934,15 +1934,34 @@ class HomeController extends Controller
 			$budgeted_consumption_lbs = $groups_consumption_data[$i]['total_pigs'] * $groups_consumption_data[$i]['budgeted_amount'];
 			$budgeted_amount_tons = $budgeted_consumption_lbs / 2000;
 
-			$d_insert = array(
-				'update_date'	=>	date("Y-m-d"),
-				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
-				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-				'budgeted_consumption_lbs'	=>	round($budgeted_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],2),
-				'budgeted_amount_tons'	=>	$budgeted_amount_tons,
-				'actual_consumption_lbs'	=>	round($groups_consumption_data[$i]['actual_consumption_lbs'] / $groups_consumption_data[$i]['total_pigs'],2),
-				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
-			);
+
+			if($type == "create"){
+
+				$d_insert = array(
+					'update_date'	=>	date("Y-m-d"),
+					'group_id'	=>	$groups_consumption_data[$i]['group_id'],
+					'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
+					'budgeted_consumption_lbs'	=>	0,
+					'budgeted_amount_tons'	=>	0,
+					'actual_consumption_lbs'	=>	0,
+					'actual_amount_tons'	=>	0,
+				);
+
+			} else
+
+				$d_insert = array(
+					'update_date'	=>	date("Y-m-d"),
+					'group_id'	=>	$groups_consumption_data[$i]['group_id'],
+					'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
+					'budgeted_consumption_lbs'	=>	round($budgeted_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],2),
+					'budgeted_amount_tons'	=>	$budgeted_amount_tons,
+					'actual_consumption_lbs'	=>	round($groups_consumption_data[$i]['actual_consumption_lbs'] / $groups_consumption_data[$i]['total_pigs'],2),
+					'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
+				);
+
+			}
+
+
 
 			$dtest_insert[] = array(
 				'update_date'	=>	date("Y-m-d"),
