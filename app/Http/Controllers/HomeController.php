@@ -1838,7 +1838,11 @@ class HomeController extends Controller
 	*	update the current groups number of pigs based on yesterday
 	* or today's update on forecasting
 	*/
-	public function updateGroupsConsumption($bin_id,$amount,$type) {
+	public function updateGroupsConsumption($bin_id,$amount,$type)
+
+		if($type == "create"){
+			return false;
+		}
 
 		// get the groups
 		$groups = DB::table("feeds_movement_groups_bins")
@@ -1935,32 +1939,15 @@ class HomeController extends Controller
 			$budgeted_amount_tons = $budgeted_consumption_lbs / 2000;
 
 
-			if($type == "create"){
-
-				$d_insert = array(
-					'update_date'	=>	date("Y-m-d"),
-					'group_id'	=>	$groups_consumption_data[$i]['group_id'],
-					'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-					'budgeted_consumption_lbs'	=>	0,
-					'budgeted_amount_tons'	=>	0,
-					'actual_consumption_lbs'	=>	0,
-					'actual_amount_tons'	=>	0,
-				);
-
-			} else
-
-				$d_insert = array(
-					'update_date'	=>	date("Y-m-d"),
-					'group_id'	=>	$groups_consumption_data[$i]['group_id'],
-					'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-					'budgeted_consumption_lbs'	=>	round($budgeted_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],2),
-					'budgeted_amount_tons'	=>	$budgeted_amount_tons,
-					'actual_consumption_lbs'	=>	round($groups_consumption_data[$i]['actual_consumption_lbs'] / $groups_consumption_data[$i]['total_pigs'],2),
-					'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
-				);
-
-			}
-
+			$d_insert = array(
+				'update_date'	=>	date("Y-m-d"),
+				'group_id'	=>	$groups_consumption_data[$i]['group_id'],
+				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
+				'budgeted_consumption_lbs'	=>	round($budgeted_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],2),
+				'budgeted_amount_tons'	=>	$budgeted_amount_tons,
+				'actual_consumption_lbs'	=>	round($groups_consumption_data[$i]['actual_consumption_lbs'] / $groups_consumption_data[$i]['total_pigs'],2),
+				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
+			);
 
 
 			$dtest_insert[] = array(
