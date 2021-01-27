@@ -1929,8 +1929,21 @@ class HomeController extends Controller
 			// manual (insert) select the previous data and build the new data to insert
 			if($type == "manual"){
 				if($groups_cons_history->isNotEmpty()){
-					$budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
-					$budgeted_amount_tons = $groups_cons_history[0]->budgeted_amount_tons;
+
+					if($groups_cons_history[0]->update_date == date('Y-m-d')){
+
+						if($groups_cons_history[0]->actual_consumption_lbs >= $groups_consumption_data[$i]['actual_consumption_lbs']){
+							return false;
+						} else {
+							$budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
+							$budgeted_amount_tons = $groups_cons_history[0]->budgeted_amount_tons;
+						}
+
+					} else {
+						$budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
+						$budgeted_amount_tons = $groups_cons_history[0]->budgeted_amount_tons;
+					}
+
 				} else {
 					$budgeted_consumption_lbs = 0;
 					$budgeted_amount_tons = 0;
