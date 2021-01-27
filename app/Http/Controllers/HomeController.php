@@ -1868,11 +1868,13 @@ class HomeController extends Controller
 						->where("created_at","!=","0000-00-00 00:00:00")
 						->select("unique_id","group_id")
 						->get();
-		$g_data = $this->toArray($g_data);
+
 
 		if($g_data->isEmpty()){
 			return "No Consumption";
 		}
+
+		$g_data = $this->toArray($g_data);
 
 		for($i=0; $i < count($g_data); $i++){
 
