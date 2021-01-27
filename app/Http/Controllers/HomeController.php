@@ -1934,7 +1934,7 @@ class HomeController extends Controller
 
 					if($groups_cons_history[0]->update_date == date('Y-m-d')){
 
-						if($groups_cons_history[0]->actual_consumption_lbs >= $groups_consumption_data[$i]['actual_consumption_lbs']){
+						if($groups_cons_history[0]->actual_amount_tons >= $groups_consumption_data[$i]['actual_amount_tons']){
 							return false;
 						} else {
 							$budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
