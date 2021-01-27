@@ -1928,11 +1928,39 @@ class HomeController extends Controller
 																->get();
 
 
+			$actual_consumption_lbs = $groups_consumption_data[$i]['actual_consumption_lbs'];
+			$actual_amount_tons = $groups_consumption_data[$i]['actual_amount_tons'];
+
 			// manual (insert) select the previous data and build the new data to insert
 			if($type == "manual"){
 				if($groups_cons_history->isNotEmpty()){
-					$budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
-					$budgeted_amount_tons = $groups_cons_history[0]->budgeted_amount_tons;
+
+					// when increasing feed amount of bins,
+					// we are not calculating budget vs actual or feed consumption.
+					if($groups_consumption_data[$i]['actual_amount_tons'] > $groups_cons_history[0]->actual_amount_tons){
+						return false;
+					} else {
+
+						$groups_cons_history = DB::table("feeds_movement_groups_consumption")
+																			->where("group_id",$groups_consumption_data[$i]['group_id'])
+																			->where("update_date",date("Y-m-d", strtotime("-1 day")))
+																			->get();
+
+						// if there were multiple times the bin was decreased in the same date,
+						// it should always get the previous amount from yesterday to calculate the recent budget vs actual
+						// if the yesterdays amount is none, the value will be today
+						if($groups_cons_history->isNotEmpty()){
+							$actual_consumption_lbs = $groups_cons_history[0]->actual_consumption_lbs;
+							$actual_amount_tons = $groups_cons_history[0]->actual_amount_tons;
+						} else {
+							$actual_consumption_lbs = $groups_consumption_data[$i]['actual_consumption_lbs'];
+							$actual_amount_tons = $groups_consumption_data[$i]['actual_amount_tons'];
+						}
+
+					}
+
+					// $budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
+					// $budgeted_amount_tons = $groups_cons_history[0]->budgeted_amount_tons;
 				} else {
 					$budgeted_consumption_lbs = 0;
 					$budgeted_amount_tons = 0;
@@ -1952,8 +1980,8 @@ class HomeController extends Controller
 				'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
 				'budgeted_consumption_lbs'	=>	round($budgeted_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],2),
 				'budgeted_amount_tons'	=>	$budgeted_amount_tons,
-				'actual_consumption_lbs'	=>	round($groups_consumption_data[$i]['actual_consumption_lbs'] / $groups_consumption_data[$i]['total_pigs'],2),
-				'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons'],
+				'actual_consumption_lbs'	=>	round($actual_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],2),
+				'actual_amount_tons'	=>	$actual_amount_tons,
 			);
 
 			$dtest_insert[] = array(
