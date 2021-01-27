@@ -1870,7 +1870,7 @@ class HomeController extends Controller
 						->get();
 		$g_data = $this->toArray($g_data);
 
-		if(count($g_data) <= 0){
+		if($g_data->isEmpty()){
 			return "No Consumption";
 		}
 
