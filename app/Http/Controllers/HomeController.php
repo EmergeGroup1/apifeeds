@@ -1937,7 +1937,7 @@ class HomeController extends Controller
 
 					// when increasing feed amount of bins,
 					// we are not calculating budget vs actual or feed consumption.
-					if($groups_consumption_data[$i]['actual_amount_tons'] > $groups_cons_history[0]->actual_amount_tons){
+					if($groups_consumption_data[$i]['actual_amount_tons'] >= $groups_cons_history[0]->actual_amount_tons){
 						return false;
 					} else {
 
