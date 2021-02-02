@@ -3152,7 +3152,7 @@ class AnimalMovementController extends Controller
        *
        * @return Response
        */
-      private function removeTransferData($group_id)
+      public function removeTransferData($group_id)
       {
 
         $transfer = DB::table('feeds_movement_transfer_v2')->where('group_from',$group_id)->first();
