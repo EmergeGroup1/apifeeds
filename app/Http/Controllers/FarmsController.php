@@ -1651,7 +1651,7 @@ class FarmsController extends Controller
 
         $animal_bins = DB::table('feeds_movement_groups_bins')->where('bin_id',$bin_id)->get();
 
-        $anml_controller = new FarmsController;
+        $anml_controller = new AnimalMovementController;
 
         if($animal_bins != NULL){
           foreach($animal_bins as $k => $v){
