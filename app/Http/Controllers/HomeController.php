@@ -1943,7 +1943,7 @@ class HomeController extends Controller
 
 						$groups_cons_history = DB::table("feeds_movement_groups_consumption")
 																			->where("group_id",$groups_consumption_data[$i]['group_id'])
-																			->where("update_date",date("Y-m-d", strtotime("-1 day")))
+																			->where("update_date",date("Y-m-d", strtotime("-2 day")))
 																			->get();
 
 						// if there were multiple times the bin was decreased in the same date,

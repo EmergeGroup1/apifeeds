@@ -331,6 +331,8 @@ class APIController extends Controller
 
       case "updateBinCacheRebuild":
 
+        return date("Y-m-d", strtotime("-1 day"));
+
         return array("err" => "none");
 
         $token = $request->input('token');
