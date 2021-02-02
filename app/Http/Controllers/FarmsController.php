@@ -1671,6 +1671,9 @@ class FarmsController extends Controller
 
               $anml_controller->removeTransferData($animal_groups[0]->group_id);
 
+              DB::table('feeds_movement_groups')->where('unique_id',$v->unique_id)->delete();
+              DB::table('feeds_movement_groups_bins')->where('unique_id',$v->unique_id)->delete();
+
             }
 
           }
