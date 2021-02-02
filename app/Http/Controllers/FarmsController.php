@@ -1655,12 +1655,13 @@ class FarmsController extends Controller
 
         if($animal_bins != NULL){
           foreach($animal_bins as $k => $v){
-            $animal_groups = DB::table('feeds_movement_groups_bins')
-            ->where('unique_id',$v->unique_id)
+            $animal_groups = DB::table('feeds_movement_groups')
             ->select('group_id')
+            ->where('unique_id',$v->unique_id)
             ->get();
 
             if($animal_groups->isNotEmpty()){
+
               DB::table('feeds_deceased')->where('group_id',$animal_groups[0]->group_id)->delete();
               DB::table('feeds_treatment')->where('group_id',$animal_groups[0]->group_id)->delete();
 
