@@ -331,6 +331,8 @@ class APIController extends Controller
 
       case "updateBinCacheRebuild":
 
+        return false; 
+
         $token = $request->input('token');
         $log_token = session('token');
         if ($token != $log_token) {
