@@ -1649,6 +1649,34 @@ class FarmsController extends Controller
   		public function deleteBinFarmAPI($bin_id)
   		{
 
+        $animal_bins = DB::table('feeds_movement_groups_bins')->where('bin_id',$bin_id)->get();
+
+        $anml_controller = new FarmsController;
+
+        if($animal_bins != NULL){
+          foreach($animal_bins as $k => $v){
+            $animal_groups = DB::table('feeds_movement_groups_bins')
+            ->where('unique_id',$v->unique_id)
+            ->select('group_id')
+            ->get();
+
+            if($animal_groups->isNotEmpty()){
+              DB::table('feeds_deceased')->where('group_id',$animal_groups[0]->group_id)->delete();
+              DB::table('feeds_treatment')->where('group_id',$animal_groups[0]->group_id)->delete();
+
+              DB::table('feeds_groups_dead_pigs')->where('group_id',$animal_groups[0]->group_id)->delete();
+              DB::table('feeds_groups_dead_pigs_logs')->where('group_id',$animal_groups[0]->group_id)->delete();
+              DB::table('feeds_groups_treated_pigs')->where('group_id',$animal_groups[0]->group_id)->delete();
+              DB::table('feeds_movement_groups_consumption')->where('group_id',$animal_groups[0]->group_id)->delete();
+
+              $anml_controller->removeTransferData($animal_groups[0]->group_id);
+
+            }
+
+          }
+        }
+        unset($anml_controller);
+
   			Bins::findOrFail($bin_id)->delete();
   			DB::table('feeds_bins_accepted_load')->where('bin_id',$bin_id)->delete();
   			// delete data on history table
