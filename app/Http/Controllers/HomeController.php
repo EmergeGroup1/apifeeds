@@ -1953,8 +1953,8 @@ class HomeController extends Controller
 							$actual_consumption_lbs = $groups_cons_history[0]->actual_consumption_lbs;
 							$actual_amount_tons = $groups_cons_history[0]->actual_amount_tons;
 						} else {
-							$actual_consumption_lbs = 0; //$groups_consumption_data[$i]['actual_consumption_lbs'];
-							$actual_amount_tons = 0; //$groups_consumption_data[$i]['actual_amount_tons'];
+							$actual_consumption_lbs = $groups_consumption_data[$i]['actual_consumption_lbs'];
+							$actual_amount_tons = $groups_consumption_data[$i]['actual_amount_tons'];
 						}
 
 					}
