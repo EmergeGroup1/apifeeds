@@ -1919,7 +1919,7 @@ class HomeController extends Controller
 
 		}
 
-
+		$previous_update = 1;
 
 		for($i=0; $i < count($groups_consumption_data); $i++){
 			$groups_cons_history = DB::table("feeds_movement_groups_consumption")
@@ -1955,6 +1955,7 @@ class HomeController extends Controller
 						} else {
 							$actual_consumption_lbs = $groups_consumption_data[$i]['actual_consumption_lbs'];
 							$actual_amount_tons = $groups_consumption_data[$i]['actual_amount_tons'];
+							$previous_update = 0;
 						}
 
 					}
@@ -2007,7 +2008,10 @@ class HomeController extends Controller
 
 			}
 
-			$insert->insert($d_insert);
+			if($previous_update == 0){
+					$insert->insert($d_insert);
+			}
+
 		}
 
 
