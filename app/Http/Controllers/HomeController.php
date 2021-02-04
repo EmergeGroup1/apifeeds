@@ -1855,7 +1855,7 @@ class HomeController extends Controller
 			return "No Consumption";
 		}
 
-		$amount = $amount * 2000;
+		// $amount = $amount * 2000;
 
 		$unique_ids = array();
 		for($i=0; $i < count($groups); $i++){
@@ -1930,20 +1930,30 @@ class HomeController extends Controller
 					'actual_amount_tons'	=>	$bin_history->actual_amount_tons,
 				);
 
-				if($bin_history->budgeted_amount_tons < 0){
+				if($bin_history->budgeted_amount_tons < 0 || $amount >= $bin_history->amount){
 
-					// $d_insert = array(
-					// 	'update_date'	=>	date("Y-m-d"),
-					// 	'group_id'	=>	$g_data[$i]['group_id'],
-					// 	'feed_type'	=>	$bin_history->feed_type,
-					// 	'budgeted_consumption_lbs'	=>	0,
-					// 	'budgeted_amount_tons'	=>	0,
-					// 	'actual_consumption_lbs'	=>	0,
-					// 	'actual_amount_tons'	=>	0,
-					// );
+					$gc = DB::table("feeds_movement_groups_consumption");
+					$gc = $gc->where('group_id',$g_data[$i]['group_id']);
+					$gc = $gc->where('update_date',date("Y-m-d", strtotime("-1 day")));
+					$gc = $gc->get();
 
-					return "none";
+					if($gc->isNotEmpty()){
 
+						$d_insert = array(
+							'update_date'	=>	date("Y-m-d"),
+							'group_id'	=>	$gc[0]->group_id,
+							'feed_type'	=>	$gc[0]->feed_type,
+							'budgeted_consumption_lbs'	=>	$gc[0]->budgeted_consumption_lbs,
+							'budgeted_amount_tons'	=>	$gc[0]->budgeted_amount_tons,
+							'actual_consumption_lbs'	=>	$gc[0]->actual_consumption_lbs,
+							'actual_amount_tons'	=>	$gc[0]->actual_amount_tons,
+						);
+
+					} else {
+
+						return "none";
+
+					}
 
 				}
 
