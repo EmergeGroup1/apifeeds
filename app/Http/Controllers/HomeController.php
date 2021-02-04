@@ -1932,15 +1932,17 @@ class HomeController extends Controller
 
 				if($bin_history->budgeted_amount_tons < 0){
 
-					$d_insert = array(
-						'update_date'	=>	date("Y-m-d"),
-						'group_id'	=>	$g_data[$i]['group_id'],
-						'feed_type'	=>	$bin_history->feed_type,
-						'budgeted_consumption_lbs'	=>	0,
-						'budgeted_amount_tons'	=>	0,
-						'actual_consumption_lbs'	=>	0,
-						'actual_amount_tons'	=>	0,
-					);
+					// $d_insert = array(
+					// 	'update_date'	=>	date("Y-m-d"),
+					// 	'group_id'	=>	$g_data[$i]['group_id'],
+					// 	'feed_type'	=>	$bin_history->feed_type,
+					// 	'budgeted_consumption_lbs'	=>	0,
+					// 	'budgeted_amount_tons'	=>	0,
+					// 	'actual_consumption_lbs'	=>	0,
+					// 	'actual_amount_tons'	=>	0,
+					// );
+
+					return "none";
 
 
 				}
