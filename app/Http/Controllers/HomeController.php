@@ -1916,7 +1916,9 @@ class HomeController extends Controller
 					'total_pigs'	=>	$total_pigs
 				);
 
-				$amount = $budgeted_amount_lbs;
+				// $amount = $budgeted_amount_lbs;
+
+
 
 				$d_insert = array(
 					'update_date'	=>	date("Y-m-d"),
@@ -1927,6 +1929,21 @@ class HomeController extends Controller
 					'actual_consumption_lbs'	=>	round(($bin_history->amount * 2000) / $total_pigs,2),
 					'actual_amount_tons'	=>	$bin_history->actual_amount_tons,
 				);
+
+				if($bin_history->budgeted_amount_tons < 0){
+
+					$d_insert = array(
+						'update_date'	=>	date("Y-m-d"),
+						'group_id'	=>	$g_data[$i]['group_id'],
+						'feed_type'	=>	$bin_history->feed_type,
+						'budgeted_consumption_lbs'	=>	0,
+						'budgeted_amount_tons'	=>	0,
+						'actual_consumption_lbs'	=>	0,
+						'actual_amount_tons'	=>	0,
+					);
+
+
+				}
 
 				// delete and insert
 				DB::table("feeds_movement_groups_consumption")
