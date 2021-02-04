@@ -44,7 +44,7 @@ class ForecastingCache extends Command
       $ch = curl_init();
 
       // set url
-      curl_setopt($ch, CURLOPT_URL, 'http://'.env('APP_DOMAIN').'/forecastdata');
+      curl_setopt($ch, CURLOPT_URL, 'https://'.env('APP_DOMAIN').'/forecastdata');
 
       //return the transfer as a string
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
