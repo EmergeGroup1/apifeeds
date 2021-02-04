@@ -690,9 +690,9 @@ class APIController extends Controller
 
         $farm_schedule_data = FarmSchedule::where('unique_id', $unique_id)->first()->toArray();
 
-        // $home_controller = new HomeController;
-        // $unique_id = $home_controller->forecastingDataCache();
-        // unset($home_controller);
+        $home_controller = new HomeController;
+        $home_controller->forecastingDataCache();
+        unset($home_controller);
 
         if ($farm_schedule_data != NULL) {
 
