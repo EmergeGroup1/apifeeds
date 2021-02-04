@@ -1972,6 +1972,12 @@ class HomeController extends Controller
 				$budgeted_amount_tons = $groups_consumption_data[$i]['budgeted_amount_tons'];
 			}
 
+
+			if($previous_update == 0){
+					return NULL;
+			}
+
+
 			$budgeted_consumption_lbs = $groups_consumption_data[$i]['total_pigs'] * $groups_consumption_data[$i]['budgeted_amount'];
 			$budgeted_amount_tons = $budgeted_consumption_lbs / 2000;
 
@@ -2008,9 +2014,7 @@ class HomeController extends Controller
 
 			}
 
-			if($previous_update == 0){
-					$insert->insert($d_insert);
-			}
+			$insert->insert($d_insert);
 
 		}
 
