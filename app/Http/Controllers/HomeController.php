@@ -1928,15 +1928,18 @@ class HomeController extends Controller
 					'actual_amount_tons'	=>	$bin_history->actual_amount_tons,
 				);
 
+				// delete and insert
+				DB::table("feeds_movement_groups_consumption")
+					->where("group_id",$g_data[$i]['group_id'])
+					->where("update_date",date("Y-m-d"))
+					->delete();
+
+				$insert->insert($d_insert);
+
 		}
 
-			// delete and insert
-			DB::table("feeds_movement_groups_consumption")
-				->where("group_id",$g_data[$i]['group_id'])
-				->where("update_date",date("Y-m-d"))
-				->delete();
-		
-		$insert->insert($d_insert);
+
+
 
 		return $d_insert;
 
