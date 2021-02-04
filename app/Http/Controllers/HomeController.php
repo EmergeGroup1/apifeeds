@@ -1925,7 +1925,7 @@ class HomeController extends Controller
 					'budgeted_consumption_lbs'	=>	$bin_history->budgeted_amount,
 					'budgeted_amount_tons'	=>	$bin_history->budgeted_amount_tons,
 					'actual_consumption_lbs'	=>	round(($bin_history->amount * 2000) / $total_pigs,2),
-					'actual_amount_tons'	=>	$actual_amount_tons,
+					'actual_amount_tons'	=>	$bin_history->actual_amount_tons,
 				);
 
 		}
