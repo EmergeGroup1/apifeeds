@@ -1031,6 +1031,15 @@ class AnimalMovementController extends Controller
         // bin_id
         $bin_id = $group_consumption->bin_id;
 
+        // bin history
+        $bh = DB::table("feeds_bin_history");
+        $bh = $bh->where("bin_id",$bin_id);
+        $bh = $bh->orderBy("update_date","desc");
+        $bh = $bh->first();
+
+        // variance
+        $variance = $bh->variance;
+
         // get the unique_id from feeds_movement_groups_bins
         $gb = DB::table("feeds_movement_groups_bins");
         $gb = $gb->where("bin_id",$bin_id);
@@ -1050,35 +1059,27 @@ class AnimalMovementController extends Controller
           $group = $group->where("status","entered");
           $group = $group->select("unique_id");
           $counter = $group->count();
+          $group = $group->get();
 
           $t_pigs = 0;
           if($counter > 1){
 
-            $group = $group->get();
             $uq_id = array();
             for($i=0; $i<$counter; $i++){
               $uq_id[] = $group[$i]->unique_id;
             }
 
-            $gbs = DB::table("feeds_movement_groups_bins")
-                      ->whereIn("unique_id",$uq_id)
-                      ->sum("number_of_pigs");
-
-            return $gbs;
+            $total_current_pigs = DB::table("feeds_movement_groups_bins")
+                                    ->whereIn("unique_id",$uq_id)
+                                    ->sum("number_of_pigs");
+            return $total_current_pigs;                        
 
           }
 
 
-
-
         }
 
-        $bh = DB::table("feeds_bin_history");
-        $bh = $bh->where("bin_id",$bin_id);
-        $bh = $bh->orderBy("update_date","desc");
-        $bh = $bh->first();
 
-        $variance = $bh->variance;
 
         if($variance < 0 ){
           return round($bh->variance,2);
