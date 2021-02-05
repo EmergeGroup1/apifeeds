@@ -1061,13 +1061,11 @@ class AnimalMovementController extends Controller
             }
             return $uq_id;
 
-            // $gbs = DB::table("feeds_movement_groups_bins");
-            //           ->whereIn("unique_id",$uq_id)
-            //           ->select("number_of_pigs")
-            //           ->first();
-            // $t_pigs = $t_pigs + $gbs->number_of_pigs;
-            //
-            // return $t_pigs;
+            $gbs = DB::table("feeds_movement_groups_bins");
+                      ->whereIn("unique_id",$uq_id)
+                      ->sum("number_of_pigs");
+
+            return $gbs;
 
           }
 
