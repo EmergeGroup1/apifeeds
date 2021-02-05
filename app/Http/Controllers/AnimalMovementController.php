@@ -1072,7 +1072,9 @@ class AnimalMovementController extends Controller
             $total_current_pigs = DB::table("feeds_movement_groups_bins")
                                     ->whereIn("unique_id",$uq_id)
                                     ->sum("number_of_pigs");
-            return "0." . ($total_pigs*100) / $total_current_pigs;                        
+            $perc = "0." . ($total_pigs*100) / $total_current_pigs;
+
+            $variance = $variance * $perc;                       
 
           }
 
