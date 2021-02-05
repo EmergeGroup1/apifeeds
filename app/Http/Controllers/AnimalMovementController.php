@@ -1068,7 +1068,17 @@ class AnimalMovementController extends Controller
         $bh = $bh->orderBy("update_date","desc");
         $bh = $bh->first();
 
-        return round($bh->variance,2);
+        $variance = $bh->variance;
+
+        if($variance < 0 ){
+          return round($bh->variance,2);
+        }
+
+        if($variance == 0){
+          return 0;
+        }
+
+        return "+" . round($bh->variance,2);
 
       }
 
