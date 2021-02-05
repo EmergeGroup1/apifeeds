@@ -1074,7 +1074,7 @@ class AnimalMovementController extends Controller
                                     ->sum("number_of_pigs");
             $perc = "0." . ($total_pigs*100) / $total_current_pigs;
 
-            $variance = $variance * $perc;                       
+            $variance = $variance * (float)$perc;                       
 
           }
 
