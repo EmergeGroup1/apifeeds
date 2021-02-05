@@ -1052,7 +1052,7 @@ class AnimalMovementController extends Controller
           $counter = $group->count();
 
           $t_pigs = 0;
-          if($group->count() > 1){
+          if($counter > 1){
 
             $group = $group->get();
             $uq_id = array();
