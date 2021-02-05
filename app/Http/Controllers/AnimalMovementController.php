@@ -1014,40 +1014,26 @@ class AnimalMovementController extends Controller
       ** Filter for all animal groups
       ** @return array
       **/
-      private function getGroupsConsumptionPercentage($group_id,$created_at)
+      private function getGroupsConsumptionPercentage($g_unique_id,$total_pigs)
       {
 
-        $group_consumption = DB::table("feeds_movement_groups_consumption")
-                                ->where("group_id",$group_id)
-                                ->get();
-
-        if(count($group_consumption) <= 0) {
+        $group_consumption = DB::table("feeds_movement_groups_bins");
+        $group_consumption = $group_consumption->where("unique_id",$g_unique_id);
+        $group_consumption = $group_consumption->select("bin_id");
+        $group_consumption = $group_consumption->orderBy('id','desc');
+        if($group_consumption->get()->isEmpty()){
           return 0;
         }
 
+        $group_consumption = $group_consumption->first();
+        $group_consumption = $this->toArray($group_consumption);
 
-        // computation from created_at(start date of group creation) to date_today
-        $actual = 0;
-        $budgeted = 0;
-        $counter = count($group_consumption);
-        for($i=0; $i < $counter; $i++){
-            $actual = $actual + $group_consumption[$i]->actual_amount_tons;
-            $budgeted = $budgeted + $group_consumption[$i]->budgeted_amount_tons;
-        }
+        $bh = DB::table("feeds_bin_history");
+        $bh = $bh->where("bin_id",$group_consumption[0]['bin_id']);
+        $bh = $bh->orderBy("update_date","desc");
+        $bh = $bh->first();
 
-        $actual  = $actual / $counter;
-        $budgeted  = $budgeted / $counter;
-        $output = 0;
-
-        if($actual > $budgeted){
-          $output = "+" . $actual / 100;
-        } else if($actual < $budgeted){
-          $output =  "-" . $actual / 100;
-        } else {
-          $output = $output;
-        }
-
-        return $output;
+        return round($bh->variance,2);
 
       }
 
