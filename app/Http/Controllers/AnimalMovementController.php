@@ -1049,7 +1049,7 @@ class AnimalMovementController extends Controller
 
           $group = DB::table("feeds_movement_groups");
           $group = $group->whereIn("unique_id",$u_id);
-          $group = $group->where("status","!=","removed");
+          $group = $group->where("status","entered");
           $group = $group->get();
 
           $t_pigs = 0;
@@ -1060,7 +1060,7 @@ class AnimalMovementController extends Controller
                       ->select("number_of_pigs")
                       ->first();
             $t_pigs = $t_pigs + $gbs->number_of_pigs;
-            
+
           }
 
           return $t_pigs;
