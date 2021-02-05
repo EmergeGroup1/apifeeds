@@ -1048,6 +1048,7 @@ class AnimalMovementController extends Controller
           $group = DB::table("feeds_movement_groups");
           $group = $group->whereIn("unique_id",$u_id);
           $group = $group->where("status","entered");
+          $group = $group->select("unique_id");
           $group = $group->get();
 
           $t_pigs = 0;
