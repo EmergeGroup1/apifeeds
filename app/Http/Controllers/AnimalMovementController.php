@@ -1031,37 +1031,42 @@ class AnimalMovementController extends Controller
         // bin_id
         $bin_id = $group_consumption->bin_id;
 
-        // // get the unique_id from feeds_movement_groups_bins
-        // $gb = DB::table("feeds_movement_groups_bins");
-        // $gb = $gb->where("bin_id",$bin_id);
-        // $gb = $gb->select("unique_id");
-        //
-        // if($gb->count() > 1){
-        //
-        //   $gb = $gb->get();
-        //   $u_id = array();
-        //   for($i=0; $i<$gb->count(); $i++){
-        //     $u_id[] = $gb[$i]->unique_id;
-        //   }
-        //
-        //   $group = DB::table("feeds_movement_groups");
-        //   $group = $group->whereIn("unique_id",$u_id);
-        //   $group = $group->where("status","!=","removed");
-        //
-        //   if($group->count() > 1){
-        //
-        //     $group = $group->get();
-        //     $total_pigs = 0;
-        //
-        //     for($i=0; $i<$group->count(); $i++){
-        //
-        //
-        //
-        //     }
-        //
-        //   }
-        //
-        // }
+        // get the unique_id from feeds_movement_groups_bins
+        $gb = DB::table("feeds_movement_groups_bins");
+        $gb = $gb->where("bin_id",$bin_id);
+        $gb = $gb->select("unique_id","number_of_pigs");
+
+        if($gb->count() > 1){
+
+          $gba = $gb->get();
+          // $u_id = array();
+          $total_pigs = 0;
+
+          for($i=0; $i<$gb->count(); $i++){
+            // $u_id[] = $gb[$i]->unique_id;
+            $total_pigs = $total_pigs + $gba[$i]->number_of_pigs;
+          }
+
+          return $total_pigs;
+
+          // $group = DB::table("feeds_movement_groups");
+          // $group = $group->whereIn("unique_id",$u_id);
+          // $group = $group->where("status","!=","removed");
+
+          // if($group->count() > 1){
+          //
+          //   $group = $group->get();
+          //   $total_pigs = 0;
+          //
+          //   for($i=0; $i<$group->count(); $i++){
+          //
+          //
+          //
+          //   }
+          //
+          // }
+
+        }
 
         $bh = DB::table("feeds_bin_history");
         $bh = $bh->where("bin_id",$bin_id);
