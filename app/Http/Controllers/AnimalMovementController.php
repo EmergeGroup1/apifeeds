@@ -1027,10 +1027,9 @@ class AnimalMovementController extends Controller
         }
 
         $group_consumption = $group_consumption->first();
-        $group_consumption = $this->toArray($group_consumption);
 
         $bh = DB::table("feeds_bin_history");
-        $bh = $bh->where("bin_id",$group_consumption[0]['bin_id']);
+        $bh = $bh->where("bin_id",$group_consumption->bin_id);
         $bh = $bh->orderBy("update_date","desc");
         $bh = $bh->first();
 
