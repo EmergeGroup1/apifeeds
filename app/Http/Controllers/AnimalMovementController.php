@@ -1051,6 +1051,8 @@ class AnimalMovementController extends Controller
           $group = $group->select("unique_id");
           $group = $group->get();
 
+          return $group;
+
           $t_pigs = 0;
           for($i=0; $i<count($group); $i++){
 
