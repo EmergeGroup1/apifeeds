@@ -1045,7 +1045,7 @@ class AnimalMovementController extends Controller
         $gb = $gb->where("bin_id",$bin_id);
         $gb = $gb->select("unique_id","number_of_pigs");
 
-        if($gb->count() > 1){
+        if($gb->count() > 1 && $variance != 0){
 
           $gba = $gb->get();
           $u_id = array();
@@ -1074,7 +1074,7 @@ class AnimalMovementController extends Controller
                                     ->sum("number_of_pigs");
             $perc = "0." . ($total_pigs*100) / $total_current_pigs;
 
-            $variance = $variance * (float)$perc;                       
+            $variance = $variance * (float)$perc;
 
           }
 
