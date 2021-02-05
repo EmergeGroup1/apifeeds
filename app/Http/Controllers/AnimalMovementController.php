@@ -1043,10 +1043,7 @@ class AnimalMovementController extends Controller
 
           for($i=0; $i<$gb->count(); $i++){
             $u_id[] = $gba[$i]->unique_id;
-            // $t_pigs = $t_pigs + $gba[$i]->number_of_pigs;
           }
-
-          return $u_id;
 
           $group = DB::table("feeds_movement_groups");
           $group = $group->whereIn("unique_id",$u_id);
