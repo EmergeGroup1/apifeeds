@@ -1052,6 +1052,8 @@ class AnimalMovementController extends Controller
           $group = $group->where("status","entered");
           $group = $group->get();
 
+          return count($group);
+
           $t_pigs = 0;
           for($i=0; $i<count($group); $i++){
 
