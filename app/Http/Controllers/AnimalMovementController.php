@@ -1060,7 +1060,7 @@ class AnimalMovementController extends Controller
               $uq_id[] = $group[$i]->unique_id;
             }
 
-            $gbs = DB::table("feeds_movement_groups_bins");
+            $gbs = DB::table("feeds_movement_groups_bins")
                       ->whereIn("unique_id",$uq_id)
                       ->sum("number_of_pigs");
 
