@@ -1047,6 +1047,8 @@ class AnimalMovementController extends Controller
             // $t_pigs = $t_pigs + $gba[$i]->number_of_pigs;
           }
 
+          return $u_id;
+
           $group = DB::table("feeds_movement_groups");
           $group = $group->whereIn("unique_id",$u_id);
           $group = $group->where("status","entered");
