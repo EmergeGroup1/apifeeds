@@ -1084,14 +1084,14 @@ class AnimalMovementController extends Controller
 
 
         if($variance < 0 ){
-          return round($bh->variance,2);
+          return round($variance,2);
         }
 
         if($variance == 0){
           return 0;
         }
 
-        return "+" . round($bh->variance,2);
+        return "+" . round($variance,2);
 
       }
 
