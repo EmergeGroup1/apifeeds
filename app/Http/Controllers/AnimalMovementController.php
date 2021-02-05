@@ -1050,20 +1050,18 @@ class AnimalMovementController extends Controller
           $group = $group->where("status","entered");
           $group = $group->get();
 
-          return count($group);
+          $t_pigs = 0;
+          for($i=0; $i<count($group); $i++){
 
-          // $t_pigs = 0;
-          // for($i=0; $i<count($group); $i++){
-          //
-          //   $gbs = DB::table("feeds_movement_groups_bins");
-          //             ->where("unique_id",$group[$i]->unique_id)
-          //             ->select("number_of_pigs")
-          //             ->first();
-          //   $t_pigs = $t_pigs + $gbs->number_of_pigs;
-          //
-          // }
-          //
-          // return $t_pigs;
+            $gbs = DB::table("feeds_movement_groups_bins");
+                      ->where("unique_id",$group[$i]->unique_id)
+                      ->select("number_of_pigs")
+                      ->first();
+            $t_pigs = $t_pigs + $gbs->number_of_pigs;
+
+          }
+
+          return $t_pigs;
 
         }
 
