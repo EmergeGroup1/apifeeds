@@ -1026,12 +1026,45 @@ class AnimalMovementController extends Controller
           return 0;
         }
 
-        return $group_consumption->count();
-
         $group_consumption = $group_consumption->first();
 
+        // bin_id
+        $bin_id = $group_consumption->bin_id;
+
+        // // get the unique_id from feeds_movement_groups_bins
+        // $gb = DB::table("feeds_movement_groups_bins");
+        // $gb = $gb->where("bin_id",$bin_id);
+        // $gb = $gb->select("unique_id");
+        //
+        // if($gb->count() > 1){
+        //
+        //   $gb = $gb->get();
+        //   $u_id = array();
+        //   for($i=0; $i<$gb->count(); $i++){
+        //     $u_id[] = $gb[$i]->unique_id;
+        //   }
+        //
+        //   $group = DB::table("feeds_movement_groups");
+        //   $group = $group->whereIn("unique_id",$u_id);
+        //   $group = $group->where("status","!=","removed");
+        //
+        //   if($group->count() > 1){
+        //
+        //     $group = $group->get();
+        //     $total_pigs = 0;
+        //
+        //     for($i=0; $i<$group->count(); $i++){
+        //
+        //
+        //
+        //     }
+        //
+        //   }
+        //
+        // }
+
         $bh = DB::table("feeds_bin_history");
-        $bh = $bh->where("bin_id",$group_consumption->bin_id);
+        $bh = $bh->where("bin_id",$bin_id);
         $bh = $bh->orderBy("update_date","desc");
         $bh = $bh->first();
 
