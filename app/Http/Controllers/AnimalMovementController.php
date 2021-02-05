@@ -1026,6 +1026,8 @@ class AnimalMovementController extends Controller
           return 0;
         }
 
+        return count($group_consumption->get());
+
         $group_consumption = $group_consumption->first();
 
         $bh = DB::table("feeds_bin_history");
