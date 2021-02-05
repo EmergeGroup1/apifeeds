@@ -1039,32 +1039,31 @@ class AnimalMovementController extends Controller
         if($gb->count() > 1){
 
           $gba = $gb->get();
-          // $u_id = array();
-          $t_pigs = 0;
+          $u_id = array();
+
 
           for($i=0; $i<$gb->count(); $i++){
-            // $u_id[] = $gb[$i]->unique_id;
-            $t_pigs = $t_pigs + $gba[$i]->number_of_pigs;
+            $u_id[] = $gb[$i]->unique_id;
+            // $t_pigs = $t_pigs + $gba[$i]->number_of_pigs;
+          }
+
+          $group = DB::table("feeds_movement_groups");
+          $group = $group->whereIn("unique_id",$u_id);
+          $group = $group->where("status","!=","removed");
+
+          $counter = $group->count();
+          $group = $group->get();
+
+          $t_pigs = 0;
+          for($i=0; $i<$counter; $i++){
+            $gbs = DB::table("feeds_movement_groups_bins");
+                      ->where("unique_id",$group->unique_id)
+                      ->select("number_of_pigs")
+                      ->first();
+            $t_pigs = $t_pigs + $gbs->number_of_pigs;
           }
 
           return $t_pigs;
-
-          // $group = DB::table("feeds_movement_groups");
-          // $group = $group->whereIn("unique_id",$u_id);
-          // $group = $group->where("status","!=","removed");
-
-          // if($group->count() > 1){
-          //
-          //   $group = $group->get();
-          //   $total_pigs = 0;
-          //
-          //   for($i=0; $i<$group->count(); $i++){
-          //
-          //
-          //
-          //   }
-          //
-          // }
 
         }
 
