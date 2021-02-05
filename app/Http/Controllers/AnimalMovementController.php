@@ -1041,9 +1041,8 @@ class AnimalMovementController extends Controller
           $gba = $gb->get();
           $u_id = array();
 
-
           for($i=0; $i<$gb->count(); $i++){
-            $u_id[] = $gb[$i]->unique_id;
+            $u_id[] = $gba[$i]->unique_id;
             // $t_pigs = $t_pigs + $gba[$i]->number_of_pigs;
           }
 
