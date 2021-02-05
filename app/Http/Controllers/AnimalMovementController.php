@@ -1026,7 +1026,7 @@ class AnimalMovementController extends Controller
           return 0;
         }
 
-        return count($group_consumption->get());
+        return $group_consumption->count();
 
         $group_consumption = $group_consumption->first();
 
