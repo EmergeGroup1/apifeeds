@@ -844,7 +844,7 @@ class AnimalMovementController extends Controller
                   'death_perc'              =>  $this->deathPercentage($v['group_id'],"closeout"),
                   'treated_perc'            =>  $this->treatedPercentage($v['group_id'],"closeout"),
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
-                  'groups_consumption'      =>  $this->getGroupsConLbs($v['group_id'],$v['created_at']),
+                  'groups_consumption'      =>  $this->getGCP($v['unique_id'],$current_total_pigs),
                   'currentAge'              =>  $original_total_pigs == 0 ? 0 : $this->currentAge($v['date_created'],$v['type'],$v['group_id'])
                 );
 
@@ -1011,10 +1011,11 @@ class AnimalMovementController extends Controller
 
 
       /**
-      ** Filter for all animal groups
+      ** Get variance
+      ** Group Consumption Percentage
       ** @return array
       **/
-      private function getGroupsConsumptionPercentage($g_unique_id,$total_pigs)
+      private function getGCP($g_unique_id,$total_pigs)
       {
 
         $group_consumption = DB::table("feeds_movement_groups_bins");
@@ -1175,7 +1176,7 @@ class AnimalMovementController extends Controller
                   'pigs_per_crate'          =>  $this->avePigsPerCrate($v['group_id']),
                   'average_weight'          =>  $this->aveWeight($transfer_data),
                   'total_days'              =>  $total_days,
-                  'groups_consumption'      =>  $this->getGroupsConLbs($v['group_id'],$v['created_at']),
+                  'groups_consumption'      =>  $this->getGCP($v['unique_id'],$current_total_pigs),
                   'currentAge'              =>  $this->currentAge($v['date_created'],$v['type'],$v['group_id'])
                 );
 
