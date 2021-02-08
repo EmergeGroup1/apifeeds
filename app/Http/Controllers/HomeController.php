@@ -2310,9 +2310,7 @@ class HomeController extends Controller
 	private function deleteUpdateBinToday($bin_id){
 		$date_today = date("Y-m-d");
 		BinsHistory::where('bin_id','=',$bin_id)
-					->whereBetween('update_date',[$date_yesterday.' 00:00:00',$date_yesterday.' 23:59:59'])
-					->select('history_id')
-					->orderBy('update_date','desc')
+					->whereBetween('update_date',[$date_today.' 00:00:00',$date_today.' 23:59:59'])
 					->delete();
 	}
 
