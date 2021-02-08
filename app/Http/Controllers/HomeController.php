@@ -1670,6 +1670,8 @@ class HomeController extends Controller
 		// update today
 		$lastupdate = $this->yesterdayBinUpdate($_POST['bin']); //$this->todayBinUpdate($_POST['bin']);
 
+		return $lastupdate;
+
 		// update yesterdays
 		if(empty($lastupdate) || $_POST['amount'] == 0){
 			$lastupdate = $this->yesterdayBinUpdate($_POST['bin']);
@@ -1692,7 +1694,7 @@ class HomeController extends Controller
 			} else {
 					$actual_consumption_per_pig = $new_amount / $lastupdate[0]['num_of_pigs'];
 			}
-			
+
 			$variance = round($actual_consumption_per_pig - $lastupdate[0]['budgeted_amount'],2);
 
 		} else {
