@@ -1670,8 +1670,6 @@ class HomeController extends Controller
 		// update today
 		$lastupdate = $this->yesterdayBinUpdate($_POST['bin']); //$this->todayBinUpdate($_POST['bin']);
 
-		return $lastupdate;
-
 		// update yesterdays
 		if(empty($lastupdate)){
 			$lastupdate = $this->yesterdayBinUpdate($_POST['bin']);
