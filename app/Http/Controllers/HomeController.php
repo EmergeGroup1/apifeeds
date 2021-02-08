@@ -1670,13 +1670,6 @@ class HomeController extends Controller
 		// update today
 		$lastupdate = $this->yesterdayBinUpdate($_POST['bin']); //$this->todayBinUpdate($_POST['bin']);
 
-		// $amount = $lastupdate[0]['amount'] - $_POST['amount'];
-		// if($lastupdate[0]['amount'] < $_POST['amount']){
-		// 		$amount = str_replace("-","",$amount);
-		// } else {
-		// 		$amount = "-".$amount;
-		// }
-
 		// update yesterdays
 		if(empty($lastupdate) || $_POST['amount'] == 0){
 			$lastupdate = $this->yesterdayBinUpdate($_POST['bin']);
@@ -1689,7 +1682,6 @@ class HomeController extends Controller
 
 			$variance = $lastupdate[0]['variance'];
 			$actual_consumption_per_pig = $lastupdate[0]['consumption'];
-			// $budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
 
 		} else if($_POST['amount'] == 0){
 
@@ -1700,15 +1692,8 @@ class HomeController extends Controller
 			} else {
 					$actual_consumption_per_pig = $new_amount / $lastupdate[0]['num_of_pigs'];
 			}
-
+			
 			$variance = round($actual_consumption_per_pig - $lastupdate[0]['budgeted_amount'],2);
-			// $update_type = $lastupdate[0]['update_type'];
-
-			// if($update_type == 'Manual Update Bin Forecasting Admin' || $update_type == 'Manual Update Mobile Farmer' || $update_type == 'Delivery Manual Update Admin'){
-			// 	$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
-			// } else {
-			// 	$budgeted_amount_tons = $lastupdate[0]['amount'];
-			// }
 
 		} else {
 
@@ -1722,17 +1707,7 @@ class HomeController extends Controller
 
 			$variance = round($actual_consumption_per_pig - $lastupdate[0]['budgeted_amount'],2);
 
-			// $update_type = $lastupdate[0]['update_type'];
-			// if($update_type == 'Manual Update Bin Forecasting Admin' || $update_type == 'Manual Update Mobile Farmer' || $update_type == 'Delivery Manual Update Admin'){
-			// 	$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
-			// } else {
-			// 	$budgeted_amount_tons = $lastupdate[0]['amount'];
-			// }
-
 		}
-
-		// $budgeted_amount_tons = $budgeted_amount_tons*2000 - ($lastupdate[0]['budgeted_amount'] * $lastupdate[0]['num_of_pigs']);
-		// $budgeted_amount_tons = $budgeted_amount_tons/2000;
 
 		$budgeted_amount = $this->daysCounterbudgetedAmount($lastupdate[0]['farm_id'],$_POST['bin'],$lastupdate[0]['feed_type'],date("Y-m-d H:i:s"));
 
@@ -1765,7 +1740,6 @@ class HomeController extends Controller
 				'unique_id'							=>	!empty($lastupdate[0]['unique_id']) ? $lastupdate[0]['unique_id'] : 'none'
 		);
 
-		return $bin_history_data;
 
 		if($yesterday == 0){
 			BinsHistory::where('history_id','=',$lastupdate[0]['history_id'])->update($bin_history_data);
