@@ -1683,21 +1683,9 @@ class HomeController extends Controller
 			$variance = $lastupdate[0]['variance'];
 			$actual_consumption_per_pig = $lastupdate[0]['consumption'];
 
-		} else if($_POST['amount'] == 0){
-
-			$new_amount = round($lastupdate[0]['amount']*2000,2);
-
-			if($lastupdate[0]['num_of_pigs'] == 0){
-					$actual_consumption_per_pig = $new_amount;
-			} else {
-					$actual_consumption_per_pig = $new_amount / $lastupdate[0]['num_of_pigs'];
-			}
-
-			$variance = round($actual_consumption_per_pig - $lastupdate[0]['budgeted_amount'],2);
-
 		} else {
 
-			$new_amount = round(($lastupdate[0]['amount'] - $_POST['amount'])*2000,2);
+			$new_amount = round($lastupdate[0]['amount']*2000,2);
 
 			if($lastupdate[0]['num_of_pigs'] == 0){
 					$actual_consumption_per_pig = $new_amount;
