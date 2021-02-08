@@ -1680,7 +1680,7 @@ class HomeController extends Controller
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
 
-			$variance = $lastupdate[0]['variance'];
+			$variance = 0; //$lastupdate[0]['variance'];
 			$actual_consumption_per_pig = $lastupdate[0]['consumption'];
 
 		} else {
