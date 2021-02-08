@@ -1765,6 +1765,8 @@ class HomeController extends Controller
 				'unique_id'							=>	!empty($lastupdate[0]['unique_id']) ? $lastupdate[0]['unique_id'] : 'none'
 		);
 
+		return $bin_history_data;
+
 		if($yesterday == 0){
 			BinsHistory::where('history_id','=',$lastupdate[0]['history_id'])->update($bin_history_data);
 		}else{
