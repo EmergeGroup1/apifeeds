@@ -1736,7 +1736,7 @@ class HomeController extends Controller
 
 		$budgeted_amount = $this->daysCounterbudgetedAmount($lastupdate[0]['farm_id'],$_POST['bin'],$lastupdate[0]['feed_type'],date("Y-m-d H:i:s"));
 
-		$budgeted_amount_tons = $budgeted_amount * $lastupdate[0]['num_of_pigs'];
+		$budgeted_amount_tons = round($budgeted_amount * $lastupdate[0]['num_of_pigs'],2);
 
 		$currentAmount = $this->currentBinCapacity($_POST['bin']);
 
