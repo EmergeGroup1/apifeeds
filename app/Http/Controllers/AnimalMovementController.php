@@ -1041,45 +1041,45 @@ class AnimalMovementController extends Controller
         $variance = $bh->variance;
 
         // get the unique_id from feeds_movement_groups_bins
-        $gb = DB::table("feeds_movement_groups_bins");
-        $gb = $gb->where("bin_id",$bin_id);
-        $gb = $gb->select("unique_id","number_of_pigs");
-
-        if($gb->count() > 1 && $variance != 0){
-
-          $gba = $gb->get();
-          $u_id = array();
-
-          for($i=0; $i<$gb->count(); $i++){
-            $u_id[] = $gba[$i]->unique_id;
-          }
-
-          $group = DB::table("feeds_movement_groups");
-          $group = $group->whereIn("unique_id",$u_id);
-          $group = $group->where("status","entered");
-          $group = $group->select("unique_id");
-          $counter = $group->count();
-          $group = $group->get();
-
-          $t_pigs = 0;
-          if($counter > 1){
-
-            $uq_id = array();
-            for($i=0; $i<$counter; $i++){
-              $uq_id[] = $group[$i]->unique_id;
-            }
-
-            $total_current_pigs = DB::table("feeds_movement_groups_bins")
-                                    ->whereIn("unique_id",$uq_id)
-                                    ->sum("number_of_pigs");
-            $perc = "0." . ($total_pigs*100) / $total_current_pigs;
-
-            $variance = $variance * (float)$perc;
-
-          }
-
-
-        }
+        // $gb = DB::table("feeds_movement_groups_bins");
+        // $gb = $gb->where("bin_id",$bin_id);
+        // $gb = $gb->select("unique_id","number_of_pigs");
+        //
+        // if($gb->count() > 1 && $variance != 0){
+        //
+        //   $gba = $gb->get();
+        //   $u_id = array();
+        //
+        //   for($i=0; $i<$gb->count(); $i++){
+        //     $u_id[] = $gba[$i]->unique_id;
+        //   }
+        //
+        //   $group = DB::table("feeds_movement_groups");
+        //   $group = $group->whereIn("unique_id",$u_id);
+        //   $group = $group->where("status","entered");
+        //   $group = $group->select("unique_id");
+        //   $counter = $group->count();
+        //   $group = $group->get();
+        //
+        //   $t_pigs = 0;
+        //   if($counter > 1){
+        //
+        //     $uq_id = array();
+        //     for($i=0; $i<$counter; $i++){
+        //       $uq_id[] = $group[$i]->unique_id;
+        //     }
+        //
+        //     $total_current_pigs = DB::table("feeds_movement_groups_bins")
+        //                             ->whereIn("unique_id",$uq_id)
+        //                             ->sum("number_of_pigs");
+        //     $perc = "0." . ($total_pigs*100) / $total_current_pigs;
+        //
+        //     $variance = $variance * (float)$perc;
+        //
+        //   }
+        //
+        //
+        // }
 
 
 
