@@ -1668,14 +1668,14 @@ class HomeController extends Controller
 		$yesterday = 0;
 
 		// update today
-		$lastupdate = $this->todayBinUpdate($_POST['bin']);
+		$lastupdate = $this->yesterdayBinUpdate($_POST['bin']); //$this->todayBinUpdate($_POST['bin']);
 
-		$amount = $lastupdate[0]['amount'] - $_POST['amount'];
-		if($lastupdate[0]['amount'] < $_POST['amount']){
-				$amount = str_replace("-","",$amount);
-		} else {
-				$amount = "-".$amount;
-		}
+		// $amount = $lastupdate[0]['amount'] - $_POST['amount'];
+		// if($lastupdate[0]['amount'] < $_POST['amount']){
+		// 		$amount = str_replace("-","",$amount);
+		// } else {
+		// 		$amount = "-".$amount;
+		// }
 
 		// update yesterdays
 		if(empty($lastupdate) || $_POST['amount'] == 0){
