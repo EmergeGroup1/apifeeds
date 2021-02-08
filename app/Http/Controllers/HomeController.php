@@ -1685,7 +1685,7 @@ class HomeController extends Controller
 
 		} else {
 
-			$new_amount = round($lastupdate[0]['amount']*2000,2);
+			$new_amount = round(($lastupdate[0]['amount'] - $_POST['amount'])*2000,2);
 
 			if($lastupdate[0]['num_of_pigs'] == 0){
 					$actual_consumption_per_pig = $new_amount;
