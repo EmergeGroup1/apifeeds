@@ -2308,7 +2308,7 @@ class HomeController extends Controller
 	*/
 	private function yesterdayBinUpdate($bin_id){
 		$date_yesterday = date('Y-m-d',strtotime('-1 day'));
-		$output = BinsHistory::where('bin_id','=',$bin_id)
+		$output = BinsHistory::where('bin_id',$bin_id)
 					->whereBetween('update_date',[$date_yesterday.' 00:00:00',$date_yesterday.' 23:59:59'])
 					->orderBy('update_date','desc')
 					->take(1)->get()->toArray();
