@@ -1741,12 +1741,15 @@ class HomeController extends Controller
 		);
 
 
-		if($yesterday == 0){
-			BinsHistory::where('history_id','=',$lastupdate[0]['history_id'])->update($bin_history_data);
-		}else{
-			BinsHistory::insert($bin_history_data);
-		}
+		// if($yesterday == 0){
+		// 	$l_update = $this->deleteUpdateBinToday($_POST['bin']);
+		// 	BinsHistory::where('history_id','=',$l_update[0]['history_id'])->update($bin_history_data);
+		// }else{
+		// 	BinsHistory::insert($bin_history_data);
+		// }
 
+		$this->deleteUpdateBinToday($_POST['bin']);
+		BinsHistory::insert($bin_history_data);
 
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
@@ -2299,6 +2302,18 @@ class HomeController extends Controller
 					->orderBy('update_date','desc')
 					->take(1)->get()->toArray();
 		return $output;
+	}
+
+	/*
+	*	get the update bin history yesterday
+	*/
+	private function deleteUpdateBinToday($bin_id){
+		$date_today = date("Y-m-d");
+		BinsHistory::where('bin_id','=',$bin_id)
+					->whereBetween('update_date',[$date_yesterday.' 00:00:00',$date_yesterday.' 23:59:59'])
+					->select('history_id')
+					->orderBy('update_date','desc')
+					->delete();
 	}
 
 	/*
