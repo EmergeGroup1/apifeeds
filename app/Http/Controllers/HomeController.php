@@ -1678,7 +1678,7 @@ class HomeController extends Controller
 		}
 
 		// update yesterdays
-		if(empty($lastupdate)){
+		if(empty($lastupdate) || $_POST['amount'] == 0){
 			$lastupdate = $this->yesterdayBinUpdate($_POST['bin']);
 			$yesterday = 1;
 		}
@@ -1686,29 +1686,57 @@ class HomeController extends Controller
 		$budgeted_amount_tons = 0;
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
+
 			$variance = $lastupdate[0]['variance'];
 			$actual_consumption_per_pig = $lastupdate[0]['consumption'];
-			$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
-		} else {
-			$new_amount = round(($lastupdate[0]['amount'] - $_POST['amount'])*2000,2);
+			// $budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
+
+		} else if($_POST['amount'] == 0){
+
+			$new_amount = round($lastupdate[0]['amount']*2000,2);
+
 			if($lastupdate[0]['num_of_pigs'] == 0){
 					$actual_consumption_per_pig = $new_amount;
 			} else {
 					$actual_consumption_per_pig = $new_amount / $lastupdate[0]['num_of_pigs'];
 			}
+
 			$variance = round($actual_consumption_per_pig - $lastupdate[0]['budgeted_amount'],2);
-			$update_type = $lastupdate[0]['update_type'];
-			if($update_type == 'Manual Update Bin Forecasting Admin' || $update_type == 'Manual Update Mobile Farmer' || $update_type == 'Delivery Manual Update Admin'){
-				$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
+			// $update_type = $lastupdate[0]['update_type'];
+
+			// if($update_type == 'Manual Update Bin Forecasting Admin' || $update_type == 'Manual Update Mobile Farmer' || $update_type == 'Delivery Manual Update Admin'){
+			// 	$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
+			// } else {
+			// 	$budgeted_amount_tons = $lastupdate[0]['amount'];
+			// }
+
+		} else {
+
+			$new_amount = round(($lastupdate[0]['amount'] - $_POST['amount'])*2000,2);
+
+			if($lastupdate[0]['num_of_pigs'] == 0){
+					$actual_consumption_per_pig = $new_amount;
 			} else {
-				$budgeted_amount_tons = $lastupdate[0]['amount'];
+					$actual_consumption_per_pig = $new_amount / $lastupdate[0]['num_of_pigs'];
 			}
+
+			$variance = round($actual_consumption_per_pig - $lastupdate[0]['budgeted_amount'],2);
+
+			// $update_type = $lastupdate[0]['update_type'];
+			// if($update_type == 'Manual Update Bin Forecasting Admin' || $update_type == 'Manual Update Mobile Farmer' || $update_type == 'Delivery Manual Update Admin'){
+			// 	$budgeted_amount_tons = $lastupdate[0]['budgeted_amount_tons'];
+			// } else {
+			// 	$budgeted_amount_tons = $lastupdate[0]['amount'];
+			// }
+
 		}
 
-		$budgeted_amount_tons = $budgeted_amount_tons*2000 - ($lastupdate[0]['budgeted_amount'] * $lastupdate[0]['num_of_pigs']);
-		$budgeted_amount_tons = $budgeted_amount_tons/2000;
+		// $budgeted_amount_tons = $budgeted_amount_tons*2000 - ($lastupdate[0]['budgeted_amount'] * $lastupdate[0]['num_of_pigs']);
+		// $budgeted_amount_tons = $budgeted_amount_tons/2000;
 
 		$budgeted_amount = $this->daysCounterbudgetedAmount($lastupdate[0]['farm_id'],$_POST['bin'],$lastupdate[0]['feed_type'],date("Y-m-d H:i:s"));
+
+		$budgeted_amount_tons = $budgeted_amount * $lastupdate[0]['num_of_pigs'];
 
 		$currentAmount = $this->currentBinCapacity($_POST['bin']);
 
@@ -1813,7 +1841,7 @@ class HomeController extends Controller
 		$user = User::where('id',$_POST['user'])->first();
 
 		// groups consumption
-	  $this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
+	  // $this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
 
 		return json_encode(array(
 			'msg' 				=> 	$msg,
@@ -2301,9 +2329,9 @@ class HomeController extends Controller
 	*	get the update bin hostory yesterday
 	*/
 	private function yesterdayBinUpdate($bin_id){
-		$date_yesterday = date("Y-m-d", time() - 60 * 60 * 24);
+		$date_yesterday = date('Y-m-d',strtotime('-1 day'));
 		$output = BinsHistory::where('bin_id','=',$bin_id)
-					->where('update_date','<=',$date_yesterday.' 23:59:59')
+					->whereBetween('update_date',[$date_yesterday.' 00:00:00',$date_yesterday.' 23:59:59'])
 					->orderBy('update_date','desc')
 					->take(1)->get()->toArray();
 		return $output;
