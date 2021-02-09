@@ -931,7 +931,7 @@ class HomeController extends Controller
 		BinsHistory::insert($data);
 
 		// groups consumption
-		$this->updateGroupsConsumption($bin_id,$lastupdate[0]->amount,"manual");
+		// $this->updateGroupsConsumption($bin_id,$lastupdate[0]->amount,"manual");
 
 		// $notification = new CloudMessaging;
 		// $farmer_data = array(
@@ -1014,7 +1014,7 @@ class HomeController extends Controller
 		BinsHistory::insert($data);
 
 		// groups consumption
-		$this->updateGroupsConsumption($bin_id,$lastupdate[0]->amount,"manual");
+		// $this->updateGroupsConsumption($bin_id,$lastupdate[0]->amount,"manual");
 
 		// $notification = new CloudMessaging;
 		// $farmer_data = array(
@@ -1314,7 +1314,7 @@ class HomeController extends Controller
 		}
 
 		// groups consumption
-		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
+		// $this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
 
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
@@ -1530,7 +1530,7 @@ class HomeController extends Controller
 		}
 
 		// groups consumption
-		$this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
+		// $this->updateGroupsConsumption($_POST['bin'],$_POST['amount'],"manual");
 
 
 		if($_POST['amount'] > $lastupdate[0]['amount']){
@@ -1833,262 +1833,151 @@ class HomeController extends Controller
 	*	update the current groups number of pigs based on yesterday
 	* or today's update on forecasting
 	*/
-	public function updateGroupsConsumption($bin_id,$amount,$type) {
-
-		if($type == "create"){
-			return false;
-		}
-
-		// get the groups
-		$groups = DB::table("feeds_movement_groups_bins")
-							->where("bin_id",$bin_id)
-							->select("unique_id")
-							->distinct()
-							->get();
-
-		if(count($groups) <= 0){
-			return "No Consumption";
-		}
-
-		// $amount = $amount * 2000;
-
-		$unique_ids = array();
-		for($i=0; $i < count($groups); $i++){
-			$unique_ids[] = $groups[$i]->unique_id;
-		}
-
-		$g_data = DB::table("feeds_movement_groups")
-						->whereIn("unique_id",$unique_ids)
-						->whereIn("status",["entered","created"])
-						->where("created_at","!=","0000-00-00 00:00:00")
-						->select("unique_id","group_id")
-						->get();
-
-
-		if($g_data->isEmpty()){
-			return "No Consumption";
-		}
-
-		$insert = DB::table("feeds_movement_groups_consumption");
-
-		$g_data = $this->toArray($g_data);
-
-		for($i=0; $i < count($g_data); $i++){
-
-				// get the total number of pigs per group inside the group bin
-				$total_pigs = DB::table("feeds_movement_groups_bins")
-												->where("unique_id",$g_data[$i]['unique_id'])
-												->sum("number_of_pigs");
-
-				// if the bin_history is empty fetch the default feed type on the feed type table else fetch
-				// the feed type on bin_history
-				$bin_history = BinsHistory::where("bin_id",$bin_id)
-																	->orderBy("update_date","desc")
-																	->first();
-
-				if($total_pigs == 0){
-					$budgeted_amount_lbs = 0;
-				}	else {
-					// $budgeted_amount_lbs = $amount - (($bin_history->budgeted_amount * 2000) / $total_pigs);
-					$budgeted_amount_lbs = $bin_history->budgeted_amount * 2000;
-					if($budgeted_amount_lbs < 0) {
-						$budgeted_amount_lbs = 0;
-					}
-				}
-
-				// $cons_lbs = ($bin_history->budgeted_amount * 2000) * $total_pigs;
-				$cons_lbs = $bin_history->actual_amount_tons * 2000;
-
-				$groups_consumption_data[] = array(
-					'update_date'	=>	date("Y-m-d"),
-					'group_id'	=>	$g_data[$i]['group_id'],
-					'feed_type'	=>	$bin_history->feed_type,
-					'budgeted_amount'	=>	$bin_history->budgeted_amount,
-					'budgeted_consumption_lbs' => $cons_lbs,
-					'budgeted_amount_tons'	=>	round($cons_lbs / 2000,2),
-					'actual_consumption_lbs'	=>	$cons_lbs,
-					'actual_amount_tons'	=>	round($cons_lbs / 2000,2),
-					'total_pigs'	=>	$total_pigs
-				);
-
-				// $amount = $budgeted_amount_lbs;
-
-
-
-				$d_insert = array(
-					'update_date'	=>	date("Y-m-d"),
-					'group_id'	=>	$g_data[$i]['group_id'],
-					'feed_type'	=>	$bin_history->feed_type,
-					'budgeted_consumption_lbs'	=>	$bin_history->budgeted_amount,
-					'budgeted_amount_tons'	=>	$bin_history->budgeted_amount_tons,
-					'actual_consumption_lbs'	=>	round(($bin_history->amount * 2000) / $total_pigs,2),
-					'actual_amount_tons'	=>	$bin_history->actual_amount_tons,
-				);
-
-				if($bin_history->budgeted_amount_tons < 0 || $amount >= $bin_history->amount){
-
-					$gc = DB::table("feeds_movement_groups_consumption");
-					$gc = $gc->where('group_id',$g_data[$i]['group_id']);
-					$gc = $gc->where('update_date',date("Y-m-d", strtotime("-1 day")));
-					$gc = $gc->get();
-
-					if($gc->isNotEmpty()){
-
-						$d_insert = array(
-							'update_date'	=>	date("Y-m-d"),
-							'group_id'	=>	$gc[0]->group_id,
-							'feed_type'	=>	$gc[0]->feed_type,
-							'budgeted_consumption_lbs'	=>	$gc[0]->budgeted_consumption_lbs,
-							'budgeted_amount_tons'	=>	$gc[0]->budgeted_amount_tons,
-							'actual_consumption_lbs'	=>	$gc[0]->actual_consumption_lbs,
-							'actual_amount_tons'	=>	$gc[0]->actual_amount_tons,
-						);
-
-					} else {
-
-						$d_insert = array(
-							'update_date'	=>	date("Y-m-d"),
-							'group_id'	=>	$g_data[$i]['group_id'],
-							'feed_type'	=>	$bin_history->feed_type,
-							'budgeted_consumption_lbs'	=>	0,
-							'budgeted_amount_tons'	=>	0,
-							'actual_consumption_lbs'	=>	0,
-							'actual_amount_tons'	=>	0,
-						);
-
-					}
-
-				}
-
-				// delete and insert
-				DB::table("feeds_movement_groups_consumption")
-					->where("group_id",$g_data[$i]['group_id'])
-					->where("update_date",date("Y-m-d"))
-					->delete();
-
-				$insert->insert($d_insert);
-
-		}
-
-
-
-
-		return $d_insert;
-
-
-		// for($i=0; $i < count($groups_consumption_data); $i++){
-		// 	$groups_cons_history = DB::table("feeds_movement_groups_consumption")
-		// 														->where("group_id",$groups_consumption_data[$i]['group_id'])
-		// 														->where("update_date",date("Y-m-d"))
-		// 														->get();
-		//
-		//
-		// 	$actual_consumption_lbs = $groups_consumption_data[$i]['actual_consumption_lbs'];
-		// 	$actual_amount_tons = $groups_consumption_data[$i]['actual_amount_tons'];
-		//
-		// 	// manual (insert) select the previous data and build the new data to insert
-		// 	if($type == "manual"){
-		// 		if($groups_cons_history->isNotEmpty()){
-		//
-		// 			// when increasing feed amount of bins,
-		// 			// we are not calculating budget vs actual or feed consumption.
-		// 			if($groups_consumption_data[$i]['actual_amount_tons'] >= $groups_cons_history[0]->actual_amount_tons){
-		// 				return false;
-		// 			} else {
-		//
-		// 				$groups_cons_history = DB::table("feeds_movement_groups_consumption")
-		// 																	->where("group_id",$groups_consumption_data[$i]['group_id'])
-		// 																	->where("update_date",date("Y-m-d", strtotime("-1 day")))
-		// 																	->get();
-		//
-		// 				// if there were multiple times the bin was decreased in the same date,
-		// 				// it should always get the previous amount from yesterday to calculate the recent budget vs actual
-		// 				// if the yesterdays amount is none, the value will be today
-		// 				if($groups_cons_history->isNotEmpty()){
-		// 					$actual_consumption_lbs = $groups_cons_history[0]->actual_consumption_lbs;
-		// 					$actual_amount_tons = $groups_cons_history[0]->actual_amount_tons;
-		// 				} else {
-		// 					$actual_consumption_lbs = $groups_consumption_data[$i]['actual_consumption_lbs'];
-		// 					$actual_amount_tons = $groups_consumption_data[$i]['actual_amount_tons'];
-		// 				}
-		//
-		// 			}
-		//
-		// 			// $budgeted_consumption_lbs = $groups_cons_history[0]->budgeted_consumption_lbs;
-		// 			// $budgeted_amount_tons = $groups_cons_history[0]->budgeted_amount_tons;
-		// 		} else {
-		// 			$budgeted_consumption_lbs = 0;
-		// 			$budgeted_amount_tons = 0;
-		// 		}
-		//
-		//
-		// 		$budgeted_consumption_lbs = $groups_consumption_data[$i]['total_pigs'] * $groups_consumption_data[$i]['budgeted_amount'];
-		// 		$budgeted_amount_tons = $budgeted_consumption_lbs / 2000;
-		//
-		// 		$d_insert = array(
-		// 			'update_date'	=>	date("Y-m-d"),
-		// 			'group_id'	=>	$groups_consumption_data[$i]['group_id'],
-		// 			'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-		// 			'budgeted_consumption_lbs'	=>	round($budgeted_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],2),
-		// 			'budgeted_amount_tons'	=>	$budgeted_amount_tons,
-		// 			'actual_consumption_lbs'	=>	round($actual_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],2),
-		// 			'actual_amount_tons'	=>	$actual_amount_tons,
-		// 		);
-		//
-		// 	} else {
-		// 		// $budgeted_consumption_lbs = round($groups_consumption_data[$i]['budgeted_consumption_lbs'],2);
-		// 		// $budgeted_amount_tons = $groups_consumption_data[$i]['budgeted_amount_tons'];
-		//
-		//
-		// 		$budgeted_consumption_lbs = $groups_consumption_data[$i]['total_pigs'] * $groups_consumption_data[$i]['budgeted_amount'];
-		// 		$budgeted_amount_tons = $budgeted_consumption_lbs / 2000;
-		//
-		//
-		// 		$d_insert = array(
-		// 			'update_date'	=>	date("Y-m-d"),
-		// 			'group_id'	=>	$groups_consumption_data[$i]['group_id'],
-		// 			'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-		// 			'budgeted_consumption_lbs'	=>	round($budgeted_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],2),
-		// 			'budgeted_amount_tons'	=>	$budgeted_amount_tons,
-		// 			'actual_consumption_lbs'	=>	round($actual_consumption_lbs / $groups_consumption_data[$i]['total_pigs'],2),
-		// 			'actual_amount_tons'	=>	$actual_amount_tons,
-		// 		);
-		// 	}
-		//
-		//
-		//
-		// 	$dtest_insert[] = array(
-		// 		'update_date'	=>	date("Y-m-d"),
-		// 		'group_id'	=>	$groups_consumption_data[$i]['group_id'],
-		// 		'feed_type'	=>	$groups_consumption_data[$i]['feed_type'],
-		// 		'budgeted_consumption_lbs'	=>	$budgeted_consumption_lbs,
-		// 		'budgeted_amount_tons'	=>	$budgeted_amount_tons,
-		// 		'actual_consumption_lbs'	=>	$groups_consumption_data[$i]['actual_consumption_lbs'],
-		// 		'actual_amount_tons'	=>	$groups_consumption_data[$i]['actual_amount_tons']
-		// 	);
-		//
-		// 	$insert = DB::table("feeds_movement_groups_consumption");
-		//
-		// 	// if groups consumption is existed {delete the group consumption today and insert}
-		// 	// else {insert}
-		// 	if(count($groups_cons_history) > 0){
-		// 		// delete and insert
-		// 		DB::table("feeds_movement_groups_consumption")
-		// 			->where("group_id",$groups_consumption_data[$i]['group_id'])
-		// 			->where("update_date",date("Y-m-d"))
-		// 			->delete();
-		//
-		// 	}
-		//
-		// 	$insert->insert($d_insert);
-		//
-		// }
-		//
-		//
-		//
-		// return $dtest_insert;
-
-	}
+	// public function updateGroupsConsumption($bin_id,$amount,$type) {
+	//
+	// 	if($type == "create"){
+	// 		return false;
+	// 	}
+	//
+	// 	// get the groups
+	// 	$groups = DB::table("feeds_movement_groups_bins")
+	// 						->where("bin_id",$bin_id)
+	// 						->select("unique_id")
+	// 						->distinct()
+	// 						->get();
+	//
+	// 	if(count($groups) <= 0){
+	// 		return "No Consumption";
+	// 	}
+	//
+	// 	// $amount = $amount * 2000;
+	//
+	// 	$unique_ids = array();
+	// 	for($i=0; $i < count($groups); $i++){
+	// 		$unique_ids[] = $groups[$i]->unique_id;
+	// 	}
+	//
+	// 	$g_data = DB::table("feeds_movement_groups")
+	// 					->whereIn("unique_id",$unique_ids)
+	// 					->whereIn("status",["entered","created"])
+	// 					->where("created_at","!=","0000-00-00 00:00:00")
+	// 					->select("unique_id","group_id")
+	// 					->get();
+	//
+	//
+	// 	if($g_data->isEmpty()){
+	// 		return "No Consumption";
+	// 	}
+	//
+	// 	$insert = DB::table("feeds_movement_groups_consumption");
+	//
+	// 	$g_data = $this->toArray($g_data);
+	//
+	// 	for($i=0; $i < count($g_data); $i++){
+	//
+	// 			// get the total number of pigs per group inside the group bin
+	// 			$total_pigs = DB::table("feeds_movement_groups_bins")
+	// 											->where("unique_id",$g_data[$i]['unique_id'])
+	// 											->sum("number_of_pigs");
+	//
+	// 			// if the bin_history is empty fetch the default feed type on the feed type table else fetch
+	// 			// the feed type on bin_history
+	// 			$bin_history = BinsHistory::where("bin_id",$bin_id)
+	// 																->orderBy("update_date","desc")
+	// 																->first();
+	//
+	// 			if($total_pigs == 0){
+	// 				$budgeted_amount_lbs = 0;
+	// 			}	else {
+	// 				// $budgeted_amount_lbs = $amount - (($bin_history->budgeted_amount * 2000) / $total_pigs);
+	// 				$budgeted_amount_lbs = $bin_history->budgeted_amount * 2000;
+	// 				if($budgeted_amount_lbs < 0) {
+	// 					$budgeted_amount_lbs = 0;
+	// 				}
+	// 			}
+	//
+	// 			// $cons_lbs = ($bin_history->budgeted_amount * 2000) * $total_pigs;
+	// 			$cons_lbs = $bin_history->actual_amount_tons * 2000;
+	//
+	// 			$groups_consumption_data[] = array(
+	// 				'update_date'	=>	date("Y-m-d"),
+	// 				'group_id'	=>	$g_data[$i]['group_id'],
+	// 				'feed_type'	=>	$bin_history->feed_type,
+	// 				'budgeted_amount'	=>	$bin_history->budgeted_amount,
+	// 				'budgeted_consumption_lbs' => $cons_lbs,
+	// 				'budgeted_amount_tons'	=>	round($cons_lbs / 2000,2),
+	// 				'actual_consumption_lbs'	=>	$cons_lbs,
+	// 				'actual_amount_tons'	=>	round($cons_lbs / 2000,2),
+	// 				'total_pigs'	=>	$total_pigs
+	// 			);
+	//
+	// 			// $amount = $budgeted_amount_lbs;
+	//
+	//
+	//
+	// 			$d_insert = array(
+	// 				'update_date'	=>	date("Y-m-d"),
+	// 				'group_id'	=>	$g_data[$i]['group_id'],
+	// 				'feed_type'	=>	$bin_history->feed_type,
+	// 				'budgeted_consumption_lbs'	=>	$bin_history->budgeted_amount,
+	// 				'budgeted_amount_tons'	=>	$bin_history->budgeted_amount_tons,
+	// 				'actual_consumption_lbs'	=>	round(($bin_history->amount * 2000) / $total_pigs,2),
+	// 				'actual_amount_tons'	=>	$bin_history->actual_amount_tons,
+	// 			);
+	//
+	// 			if($bin_history->budgeted_amount_tons < 0 || $amount >= $bin_history->amount){
+	//
+	// 				$gc = DB::table("feeds_movement_groups_consumption");
+	// 				$gc = $gc->where('group_id',$g_data[$i]['group_id']);
+	// 				$gc = $gc->where('update_date',date("Y-m-d", strtotime("-1 day")));
+	// 				$gc = $gc->get();
+	//
+	// 				if($gc->isNotEmpty()){
+	//
+	// 					$d_insert = array(
+	// 						'update_date'	=>	date("Y-m-d"),
+	// 						'group_id'	=>	$gc[0]->group_id,
+	// 						'feed_type'	=>	$gc[0]->feed_type,
+	// 						'budgeted_consumption_lbs'	=>	$gc[0]->budgeted_consumption_lbs,
+	// 						'budgeted_amount_tons'	=>	$gc[0]->budgeted_amount_tons,
+	// 						'actual_consumption_lbs'	=>	$gc[0]->actual_consumption_lbs,
+	// 						'actual_amount_tons'	=>	$gc[0]->actual_amount_tons,
+	// 					);
+	//
+	// 				} else {
+	//
+	// 					$d_insert = array(
+	// 						'update_date'	=>	date("Y-m-d"),
+	// 						'group_id'	=>	$g_data[$i]['group_id'],
+	// 						'feed_type'	=>	$bin_history->feed_type,
+	// 						'budgeted_consumption_lbs'	=>	0,
+	// 						'budgeted_amount_tons'	=>	0,
+	// 						'actual_consumption_lbs'	=>	0,
+	// 						'actual_amount_tons'	=>	0,
+	// 					);
+	//
+	// 				}
+	//
+	// 			}
+	//
+	// 			// delete and insert
+	// 			DB::table("feeds_movement_groups_consumption")
+	// 				->where("group_id",$g_data[$i]['group_id'])
+	// 				->where("update_date",date("Y-m-d"))
+	// 				->delete();
+	//
+	// 			$insert->insert($d_insert);
+	//
+	// 	}
+	//
+	//
+	//
+	//
+	// 	return $d_insert;
+	//
+	//
+	//
+	// }
 
 
 
@@ -6495,7 +6384,7 @@ class HomeController extends Controller
 			$feed_name = FeedTypes::where('type_id','=',$data[0]['feed_type'])->first();
 
 			// groups consumption
-			$this->updateGroupsConsumption($data[0]['bin_id'],$amount,"automatic");
+			// $this->updateGroupsConsumption($data[0]['bin_id'],$amount,"automatic");
 
 			// Mobile created date
 			/*$time = date('H:i:s',strtotime($data[0]['update_date'])+60*60);
@@ -6882,7 +6771,7 @@ class HomeController extends Controller
 				// }
 
 				// groups consumption
-				$this->updateGroupsConsumption($bin_id,$data[0]['amount'] + $undone_deliveries[$i]['amount'],"manual");
+				// $this->updateGroupsConsumption($bin_id,$data[0]['amount'] + $undone_deliveries[$i]['amount'],"manual");
 
 			// insert
 			} else {
@@ -6918,7 +6807,7 @@ class HomeController extends Controller
 				}
 
 				// groups consumptions
-				$this->updateGroupsConsumption($bin_id,$data[0]['amount'] + $undone_deliveries[$i]['amount'],"manual");
+				// $this->updateGroupsConsumption($bin_id,$data[0]['amount'] + $undone_deliveries[$i]['amount'],"manual");
 
 				// if($undone_deliveries[$i]['status'] == 2){
 				// 	$this->sendNotificationMarkAsDelivered($data_to_insert['unique_id'],$undone_deliveries[$i]['driver_id']);
