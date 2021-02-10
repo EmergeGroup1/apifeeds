@@ -2912,6 +2912,10 @@ class AnimalMovementController extends Controller
       public function updateBinsHistoryNumberOfPigs($bin_id,$number_of_pigs,$type,$user_id)
       {
             $bininfo = $this->getBinDefaultInfo($bin_id);
+            if(count($bininfo) <= 0){
+              return false;
+            }
+
             $lastupdate  = $this->getLastHistory($bininfo);
 
             if(count($lastupdate) <= 0){
