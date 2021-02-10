@@ -1748,6 +1748,7 @@ class APIController extends Controller
 
         $groups = DB::table("feeds_movement_groups")
                     ->where("created_at","0000-00-00 00:00:00")
+                    
                     ->get();
 
         for($i=0; $i<count($groups); $i++){
