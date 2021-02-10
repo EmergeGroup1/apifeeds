@@ -1747,7 +1747,7 @@ class APIController extends Controller
         $am_controller = new AnimalMovementController;
 
         $groups = DB::table("feeds_movement_groups")
-                    // ->where("created_at","0000-00-00 00:00:00")
+                    ->where("created_at","0000-00-00 00:00:00")
                     ->get();
 
         for($i=0; $i<count($groups); $i++){
