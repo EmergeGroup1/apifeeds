@@ -657,11 +657,18 @@ class APIController extends Controller
           return array("err" => "Invalid token, please login");
         }
 
+        return $requesrt->input();
+
         $user = $request->input("userID");
 
         $home_controller = new HomeController;
         $unique_id = $home_controller->generator();
         unset($home_controller);
+
+        // loop from the dates
+        // duplicate the batches but not the date, code_id and unique_id
+        // insert in feeds_bacth table
+
 
         $max_compartment = DB::table('feeds_batch')->where('status', 'pending')->max('compartment');
         $total_tons = DB::table('feeds_batch')->where('status', 'pending')->sum('amount');
