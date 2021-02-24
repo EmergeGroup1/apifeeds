@@ -657,7 +657,7 @@ class APIController extends Controller
           return array("err" => "Invalid token, please login");
         }
 
-        return $requesrt->input();
+        return $request->input();
 
         $user = $request->input("userID");
 
