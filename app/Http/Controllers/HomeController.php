@@ -7583,7 +7583,7 @@ class HomeController extends Controller
 				'truck' => $pending[$i]->truck,
 				'compartment' => $pending[$i]->compartment,
 				'code_id' => $pending[$i]->code_id,
-				'unqiue_id' => $data['unique_id'],
+				'unique_id' => $data['unique_id'],
 				'status' => 'created',
 				'driver_id' => $pending[$i]->driver_id,
 			);
