@@ -672,7 +672,12 @@ class APIController extends Controller
             'date'      =>  date("Y-m-d",strtotime($date_1)),
             'unique_id' =>  $home_controller->generator()
           );
+
           $home_controller->pendingDuplication($dups);
+
+          $batches = DB::table('feeds_batch')->where('unique_id', $dups['unique_id'])->get();
+          $this->saveFarmSchedule($batches, $dups['unique_id'], $user);
+
         }
 
         if($date_2 != NULL){
@@ -680,7 +685,12 @@ class APIController extends Controller
             'date'      =>  date("Y-m-d",strtotime($date_2)),
             'unique_id' =>  $home_controller->generator()
           );
+
           $home_controller->pendingDuplication($dups);
+
+          $batches = DB::table('feeds_batch')->where('unique_id', $dups['unique_id'])->get();
+          $this->saveFarmSchedule($batches, $dups['unique_id'], $user);
+
         }
 
         if($date_3 != NULL){
@@ -688,15 +698,15 @@ class APIController extends Controller
             'date'      =>  date("Y-m-d",strtotime($date_3)),
             'unique_id' =>  $home_controller->generator()
           );
+
           $home_controller->pendingDuplication($dups);
+
+          $batches = DB::table('feeds_batch')->where('unique_id', $dups['unique_id'])->get();
+          $this->saveFarmSchedule($batches, $dups['unique_id'], $user);
+
         }
 
         unset($home_controller);
-
-
-        // loop from the dates
-        // duplicate the batches but not the date, code_id and unique_id
-        // insert in feeds_bacth table
 
 
         $max_compartment = DB::table('feeds_batch')->where('status', 'pending')->max('compartment');
