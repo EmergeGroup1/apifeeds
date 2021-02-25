@@ -669,7 +669,7 @@ class APIController extends Controller
 
         if($date_1 != NULL){
           $dups = array(
-            'date'      =>  date("Y-m-d",stsrtotime($date_1)),
+            'date'      =>  date("Y-m-d",strtotime($date_1)),
             'unique_id' =>  $home_controller->generator()
           );
           $home_controller->pendingDuplication($dups);
@@ -677,7 +677,7 @@ class APIController extends Controller
 
         if($date_2 != NULL){
           $dups = array(
-            'date'      =>  date("Y-m-d",stsrtotime($date_2)),
+            'date'      =>  date("Y-m-d",strtotime($date_2)),
             'unique_id' =>  $home_controller->generator()
           );
           $home_controller->pendingDuplication($dups);
@@ -685,7 +685,7 @@ class APIController extends Controller
 
         if($date_3 != NULL){
           $dups = array(
-            'date'      =>  date("Y-m-d",stsrtotime($date_3)),
+            'date'      =>  date("Y-m-d",strtotime($date_3)),
             'unique_id' =>  $home_controller->generator()
           );
           $home_controller->pendingDuplication($dups);
