@@ -7561,4 +7561,39 @@ class HomeController extends Controller
 		}
 	}
 
+
+
+
+	/*
+	*	Pending deliveries duplication
+	*/
+	public function pendingDuplication($data)
+	{
+		$pending = DB::table('feeds_batch')->where('status', 'pending')->get();
+
+		for($i=0; $i<count($pending); $i++) {
+
+			$insert[] = array(
+				'farm_id' => $pending[$i]->farm_id,
+				'bin_id' => $pending[$i]->bin_id,
+				'date' => $data['date'],
+				'amount' => $pending[$i]->amount,
+				'feed_type' => $pending[$i]->feed_type,
+				'medication' => $pending[$i]->medication,
+				'truck' => $pending[$i]->truck,
+				'compartment' => $pending[$i]->compartment,
+				'code_id' => $pending[$i]->code_id,
+				'unqiue_id' => $data['unique_id'],
+				'status' => 'created',
+				'driver_id' => $pending[$i]->driver_id,
+			);
+
+		}
+
+		DB::table('feeds_batch')->insert($insert);
+
+
+	}
+
+
 }

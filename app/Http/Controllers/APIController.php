@@ -657,13 +657,42 @@ class APIController extends Controller
           return array("err" => "Invalid token, please login");
         }
 
-        return $request->input();
+        $date_1 = $request->input("date_1");
+        $date_2 = $request->input("date_2");
+        $date_3 = $request->input("date_3");
 
         $user = $request->input("userID");
 
         $home_controller = new HomeController;
         $unique_id = $home_controller->generator();
+
+
+        if($date_1 != NULL){
+          $dups = array(
+            'date'      =>  date("Y-m-d",stsrtotime($date_1)),
+            'unique_id' =>  $home_controller->generator()
+          );
+          $home_controller->pendingDuplication($dups);
+        }
+
+        if($date_2 != NULL){
+          $dups = array(
+            'date'      =>  date("Y-m-d",stsrtotime($date_2)),
+            'unique_id' =>  $home_controller->generator()
+          );
+          $home_controller->pendingDuplication($dups);
+        }
+
+        if($date_3 != NULL){
+          $dups = array(
+            'date'      =>  date("Y-m-d",stsrtotime($date_3)),
+            'unique_id' =>  $home_controller->generator()
+          );
+          $home_controller->pendingDuplication($dups);
+        }
+
         unset($home_controller);
+
 
         // loop from the dates
         // duplicate the batches but not the date, code_id and unique_id
