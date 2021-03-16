@@ -23,6 +23,7 @@ class FeedTypeController extends Controller
          $feedTypes = DB::table('feeds_feed_types')
                ->select('feeds_feed_types.*','feeds_feed_type_budgeted_amount_per_day.*')
                ->where('name','!=','None')
+               ->where('status','show')
                ->leftJoin('feeds_feed_type_budgeted_amount_per_day','feeds_feed_type_budgeted_amount_per_day.feed_type_id','=','feeds_feed_types.type_id')
                ->latest()
                ->get();
@@ -171,7 +172,7 @@ class FeedTypeController extends Controller
 		    return redirect('feedtype');
     }
 
-  
+
 
     /**
      * Remove the specified resource from storage.
