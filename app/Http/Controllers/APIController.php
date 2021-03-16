@@ -2174,7 +2174,10 @@ class APIController extends Controller
             "msg"     =>  "Successfully get data"
           );
         } else {
-          return $this->errorMessage();
+          return array(
+            "err"     =>  1,
+            "msg"     =>  "empty"
+          );
         }
 
         break;
